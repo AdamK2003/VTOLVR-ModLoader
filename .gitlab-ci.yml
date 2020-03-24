@@ -1,11 +1,11 @@
-image : microsoft/dotnet:latest
 stages:
   - build
-before_script:
-  - 'dotnet restore'
-build:
- stage: build
- script:
-  - 'dotnet build'
- only:
-   - master
+  - test
+
+build_job:
+  stage: build
+  script:
+  - 'echo building...'
+  - 'msbuild.exe VTOLVR-ModLoader.sln'
+  except:
+  - tags

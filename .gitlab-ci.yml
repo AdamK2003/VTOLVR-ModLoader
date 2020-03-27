@@ -1,4 +1,4 @@
-image: mono
+image: mcr.microsoft.com/dotnet/core/sdk
 stages:
   - build
 
@@ -6,5 +6,6 @@ build:
   stage: build
   script:
   - echo 'Building Mod Loader'
+  - dotnet build ./VTOLVR-ModLoader
   except:
   - tags 

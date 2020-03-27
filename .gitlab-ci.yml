@@ -1,11 +1,11 @@
+
 stages:
   - build
-  - test
 
-build_job:
+build:
+  image: mcr.microsoft.com/dotnet/framework/sdk:4.8
   stage: build
   script:
-  - 'echo building...'
-  - 'msbuild.exe VTOLVR-ModLoader.sln'
+  - echo 'Building Mod Loader'
   except:
   - tags

@@ -1,4 +1,4 @@
-image: data.mcr.microsoft.com/dotnet/framework/sdk
+image: mono
 stages:
   - build
 

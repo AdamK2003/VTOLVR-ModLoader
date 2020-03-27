@@ -1,4 +1,5 @@
-image: gableroux/unity3d:2019.3.6f1-windows
+image: mcr.microsoft.com/dotnet/framework/sdk:4.8
+
 stages:
   - build
 

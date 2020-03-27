@@ -3,7 +3,7 @@ stages:
   - build
 
 build:
-  image: mcr.microsoft.com/dotnet/framework/sdk:4.8
+  image: mcr.microsoft.com/dotnet/framework/samples:dotnetapp
   stage: build
   script:
   - echo 'Building Mod Loader'

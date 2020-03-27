@@ -3,9 +3,9 @@ stages:
   - build
 
 build:
-  image: mcr.microsoft.com/dotnet/framework/sdk:4.5
+  image: mcr.microsoft.com/dotnet/framework/sdk
   stage: build
   script:
   - echo 'Building Mod Loader'
   except:
-  - tags
+  - tags 

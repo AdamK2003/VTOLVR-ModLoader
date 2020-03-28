@@ -12,5 +12,7 @@ build:
     - .shared_windows_runners
   stage: build
   script:
+  - echo '.net location'
+  - reg.exe query "HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0" /v MSBuildToolsPath
   - echo 'Building Mod Loader'
-  - MSBuild.exe ./ModLoader/ModLoader
+  - "C:\Windows\Microsoft.NET\Framework64\v4.8.0.20190930\MSBuild.exe" ModLoader/ModLoader

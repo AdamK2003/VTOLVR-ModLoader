@@ -1,0 +1,16 @@
+.shared_windows_runners:
+  tags:
+  - shared-windows
+  - windows
+  - windows-1809
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+  - echo 'Building Mod Loader'
+  - msbuild build ./ModLoader/ModLoader
+  except:
+  - tags 

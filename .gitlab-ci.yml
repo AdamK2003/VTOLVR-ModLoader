@@ -8,9 +8,9 @@ stages:
   - build
 
 build:
+  extends:
+    - .shared_windows_runners
   stage: build
   script:
   - echo 'Building Mod Loader'
-  - msbuild build ./ModLoader/ModLoader
-  except:
-  - tags 
+  - msbuild ./ModLoader/ModLoader

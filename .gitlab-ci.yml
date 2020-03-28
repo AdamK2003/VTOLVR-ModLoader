@@ -13,4 +13,4 @@ build:
   stage: build
   script:
   - echo 'Building Mod Loader'
-  - msbuild ./ModLoader/ModLoader
+  - MSBuild.exe ./ModLoader/ModLoader

@@ -4,6 +4,7 @@
   - windows
   - windows-1809
 
+image: mcr.microsoft.com/dotnet/framework/sdk
 
 stages:
   - build
@@ -13,4 +14,4 @@ build:
     - .shared_windows_runners
   stage: build
   script:
-  - reg.exe query 'HKLM\SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.5' /v MSBuildToolsPath
+   - 'dotnet build ./ModLoader/ModLoader'

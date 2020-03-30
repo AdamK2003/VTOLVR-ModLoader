@@ -1,17 +1,3 @@
-.shared_windows_runners:
-  tags:
-  - shared-windows
-  - windows
-  - windows-1809
-
-image: mcr.microsoft.com/dotnet/framework/sdk
-
-stages:
-  - build
-
 build:
-  extends:
-    - .shared_windows_runners
-  stage: build
   script:
-   - 'dotnet build ./ModLoader/ModLoader'
+  - echo hello

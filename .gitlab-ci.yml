@@ -1,3 +1,10 @@
+image: mcr.microsoft.com/dotnet/framework/sdk
+
+stages:
+  - build
+
 build:
+  stage: build
   script:
-  - echo hello
+   - echo 'Hello World!'
+   - 'dotnet build ./ModLoader/ModLoader'

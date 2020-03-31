@@ -63,7 +63,7 @@ namespace Build
             {
                 File.Copy(deps[i], deps[i].Replace(dlls, dir + @"\dll"));
             }
-            Log("Moved " + deps.Length + 1 + " dependencies");
+            Log("Moved " + (deps.Length + 1) + " dependencies");
         }
         private static void BuildDLL()
         {
@@ -75,6 +75,9 @@ namespace Build
         private static void BuildWPFApp()
         {
             Log("Building VTOLVR-ModLoader.exe\n");
+            Run(paths["msbuild"],
+                "VTOLVR-ModLoader.csproj -t:restore",
+                @"\VTOLVR-ModLoader");
             Run(paths["msbuild"],
                 "VTOLVR-ModLoader.csproj -property:Configuration=Release;TargetFrameworkVersion=4.6 -tv:14.0",
                 @"\VTOLVR-ModLoader");

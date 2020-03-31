@@ -181,6 +181,8 @@ namespace Build
                 Console.WriteLine(output);
             }
             process.WaitForExit();
+            if (process.ExitCode != 0)
+                Environment.Exit(process.ExitCode);
         }
 
         private static void Log(object message)

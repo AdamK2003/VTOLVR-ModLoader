@@ -8,9 +8,6 @@ build_builder:
    - echo 'Building Builder.exe'
    - cd Builder
    - dotnet build --configuration Release
-   - echo 'Moving Builder.exe to root'
-   - cd ..
-   - MOVE Builder/bin/Release/Builder.exe Builder.exe
 
 run_builder:
   stage: run_builder

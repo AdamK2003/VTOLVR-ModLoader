@@ -27,7 +27,6 @@ namespace Build
             BuildWPFApp();
             BuildUpdater();
             ZIPContents();
-            Console.ReadKey();
         }
         private static void CheckArgs(string[] args)
         {

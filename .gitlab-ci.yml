@@ -62,5 +62,5 @@ build_installer:
    - .\Builder.exe buildinstaller
   artifacts:
    paths:
-   - Installer\bin\Release\Installer.zip
+   - Installer\bin\Release\Installer.exe
    expire_in: 1 day

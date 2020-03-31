@@ -149,6 +149,7 @@ namespace Build
             {
                 Console.WriteLine("Failed to move a file (" + sourceFileName + ")");
                 Console.WriteLine(e.ToString());
+                Environment.Exit(2);
                 return false;
             }
         }

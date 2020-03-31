@@ -1,5 +1,6 @@
 stages:
   - build_builder
+  - build_dll
   - build_wpf
   - build_updater
   - zip
@@ -18,6 +19,7 @@ build_builder:
 build_dll:
   stage: build_dll
   script:
+   - echo 'Test'
    - Builder.exe builddll dlls=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\dll
 
 build_wpf:
@@ -39,14 +41,3 @@ build_installer:
   stage: build_installer
   script:
    - Builder.exe buildinstaller
-
-testing:
-  stage: testing
-  script:
-   - echo 'Building Builder.exe'
-   - cd Builder
-   - dotnet build --configuration Release
-   - echo 'Running Builder.exe'
-   - cd ..
-   - MOVE Builder\bin\Release\Builder.exe Builder.exe
-   - Builder.exe template=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\template dlls=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\dll

@@ -15,11 +15,14 @@ build_builder:
    - echo 'Running Builder.exe'
    - cd ..
    - MOVE Builder\bin\Release\Builder.exe Builder.exe
+  artifacts:
+    paths:
+    - Builder.exe
+    expire_in: 1 day
 
 build_dll:
   stage: build_dll
   script:
-   - echo 'Test'
    - Builder.exe builddll dlls=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\dll
 
 build_wpf:

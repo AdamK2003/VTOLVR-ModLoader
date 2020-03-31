@@ -5,15 +5,15 @@ stages:
 build_builder:
   stage: build_builder
   script:
-   - echo 'Building Build.exe'
-   - cd Build
+   - echo 'Building Builder.exe'
+   - cd Builder
    - dotnet build --configuration Release
-   - echo 'Moving Build.exe to root'
+   - echo 'Moving Builder.exe to root'
    - cd ..
-   - MOVE Build/bin/Release/Build.exe Build.exe
+   - MOVE Builder/bin/Release/Builder.exe Builder.exe
 
 run_builder:
   stage: run_builder
   script:
    - echo 'Running Builder.exe'
-   - Build.exe
+   - Builder.exe

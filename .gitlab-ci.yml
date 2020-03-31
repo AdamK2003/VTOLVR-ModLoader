@@ -10,4 +10,4 @@ run:
    - echo 'Running Builder.exe'
    - cd ..
    - MOVE Builder\bin\Release\Builder.exe Builder.exe
-   - Builder.exe
+   - Builder.exe -template=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\template -dlls=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\dll

@@ -76,7 +76,7 @@ namespace Build
         {
             Log("Building VTOLVR-ModLoader.exe\n");
             Run(paths["msbuild"],
-                "VTOLVR-ModLoader.csproj -t:Restore",
+                "VTOLVR-ModLoader.csproj /restore",
                 @"\VTOLVR-ModLoader");
             Run(paths["msbuild"],
                 "VTOLVR-ModLoader.csproj -property:Configuration=Release;TargetFrameworkVersion=4.6 -tv:14.0",

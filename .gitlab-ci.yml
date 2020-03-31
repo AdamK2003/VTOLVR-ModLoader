@@ -15,8 +15,6 @@ build_builder:
    - echo 'Running Builder.exe'
    - cd ..
    - MOVE Builder\bin\Release\Builder.exe Builder.exe
-   - tree
-   - Builder.exe builddll dlls=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\dll
   artifacts:
     paths:
     - Builder.exe
@@ -25,24 +23,24 @@ build_builder:
 build_dll:
   stage: build_dll
   script:
-   - Builder.exe builddll dlls=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\dll
+   - .\Builder.exe builddll dlls=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\dll
 
 build_wpf:
   stage: build_wpf
   script:
-   - Builder.exe buildwpf
+   - .\Builder.exe buildwpf
 
 build_updater:
   stage: build_updater
   script:
-   - Builder.exe buildupdater
+   - .\Builder.exe buildupdater
 
 zip:
   stage: zip
   script:
-   - Builder.exe zip
+   - .\Builder.exe zip
 
 build_installer:
   stage: build_installer
   script:
-   - Builder.exe buildinstaller
+   - .\Builder.exe buildinstaller

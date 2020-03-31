@@ -39,6 +39,7 @@ namespace Build
                 if (args[i].Contains("dlls="))
                 {
                     dlls = args[i].Replace("dlls=", string.Empty);
+                    MoveDeps();
                 }
             }
 

@@ -1,11 +1,8 @@
 stages:
-  - build
+  - run_build
 
-image: mcr.microsoft.com/dotnet/framework/sdk:4.7.2-20190312-windowsservercore-ltsc2016
-
-build:
-  stage: build
+run_build:
+  stage: run_build
   script:
-   - echo 'Hello World!'
-   - cd ModLoader
-   - dotnet build --configuration Release
+   - echo 'Running Build.exe'
+   - Build.exe

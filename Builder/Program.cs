@@ -16,7 +16,7 @@ namespace Build
         private static Dictionary<string, string> paths = new Dictionary<string, string>()
         {
             { "msbuild", @"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"},
-            { "unity", @"C:\Program Files\Unity\Hub\Editor\2019.1.8f1\Editor\Unity.exe"}
+            { "unity", @"C:\Program Files\Unity\Hub\Editor\2019.1.8f1\Editor\Unity.exe"},
             { "nuget", @"C:\Program Files\nuget.exe" }
         };
         static void Main(string[] args)

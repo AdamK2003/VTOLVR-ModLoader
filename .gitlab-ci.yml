@@ -15,6 +15,7 @@ build_builder:
    - echo 'Running Builder.exe'
    - cd ..
    - MOVE Builder\bin\Release\Builder.exe Builder.exe
+   - tree
    - Builder.exe builddll dlls=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\dll
   artifacts:
     paths:

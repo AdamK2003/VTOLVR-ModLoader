@@ -1,8 +1,19 @@
 stages:
-  - run_build
+  - build_builder
+  - run_builder
 
-run_build:
-  stage: run_build
+build_builder:
+  stage: build_builder
   script:
-   - echo 'Running Build.exe'
+   - echo 'Building Build.exe'
+   - cd Build
+   - dotnet build --configuration Release
+   - echo 'Moving Build.exe to root'
+   - cd ..
+   - MOVE Build/bin/Release/Build.exe Build.exe
+
+run_builder:
+  stage: run_builder
+  script:
+   - echo 'Running Builder.exe'
    - Build.exe

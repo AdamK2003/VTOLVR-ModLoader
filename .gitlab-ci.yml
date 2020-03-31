@@ -1,16 +1,13 @@
 stages:
-  - build_builder
-  - run_builder
+  - run
 
-build_builder:
-  stage: build_builder
+run:
+  stage: run
   script:
    - echo 'Building Builder.exe'
    - cd Builder
    - dotnet build --configuration Release
-
-run_builder:
-  stage: run_builder
-  script:
    - echo 'Running Builder.exe'
+   - cd ..
+   - MOVE Builder\bin\Release\Builder.exe Builder.exe
    - Builder.exe

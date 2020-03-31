@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Build
 {
@@ -10,7 +11,7 @@ namespace Build
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("HELLLLOOOOO");
+            Console.WriteLine(Directory.GetCurrentDirectory());
         }
     }
 }

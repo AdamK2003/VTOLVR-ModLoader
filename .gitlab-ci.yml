@@ -15,10 +15,6 @@ build_builder:
    - echo 'Running Builder.exe'
    - cd ..
    - MOVE Builder\bin\Release\Builder.exe Builder.exe
-  artifacts:
-    paths:
-    - Builder.exe
-    expire_in: 1 day
 
 build_dll:
   stage: build_dll
@@ -38,7 +34,7 @@ build_updater:
 zip:
   stage: zip
   script:
-   - .\Builder.exe zip
+   - .\Builder.exe zip template=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\template
 
 build_installer:
   stage: build_installer

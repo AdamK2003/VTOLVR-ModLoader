@@ -23,10 +23,6 @@ namespace Build
         {
             dir = Directory.GetCurrentDirectory();
             CheckArgs(args);
-            BuildDLL();
-            BuildWPFApp();
-            BuildUpdater();
-            ZIPContents();
         }
         private static void CheckArgs(string[] args)
         {
@@ -139,7 +135,7 @@ namespace Build
             Log("Building Installer.exe");
             Run("cmd.exe",
                 "/c dotnet build --configuration Release",
-                @"\ModLoader");
+                @"\Installer");
         }
 
         private static bool TryMove(string sourceFileName, string destFileName)

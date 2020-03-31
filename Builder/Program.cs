@@ -133,8 +133,8 @@ namespace Build
         private static void BuildInstaller()
         {
             Log("Building Installer.exe");
-            Run("cmd.exe",
-                "/c dotnet build --configuration Release",
+            Run(paths["msbuild"],
+                "Installer.csproj -property:Configuration=Release;TargetFrameworkVersion=4.6 -tv:14.0",
                 @"\Installer");
         }
 

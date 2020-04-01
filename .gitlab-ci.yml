@@ -23,7 +23,7 @@ build_builder:
 build_dll:
   stage: build_dll
   script:
-   - .\Builder.exe builddll dlls=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\dll
+   - .\Builder.exe builddll dlls=$dlls
   artifacts:
    paths:
    - ModLoader\bin\Release\ModLoader.dll
@@ -50,7 +50,7 @@ build_updater:
 zip:
   stage: zip
   script:
-   - .\Builder.exe zip template=A:\Code\VTOLVR-ModLoader-Gitlab\ModLoader\template 
+   - .\Builder.exe zip template=$template
   artifacts:
    paths:
    - Installer\Resources\ModLoader.zip

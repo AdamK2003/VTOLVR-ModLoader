@@ -1,0 +1,66 @@
+stages:
+  - build_builder
+  - build_dll
+  - build_wpf
+  - build_updater
+  - zip
+  - build_installer
+
+build_builder:
+  stage: build_builder
+  script:
+   - echo 'Building Builder.exe'
+   - cd Builder
+   - dotnet build --configuration Release
+   - echo 'Running Builder.exe'
+   - cd ..
+   - MOVE Builder\bin\Release\Builder.exe Builder.exe
+  artifacts:
+    paths:
+    - Builder.exe
+    expire_in: 1 day
+
+build_dll:
+  stage: build_dll
+  script:
+   - .\Builder.exe builddll dlls=$dlls
+  artifacts:
+   paths:
+   - ModLoader\bin\Release\ModLoader.dll
+   expire_in: 1 day
+
+build_wpf:
+  stage: build_wpf
+  script:
+   - .\Builder.exe buildwpf
+  artifacts:
+   paths:
+   - VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe
+   expire_in: 1 day
+
+build_updater:
+  stage: build_updater
+  script:
+   - .\Builder.exe buildupdater
+  artifacts:
+   paths:
+   - Updater\bin\Release\Updater.exe
+   expire_in: 1 day
+
+zip:
+  stage: zip
+  script:
+   - .\Builder.exe zip template=$template
+  artifacts:
+   paths:
+   - Installer\Resources\ModLoader.zip
+   expire_in: 1 day
+
+build_installer:
+  stage: build_installer
+  script:
+   - .\Builder.exe buildinstaller
+  artifacts:
+   paths:
+   - Installer\bin\Release\Installer.exe
+   expire_in: 1 day

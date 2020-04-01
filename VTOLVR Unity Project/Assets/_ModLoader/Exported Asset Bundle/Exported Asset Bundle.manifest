@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 1283211586
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: modloader.assets
+      Dependencies: {}

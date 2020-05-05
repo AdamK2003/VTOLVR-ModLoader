@@ -52,7 +52,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Logo.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -77,19 +77,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\DevToolsSave.cs" />
+    <Compile Include="Classes\Pilot.cs" />
+    <Compile Include="Classes\Save.cs" />
+    <Compile Include="Classes\Scenario.cs" />
     <Compile Include="Helper.cs" />
-    <Compile Include="SettingSave.cs" />
+    <Compile Include="Classes\SettingSave.cs" />
     <Compile Include="UpdateData.cs" />
     <Compile Include="NotificationWindow.xaml.cs">
       <DependentUpon>NotificationWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Settings.xaml.cs">
-      <DependentUpon>Settings.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Versions.cs" />
-    <Compile Include="ViewModels\ModUploaderViewModel.cs" />
-    <Compile Include="ViewModels\NewsViewModel.cs" />
-    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\DevTools.xaml.cs">
+      <DependentUpon>DevTools.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ModUploader.xaml.cs">
       <DependentUpon>ModUploader.xaml</DependentUpon>
     </Compile>
@@ -115,7 +116,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Settings.xaml">
+    <Page Include="Views\DevTools.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -166,12 +167,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Logo.ico" />
-    <Resource Include="LogoSpinning.gif" />
+    <Resource Include="Resources\Logo.ico" />
+    <Resource Include="Resources\LogoSpinning.gif" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

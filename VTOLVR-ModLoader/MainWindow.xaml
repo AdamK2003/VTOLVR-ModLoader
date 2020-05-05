@@ -5,14 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         xmlns:local="clr-namespace:VTOLVR_ModLoader"
-        xmlns:viewmodels="clr-namespace:VTOLVR_ModLoader.ViewModels"
         xmlns:views="clr-namespace:VTOLVR_ModLoader.Views"
         mc:Ignorable="d"
-        Title="VTOL VR Modloader" Height="600" Width="1200" Icon="Logo.ico" MinWidth="800" MinHeight="400" 
+        Title="VTOL VR Modloader" Height="600" Width="1200" Icon="Resources/Logo.ico" MinWidth="800" MinHeight="490" 
         Background="#FF4B4B4B" WindowStartupLocation="CenterScreen" WindowStyle="None" Closing="WindowClosing" Initialized="Start">
     <Window.Resources>
-        <DataTemplate x:Name="settingsViewTemplate" DataType="{x:Type viewmodels:SettingsViewModel}">
+        <DataTemplate x:Name="settingsViewTemplate" DataType="{x:Type views:Settings}">
             <views:Settings DataContext="{Binding}"/>
+        </DataTemplate>
+        <DataTemplate x:Name="newsViewTemplate" DataType="{x:Type views:News}">
+            <views:News DataContext="{Binding}"/>
         </DataTemplate>
     </Window.Resources>
     <Grid>
@@ -53,6 +55,8 @@
                     <RowDefinition Height="45"/>
                     <RowDefinition Height="45"/>
                     <RowDefinition Height="45"/>
+                    <RowDefinition Height="45"/>
+                    <RowDefinition Height="45"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
@@ -69,7 +73,7 @@
                         <ColumnDefinition Width="0.05*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Image Grid.Column="1" Grid.Row="1" gif:ImageBehavior.RepeatBehavior="0x" gif:ImageBehavior.AnimatedSource="LogoSpinning.gif" x:Name="LogoGif" gif:ImageBehavior.AutoStart="False" />
+                    <Image Grid.Column="1" Grid.Row="1" gif:ImageBehavior.RepeatBehavior="0x" gif:ImageBehavior.AnimatedSource="Resources/LogoSpinning.gif" x:Name="LogoGif" gif:ImageBehavior.AutoStart="False" />
 
                 </Grid>
 
@@ -87,12 +91,12 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Website" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
-                            Click="Website"/>
+                            Content="Home" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
+                            Click="News"/>
                 </Grid>
 
                 <Grid Grid.Row="2">
-                    <!-- Skins Button -->
+                    <!-- Open Folder Button -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.3*"/>
                         <RowDefinition Height="*"/>
@@ -105,11 +109,11 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Discord" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" Click="Discord"/>
+                            Content="Open Folder" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" Click="OpenFolder"/>
                 </Grid>
 
                 <Grid Grid.Row="3">
-                    <!-- Discord Button -->
+                    <!-- Console Button -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.3*"/>
                         <RowDefinition Height="*"/>
@@ -122,12 +126,47 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Open Folder" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
+                            Content="Console" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
                             Click="OpenFolder"/>
                 </Grid>
 
                 <Grid Grid.Row="4">
-                    <!-- Github Button -->
+                    <!-- Upload Mod Button -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.3*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="0.3*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.1*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="0.1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                            Content="Upload Mod" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
+                            Click="UploadMod"/>
+                </Grid>
+
+                <Grid Grid.Row="5">
+                    <!-- Dev Tools Button -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.3*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="0.3*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.1*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="0.1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                            Content="Dev Tools" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
+                            Click="OpenTools"/>
+                </Grid>
+                <Grid Grid.Row="6">
+                    <!-- Settings Button -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.3*"/>
                         <RowDefinition Height="*"/>

@@ -13,11 +13,27 @@ using Microsoft.Win32;
 using System.Security.Cryptography;
 using System.Collections.Generic;
 using VTOLVR_ModLoader.Views;
+using System.Runtime.InteropServices;
+using VTOLVR_ModLoader.Classes;
 
 namespace VTOLVR_ModLoader
 {
     public partial class MainWindow : Window
     {
+        [DllImport("user32.dll")]
+        public static extern int SetForegroundWindow(IntPtr hwnd);
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool ShowWindow(IntPtr hWnd, ShowWindowEnum flags);
+        private enum ShowWindowEnum
+        {
+            Hide = 0,
+            ShowNormal = 1, ShowMinimized = 2, ShowMaximized = 3,
+            Maximize = 3, ShowNormalNoActivate = 4, Show = 5,
+            Minimize = 6, ShowMinNoActivate = 7, ShowNoActivate = 8,
+            Restore = 9, ShowDefault = 10, ForceMinimized = 11
+        };
+
         private enum gifStates { Paused, Play, Frame }
 
         public static string modsFolder = @"\mods";
@@ -29,12 +45,18 @@ namespace VTOLVR_ModLoader
         private string url = @"https://vtolvr-mods.com";
         public static string root;
         public static string vtolFolder;
+        public readonly string savePath = @"settings.xml";
 
         //Startup
         private string[] needFiles = new string[] { "SharpMonoInjector.dll", "injector.exe", "Updater.exe" };
         private string[] neededDLLFiles = new string[] { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll" };
         private string[] args;
         private bool autoStart;
+
+        //Pages
+        private News news;
+        private Settings settings;
+        private DevTools devTools;
 
         //Moving Window
         private bool holdingDown;
@@ -52,15 +74,6 @@ namespace VTOLVR_ModLoader
         private int extractedMods = 0;
         private int extractedSkins = 0;
         private int movedDep = 0;
-        //Dev Console
-        public static bool devConsole;
-        //Settings
-        public static Settings settings;
-        public static Pilot pilotSelected;
-        public static Scenario scenarioSelected;
-        public static List<string> modsToLoad = new List<string>();
-        public static SettingsSave save;
-        public static readonly string savePath = @"settings.xml";
 
         private static string CalculateMD5(string filename)
         {
@@ -78,9 +91,6 @@ namespace VTOLVR_ModLoader
         public MainWindow()
         {
             SearchForProcess();
-#if DEBUG
-            url = "http://localhost";
-#endif
             InitializeComponent();
         }
         private void SearchForProcess()
@@ -91,8 +101,18 @@ namespace VTOLVR_ModLoader
             {
                 if (p[i].Id != Process.GetCurrentProcess().Id)
                 {
-                    p[i].Kill();
+                    // check if the window is hidden / minimized
+                    if (p[i].MainWindowHandle == IntPtr.Zero)
+                    {
+                        // the window is hidden so try to restore it before setting focus.
+                        ShowWindow(p[i].Handle, ShowWindowEnum.Restore);
+                    }
+
+                    // set user the focus to the window
+                    SetForegroundWindow(p[i].MainWindowHandle);
+                    Quit();
                 }
+                
             }
         }
 
@@ -108,26 +128,61 @@ namespace VTOLVR_ModLoader
         {
             await Task.Delay(500);
 
+            news = new News();
+            settings = new Settings();
+            devTools = new DevTools();
+            DataContext = news;
+
             if (args.Length == 2 && args[1].Contains("vtolvrml"))
                 URICheck();
             else
                 CheckBaseFolder();
 
-            GetData();
             if (SettingsSaveExists())
-            {
-                save = LoadSettings();
-                devConsole = save.devConsole;
-                pilotSelected = save.previousPilot;
-                scenarioSelected = save.previousScenario;
-            }
+                LoadSettings();
             else
-                save = new SettingsSave();
+                LoadDefaultSettings();
+
+            GetData();
 
             if (CheckForArg("autostart"))
                 autoStart = true;
             if (CheckForArg("devconsole"))
-                devConsole = true;
+                devTools.devConsole = true;
+
+        }
+
+        private void LoadSettings()
+        {
+            using (FileStream stream = new FileStream(root + @"\" + savePath, FileMode.Open))
+            {
+                XmlSerializer xml = new XmlSerializer(typeof(Save));
+                Save save = (Save)xml.Deserialize(stream);
+
+
+                devTools.devConsole = save.DevToolsSave.devConsole;
+                devTools.pilotSelected = save.DevToolsSave.previousPilot;
+                devTools.scenarioSelected = save.DevToolsSave.previousScenario;
+            }
+        }
+        private void LoadDefaultSettings()
+        {
+            devTools.devConsole = false;
+        }
+        private void SaveSettings()
+        {
+            using (FileStream stream = new FileStream(root + @"\" + savePath, FileMode.Create))
+            {
+                XmlSerializer xml = new XmlSerializer(typeof(Save));
+                xml.Serialize(stream, new Save(
+                    new SettingsSave(),
+                    new DevToolsSave(devTools.devConsole, devTools.pilotSelected, devTools.scenarioSelected, devTools.modsToLoad.ToArray())));
+            }
+        }
+
+        private bool SettingsSaveExists()
+        {
+            return File.Exists(root + @"\" + savePath);
         }
         public bool CheckForArg(string arg)
         {
@@ -270,7 +325,7 @@ namespace VTOLVR_ModLoader
                 XmlSerializer xml = new XmlSerializer(typeof(UpdateData));
                 UpdateData deserialized = (UpdateData)xml.Deserialize(stream);
                 //Updating Feed from file
-                //updateFeed.ItemsSource = deserialized.Updates;
+                news.LoadData(deserialized);
 
                 //Checking versions. If auto start is true, skip checking for updates.
                 if (autoStart == false && CheckForInternet())
@@ -331,34 +386,34 @@ namespace VTOLVR_ModLoader
             SetPlayButton(false);
             SetProgress(0, "Launching Game");
             GifState(gifStates.Play);
-
+            SaveSettings();
             //Launching the game
-            
-            if (devConsole || 
-                (pilotSelected != null && scenarioSelected != null) || 
-                (modsToLoad != null && modsToLoad.Count > 0))
+
+            if (devTools.devConsole || 
+                (devTools.pilotSelected != null && devTools.scenarioSelected != null) || 
+                (devTools.modsToLoad != null && devTools.modsToLoad.Count > 0))
             {
                 string regPath = (string)Registry.GetValue(
     @"HKEY_CURRENT_USER\SOFTWARE\Valve\Steam",
     @"SteamPath",
     @"NULL");
                 string args = string.Empty;
-                if (pilotSelected != null && scenarioSelected != null &&
-                    pilotSelected.Name != "No Selection" && scenarioSelected.Name != "No Selection")
+                if (devTools.pilotSelected != null && devTools.scenarioSelected != null &&
+                    devTools.pilotSelected.Name != "No Selection" && devTools.scenarioSelected.Name != "No Selection")
                 {
-                    args += $" PILOT={pilotSelected.Name} SCENARIO_CID={scenarioSelected.cID} SCENARIO_ID={scenarioSelected.ID}";
+                    args += $" PILOT={devTools.pilotSelected.Name} SCENARIO_CID={devTools.scenarioSelected.cID} SCENARIO_ID={devTools.scenarioSelected.ID}";
                 }
 
-                if (devConsole)
+                if (devTools.devConsole)
                 {
                     args += " dev";
                 }
 
-                if (modsToLoad != null && modsToLoad.Count > 0)
+                if (devTools.modsToLoad != null && devTools.modsToLoad.Count > 0)
                 {
-                    for (int i = 0; i < modsToLoad.Count; i++)
+                    for (int i = 0; i < devTools.modsToLoad.Count; i++)
                     {
-                        args += " mod=" + modsToLoad[i] + ""; //Example " mod=NoGravity\NoGravity.dll "
+                        args += " mod=" + devTools.modsToLoad[i] + ""; //Example " mod=NoGravity\NoGravity.dll "
                     }
                 }
 
@@ -684,6 +739,7 @@ namespace VTOLVR_ModLoader
 
         private void Quit(object sender, RoutedEventArgs e)
         {
+            SaveSettings();
             Quit();
         }
 
@@ -722,29 +778,29 @@ namespace VTOLVR_ModLoader
 
         private void OpenSettings(object sender, RoutedEventArgs e)
         {
-            DataContext = new VTOLVR_ModLoader.ViewModels.SettingsViewModel();
-            return;
-            if (settings != null)
-            {
-                settings.Activate();
-                return;
-            }
-            settings = new Settings();
-            settings.Show();
+            if (settings == null)
+                settings = new Settings();
+            DataContext = settings;
         }
 
-        private bool SettingsSaveExists()
+        private void UploadMod(object sender, RoutedEventArgs e)
         {
-            return File.Exists(root + @"\" + savePath);
+            //DataContext = new SettingsViewModel();
         }
 
-        private SettingsSave LoadSettings()
+        private void News(object sender, RoutedEventArgs e)
         {
-            using (FileStream stream = new FileStream(root + @"\" + savePath, FileMode.Open))
-            {
-                XmlSerializer xml = new XmlSerializer(typeof(SettingsSave));
-                return (SettingsSave)xml.Deserialize(stream);
-            }
+            if (news == null)
+                news = new News();
+            DataContext = news;
+        }
+
+        private void OpenTools(object sender, RoutedEventArgs e)
+        {
+            if (devTools == null)
+                devTools = new DevTools();
+            devTools.SetUI();
+            DataContext = devTools;
         }
     }
 

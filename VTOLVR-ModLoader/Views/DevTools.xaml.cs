@@ -1,118 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Windows;
-using System.Windows.Input;
-using System.Xml.Serialization;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Text.RegularExpressions;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Xml.Serialization;
+using VTOLVR_ModLoader.Classes;
 
-namespace VTOLVR_ModLoader
+namespace VTOLVR_ModLoader.Views
 {
     /// <summary>
-    /// Interaction logic for Settings.xaml
+    /// Interaction logic for DevTools.xaml
     /// </summary>
-    public partial class Settings : Window
+    public partial class DevTools : UserControl
     {
-        public static string[] pilotsCFG;
-        //Moving Window
-        private bool holdingDown;
-        private Point lm = new Point();
-        public Settings()
+        public Pilot pilotSelected;
+        public Scenario scenarioSelected;
+        public List<string> modsToLoad = new List<string>();
+        public string[] pilotsCFG;
+
+        public bool devConsole;
+
+        public DevTools()
         {
             InitializeComponent();
-            devConsoleCheckbox.IsChecked = MainWindow.devConsole;                    
-            FindPilots();
+
             AddDefaultScenarios();
-
+            FindPilots();
             FindMods();
-            if (MainWindow.save != null)
-            {
-                devConsoleCheckbox.IsChecked = MainWindow.save.devConsole;
-                MainWindow.devConsole = MainWindow.save.devConsole;
-                if (MainWindow.pilotSelected != null)
-                {
-                    foreach (Pilot p in PilotDropdown.ItemsSource)
-                    {
-                        if (p.Name == MainWindow.pilotSelected.Name)
-                        {
-                            PilotDropdown.SelectedItem = p;
-                            break;
-                        }
-                    }
-                }
-                if (MainWindow.scenarioSelected != null)
-                {
-                    foreach (Scenario s in ScenarioDropdown.ItemsSource)
-                    {
-                        if (s.ID == MainWindow.scenarioSelected.ID)
-                        {
-                            ScenarioDropdown.SelectedItem = s;
-                            break;
-                        }
-                    }
-                }
-
-                //Havn't done Mod saving because I can't find a way to get the checkboxes to enable them.
-            }
         }
-
-        private void Quit(object sender, RoutedEventArgs e)
-        {
-            Quit();
-        }
-        private void Quit()
-        {
-            SaveSettings();
-            Settings s = MainWindow.settings;
-            MainWindow.settings = null;
-            s.Close();
-        }
-        #region Moving Window
-        private void TopBarDown(object sender, MouseButtonEventArgs e)
-        {
-            holdingDown = true;
-            lm = Mouse.GetPosition(this);
-        }
-
-        private void TopBarUp(object sender, MouseButtonEventArgs e)
-        {
-            holdingDown = false;
-        }
-
-        private void TopBarMove(object sender, MouseEventArgs e)
-        {
-            if (holdingDown)
-            {
-                this.Left += Mouse.GetPosition(this).X - lm.X;
-                this.Top += Mouse.GetPosition(this).Y - lm.Y;
-            }
-        }
-
-        private void WindowClosing(object sender, CancelEventArgs e)
-        {
-
-        }
-
-        private void TopBarLeave(object sender, MouseEventArgs e)
-        {
-            holdingDown = false;
-        }
-
-        #endregion
 
         private void DevConsole(object sender, RoutedEventArgs e)
         {
             if (devConsoleCheckbox.IsChecked == true)
-                MainWindow.devConsole = true;
+                devConsole = true;
             else if (devConsoleCheckbox.IsChecked == false)
-                MainWindow.devConsole = false;
-            MainWindow.save.devConsole = MainWindow.devConsole;
+                devConsole = false;
+        }
+        public void SetUI()
+        {
+            devConsoleCheckbox.IsChecked = devConsole;
+            if (pilotSelected != null)
+            {
+                foreach (Pilot p in PilotDropdown.ItemsSource)
+                {
+                    if (p.Name == pilotSelected.Name)
+                    {
+                        PilotDropdown.SelectedItem = p;
+                        break;
+                    }
+                }
+            }
+            if (scenarioSelected != null)
+            {
+                foreach (Scenario s in ScenarioDropdown.ItemsSource)
+                {
+                    if (s.ID == scenarioSelected.ID)
+                    {
+                        ScenarioDropdown.SelectedItem = s;
+                        break;
+                    }
+                }
+            }
+
+            //Havn't done Mod saving because I can't find a way to get the checkboxes to enable them.
         }
 
         private void CreateInfo(object sender, RoutedEventArgs e)
@@ -135,13 +95,13 @@ namespace VTOLVR_ModLoader
             if (pilotsCFG == null)
                 pilotsCFG = File.ReadAllLines(MainWindow.vtolFolder + @"\SaveData\pilots.cfg");
             string result;
-            List<Pilot> pilots = new List<Pilot>(1) { new Pilot("No Selection")};
+            List<Pilot> pilots = new List<Pilot>(1) { new Pilot("No Selection") };
             for (int i = 0; i < pilotsCFG.Length; i++)
             {
                 result = Helper.ClearSpaces(pilotsCFG[i]);
                 if (result.Contains("pilotName="))
                 {
-                    pilots.Add(new Pilot(result.Replace("pilotName=",string.Empty)));
+                    pilots.Add(new Pilot(result.Replace("pilotName=", string.Empty)));
                 }
             }
 
@@ -189,14 +149,12 @@ namespace VTOLVR_ModLoader
         }
         private void PilotChanged(object sender, EventArgs e)
         {
-            MainWindow.pilotSelected = (Pilot)PilotDropdown.SelectedItem;
-            MainWindow.save.previousPilot = MainWindow.pilotSelected;
+            pilotSelected = (Pilot)PilotDropdown.SelectedItem;
         }
 
         private void ScenarioChanged(object sender, EventArgs e)
         {
-            MainWindow.scenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
-            MainWindow.save.previousScenario = MainWindow.scenarioSelected;
+            scenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
         }
 
         private void FindMods()
@@ -225,19 +183,11 @@ namespace VTOLVR_ModLoader
             CheckBox checkBox = (CheckBox)sender;
             if (checkBox.IsChecked == true)
             {
-                MainWindow.modsToLoad.Add(checkBox.ToolTip.ToString());
+                modsToLoad.Add(checkBox.ToolTip.ToString());
             }
             else if (checkBox.IsChecked == false)
             {
-                MainWindow.modsToLoad.Remove(checkBox.ToolTip.ToString());
-            }
-        }
-        private void SaveSettings()
-        {
-            using (FileStream stream = new FileStream(MainWindow.root + @"\" + MainWindow.savePath, FileMode.Create))
-            {
-                XmlSerializer xml = new XmlSerializer(typeof(SettingsSave));
-                xml.Serialize(stream, MainWindow.save);
+                modsToLoad.Remove(checkBox.ToolTip.ToString());
             }
         }
     }
@@ -252,6 +202,4 @@ namespace VTOLVR_ModLoader
             ModName = modName;
         }
     }
-
 }
-

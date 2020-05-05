@@ -15,14 +15,16 @@ using System.Windows.Shapes;
 
 namespace VTOLVR_ModLoader.Views
 {
-    /// <summary>
-    /// Interaction logic for News.xaml
-    /// </summary>
     public partial class News : UserControl
     {
         public News()
         {
             InitializeComponent();
+        }
+
+        public void LoadData(UpdateData data)
+        {
+            updateFeed.ItemsSource = data.Updates;
         }
     }
 }

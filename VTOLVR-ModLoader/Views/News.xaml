@@ -6,7 +6,25 @@
              xmlns:local="clr-namespace:VTOLVR_ModLoader.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="Green">
-            
-    </Grid>
+    <ScrollViewer Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+        <ItemsControl x:Name="updateFeed" >
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="0,0,0,50" >
+                        <StackPanel>
+                            <TextBlock Text="{Binding Title}" 
+                                           FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                                           Foreground="White" FontSize="20" TextWrapping="Wrap"
+                                               Background="#FF3D3D3D"/>
+
+                            <TextBlock  Text="{Binding ChangeLog}" 
+                                           FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                                           Foreground="White" FontSize="10" TextWrapping="Wrap"
+                                                Background="#FF3D3D3D"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
 </UserControl>

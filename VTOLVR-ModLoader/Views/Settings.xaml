@@ -6,7 +6,5 @@
              xmlns:local="clr-namespace:VTOLVR_ModLoader.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="Red">
-            
-    </Grid>
+    
 </UserControl>

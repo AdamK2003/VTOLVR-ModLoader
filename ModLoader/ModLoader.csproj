@@ -57,6 +57,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\dll\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\dll\UnityEngine.dll</HintPath>
     </Reference>
@@ -95,13 +99,15 @@
     <Compile Include="SettingsMenu.cs" />
     <Compile Include="SkinManager.cs" />
     <Compile Include="UConsole.cs" />
+    <Compile Include="UI\ListItemTemplate.cs" />
     <Compile Include="VTOLAPI.cs" />
     <Compile Include="VTOLMOD.cs" />
     <Compile Include="ModReader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>IF EXIST "A:\Program Files\Steam\steamapps\common\VTOL VR\VTOLVR.exe" (
+copy "$(TargetPath)" "A:\Program Files\Steam\steamapps\common\VTOL VR\VTOLVR_ModLoader\ModLoader.dll"
+)</PostBuildEvent>
   </PropertyGroup>
 </Project>

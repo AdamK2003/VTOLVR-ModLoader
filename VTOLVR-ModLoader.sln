@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example Mods", "Example Mod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoGravity", "Example Mods\NoGravity\NoGravity.csproj", "{5471978C-53E1-45FE-AE70-9861A71CCB77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModLoader", "ModLoader\ModLoader.csproj", "{6954C277-7D91-4274-B54B-FDDAD7738790}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mod Loader", "ModLoader\Mod Loader.csproj", "{6954C277-7D91-4274-B54B-FDDAD7738790}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{1EE40772-7545-473D-A2C9-DBE790F36BF3}"
 EndProject

@@ -12,6 +12,7 @@ using System.ComponentModel;
 using Microsoft.Win32;
 using System.Security.Cryptography;
 using System.Collections.Generic;
+using VTOLVR_ModLoader.Views;
 
 namespace VTOLVR_ModLoader
 {
@@ -269,7 +270,7 @@ namespace VTOLVR_ModLoader
                 XmlSerializer xml = new XmlSerializer(typeof(UpdateData));
                 UpdateData deserialized = (UpdateData)xml.Deserialize(stream);
                 //Updating Feed from file
-                updateFeed.ItemsSource = deserialized.Updates;
+                //updateFeed.ItemsSource = deserialized.Updates;
 
                 //Checking versions. If auto start is true, skip checking for updates.
                 if (autoStart == false && CheckForInternet())
@@ -721,6 +722,8 @@ namespace VTOLVR_ModLoader
 
         private void OpenSettings(object sender, RoutedEventArgs e)
         {
+            DataContext = new VTOLVR_ModLoader.ViewModels.SettingsViewModel();
+            return;
             if (settings != null)
             {
                 settings.Activate();

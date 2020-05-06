@@ -46,6 +46,7 @@ namespace VTOLVR_ModLoader
         public static string root;
         public static string vtolFolder;
         public readonly string savePath = @"settings.xml";
+        public static MainWindow _instance;
 
         //Startup
         private string[] needFiles = new string[] { "SharpMonoInjector.dll", "injector.exe", "Updater.exe" };
@@ -92,6 +93,7 @@ namespace VTOLVR_ModLoader
         {
             SearchForProcess();
             InitializeComponent();
+            _instance = this;
         }
         private void SearchForProcess()
         {
@@ -275,24 +277,7 @@ namespace VTOLVR_ModLoader
         #region Auto Updater
         private void GetData()
         {
-            SetProgress(0, "Getting Changelog...");
-            SetPlayButton(true);
-            if (CheckForInternet())
-            {
-                client = new WebClient();
-                client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(UpdatesProgress);
-                client.DownloadFileCompleted += new AsyncCompletedEventHandler(UpdatesDone);
-                client.DownloadFileAsync(new Uri(url + updatesURL), root + updatesFileTemp);
-            }
-            else
-            {
-                if (File.Exists(root + updatesFile))
-                    LoadData();
-                SetProgress(100, "Failed to connect to the internet");
-                SetPlayButton(false);
-                if (autoStart)
-                    OpenGame(null, null);
-            }
+            news.LoadNews();
         }
         private void UpdatesProgress(object sender, DownloadProgressChangedEventArgs e)
         {
@@ -315,49 +300,11 @@ namespace VTOLVR_ModLoader
                     File.Delete(root + updatesFileTemp);
                 SetPlayButton(true);
             }
-            LoadData();
+            
             client.Dispose();
         }
-        private void LoadData()
-        {
-            using (FileStream stream = new FileStream(root + updatesFile, FileMode.Open))
-            {
-                XmlSerializer xml = new XmlSerializer(typeof(UpdateData));
-                UpdateData deserialized = (UpdateData)xml.Deserialize(stream);
-                //Updating Feed from file
-                news.LoadData(deserialized);
 
-                //Checking versions. If auto start is true, skip checking for updates.
-                if (autoStart == false && CheckForInternet())
-                {
-                    bool needsUpdate = false;
-                    Update lastUpdate = deserialized.Updates[0];
-
-                    for (int i = 0; i < lastUpdate.Files.Length; i++)
-                    {
-                        if (!File.Exists(vtolFolder + lastUpdate.Files[i].FileLocation) ||
-                            CalculateMD5(vtolFolder + lastUpdate.Files[i].FileLocation) != lastUpdate.Files[i].FileHash.ToLower())
-                        {
-                            needsUpdate = true;
-                        }
-                    }
-
-                    if (needsUpdate && File.Exists(root + "/Updater.exe"))
-                    {
-                        if (MessageBox.Show("Would you like to download the update?", "Update Available!", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                        {
-                            Process.Start(root + "/Updater.exe");
-                            Quit();
-                            return;
-                        }
-                    }
-                }
-            }
-
-            SetPlayButton(false);
-            ExtractMods();
-        }
-        private bool CheckForInternet()
+        public bool CheckForInternet()
         {
             try
             {
@@ -704,12 +651,12 @@ namespace VTOLVR_ModLoader
             notification.Owner = this;
             notification.Show();
         }
-        private void SetProgress(int barValue, string text)
+        public void SetProgress(int barValue, string text)
         {
             progressText.Text = text;
             progressBar.Value = barValue;
         }
-        private void SetPlayButton(bool disabled)
+        public void SetPlayButton(bool disabled)
         {
             launchButton.Content = disabled ? "Busy" : "Play";
             isBusy = disabled;

@@ -25,7 +25,7 @@ namespace VTOLVR_ModLoader.Views
 {
     public partial class News : UserControl
     {
-        private readonly string githubURL = "https://api.github.com/repos/MarshMello0/VTOLVR-ModLoader/releases";
+        private readonly string githubURL = "https://gitlab.com/api/v4/projects/17323170/releases";
         private MainWindow main;
         public News()
         {
@@ -36,7 +36,7 @@ namespace VTOLVR_ModLoader.Views
         }
         public void LoadNews()
         {
-            if (main.CheckForInternet())
+            if (false) //Blocked till the new API is set up (main.CheckForInternet())
             {
                 WebClient client = new WebClient();
                 client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; " +
@@ -46,7 +46,7 @@ namespace VTOLVR_ModLoader.Views
             }
             else
             {
-                //No internet
+                NoInternet();
             }
         }
         private void NewsDone(object sender, DownloadStringCompletedEventArgs e)
@@ -60,15 +60,15 @@ namespace VTOLVR_ModLoader.Views
 
                 for (int i = 0; i < jArray.Count; i++)
                 {
-                    assetsArray = JArray.FromObject(jArray[i]["assets"]);
+                    assetsArray = JArray.FromObject(jArray[i]["assets"]["sources"]);
                     assets = new Asset[assetsArray.Count];
                     for (int j = 0; j < assetsArray.Count; j++)
                     {
-                        assets[j] = new Asset(assetsArray[j]["name"].ToString(),assetsArray[j]["browser_download_url"].ToString());
+                        assets[j] = new Asset(assetsArray[j]["name"].ToString(),assetsArray[j]["url"].ToString());
                     }
                     updates[i] = new Updates(jArray[i]["name"].ToString(),
                                             jArray[i]["tag_name"].ToString(),
-                                            jArray[i]["body"].ToString(),
+                                            jArray[i]["description"].ToString(),
                                             assets);
                 }
 
@@ -78,8 +78,19 @@ namespace VTOLVR_ModLoader.Views
             {
                 //Failed
                 MessageBox.Show(e.Error.ToString());
+                NoInternet();
             }
             
+        }
+
+        private void NoInternet()
+        {
+            Updates[] updates = new Updates[1];
+            updates[0] = new Updates("No Internet Connection",
+                                    "",
+                                    "Please connect to the internet to see the latest releases",
+                                            null);
+            updateFeed.ItemsSource = updates.ToArray();
         }
     }
 }

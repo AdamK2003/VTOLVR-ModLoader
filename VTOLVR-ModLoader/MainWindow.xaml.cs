@@ -437,8 +437,9 @@ namespace VTOLVR_ModLoader
 
 
             //Starting a new thread for the console
-            Thread tcpServer = new Thread(new ThreadStart(SetupConsole));
-            tcpServer.Start();
+            console.StartTCPListener();
+            //Thread tcpServer = new Thread(new ThreadStart(SetupConsole));
+            //tcpServer.Start();
         }
         private void InjectDefaultMod()
         {
@@ -468,7 +469,7 @@ namespace VTOLVR_ModLoader
             {
                 byte[] message = new byte[mClient.ReceiveBufferSize];
                 stream.Read(message, 0, message.Length);
-                Application.Current.Dispatcher.Invoke(new Action(() => { console.UpdateFeed(Encoding.ASCII.GetString(message)); }));
+                //Application.Current.Dispatcher.Invoke(new Action(() => { console.UpdateFeed(Encoding.ASCII.GetString(message)); }));
             }
         }
         #endregion
@@ -688,7 +689,7 @@ namespace VTOLVR_ModLoader
         }
         public void SetProgress(int barValue, string text)
         {
-            console.UpdateFeed(barValue + "% " + text);
+            Views.Console.Log(text);
             progressText.Text = text;
             progressBar.Value = barValue;
         }

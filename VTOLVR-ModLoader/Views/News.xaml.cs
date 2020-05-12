@@ -91,6 +91,7 @@ namespace VTOLVR_ModLoader.Views
                                     "Please connect to the internet to see the latest releases",
                                             null);
             updateFeed.ItemsSource = updates.ToArray();
+            Console.Log("Can't connect to internet");
         }
     }
 }

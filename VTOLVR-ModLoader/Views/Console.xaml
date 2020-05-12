@@ -17,14 +17,12 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
-        <ScrollViewer>
+        <ScrollViewer Background="Black">
             <ItemsControl x:Name="console" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Padding="0,0,0,5" >
-                            <TextBlock  Text="{Binding message}"
-                                           Foreground="White" FontSize="10" TextWrapping="Wrap"
-                                                Background="#FF3D3D3D"/>
+                        <Border Padding="0,0,0,0">
+                            <TextBlock  Text="{Binding message}" Foreground="White" FontSize="10" TextWrapping="Wrap"/>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

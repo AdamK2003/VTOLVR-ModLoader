@@ -64,7 +64,7 @@ namespace VTOLVR_ModLoader
         private News news;
         private Settings settings;
         private DevTools devTools;
-        private Views.Console console;
+        private Console console;
 
         //Moving Window
         private bool holdingDown;

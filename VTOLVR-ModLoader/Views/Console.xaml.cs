@@ -67,7 +67,7 @@ namespace VTOLVR_ModLoader.Views
 
         public void UpdateFeed()
         {
-            console.ItemsSource = consoleFeed;
+            console.ItemsSource = consoleFeed.ToArray();
         }
 
         public static void Log(string message)

@@ -19,8 +19,8 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using Console = System.Console;
 using System.Threading;
+using Console = VTOLVR_ModLoader.Views.Console;
 
 namespace VTOLVR_ModLoader
 {
@@ -188,6 +188,7 @@ namespace VTOLVR_ModLoader
                     new SettingsSave(),
                     new DevToolsSave(devTools.devConsole, devTools.pilotSelected, devTools.scenarioSelected, devTools.modsToLoad.ToArray())));
             }
+            Console.Log("Saved Settings!");
         }
 
         private bool SettingsSaveExists()
@@ -303,7 +304,7 @@ namespace VTOLVR_ModLoader
             else
             {
                 SetProgress(100, "Failed to connect to server.");
-                Console.WriteLine("Failed getting feed \n" + e.Error.ToString());
+                Console.Log("Failed getting feed \n" + e.Error.ToString());
                 if (File.Exists(root + updatesFileTemp))
                     File.Delete(root + updatesFileTemp);
                 SetPlayButton(true);
@@ -587,10 +588,10 @@ namespace VTOLVR_ModLoader
                 string[] subFolders = Directory.GetDirectories(modFolders[i]);
                 for (int j = 0; j < subFolders.Length; j++)
                 {
-                    Console.WriteLine("Checking " + subFolders[j].ToLower());
+                    Console.Log("Checking " + subFolders[j].ToLower());
                     if (subFolders[j].ToLower().Contains("dependencies"))
                     {
-                        Console.WriteLine("Found the folder dependencies");
+                        Console.Log("Found the folder dependencies");
                         string[] depFiles = Directory.GetFiles(subFolders[j], "*.dll");
                         for (int k = 0; k < depFiles.Length; k++)
                         {
@@ -613,7 +614,7 @@ namespace VTOLVR_ModLoader
                             }
                             else
                             {
-                                Console.WriteLine("Moved file \n" + Directory.GetParent(root).FullName +
+                                Console.Log("Moved file \n" + Directory.GetParent(root).FullName +
                                         @"\VTOLVR_Data\Managed\" + fileName);
                                 File.Copy(depFiles[k], Directory.GetParent(root).FullName +
                                             @"\VTOLVR_Data\Managed\" + fileName,
@@ -689,7 +690,7 @@ namespace VTOLVR_ModLoader
         }
         public void SetProgress(int barValue, string text)
         {
-            Views.Console.Log(text);
+            Console.Log(text);
             progressText.Text = text;
             progressBar.Value = barValue;
         }
@@ -707,18 +708,23 @@ namespace VTOLVR_ModLoader
         private void Website(object sender, RoutedEventArgs e)
         {
             Process.Start("https://vtolvr-mods.com");
+            Console.Log("Website Opened!");
         }
         private void Discord(object sender, RoutedEventArgs e)
         {
             Process.Start("https://discord.gg/49HDD7m");
+            Console.Log("Discord Opened!");
         }
         private void Patreon(object sender, RoutedEventArgs e)
         {
+            
             Process.Start("https://www.patreon.com/vtolvrmods");
+            Console.Log("Patreon Opened!");
         }
         private void OpenFolder(object sender, RoutedEventArgs e)
         {
             Process.Start(root);
+            Console.Log("Mod Loader Folder Opened!");
         }
 
         private void Quit(object sender, RoutedEventArgs e)

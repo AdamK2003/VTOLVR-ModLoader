@@ -153,12 +153,10 @@ namespace VTOLVR_ModLoader
             else
                 LoadDefaultSettings();
 
-            GetData();
+            news.LoadNews();
 
             if (CheckForArg("autostart"))
                 autoStart = true;
-            if (CheckForArg("devconsole"))
-                devTools.devConsole = true;
 
         }
 
@@ -170,14 +168,13 @@ namespace VTOLVR_ModLoader
                 Save save = (Save)xml.Deserialize(stream);
 
 
-                devTools.devConsole = save.DevToolsSave.devConsole;
                 devTools.pilotSelected = save.DevToolsSave.previousPilot;
                 devTools.scenarioSelected = save.DevToolsSave.previousScenario;
             }
         }
         private void LoadDefaultSettings()
         {
-            devTools.devConsole = false;
+            
         }
         private void SaveSettings()
         {
@@ -186,7 +183,7 @@ namespace VTOLVR_ModLoader
                 XmlSerializer xml = new XmlSerializer(typeof(Save));
                 xml.Serialize(stream, new Save(
                     new SettingsSave(),
-                    new DevToolsSave(devTools.devConsole, devTools.pilotSelected, devTools.scenarioSelected, devTools.modsToLoad.ToArray())));
+                    new DevToolsSave(devTools.pilotSelected, devTools.scenarioSelected, devTools.modsToLoad.ToArray())));
             }
             Console.Log("Saved Settings!");
         }
@@ -284,10 +281,6 @@ namespace VTOLVR_ModLoader
         #endregion
 
         #region Auto Updater
-        private void GetData()
-        {
-            news.LoadNews();
-        }
         private void UpdatesProgress(object sender, DownloadProgressChangedEventArgs e)
         {
             SetProgress(e.ProgressPercentage / 100, "Downloading data...");
@@ -345,8 +338,7 @@ namespace VTOLVR_ModLoader
             SaveSettings();
             //Launching the game
 
-            if (devTools.devConsole || 
-                (devTools.pilotSelected != null && devTools.scenarioSelected != null) || 
+            if ((devTools.pilotSelected != null && devTools.scenarioSelected != null) || 
                 (devTools.modsToLoad != null && devTools.modsToLoad.Count > 0))
             {
                 string regPath = (string)Registry.GetValue(
@@ -360,10 +352,6 @@ namespace VTOLVR_ModLoader
                     args += $" PILOT={devTools.pilotSelected.Name} SCENARIO_CID={devTools.scenarioSelected.cID} SCENARIO_ID={devTools.scenarioSelected.ID}";
                 }
 
-                if (devTools.devConsole)
-                {
-                    args += " dev";
-                }
 
                 if (devTools.modsToLoad != null && devTools.modsToLoad.Count > 0)
                 {

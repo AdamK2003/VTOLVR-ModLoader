@@ -79,10 +79,8 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
         public string discordDetail, discordState;
         public int loadedModsCount;
 
-        //Console
-        private Windows.ConsoleWindow console = new Windows.ConsoleWindow();
-        private Windows.ConsoleInput input = new Windows.ConsoleInput();
-        private bool runConsole;
+        private static NetworkStream nwStream;
+        private static TcpClient client;
 
         private void Awake()
         {
@@ -94,18 +92,8 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
             SetPaths();
             Debug.Log("This is the first mod loader manager");
             args = Environment.GetCommandLineArgs();
-            if (args.Contains("dev"))
-            {
-                Debug.Log("Creating Console");
-                console.Initialize();
-                console.SetTitle("VTOL VR Console");
-                input.OnInputText += ConsoleInput;
-                Application.logMessageReceived += LogCallBack;
-                runConsole = true;
-                Debug.Log("Created Console");
-            }
 
-
+            Application.logMessageReceived += MLCallback;
             ConnectToML();
             CreateAPI();
             
@@ -128,59 +116,31 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
             api.CreateCommand("help", api.ShowHelp);
             api.CreateCommand("vrinteract", VRInteract);
         }
-        private static NetworkStream nwStream;
+        
         private static void ConnectToML()
         {
-            TcpClient client = new TcpClient("127.0.0.1", 9999);
+            client = new TcpClient("127.0.0.1", 9999);
             nwStream = client.GetStream();
         }
-        private void ConsoleInput(string obj)
+        private void MLCallback(string message, string stackTrace, LogType type)
         {
-            api.CheckConsoleCommand(obj);
-        }
-
-        private void LogCallBack(string message, string stackTrace, LogType type)
-        {
-            if (type == LogType.Warning)
-                System.Console.ForegroundColor = ConsoleColor.Yellow;
-            else if (type == LogType.Error)
-                System.Console.ForegroundColor = ConsoleColor.Red;
-            else
-                System.Console.ForegroundColor = ConsoleColor.White;
-
-            // We're half way through typing something, so clear this line ..
-            if (Console.CursorLeft != 0)
-                input.ClearLine();
-
-            System.Console.WriteLine(message);
-
-            // If we were typing something re-add it.
-            input.RedrawInputLine();
             if (nwStream != null)
             {
                 try
                 {
                     byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(message);
-                    //---send the text---
                     nwStream.Write(bytesToSend, 0, bytesToSend.Length);
                 }
                 catch (Exception e)
                 {
                     Debug.LogError(e.ToString());
                 }
-                
             }
         }
 
-        private void Update()
-        {
-            if (runConsole)
-                input.Update();
-        }
         private void OnDestroy()
         {
-            if (runConsole)
-                console.Shutdown();
+            client.Close();
         }
 
         private void CreateAPI()

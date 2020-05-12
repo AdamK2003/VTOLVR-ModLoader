@@ -38,6 +38,7 @@ namespace VTOLVR_ModLoader.Views
         {
             if (false) //Blocked till the new API is set up (main.CheckForInternet())
             {
+                Console.Log("Connecting to API for latest releases");
                 WebClient client = new WebClient();
                 client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; " +
                                   "Windows NT 5.2; .NET CLR 1.0.3705;)");
@@ -73,6 +74,7 @@ namespace VTOLVR_ModLoader.Views
                 }
 
                 updateFeed.ItemsSource = updates.ToArray();
+                Console.Log("Got latest releases");
             }
             else
             {

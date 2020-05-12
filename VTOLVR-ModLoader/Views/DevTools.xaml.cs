@@ -28,8 +28,6 @@ namespace VTOLVR_ModLoader.Views
         public List<string> modsToLoad = new List<string>();
         public string[] pilotsCFG;
 
-        public bool devConsole;
-
         public DevTools()
         {
             InitializeComponent();
@@ -38,17 +36,8 @@ namespace VTOLVR_ModLoader.Views
             FindPilots();
             FindMods();
         }
-
-        private void DevConsole(object sender, RoutedEventArgs e)
-        {
-            if (devConsoleCheckbox.IsChecked == true)
-                devConsole = true;
-            else if (devConsoleCheckbox.IsChecked == false)
-                devConsole = false;
-        }
         public void SetUI()
         {
-            devConsoleCheckbox.IsChecked = devConsole;
             if (pilotSelected != null)
             {
                 foreach (Pilot p in PilotDropdown.ItemsSource)

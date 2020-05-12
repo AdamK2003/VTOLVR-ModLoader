@@ -12,6 +12,8 @@ using System.Reflection;
 using UnityEngine.UI;
 using System.Net;
 using System.ComponentModel;
+using System.IO.Pipes;
+using System.Net.Sockets;
 
 namespace ModLoader
 {
@@ -103,8 +105,8 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
                 Debug.Log("Created Console");
             }
 
-            
 
+            ConnectToML();
             CreateAPI();
             
 
@@ -126,7 +128,12 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
             api.CreateCommand("help", api.ShowHelp);
             api.CreateCommand("vrinteract", VRInteract);
         }
-
+        private static NetworkStream nwStream;
+        private static void ConnectToML()
+        {
+            TcpClient client = new TcpClient("127.0.0.1", 9999);
+            nwStream = client.GetStream();
+        }
         private void ConsoleInput(string obj)
         {
             api.CheckConsoleCommand(obj);
@@ -149,6 +156,20 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
 
             // If we were typing something re-add it.
             input.RedrawInputLine();
+            if (nwStream != null)
+            {
+                try
+                {
+                    byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(message);
+                    //---send the text---
+                    nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e.ToString());
+                }
+                
+            }
         }
 
         private void Update()
@@ -395,6 +416,11 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
                 }
             }
             
+        }
+
+        private void OnApplicationQuit()
+        {
+            nwStream.Close();
         }
     }
 }

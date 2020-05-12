@@ -15,6 +15,12 @@ using System.Collections.Generic;
 using VTOLVR_ModLoader.Views;
 using System.Runtime.InteropServices;
 using VTOLVR_ModLoader.Classes;
+using System.IO.Pipes;
+using System.Linq;
+using System.Net.Sockets;
+using System.Text;
+using Console = System.Console;
+using System.Threading;
 
 namespace VTOLVR_ModLoader
 {
@@ -58,6 +64,7 @@ namespace VTOLVR_ModLoader
         private News news;
         private Settings settings;
         private DevTools devTools;
+        private Views.Console console;
 
         //Moving Window
         private bool holdingDown;
@@ -133,6 +140,7 @@ namespace VTOLVR_ModLoader
             news = new News();
             settings = new Settings();
             devTools = new DevTools();
+            console = new Views.Console();
             DataContext = news;
 
             if (args.Length == 2 && args[1].Contains("vtolvrml"))
@@ -426,15 +434,42 @@ namespace VTOLVR_ModLoader
             //Injecting Default Mod
             SetProgress(75, "Injecting Mod Loader...");
             InjectDefaultMod();
-            //Closing Exe
-            Quit();
+
+
+            //Starting a new thread for the console
+            Thread tcpServer = new Thread(new ThreadStart(SetupConsole));
+            tcpServer.Start();
         }
         private void InjectDefaultMod()
         {
             //Injecting the default mod
             string defaultStart = string.Format("inject -p {0} -a {1} -n {2} -c {3} -m {4}", "vtolvr", "ModLoader.dll", "ModLoader", "Load", "Init");
             Process.Start(root + injector, defaultStart);
-            Quit();
+        }
+
+        private void SetupConsole()
+        {
+            TcpListener listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
+            listener.Start();
+
+            //We only need to accept one client, the game. So need for loop
+            TcpClient client = listener.AcceptTcpClient();
+            Thread tcpHandlerThread = new Thread(new ParameterizedThreadStart(TCPHandler));
+            tcpHandlerThread.Start(client);
+        }
+
+        private void TCPHandler(object client)
+        {
+            TcpClient mClient = (TcpClient)client;
+            NetworkStream stream = mClient.GetStream();
+
+            
+            while(true)
+            {
+                byte[] message = new byte[mClient.ReceiveBufferSize];
+                stream.Read(message, 0, message.Length);
+                Application.Current.Dispatcher.Invoke(new Action(() => { console.UpdateFeed(Encoding.ASCII.GetString(message)); }));
+            }
         }
         #endregion
 
@@ -653,6 +688,7 @@ namespace VTOLVR_ModLoader
         }
         public void SetProgress(int barValue, string text)
         {
+            console.UpdateFeed(barValue + "% " + text);
             progressText.Text = text;
             progressBar.Value = barValue;
         }
@@ -748,6 +784,14 @@ namespace VTOLVR_ModLoader
                 devTools = new DevTools();
             devTools.SetUI();
             DataContext = devTools;
+        }
+
+        private void OpenConsole(object sender, RoutedEventArgs e)
+        {
+            if (console == null)
+                console = new Views.Console();
+            console.UpdateFeed();
+            DataContext = console;
         }
     }
 

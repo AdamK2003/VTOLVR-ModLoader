@@ -17,7 +17,7 @@
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
-        <ScrollViewer Background="Black">
+        <ScrollViewer Background="Black" Grid.Row="0" Grid.Column="0">
             <ItemsControl x:Name="console" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -28,5 +28,18 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0" Margin="5" FontSize="25" IsEnabled="False"  Text="Game Not Running"
+                     x:Name="inputBox"/>
+
+            <Button Content="Send" Grid.Column="1" Margin="5" IsEnabled="False" x:Name="sendButton" Click="SendCommand"/>
+        </Grid>
+        
     </Grid>
 </UserControl>

@@ -27,6 +27,7 @@ namespace VTOLVR_ModLoader.Views
         private static Thread tcpListenerThread;
         private static TcpListener tcpListener;
         private static TcpClient TcpClient;
+        private static NetworkStream nwStream;
 
         public List<Feed> consoleFeed = new List<Feed>();
         public Console()
@@ -47,21 +48,22 @@ namespace VTOLVR_ModLoader.Views
             tcpListener = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
             tcpListener.Start();
             byte[] array = new byte[32000];
+            Application.Current.Dispatcher.Invoke(new Action(() => { _instance.GameOpened(); }));
             for ( ; ; )
             {
                 using (TcpClient = tcpListener.AcceptTcpClient())
                 {
-                    using (NetworkStream stream = TcpClient.GetStream())
+                    nwStream = TcpClient.GetStream();
+                    int num;
+                    while ((num = nwStream.Read(array, 0, array.Length)) != 0)
                     {
-                        int num;
-                        while ((num = stream.Read(array, 0, array.Length)) != 0)
-                        {
-                            byte[] array2 = new byte[num];
-                            Array.Copy(array, 0, array2, 0, num);
-                            Application.Current.Dispatcher.Invoke(new Action(() => { Log(Encoding.ASCII.GetString(array2)); }));
-                        }
+                        byte[] array2 = new byte[num];
+                        Array.Copy(array, 0, array2, 0, num);
+                        Application.Current.Dispatcher.Invoke(new Action(() => { Log(Encoding.ASCII.GetString(array2)); }));
                     }
                 }
+                Application.Current.Dispatcher.Invoke(new Action(() => { _instance.GameClosed(); }));
+                
             }
         }
 
@@ -75,6 +77,32 @@ namespace VTOLVR_ModLoader.Views
             _instance.consoleFeed.Add(new Feed(message));
             _instance.console.ItemsSource = _instance.consoleFeed.ToArray();
 
+        }
+        private void SendCommand(object sender, RoutedEventArgs e)
+        {
+            if (!TcpClient.Connected)
+            {
+                Log("Connection with TCP client is false");
+                GameClosed();
+                return;
+            }
+
+            byte[] bytesToSend = Encoding.ASCII.GetBytes(inputBox.Text);
+            nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+            inputBox.Text = string.Empty;
+        }
+
+        private void GameClosed()
+        {
+            inputBox.IsEnabled = false;
+            sendButton.IsEnabled = false;
+        }
+
+        private void GameOpened()
+        {
+            inputBox.Text = string.Empty;
+            inputBox.IsEnabled = true;
+            sendButton.IsEnabled = true;
         }
 
         public class Feed

@@ -116,11 +116,6 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
             api.CreateCommand("vrinteract", VRInteract);
         }
 
-        private void OnDestroy()
-        {
-            client.Close();
-        }
-
         private void CreateAPI()
         {
             api = gameObject.AddComponent<VTOLAPI>();

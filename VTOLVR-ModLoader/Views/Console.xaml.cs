@@ -73,12 +73,14 @@ namespace VTOLVR_ModLoader.Views
         public void UpdateFeed()
         {
             console.ItemsSource = consoleFeed.ToArray();
+            _instance.scrollView.ScrollToBottom();
         }
 
         public static void Log(string message)
         {
             _instance.consoleFeed.Add(new Feed(message));
             _instance.console.ItemsSource = _instance.consoleFeed.ToArray();
+            _instance.scrollView.ScrollToBottom();
 
         }
         private void SendCommand(object sender, RoutedEventArgs e)

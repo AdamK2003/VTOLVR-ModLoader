@@ -49,21 +49,24 @@ namespace VTOLVR_ModLoader.Views
             tcpListener.Start();
             byte[] array = new byte[32000];
             Application.Current.Dispatcher.Invoke(new Action(() => { _instance.GameOpened(); }));
-            for ( ; ; )
+            while (true)
             {
                 using (TcpClient = tcpListener.AcceptTcpClient())
                 {
                     nwStream = TcpClient.GetStream();
                     int num;
-                    while ((num = nwStream.Read(array, 0, array.Length)) != 0)
+                    while(TcpClient.Connected)
                     {
-                        byte[] array2 = new byte[num];
-                        Array.Copy(array, 0, array2, 0, num);
-                        Application.Current.Dispatcher.Invoke(new Action(() => { Log(Encoding.ASCII.GetString(array2)); }));
+                        num = nwStream.Read(array, 0, array.Length);
+                        if (num != 0)
+                        {
+                            byte[] array2 = new byte[num];
+                            Array.Copy(array, 0, array2, 0, num);
+                            Application.Current.Dispatcher.Invoke(new Action(() => { Log(Encoding.ASCII.GetString(array2)); }));
+                        }
                     }
                 }
-                Application.Current.Dispatcher.Invoke(new Action(() => { _instance.GameClosed(); }));
-                
+                Application.Current.Dispatcher.Invoke(new Action(() => { _instance.GameClosed(); }));                
             }
         }
 
@@ -94,6 +97,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void GameClosed()
         {
+            Log("Game Closed");
             inputBox.IsEnabled = false;
             sendButton.IsEnabled = false;
         }

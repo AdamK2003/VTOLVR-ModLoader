@@ -81,10 +81,6 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
         public string discordDetail, discordState;
         public int loadedModsCount;
 
-        private TcpClient client;
-        private Thread clientReceiveThread;
-        private NetworkStream stream;
-
         private void Awake()
         {
             if (instance)
@@ -97,8 +93,8 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
             args = Environment.GetCommandLineArgs();
 
             CreateAPI();
-            Application.logMessageReceived += MLCallback;
-            ConnectToML();
+
+            gameObject.AddComponent<TCPConsole>();
 
 
             discord = gameObject.AddComponent<DiscordController>();
@@ -118,57 +114,6 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
             api.CreateCommand("print", PrintMessage);
             api.CreateCommand("help", api.ShowHelp);
             api.CreateCommand("vrinteract", VRInteract);
-        }
-        
-        private void ConnectToML()
-        {
-            try
-            {
-                clientReceiveThread = new Thread(new ThreadStart(ListenForData));
-                clientReceiveThread.IsBackground = true;
-                clientReceiveThread.Start();
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("On client connect exception " + e);
-            }
-        }
-
-        private void ListenForData()
-        {
-            try
-            {
-                client = new TcpClient("127.0.0.1", 9999);
-                stream = client.GetStream();
-                byte[] array = new byte[32000];
-                string message = string.Empty;
-                int num;
-                while (client.Connected)
-                { 
-                    num = stream.Read(array, 0, array.Length);
-                    if (num > 0)
-                    {
-                        byte[] byteMessage = new byte[num];
-                        Array.Copy(array, 0, byteMessage, 0, num);
-                        message = Encoding.ASCII.GetString(byteMessage);
-                        Debug.Log("Recived :" + message);
-                        VTOLAPI.instance.CheckConsoleCommand(message);
-                    }
-                }
-
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e.ToString());
-            }
-        }
-        private void MLCallback(string message, string stackTrace, LogType type)
-        {
-            if (client == null || !client.Connected)
-                return;
-
-            byte[] bytesToSend = Encoding.ASCII.GetBytes(message);
-            stream.Write(bytesToSend, 0, bytesToSend.Length);
         }
 
         private void OnDestroy()
@@ -409,11 +354,6 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
                 }
             }
             
-        }
-
-        private void OnApplicationQuit()
-        {
-            stream.Close();
         }
     }
 }

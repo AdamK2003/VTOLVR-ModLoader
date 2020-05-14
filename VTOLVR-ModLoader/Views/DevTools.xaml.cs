@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace VTOLVR_ModLoader.Views
     /// </summary>
     public partial class DevTools : UserControl
     {
+        private const string savePath = "/devtools.json";
         public Pilot pilotSelected;
         public Scenario scenarioSelected;
         public List<string> modsToLoad = new List<string>();
@@ -31,13 +33,13 @@ namespace VTOLVR_ModLoader.Views
         public DevTools()
         {
             InitializeComponent();
-
             AddDefaultScenarios();
-            FindPilots();
-            FindMods();
         }
         public void SetUI()
         {
+            LoadSettings();
+            FindMods();
+            FindPilots();
             if (pilotSelected != null)
             {
                 foreach (Pilot p in PilotDropdown.ItemsSource)
@@ -139,11 +141,13 @@ namespace VTOLVR_ModLoader.Views
         private void PilotChanged(object sender, EventArgs e)
         {
             pilotSelected = (Pilot)PilotDropdown.SelectedItem;
+            SaveSettings();
         }
 
         private void ScenarioChanged(object sender, EventArgs e)
         {
             scenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
+            SaveSettings();
         }
 
         private void FindMods()
@@ -153,15 +157,23 @@ namespace VTOLVR_ModLoader.Views
             List<ModItem> mods = new List<ModItem>();
             for (int i = 0; i < files.Length; i++)
             {
-                mods.Add(new ModItem(files[i].Name));
+                if (modsToLoad.Contains(files[i].Name))
+                    mods.Add(new ModItem(files[i].Name, true));
+                else
+                    mods.Add(new ModItem(files[i].Name));
             }
 
             DirectoryInfo[] folders = folder.GetDirectories();
             for (int i = 0; i < folders.Length; i++)
             {
-                if (File.Exists(folders[i].FullName + @"\" + folders[i].Name + ".dll"))
+                if (File.Exists(folders[i].FullName + "/" + folders[i].Name + ".dll"))
                 {
-                    mods.Add(new ModItem(folders[i].Name + @"\" + folders[i].Name + ".dll"));
+                    if (modsToLoad.Contains(folders[i].Name + "/" + folders[i].Name + ".dll"))
+                    {
+                        mods.Add(new ModItem(folders[i].Name + "/" + folders[i].Name + ".dll", true));
+                    }
+                    else
+                        mods.Add(new ModItem(folders[i].Name + "/" + folders[i].Name + ".dll"));
                 }
             }
             this.mods.ItemsSource = mods;
@@ -178,17 +190,93 @@ namespace VTOLVR_ModLoader.Views
             {
                 modsToLoad.Remove(checkBox.ToolTip.ToString());
             }
+            SaveSettings();
+        }
+
+        private void SaveSettings()
+        {
+            JObject jObject = new JObject();
+            if (pilotSelected != null)
+                jObject.Add("pilot", pilotSelected.Name);
+            if (scenarioSelected != null)
+            {
+                JObject scenario = new JObject();
+                scenario.Add("name", scenarioSelected.Name);
+                scenario.Add("id", scenarioSelected.ID);
+                scenario.Add("cid", scenarioSelected.cID);
+                jObject.Add(new JProperty("scenario", scenario));
+            }
+
+            if (modsToLoad.Count > 0)
+            {
+                JArray previousMods = new JArray(modsToLoad.ToArray());
+                jObject.Add(new JProperty("previousMods", previousMods));
+            }
+
+            try
+            {
+                File.WriteAllText(MainWindow.root + savePath, jObject.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.Log($"Failed to save {savePath}");
+                Console.Log(e.Message);
+            }
+
+            
+        }
+
+        private void LoadSettings()
+        {
+            if (!File.Exists(MainWindow.root + savePath))
+                return;
+            JObject json;
+            try
+            {
+                json = JObject.Parse(File.ReadAllText(MainWindow.root + savePath));
+            }
+            catch (Exception e)
+            {
+                Console.Log("Error when reading " + savePath);
+                Console.Log(e.ToString());
+                return;
+            }
+            
+
+            pilotSelected = new Pilot(json["pilot"].Value<string>()) ?? null;
+
+            if (json["scenario"] != null)
+            {
+                JObject scenario = json["scenario"] as JObject;
+                scenarioSelected = new Scenario(scenario["name"].ToString(),
+                                                scenario["id"].ToString(),
+                                                scenario["cid"].ToString());
+            }
+
+            if (json["previousMods"] != null)
+            {
+                JArray mods = json["previousMods"] as JArray;
+                for (int i = 0; i < mods.Count; i++)
+                {
+                    modsToLoad.Add(mods[i].ToString());
+                    Console.Log($"Adding {mods[i].ToString()}");
+                }
+            }
         }
     }
     public class ModItem
     {
         public string ModName { get; set; }
         public bool LoadMod { get; set; }
-        public CheckBox checkBox { get; set; }
-
         public ModItem(string modName)
         {
             ModName = modName;
+        }
+
+        public ModItem(string modName, bool loadMod)
+        {
+            ModName = modName;
+            LoadMod = loadMod;
         }
     }
 }

@@ -80,9 +80,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Classes\DevToolsSave.cs" />
     <Compile Include="Classes\Pilot.cs" />
-    <Compile Include="Classes\Save.cs" />
     <Compile Include="Classes\Scenario.cs" />
     <Compile Include="Classes\Updates.cs" />
     <Compile Include="Helper.cs" />

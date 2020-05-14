@@ -50,7 +50,6 @@ namespace VTOLVR_ModLoader
         public static string url = @"https://vtolvr-mods.com";
         public static string root;
         public static string vtolFolder;
-        public readonly string savePath = @"settings.xml";
         public static MainWindow _instance;
 
         //Startup
@@ -150,49 +149,11 @@ namespace VTOLVR_ModLoader
             else
                 CheckBaseFolder();
 
-            if (SettingsSaveExists())
-                LoadSettings();
-            else
-                LoadDefaultSettings();
-
             news.LoadNews(0);
 
             if (CheckForArg("autostart"))
                 autoStart = true;
 
-        }
-
-        private void LoadSettings()
-        {
-            using (FileStream stream = new FileStream(root + @"\" + savePath, FileMode.Open))
-            {
-                XmlSerializer xml = new XmlSerializer(typeof(Save));
-                Save save = (Save)xml.Deserialize(stream);
-
-
-                devTools.pilotSelected = save.DevToolsSave.previousPilot;
-                devTools.scenarioSelected = save.DevToolsSave.previousScenario;
-            }
-        }
-        private void LoadDefaultSettings()
-        {
-            
-        }
-        private void SaveSettings()
-        {
-            using (FileStream stream = new FileStream(root + @"\" + savePath, FileMode.Create))
-            {
-                XmlSerializer xml = new XmlSerializer(typeof(Save));
-                xml.Serialize(stream, new Save(
-                    new SettingsSave(),
-                    new DevToolsSave(devTools.pilotSelected, devTools.scenarioSelected, devTools.modsToLoad.ToArray())));
-            }
-            Console.Log("Saved Settings!");
-        }
-
-        private bool SettingsSaveExists()
-        {
-            return File.Exists(root + @"\" + savePath);
         }
         public bool CheckForArg(string arg)
         {
@@ -337,7 +298,6 @@ namespace VTOLVR_ModLoader
             SetPlayButton(false);
             SetProgress(0, "Launching Game");
             GifState(gifStates.Play);
-            SaveSettings();
             //Launching the game
 
             if ((devTools.pilotSelected != null && devTools.scenarioSelected != null) || 
@@ -719,7 +679,6 @@ namespace VTOLVR_ModLoader
 
         private void Quit(object sender, RoutedEventArgs e)
         {
-            SaveSettings();
             Quit();
         }
 

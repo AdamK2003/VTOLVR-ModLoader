@@ -47,8 +47,7 @@ namespace VTOLVR_ModLoader
         private static string injector = @"\injector.exe";
         private static string updatesFile = @"\updates.xml";
         private static string updatesFileTemp = @"\updates_TEMP.xml";
-        private static string updatesURL = @"/files/updates.xml";
-        private string url = @"https://vtolvr-mods.com";
+        public static string url = @"https://vtolvr-mods.com";
         public static string root;
         public static string vtolFolder;
         public readonly string savePath = @"settings.xml";
@@ -98,6 +97,9 @@ namespace VTOLVR_ModLoader
         #region Startup
         public MainWindow()
         {
+#if DEBUG
+            url = @"http://127.0.0.1:8000";
+#endif
             SearchForProcess();
             InitializeComponent();
             _instance = this;
@@ -153,7 +155,7 @@ namespace VTOLVR_ModLoader
             else
                 LoadDefaultSettings();
 
-            news.LoadNews();
+            news.LoadNews(0);
 
             if (CheckForArg("autostart"))
                 autoStart = true;
@@ -278,9 +280,9 @@ namespace VTOLVR_ModLoader
             MessageBox.Show("I can't seem to find " + file + " in VTOL VR > VTOLVR_Data, please make sure this file is here otherwise the mod loader won't work", "Missing File");
             Quit();
         }
-        #endregion
+#endregion
 
-        #region Auto Updater
+#region Auto Updater
         private void UpdatesProgress(object sender, DownloadProgressChangedEventArgs e)
         {
             SetProgress(e.ProgressPercentage / 100, "Downloading data...");
@@ -325,9 +327,9 @@ namespace VTOLVR_ModLoader
             }
         }
 
-        #endregion
+#endregion
 
-        #region Launching Game
+#region Launching Game
         private void OpenGame(object sender, RoutedEventArgs e)
         {
             if (isBusy)
@@ -461,9 +463,9 @@ namespace VTOLVR_ModLoader
                 //Application.Current.Dispatcher.Invoke(new Action(() => { console.UpdateFeed(Encoding.ASCII.GetString(message)); }));
             }
         }
-        #endregion
+#endregion
 
-        #region Handeling Mods
+#region Handeling Mods
         private void ExtractMods()
         {
             if (uriSet)
@@ -664,7 +666,7 @@ namespace VTOLVR_ModLoader
             SetProgress(e.ProgressPercentage / 100, "Downloading " + uriFileName + "...");
         }
 
-        #endregion
+#endregion
 
         private void ShowNotification(string text)
         {
@@ -721,7 +723,7 @@ namespace VTOLVR_ModLoader
             Quit();
         }
 
-        #region Moving Window
+#region Moving Window
         private void TopBarDown(object sender, MouseButtonEventArgs e)
         {
             holdingDown = true;
@@ -752,7 +754,7 @@ namespace VTOLVR_ModLoader
             holdingDown = false;
         }
 
-        #endregion
+#endregion
 
         private void OpenSettings(object sender, RoutedEventArgs e)
         {

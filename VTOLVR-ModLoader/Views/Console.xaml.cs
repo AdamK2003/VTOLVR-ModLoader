@@ -34,6 +34,13 @@ namespace VTOLVR_ModLoader.Views
         {
             InitializeComponent();
             _instance = this;
+            inputBox.KeyDown += inputBoxKeyDown;
+        }
+
+        private void inputBoxKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                SendCommand(null, null);
         }
 
         public void StartTCPListener()

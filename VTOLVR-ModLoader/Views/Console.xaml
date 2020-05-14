@@ -31,7 +31,8 @@
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0" Margin="5" FontSize="25" IsEnabled="False"  Text="Game Not Running"
-                     x:Name="inputBox"/>
+                     x:Name="inputBox">
+            </TextBox>
 
             <Button Content="Send" Grid.Column="1" Margin="5" IsEnabled="False" x:Name="sendButton" Click="SendCommand"/>
         </Grid>

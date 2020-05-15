@@ -62,8 +62,6 @@ namespace VTOLVR_ModLoader.Views
                     }
                 }
             }
-
-            //Havn't done Mod saving because I can't find a way to get the checkboxes to enable them.
         }
 
         private void CreateInfo(object sender, RoutedEventArgs e)
@@ -259,7 +257,6 @@ namespace VTOLVR_ModLoader.Views
                 for (int i = 0; i < mods.Count; i++)
                 {
                     modsToLoad.Add(mods[i].ToString());
-                    Console.Log($"Adding {mods[i].ToString()}");
                 }
             }
         }

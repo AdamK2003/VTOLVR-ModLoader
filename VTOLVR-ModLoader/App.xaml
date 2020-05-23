@@ -4,6 +4,9 @@
              xmlns:local="clr-namespace:VTOLVR_ModLoader"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style x:Key="FontStyle" TargetType="{x:Type Window}">
+            <Setter Property="FontFamily"
+                Value="/VTOLVR-ModLoader;component/Resources/#Montserrat Medium" />
+        </Style>
     </Application.Resources>
 </Application>

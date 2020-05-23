@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,7 @@ namespace VTOLVR_ModLoader.Views
     public partial class DevTools : UserControl
     {
         private const string savePath = "/devtools.json";
+        private const string gameData = "/gamedata.json";
         public Pilot pilotSelected;
         public Scenario scenarioSelected;
         public List<string> modsToLoad = new List<string>();
@@ -33,7 +35,8 @@ namespace VTOLVR_ModLoader.Views
         public DevTools()
         {
             InitializeComponent();
-            AddDefaultScenarios();
+            LoadScenarios();
+            LoadSettings();
         }
         public void SetUI()
         {
@@ -68,21 +71,21 @@ namespace VTOLVR_ModLoader.Views
         {
             Mod newMod = new Mod(modName.Text, modDescription.Text);
 
-            Directory.CreateDirectory(MainWindow.root + $"\\mods\\{modName.Text}");
+            Directory.CreateDirectory(Program.root + $"\\mods\\{modName.Text}");
 
-            using (FileStream stream = new FileStream(MainWindow.root + $"\\mods\\{modName.Text}\\info.xml", FileMode.Create))
+            using (FileStream stream = new FileStream(Program.root + $"\\mods\\{modName.Text}\\info.xml", FileMode.Create))
             {
                 XmlSerializer xml = new XmlSerializer(typeof(Mod));
                 xml.Serialize(stream, newMod);
             }
 
-            MessageBox.Show("Created info.xml in \n\"" + MainWindow.root + $"\\mods\\{modName.Text}\"", "Created Info.xml", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Created info.xml in \n\"" + Program.root + $"\\mods\\{modName.Text}\"", "Created Info.xml", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void FindPilots()
         {
             if (pilotsCFG == null)
-                pilotsCFG = File.ReadAllLines(MainWindow.vtolFolder + @"\SaveData\pilots.cfg");
+                pilotsCFG = File.ReadAllLines(Program.vtolFolder + @"\SaveData\pilots.cfg");
             string result;
             List<Pilot> pilots = new List<Pilot>(1) { new Pilot("No Selection") };
             for (int i = 0; i < pilotsCFG.Length; i++)
@@ -100,42 +103,7 @@ namespace VTOLVR_ModLoader.Views
                 PilotDropdown.SelectedIndex = 0;
             }
         }
-
-        private void AddDefaultScenarios()
-        {
-            ScenarioDropdown.ItemsSource = new Scenario[]
-            {
-                new Scenario("No Selection","",""),
-                new Scenario("AV-42C - Preparations", "av42cTheIsland", "01_preparations"),
-                new Scenario("AV-42C - Minesweeper", "av42cTheIsland", "02_minesweeper"),
-                new Scenario("AV-42C - Redirection", "av42cTheIsland", "03_redirection"),
-                new Scenario("AV-42C - Open Water", "av42cTheIsland", "04_openWater"),
-                new Scenario("AV-42C - Silent Island", "av42cTheIsland", "05_silentIsland"),
-                new Scenario("AV-42C - Darkness", "av42cTheIsland", "06_darkness"),
-                new Scenario("AV-42C - Island Defense", "av42cTheIsland", "07_islandDefense"),
-                new Scenario("AV-42C - Free Flight", "av42cQuickFlight", "freeFlight"),
-                new Scenario("AV-42C - Target Practice", "av42cQuickFlight", "targetPractice"),
-                new Scenario("AV-42C - Aerial Refueling Practice", "av42cQuickFlight", "aerialRefuelPractice"),
-                new Scenario("AV-42C - Naval Landing Practice", "av42cQuickFlight", "carrierLanding"),
-                new Scenario("F/A-26B - Free Flight", "fa26bFreeFlight", "Free Flight"),
-                new Scenario("F/A-26B - Target Practice", "fa26bFreeFlight", "targetPractice"),
-                new Scenario("F/A-26B - Carrier Landing Practice", "fa26bFreeFlight", "carrierLandingPractice"),
-                new Scenario("F/A-26B - FA-26 Aerial Refuel Practice", "fa26bFreeFlight", "fa26Refuel"),
-                new Scenario("F/A-26B - 2v2 Air Combat", "fa26bFreeFlight", "2v2dogfight"),
-                new Scenario("F/A-26B - Difficult Mission", "fa26bFreeFlight", "FA26Difficult"),
-                new Scenario("F/A-26B - July 4th", "j4Campaign", "j4"),
-                new Scenario("F/A-26B - Base Defense", "fa26-opDesertCobra", "mission1"),
-                new Scenario("F/A-26B - Retalliation", "fa26-opDesertCobra", "mission2"),
-                new Scenario("F/A-26B - Strike on Naval Test Lake", "fa26-opDesertCobra", "mission3"),
-                new Scenario("F/A-26B - Tanker Escort", "fa26-opDesertCobra", "mission4"),
-                new Scenario("F/A-26B - Departure", "fa26-opDesertCobra", "mission5"),
-                new Scenario("F/A-26B - Northern Assault", "fa26-opDesertCobra", "mission6"),
-                new Scenario("F/A-26B - Striking Oil", "fa26-opDesertCobra", "mission7"),
-                new Scenario("F-45A - Free Flight", "f45-quickFlight", "f45-freeFlight"),
-                new Scenario("F-45A - Stealth Strike", "f45-quickFlight", "f45_quickMission1")
-            };
-            ScenarioDropdown.SelectedIndex = 0;
-        }
+       
         private void PilotChanged(object sender, EventArgs e)
         {
             pilotSelected = (Pilot)PilotDropdown.SelectedItem;
@@ -150,7 +118,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void FindMods()
         {
-            DirectoryInfo folder = new DirectoryInfo(MainWindow.root + MainWindow.modsFolder);
+            DirectoryInfo folder = new DirectoryInfo(Program.root + Program.modsFolder);
             FileInfo[] files = folder.GetFiles("*.dll");
             List<ModItem> mods = new List<ModItem>();
             for (int i = 0; i < files.Length; i++)
@@ -187,6 +155,7 @@ namespace VTOLVR_ModLoader.Views
             else if (checkBox.IsChecked == false)
             {
                 modsToLoad.Remove(checkBox.ToolTip.ToString());
+                Console.Log($"Removed {checkBox.ToolTip.ToString()}");
             }
             SaveSettings();
         }
@@ -213,7 +182,7 @@ namespace VTOLVR_ModLoader.Views
 
             try
             {
-                File.WriteAllText(MainWindow.root + savePath, jObject.ToString());
+                File.WriteAllText(Program.root + savePath, jObject.ToString());
             }
             catch (Exception e)
             {
@@ -226,12 +195,12 @@ namespace VTOLVR_ModLoader.Views
 
         private void LoadSettings()
         {
-            if (!File.Exists(MainWindow.root + savePath))
+            if (!File.Exists(Program.root + savePath))
                 return;
             JObject json;
             try
             {
-                json = JObject.Parse(File.ReadAllText(MainWindow.root + savePath));
+                json = JObject.Parse(File.ReadAllText(Program.root + savePath));
             }
             catch (Exception e)
             {
@@ -256,9 +225,61 @@ namespace VTOLVR_ModLoader.Views
                 JArray mods = json["previousMods"] as JArray;
                 for (int i = 0; i < mods.Count; i++)
                 {
-                    modsToLoad.Add(mods[i].ToString());
+                    if (!modsToLoad.Contains(mods[i].ToString()))
+                        modsToLoad.Add(mods[i].ToString());
                 }
             }
+        }
+
+        private void LoadScenarios()
+        {
+            JObject json = null;
+
+            try
+            {
+                if (!File.Exists(Program.root + gameData))
+                {
+                    json = JObject.Parse(Properties.Resources.CampaignsJsonString);
+                }
+                else
+                {
+                    json = JObject.Parse(File.ReadAllText(Program.root + gameData));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.Log("Error when reading Campaigns");
+                if (e.ToString() != null)
+                    Console.Log(e.ToString());
+            }
+            if (json == null)
+                return;
+            AddScenarios(json);            
+        }
+
+        private void AddScenarios(JObject json)
+        {
+            List<Scenario> scenarios = new List<Scenario>();
+            scenarios.Add(new Scenario("No Selection", string.Empty, string.Empty));
+            if (json["Campaigns"] != null)
+            {
+                JArray campaignJArray = json["Campaigns"] as JArray;
+                JArray scenariosJArray;
+                for (int i = 0; i < campaignJArray.Count; i++)
+                {
+                    scenariosJArray = campaignJArray[i]["Scenarios"] as JArray;
+                    for (int s = 0; s < scenariosJArray.Count; s++)
+                    {
+                        scenarios.Add(new Scenario(
+                            campaignJArray[i]["Vehicle"].ToString() + " " + scenariosJArray[s]["Name"].ToString(),
+                            campaignJArray[i]["CampaignID"].ToString(),
+                            scenariosJArray[s]["Id"].ToString()));
+                    }
+                }
+            }
+
+            ScenarioDropdown.ItemsSource = scenarios.ToArray();
+            ScenarioDropdown.SelectedIndex = 0;
         }
     }
     public class ModItem

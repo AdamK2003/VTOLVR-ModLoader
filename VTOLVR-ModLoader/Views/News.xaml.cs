@@ -10,9 +10,6 @@ namespace VTOLVR_ModLoader.Views
 {
     public partial class News : UserControl
     {
-        private const string pageFormat = "&page=";
-        private const string jsonFormat = "/?format=json";
-        private const string apiURL = "/api";
         private const string modLoaderURL = "/modloader";
         private MainWindow main;
         private List<Updates> updates = new List<Updates>();
@@ -25,13 +22,13 @@ namespace VTOLVR_ModLoader.Views
         }
         public void LoadNews(int page)
         {
-            if (main.CheckForInternet())
+            if (Program.CheckForInternet())
             {
                 Console.Log("Connecting to API for latest releases");
                 WebClient client = new WebClient();
                 client.Headers.Add("user-agent", "VTOL VR Mod Loader");
                 client.DownloadStringCompleted += NewsDone;
-                client.DownloadStringAsync(new Uri(MainWindow.url + apiURL + modLoaderURL + jsonFormat + (page == 0? "" : pageFormat + page)));
+                client.DownloadStringAsync(new Uri(Program.url + Program.apiURL + modLoaderURL + Program.jsonFormat  + (page == 0? "" : Program.pageFormat + page)));
             }
             else
             {
@@ -69,7 +66,7 @@ namespace VTOLVR_ModLoader.Views
             if (json["next"].ToString() != "")
             {
                 string url = json["next"].ToString();
-                string pageNum = url.Replace(MainWindow.url + apiURL + modLoaderURL + jsonFormat + pageFormat, "");
+                string pageNum = url.Replace(Program.url + Program.apiURL + modLoaderURL + Program.jsonFormat + Program.pageFormat, "");
                 Console.Log($"Getting next page of releases ({pageNum})");
                 LoadNews(int.Parse(pageNum));
             }

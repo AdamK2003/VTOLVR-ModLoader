@@ -30,6 +30,7 @@ namespace VTOLVR_ModLoader.Views
         private static NetworkStream nwStream;
 
         public List<Feed> consoleFeed = new List<Feed>();
+        private List<string> storedMessages = new List<string>();
         public Console()
         {
             InitializeComponent();
@@ -71,9 +72,12 @@ namespace VTOLVR_ModLoader.Views
                             Array.Copy(array, 0, array2, 0, num);
                             Application.Current.Dispatcher.Invoke(new Action(() => { Log(Encoding.ASCII.GetString(array2)); }));
                         }
+                        Application.Current.Dispatcher.Invoke(new Action(() => { _instance.SendStoredMessages(); }));
                     }
                 }
-                Application.Current.Dispatcher.Invoke(new Action(() => { _instance.GameClosed(); }));                
+                Application.Current.Dispatcher.Invoke(new Action(() => { _instance.GameClosed(); }));
+                Application.Current.Dispatcher.Invoke(new Action(() => { MainWindow._instance.GifState(MainWindow.gifStates.Paused); }));
+                
             }
         }
 
@@ -85,6 +89,7 @@ namespace VTOLVR_ModLoader.Views
 
         public static void Log(string message)
         {
+            System.Console.WriteLine(message);
             _instance.consoleFeed.Add(new Feed(message));
             _instance.console.ItemsSource = _instance.consoleFeed.ToArray();
             _instance.scrollView.ScrollToBottom();
@@ -102,6 +107,34 @@ namespace VTOLVR_ModLoader.Views
             byte[] bytesToSend = Encoding.ASCII.GetBytes(inputBox.Text);
             nwStream.Write(bytesToSend, 0, bytesToSend.Length);
             inputBox.Text = string.Empty;
+        }
+        public void SendCommand(string message, bool waitForGame = false)
+        {
+            if (TcpClient == null && waitForGame)
+            {
+                storedMessages.Add(message);
+                Log("Stored Message " + message);
+                return;
+            }
+            else if (TcpClient != null && !TcpClient.Connected && !waitForGame)
+            {
+                Log("Connection with TCP client is false");
+                GameClosed();
+                return;
+            }
+            byte[] bytesToSend = Encoding.ASCII.GetBytes(message);
+            nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+            inputBox.Text = string.Empty;
+        }
+        public void SendStoredMessages()
+        {
+            if (storedMessages.Count == 0)
+                return;
+            for (int i = 0; i < storedMessages.Count; i++)
+            {
+                SendCommand(storedMessages[i]);
+            }
+            storedMessages.Clear();
         }
 
         private void GameClosed()

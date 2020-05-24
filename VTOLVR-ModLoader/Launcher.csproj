@@ -102,8 +102,8 @@
     <Compile Include="Views\DevTools.xaml.cs">
       <DependentUpon>DevTools.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ModUploader.xaml.cs">
-      <DependentUpon>ModUploader.xaml</DependentUpon>
+    <Compile Include="Views\ModCreator.xaml.cs">
+      <DependentUpon>ModCreator.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\News.xaml.cs">
       <DependentUpon>News.xaml</DependentUpon>
@@ -135,7 +135,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ModUploader.xaml">
+    <Page Include="Views\ModCreator.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

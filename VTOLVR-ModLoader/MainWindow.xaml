@@ -41,8 +41,8 @@
                        MouseDown="TopBarDown" MouseUp="TopBarUp" MouseMove="TopBarMove" MouseLeave="TopBarLeave"/>
             <Button Grid.Column="1" Foreground="White"
                        FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                       FontSize="20" Background="#FF3D3D3D" BorderBrush="{x:Null}" Click="Quit"
-                    Content="x">
+                       FontSize="20" BorderBrush="{x:Null}" Click="Quit"
+                    Content="x" Style="{StaticResource darkButton}">
             </Button>
         </Grid>
 
@@ -95,8 +95,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Home" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
-                            Click="News"/>
+                            Content="Home" Foreground="White" BorderBrush="{x:Null}" Click="News" 
+                            Style="{StaticResource darkButton}"/>
                 </Grid>
 
                 <Grid Grid.Row="2">
@@ -113,7 +113,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Open Folder" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" Click="OpenFolder"/>
+                            Content="Open Folder" Foreground="White" BorderBrush="{x:Null}" 
+                            Click="OpenFolder" Style="{StaticResource darkButton}"/>
                 </Grid>
 
                 <Grid Grid.Row="3">
@@ -130,8 +131,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Console" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
-                            Click="OpenConsole"/>
+                            Content="Console" Foreground="White" BorderBrush="{x:Null}" 
+                            Click="OpenConsole" Style="{StaticResource darkButton}"/>
                 </Grid>
 
                 <Grid Grid.Row="4">
@@ -148,8 +149,9 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Upload Mod" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
-                            Click="UploadMod" x:Name="uploadModButton"/>
+                            Content="Mod Creator" Foreground="White" BorderBrush="{x:Null}" 
+                            Click="UploadMod" x:Name="uploadModButton" Style="{StaticResource darkButton}">
+                    </Button>
                 </Grid>
 
                 <Grid Grid.Row="5">
@@ -166,8 +168,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Dev Tools" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
-                            Click="OpenTools"/>
+                            Content="Dev Tools" Foreground="White" BorderBrush="{x:Null}" 
+                            Click="OpenTools" Style="{StaticResource darkButton}"/>
                 </Grid>
                 <Grid Grid.Row="6">
                     <!-- Settings Button -->
@@ -183,8 +185,8 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Settings" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
-                            Click="OpenSettings"/>
+                            Content="Settings" Foreground="White" BorderBrush="{x:Null}" 
+                            Click="OpenSettings" Style="{StaticResource darkButton}"/>
                 </Grid>
             </Grid>
 
@@ -242,8 +244,9 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Play" FontSize="30" Foreground="White" Background="#FF3D3D3D" 
-                        BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame" BorderThickness="1"/>
+                            Content="Play" FontSize="30" Foreground="White"
+                        BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame" BorderThickness="1"
+                        Style="{StaticResource darkButton}"/>
             </Grid>
         </Grid>
     </Grid>

@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="VTOLVR_ModLoader.Views.ProjectManager"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VTOLVR_ModLoader.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="25"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="1" Style="{StaticResource darkButton}" Content="New Project"
+                        Margin="5,5,5,5" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                        x:Name="newProjectButton" Click="NewProject"/>
+
+                <Label Grid.Column="0" Foreground="White" FontSize="30">My Projects</Label>
+            </Grid>
+
+            <TextBlock Grid.Row="2" Foreground="White" FontSize="30" TextWrapping="Wrap" 
+                       VerticalAlignment="Center" TextAlignment="Center" x:Name="settingsText" Visibility="Hidden">
+                It seems that you have set up a folder for your projects to be stored.<LineBreak/>
+                Please head over to the settings page to set a workspace.
+            </TextBlock>
+
+            <Grid Grid.Row="2">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="folders" Margin="10,0,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Left" >
+                                    <Button Content="{Binding Name}" Style="{StaticResource transparentButton}" 
+                                    Foreground="White" FontSize="20" Margin="0,0,0,5" Tag="{Binding FullName}"
+                                        Click="FolderButton"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

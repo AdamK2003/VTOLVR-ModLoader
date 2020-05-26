@@ -13,6 +13,7 @@ using Microsoft.Win32;
 using System.Security.Cryptography;
 using System.Collections.Generic;
 using VTOLVR_ModLoader.Views;
+using VTOLVR_ModLoader.Windows;
 using System.Runtime.InteropServices;
 using VTOLVR_ModLoader.Classes;
 using System.IO.Pipes;
@@ -35,6 +36,7 @@ namespace VTOLVR_ModLoader
         public Settings settings { get; private set; }
         public DevTools devTools { get; private set; }
         public Console console { get; private set; }
+        public ProjectManager pManager { get; private set; }
 
         //Moving Window
         private bool holdingDown;
@@ -67,7 +69,7 @@ namespace VTOLVR_ModLoader
 
         #region Startup
         public MainWindow()
-        {
+        { 
             _instance = this;
             Startup.RunStartUp();
             Program.SetupAfterUI();
@@ -80,13 +82,12 @@ namespace VTOLVR_ModLoader
             news = new News();
             settings = new Settings();
             devTools = new DevTools();
+            pManager = new ProjectManager();
             DataContext = news;
         }     
 #endregion
 
-        
-
-#region Handeling Mods
+        #region Handeling Mods
         private void ExtractMods()
         {
             if (uriSet)
@@ -270,8 +271,8 @@ namespace VTOLVR_ModLoader
             }
             else
             {
-                MessageBox.Show("Failed Downloading " + uriFileName + "\n" + e.Error.ToString(),
-                    "Failed Downloading File", MessageBoxButton.OK, MessageBoxImage.Error);
+                Notification.Show("Failed Downloading " + uriFileName + "\n" + e.Error.ToString(),
+                    "Failed Downloading File");
             }
 
             uriSet = false;
@@ -402,9 +403,12 @@ namespace VTOLVR_ModLoader
             DataContext = settings;
         }
 
-        private void UploadMod(object sender, RoutedEventArgs e)
+        private void Creator(object sender, RoutedEventArgs e)
         {
-            //DataContext = new SettingsViewModel();
+            if (pManager == null)
+                pManager = new ProjectManager();
+            pManager.SetUI();
+            DataContext = pManager;
         }
 
         private void News(object sender, RoutedEventArgs e)

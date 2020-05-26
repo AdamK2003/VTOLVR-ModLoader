@@ -10,12 +10,15 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
+using UserControl = System.Windows.Controls.UserControl;
+using VTOLVR_ModLoader.Windows;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -26,11 +29,16 @@ namespace VTOLVR_ModLoader.Views
     {
         private const string userURL = "/get-token";
         private const string savePath = @"\settings.json";
-        private string token;
         public static bool tokenValid = false;
         private bool hideResult;
+        private Action<bool, string> callBack;
+
+        //Settings
+        private string token;
+        public string projectsFolder { get; private set; }
         public Settings()
         {
+            callBack += SetProjectsFolder;
             InitializeComponent();
             LoadSettings();
             if (CommunicationsManager.CheckArgs("vtolvrml", out string line))
@@ -80,7 +88,7 @@ namespace VTOLVR_ModLoader.Views
             if (!e.Cancelled && e.Error == null)
             {
                 if (!hideResult)
-                    MessageBox.Show("Token was successful!");
+                    Notification.Show("Token was successful!");
                 tokenValid = true;
 
             }
@@ -88,7 +96,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 tokenValid = false;
                 if (!hideResult)
-                    MessageBox.Show(e.Error.Message);
+                    Notification.Show(e.Error.Message);
                 Console.Log("Error:\n" + e.Error.Message);
             }
             updateButton.IsEnabled = true;
@@ -107,6 +115,9 @@ namespace VTOLVR_ModLoader.Views
             JObject jObject = new JObject();
             if (!string.IsNullOrEmpty(token))
                 jObject.Add("token", token);
+
+            if (!string.IsNullOrEmpty(projectsFolder))
+                jObject.Add("projectsFolder", projectsFolder);
 
             try
             {
@@ -141,6 +152,42 @@ namespace VTOLVR_ModLoader.Views
                 token = json["token"].ToString();
                 tokenBox.Password = token;
             }
+
+            if (json["projectsFolder"] != null)
+            {
+                string path = json["projectsFolder"].ToString();
+                if (Directory.Exists(path))
+                    SetProjectsFolder(path);
+                else
+                    Notification.Show($"Projects Folder in settings.json is not valid\n({path})", "Invalid Folder");
+            }
+            else
+            {
+                projectsText.Text = "My Projects folder not set.";
+                projectsButton.Content = "Set";
+            }
+        }
+
+        private void SetMyProjectsFolder(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(projectsFolder))
+                FolderDialog.Dialog(projectsFolder, callBack);
+            else
+                FolderDialog.Dialog(Program.root, callBack);
+        }
+        public void SetProjectsFolder(bool set, string path)
+        {
+            if (set)
+                SetProjectsFolder(path);
+        }
+
+        private void SetProjectsFolder(string folder)
+        {
+            projectsFolder = folder;
+            projectsText.Text = "My Projects folder:\n" + projectsFolder;
+            projectsButton.Content = "Change";
+
+            SaveSettings();
         }
     }
 }

@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using VTOLVR_ModLoader.Windows;
 
 namespace VTOLVR_ModLoader
 {
@@ -33,7 +34,7 @@ namespace VTOLVR_ModLoader
                 string[] split = line.Replace("vtolvrml:///", string.Empty).Split('/');
                 if (split.Length == 2 || string.IsNullOrEmpty(split[2]))
                 {
-                    MessageBox.Show("It seems that URI was missing some extra details\n" + line, "Error with URI");
+                    Notification.Show("It seems that URI was missing some extra details\n" + line, "Error with URI");
                     return;
                 }
 
@@ -43,10 +44,10 @@ namespace VTOLVR_ModLoader
                         MainWindow._instance.settings.SetUserToken(split[3]);
                         break;
                     case "mod":
-                        MessageBox.Show("mod");
+                        Notification.Show("mod");
                         break;
                     case "skin":
-                        MessageBox.Show("skin");
+                        Notification.Show("skin");
                         break;
 
                 }

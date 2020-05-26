@@ -67,21 +67,6 @@ namespace VTOLVR_ModLoader.Views
             }
         }
 
-        private void CreateInfo(object sender, RoutedEventArgs e)
-        {
-            Mod newMod = new Mod(modName.Text, modDescription.Text);
-
-            Directory.CreateDirectory(Program.root + $"\\mods\\{modName.Text}");
-
-            using (FileStream stream = new FileStream(Program.root + $"\\mods\\{modName.Text}\\info.xml", FileMode.Create))
-            {
-                XmlSerializer xml = new XmlSerializer(typeof(Mod));
-                xml.Serialize(stream, newMod);
-            }
-
-            MessageBox.Show("Created info.xml in \n\"" + Program.root + $"\\mods\\{modName.Text}\"", "Created Info.xml", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
         private void FindPilots()
         {
             if (pilotsCFG == null)

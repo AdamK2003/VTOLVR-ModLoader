@@ -16,15 +16,13 @@ using System.Windows.Shapes;
 namespace VTOLVR_ModLoader.Views
 {
     /// <summary>
-    /// Interaction logic for ModCreator.xaml
+    /// Interaction logic for NewProject.xaml
     /// </summary>
-    public partial class ModCreator : UserControl
+    public partial class NewProject : UserControl
     {
-        public ModCreator()
+        public NewProject()
         {
             InitializeComponent();
         }
-
-
     }
 }

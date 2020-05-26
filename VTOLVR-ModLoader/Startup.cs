@@ -19,6 +19,7 @@ using System.Windows;
 using Gameloop;
 using Gameloop.Vdf;
 using Gameloop.Vdf.Linq;
+using VTOLVR_ModLoader.Windows;
 
 namespace VTOLVR_ModLoader
 {
@@ -85,13 +86,13 @@ namespace VTOLVR_ModLoader
                     }
                     catch (Exception e)
                     {
-                        MessageBox.Show(e.ToString());
+                        Notification.Show(e.ToString());
                         throw;
                     }
                 }
                 else
                 {
-                    MessageBox.Show("It seems I am not in the folder \"VTOLVR_ModLoader\", place make sure I am in there other wise the in game menu won't load", "Wrong Folder");
+                    Notification.Show("It seems I am not in the folder \"VTOLVR_ModLoader\", place make sure I am in there other wise the in game menu won't load", "Wrong Folder");
                     Program.Quit();
                 }
                 
@@ -101,7 +102,7 @@ namespace VTOLVR_ModLoader
             string vtolexe = Program.root.Replace("VTOLVR_ModLoader", "VTOLVR.exe");
             if (!File.Exists(vtolexe))
             {
-                MessageBox.Show("It seems the VTOLVR_ModLoader folder isn't with the other games files\nPlease move me to VTOL VR's game Program.root directory.", "Wrong Folder Location");
+                Notification.Show("It seems the VTOLVR_ModLoader folder isn't with the other games files\nPlease move me to VTOL VR's game Program.root directory.", "Wrong Folder Location");
                 Program.Quit();
             }
         }
@@ -137,12 +138,12 @@ namespace VTOLVR_ModLoader
         }
         private static void WrongFolder(string file)
         {
-            MessageBox.Show("I can't seem to find " + file + " in my folder. Make sure you place me in the same folder as this file.", "Missing File");
+            Notification.Show("I can't seem to find " + file + " in my folder. Make sure you place me in the same folder as this file.", "Missing File");
             Program.Quit();
         }
         private static void MissingManagedFile(string file)
         {
-            MessageBox.Show("I can't seem to find " + file + " in VTOL VR > VTOLVR_Data, please make sure this file is here otherwise the mod loader won't work", "Missing File");
+            Notification.Show("I can't seem to find " + file + " in VTOL VR > VTOLVR_Data, please make sure this file is here otherwise the mod loader won't work", "Missing File");
             Program.Quit();
         }
 
@@ -162,7 +163,7 @@ namespace VTOLVR_ModLoader
             }
 
             if (!File.Exists(regPath + @"\steamapps\libraryfolders.vdf"))
-                MessageBox.Show("libraryfolders.vdf missing from " + regPath + @"\steamapps");
+                Notification.Show("libraryfolders.vdf missing from " + regPath + @"\steamapps");
 
             VProperty libFolders = VdfConvert.Deserialize(File.ReadAllText(regPath + @"\steamapps\libraryfolders.vdf"));
 

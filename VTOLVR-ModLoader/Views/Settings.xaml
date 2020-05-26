@@ -11,7 +11,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="100"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -27,10 +28,24 @@
                 <Button Grid.Column="2" Content="Update" Foreground="White"
                         Click="UpdateToken" x:Name="updateButton" Style="{StaticResource transparentButton}"/>
             </Grid>
-            <TextBlock  Grid.Row="2" Foreground="White" FontSize="15" TextWrapping="Wrap">
+            <TextBlock Grid.Row="2" Foreground="White" FontSize="15" TextWrapping="Wrap">
                 User tokens are currently only for mod/skin creators. It gives them access to uploading mods from the mod loader.<LineBreak/>
                 To apply this code, you can press this button or paste it manually in the settings page of the mod loader.<LineBreak/><LineBreak/>
                 Make sure you don't share this token otherwise others will be able to upload/update mods and skins on your account.</TextBlock>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Foreground="White" FontSize="15" x:Name="projectsText">
+                    My Projects folder not set.
+                </TextBlock>
+
+                <Button Grid.Column="1" Style="{StaticResource darkButton}" Margin="5,10,5,10"
+                        Content="Set" Click="SetMyProjectsFolder" x:Name="projectsButton"/>
+            </Grid>
         </Grid>
     </ScrollViewer>
 </UserControl>

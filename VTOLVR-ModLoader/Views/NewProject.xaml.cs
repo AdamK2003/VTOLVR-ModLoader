@@ -228,12 +228,13 @@ namespace VTOLVR_ModLoader.Views
             jObject.Add("Description", descriptionBox.Text);
             if (isMod)
                 jObject.Add("Dll File", nameBox.Text.RemoveSpaces() + ".dll");
-            File.WriteAllText(currentFolder.FullName + @"\Builds\info.json", jObject.ToString());
+            File.WriteAllText(currentFolder.FullName + (isMod? @"\Builds\" : @"\") + @"info.json", jObject.ToString());
         }
 
         private void CreateSkinProject(string name)
         {
-            DirectoryInfo currentFolder = Directory.CreateDirectory(Settings.projectsFolder + skinsFolder + @"\" + name);
+            currentFolder = Directory.CreateDirectory(Settings.projectsFolder + skinsFolder + @"\" + name);
+            CreateJson(false);
         }
     }
 }

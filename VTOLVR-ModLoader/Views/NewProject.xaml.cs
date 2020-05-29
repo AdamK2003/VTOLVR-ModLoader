@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -164,7 +165,10 @@ namespace VTOLVR_ModLoader.Views
                 File.Delete(currentFolder.FullName + @"\README.md");
 
             MoveDlls(currentFolder.FullName + @"\Dependencies");
-            ChangeFilesText(currentFolder.FullName);
+            ChangeFilesText();
+            Directory.CreateDirectory(currentFolder.FullName + @"\Builds");
+
+            CreateJson();
         }
 
         private void MoveDlls(string path)
@@ -189,32 +193,42 @@ namespace VTOLVR_ModLoader.Views
             return true;
         }
 
-        private void ChangeFilesText(string path)
+        private void ChangeFilesText()
         {
             string projectName = nameBox.Text.RemoveSpaces();
 
-            string solutionFile = File.ReadAllText(path + @"\VTOLVR_MOD_Boilerplate.sln");
+            string solutionFile = File.ReadAllText(currentFolder.FullName + @"\VTOLVR_MOD_Boilerplate.sln");
             solutionFile = solutionFile.Replace("VTOLVR_Mod_Boilerplate", projectName);
-            File.WriteAllText(path + @"\" + projectName + ".sln", solutionFile);
-            File.Delete(path + @"\VTOLVR_MOD_Boilerplate.sln");
+            File.WriteAllText(currentFolder.FullName + @"\" + projectName + ".sln", solutionFile);
+            File.Delete(currentFolder.FullName + @"\VTOLVR_MOD_Boilerplate.sln");
 
-            Directory.Move(path + @"\VTOLVR_Mod_Boilerplate", path + @"\" + projectName);
+            Directory.Move(currentFolder.FullName + @"\VTOLVR_Mod_Boilerplate", currentFolder.FullName + @"\" + projectName);
 
-            string csproj = File.ReadAllText($"{path}\\{projectName}\\VTOLVR_Mod_Boilerplate.csproj");
+            string csproj = File.ReadAllText($"{currentFolder.FullName}\\{projectName}\\VTOLVR_Mod_Boilerplate.csproj");
             csproj = csproj.Replace("VTOLVR_Mod_Boilerplate", projectName);
             csproj = csproj.Replace("{{VTOLVR}}", Program.root + @"\VTOLVR-ModLoader.exe");
-            csproj = csproj.Replace("{{MODPATH}}", Program.root + Program.modsFolder + @"\" + nameBox.Text + @"\" + projectName + @".dll");
-            File.WriteAllText($"{path}\\{projectName}\\{projectName}.csproj", csproj);
-            File.Delete($"{path}\\{projectName}\\VTOLVR_Mod_Boilerplate.csproj");
+            csproj = csproj.Replace("{{MODPATH}}", currentFolder.FullName + @"\Builds\" + projectName + @".dll");
+            File.WriteAllText($"{currentFolder.FullName}\\{projectName}\\{projectName}.csproj", csproj);
+            File.Delete($"{currentFolder.FullName}\\{projectName}\\VTOLVR_Mod_Boilerplate.csproj");
 
-            string maincs = File.ReadAllText($"{path}\\{projectName}\\Main.cs");
+            string maincs = File.ReadAllText($"{currentFolder.FullName}\\{projectName}\\Main.cs");
             string nameSpace = projectName;
             if (Regex.IsMatch(nameSpace[0].ToString(), @"^\d$"))
             {
                 nameSpace = "_" + nameSpace;
             }
             maincs = maincs.Replace("VTOLVR_Mod_Boilerplate", nameSpace);
-            File.WriteAllText($"{path}\\{projectName}\\Main.cs", maincs);
+            File.WriteAllText($"{currentFolder.FullName}\\{projectName}\\Main.cs", maincs);
+        }
+
+        private void CreateJson(bool isMod = true)
+        {
+            JObject jObject = new JObject();
+            jObject.Add("Name", nameBox.Text);
+            jObject.Add("Description", descriptionBox.Text);
+            if (isMod)
+                jObject.Add("Dll File", nameBox.Text.RemoveSpaces() + ".dll");
+            File.WriteAllText(currentFolder.FullName + @"\Builds\info.json", jObject.ToString());
         }
 
         private void CreateSkinProject(string name)

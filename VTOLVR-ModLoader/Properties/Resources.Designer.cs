@@ -84,5 +84,15 @@ namespace VTOLVR_ModLoader.Properties {
                 return ResourceManager.GetString("CampaignsJsonString", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] vtolvr_mod_boilerplate_master {
+            get {
+                object obj = ResourceManager.GetObject("vtolvr_mod_boilerplate_master", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

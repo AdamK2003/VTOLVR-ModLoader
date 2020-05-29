@@ -35,7 +35,7 @@ namespace VTOLVR_ModLoader.Views
 
         //Settings
         private string token;
-        public string projectsFolder { get; private set; }
+        public static string projectsFolder { get; private set; }
         public Settings()
         {
             callBack += SetProjectsFolder;

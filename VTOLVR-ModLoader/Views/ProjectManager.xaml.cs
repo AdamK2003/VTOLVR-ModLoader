@@ -35,7 +35,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void CheckProjectPath()
         {
-            if (string.IsNullOrEmpty(MainWindow._instance.settings.projectsFolder))
+            if (string.IsNullOrEmpty(Settings.projectsFolder))
                 return;
             settingsText.Visibility = Visibility.Hidden;
             newProjectButton.IsEnabled = true;
@@ -43,7 +43,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void NewProject(object sender, RoutedEventArgs e)
         {
-
+            MainWindow.OpenPage(new NewProject());
         }
     }
 }

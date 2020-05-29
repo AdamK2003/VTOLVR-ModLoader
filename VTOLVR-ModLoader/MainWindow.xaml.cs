@@ -22,6 +22,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Console = VTOLVR_ModLoader.Views.Console;
+using System.Windows.Controls;
 
 namespace VTOLVR_ModLoader
 {
@@ -432,6 +433,11 @@ namespace VTOLVR_ModLoader
                 console = new Views.Console();
             console.UpdateFeed();
             DataContext = console;
+        }
+
+        public static void OpenPage(UserControl control)
+        {
+            _instance.DataContext = control;
         }
     }
 

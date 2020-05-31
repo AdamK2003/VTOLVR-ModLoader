@@ -43,9 +43,39 @@ namespace VTOLVR_ModLoader.Views
         {
             nameBox.Text = nameBox.Text.RemoveSpecialCharacters();
             nameBox.CaretIndex = nameBox.Text.Length;
+
+            if (nameBox.Text.Length == 0 && createButton != null)
+                createButton.IsEnabled = false;
+            else if (createButton != null)
+                createButton.IsEnabled = true;
+
             //This is null for some reason at the start
             if (folderPreviewText != null)
-                folderPreviewText.Text = "Will be saved in: " + nameBox.Text;
+            {
+                if (!CheckIfProjectExists())
+                {
+                    folderPreviewText.Text = "Will be saved in: " + nameBox.Text;
+                    createButton.IsEnabled = true;
+                }
+                else
+                {
+                    folderPreviewText.Text = "This project already exists";
+                    createButton.IsEnabled = false;
+                }
+            }
+                
+        }
+
+        private bool CheckIfProjectExists()
+        {
+            if (!Directory.Exists(Settings.projectsFolder + (dropdown.SelectedIndex == 0 ? modsFolder : skinsFolder) + @"\" + nameBox.Text))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         private void CreateProject(object sender, RoutedEventArgs e)

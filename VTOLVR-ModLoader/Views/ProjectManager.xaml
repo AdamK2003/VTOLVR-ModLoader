@@ -11,6 +11,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="5"/>
                 <RowDefinition Height="50"/>
+                <RowDefinition Height="5"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -28,22 +29,39 @@
                 <Label Grid.Column="0" Foreground="White" FontSize="30">My Projects</Label>
             </Grid>
 
-            <TextBlock Grid.Row="2" Foreground="White" FontSize="30" TextWrapping="Wrap" 
+            <Border Grid.Row="2" Background="#FF2E2E2E"/>
+
+            <TextBlock Grid.Row="3" Foreground="White" FontSize="30" TextWrapping="Wrap" 
                        VerticalAlignment="Center" TextAlignment="Center" x:Name="settingsText" Visibility="Hidden">
                 It seems that you have set up a folder for your projects to be stored.<LineBreak/>
                 Please head over to the settings page to set a workspace.
             </TextBlock>
 
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="3">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <ItemsControl x:Name="folders" Margin="10,0,0,0">
+                    <ItemsControl x:Name="folders" Margin="10,0,10,0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel HorizontalAlignment="Left" >
-                                    <Button Content="{Binding Name}" Style="{StaticResource transparentButton}" 
-                                    Foreground="White" FontSize="20" Margin="0,0,0,5" Tag="{Binding FullName}"
-                                        />
-                                </StackPanel>
+                                <Button HorizontalContentAlignment="Stretch" Style="{StaticResource transparentButton}"
+                                        Tag="{Binding Path}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="300"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" 
+                               Foreground="White" FontSize="20"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Path}" 
+                               Foreground="Gray" FontSize="10"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding LastEdit}" 
+                               Foreground="Gray" FontSize="10" TextAlignment="Right"/>
+                                    </Grid>
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

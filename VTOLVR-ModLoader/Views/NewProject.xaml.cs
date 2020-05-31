@@ -28,8 +28,6 @@ namespace VTOLVR_ModLoader.Views
     /// </summary>
     public partial class NewProject : UserControl
     {
-        private const string modsFolder = @"\My Mods";
-        private const string skinsFolder = @"\My Skins";
         private const string modBoilerplateURL = "https://gitlab.com/vtolvr-mods/vtolvr-mod-boilerplate/-/archive/master/vtolvr-mod-boilerplate-master.zip";
 
         private DirectoryInfo currentFolder;
@@ -68,7 +66,7 @@ namespace VTOLVR_ModLoader.Views
 
         private bool CheckIfProjectExists()
         {
-            if (!Directory.Exists(Settings.projectsFolder + (dropdown.SelectedIndex == 0 ? modsFolder : skinsFolder) + @"\" + nameBox.Text))
+            if (!Directory.Exists(Settings.projectsFolder + (dropdown.SelectedIndex == 0 ? ProjectManager.modsFolder : ProjectManager.skinsFolder) + @"\" + nameBox.Text))
             {
                 return false;
             }
@@ -104,8 +102,8 @@ namespace VTOLVR_ModLoader.Views
         {
             try
             {
-                Directory.CreateDirectory(Settings.projectsFolder + modsFolder);
-                Directory.CreateDirectory(Settings.projectsFolder + skinsFolder);
+                Directory.CreateDirectory(Settings.projectsFolder + ProjectManager.modsFolder);
+                Directory.CreateDirectory(Settings.projectsFolder + ProjectManager.skinsFolder);
             }
             catch (Exception e)
             {
@@ -119,7 +117,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void CreateModProject(string name)
         {
-            currentFolder = Directory.CreateDirectory(Settings.projectsFolder + modsFolder + @"\" + name);
+            currentFolder = Directory.CreateDirectory(Settings.projectsFolder + ProjectManager.modsFolder + @"\" + name);
             if (Program.CheckForInternet())
             {
                 DownloadModBoilerplate();
@@ -258,12 +256,13 @@ namespace VTOLVR_ModLoader.Views
             jObject.Add("Description", descriptionBox.Text);
             if (isMod)
                 jObject.Add("Dll File", nameBox.Text.RemoveSpaces() + ".dll");
+            jObject.Add("Last Edit", DateTime.Now.Ticks);
             File.WriteAllText(currentFolder.FullName + (isMod? @"\Builds\" : @"\") + @"info.json", jObject.ToString());
         }
 
         private void CreateSkinProject(string name)
         {
-            currentFolder = Directory.CreateDirectory(Settings.projectsFolder + skinsFolder + @"\" + name);
+            currentFolder = Directory.CreateDirectory(Settings.projectsFolder + ProjectManager.skinsFolder + @"\" + name);
             CreateJson(false);
         }
     }

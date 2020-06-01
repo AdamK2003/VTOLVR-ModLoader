@@ -404,7 +404,7 @@ namespace VTOLVR_ModLoader
             DataContext = settings;
         }
 
-        private void Creator(object sender, RoutedEventArgs e)
+        public void Creator(object sender, RoutedEventArgs e)
         {
             if (pManager == null)
                 pManager = new ProjectManager();

@@ -36,7 +36,13 @@ namespace VTOLVR_ModLoader.Views
 
             if (CheckProjectPath())
             {
-                FindMods();
+                List<MyProject> localMods = new List<MyProject>();
+
+                FindMods(ref localMods);
+                FindSkins(ref localMods);
+
+                localMods = SortProjects(localMods);
+                folders.ItemsSource = localMods.ToArray();
             }
         }
 
@@ -54,12 +60,10 @@ namespace VTOLVR_ModLoader.Views
             MainWindow.OpenPage(new NewProject());
         }
 
-        private void FindMods()
+        private void FindMods(ref List<MyProject> localProjects)
         {
             DirectoryInfo myMods = new DirectoryInfo(Settings.projectsFolder + modsFolder);
             DirectoryInfo[] mods = myMods.GetDirectories();
-
-            List<MyMod> localMods = new List<MyMod>();
 
             for (int i = 0; i < mods.Length; i++)
             {
@@ -80,17 +84,19 @@ namespace VTOLVR_ModLoader.Views
                     if (jObject["Name"] != null || jObject["Description"] != null)
                     {
                         string lastedit = string.Empty;
+                        long result = 0;
                         if (jObject["Last Edit"] != null)
                         {
-                            if (long.TryParse(jObject["Last Edit"].ToString(), out long result))
+                            if (long.TryParse(jObject["Last Edit"].ToString(), out result))
                             {
                                 lastedit = new DateTime(result).ToString();
                             }
                         }
-                        localMods.Add(new MyMod(jObject["Name"].ToString(),
+                        localProjects.Add(new MyProject(jObject["Name"].ToString(),
                         jObject["Description"].ToString(),
                         mods[i].FullName,
-                        lastedit));
+                        lastedit,
+                        new DateTime(result)));
                     }
                     else
                     {
@@ -102,23 +108,78 @@ namespace VTOLVR_ModLoader.Views
                     Console.Log($"{mods[i].Name} doesn't seem to have a builds folder or a info.json, ignoring folder");
                 }
             }
-
-            folders.ItemsSource = localMods.ToArray();
         }
 
-        private class MyMod
+        private void FindSkins(ref List<MyProject> localProjects)
+        {
+            DirectoryInfo mySkins = new DirectoryInfo(Settings.projectsFolder + skinsFolder);
+            DirectoryInfo[] skins = mySkins.GetDirectories();
+
+            for (int i = 0; i < skins.Length; i++)
+            {
+                if (File.Exists(skins[i].FullName + @"\info.json"))
+                {
+                    JObject jObject;
+                    try
+                    {
+                        jObject = JObject.Parse(File.ReadAllText(skins[i].FullName + @"\info.json"));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.Log($"Failed to parse {skins[i].FullName}\\info.json\n{e.Message}");
+                        continue;
+                    }
+
+                    if (jObject["Name"] != null || jObject["Description"] != null)
+                    {
+                        string lastedit = string.Empty;
+                        long result = 0;
+                        if (jObject["Last Edit"] != null)
+                        {
+                            if (long.TryParse(jObject["Last Edit"].ToString(), out result))
+                            {
+                                lastedit = new DateTime(result).ToString();
+                            }
+                        }
+                        localProjects.Add(new MyProject(jObject["Name"].ToString(),
+                        jObject["Description"].ToString(),
+                        skins[i].FullName,
+                        lastedit,
+                        new DateTime(result)));
+                    }
+                    else
+                    {
+                        Console.Log($"{skins[i].Name} is missing something in it's info.json file");
+                    }
+                }
+                else
+                {
+                    Console.Log($"{skins[i].Name} doesn't seem to have a info.json, ignoring folder");
+                }
+            }
+        }
+
+        private static List<MyProject> SortProjects(List<MyProject> myProjects)
+        {
+            myProjects.Sort((a, b) => b.DateTime.CompareTo(a.DateTime));
+            return myProjects;
+        }
+
+        private class MyProject
         {
             public string Name { get; set; }
             public string Description { get; set; }
             public string Path { get; set; }
             public string LastEdit { get; set; }
+            public DateTime DateTime { get; set; }
 
-            public MyMod(string name, string description, string path, string lastEdit)
+            public MyProject(string name, string description, string path, string lastEdit, DateTime dateTime)
             {
                 Name = name;
                 Description = description;
                 Path = path;
                 LastEdit = lastEdit;
+                DateTime = dateTime;
             }
         }
     }

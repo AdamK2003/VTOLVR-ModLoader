@@ -197,6 +197,7 @@ namespace VTOLVR_ModLoader.Views
             Directory.CreateDirectory(currentFolder.FullName + @"\Builds");
 
             CreateJson();
+            Finished();
         }
 
         private void MoveDlls(string path)
@@ -264,6 +265,12 @@ namespace VTOLVR_ModLoader.Views
         {
             currentFolder = Directory.CreateDirectory(Settings.projectsFolder + ProjectManager.skinsFolder + @"\" + name);
             CreateJson(false);
+            Finished();
+        }
+
+        private void Finished()
+        {
+            MainWindow._instance.Creator(null, null);
         }
     }
 }

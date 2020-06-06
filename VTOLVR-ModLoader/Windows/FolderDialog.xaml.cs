@@ -21,6 +21,7 @@ namespace VTOLVR_ModLoader.Windows
     /// </summary>
     public partial class FolderDialog : Window
     {
+        private static FolderDialog window;
         private string currentPath;
         private DirectoryInfo parent;
         private Action<bool, string> callBack;
@@ -38,7 +39,7 @@ namespace VTOLVR_ModLoader.Windows
 
         public static void Dialog(string startingPath, Action<bool, string> callback)
         {
-            FolderDialog window = new FolderDialog(startingPath, callback);
+            window = new FolderDialog(startingPath, callback);
             window.Show();
         }
 
@@ -115,15 +116,17 @@ namespace VTOLVR_ModLoader.Windows
             OpenPath(((Button)sender).Tag as string);
         }
 
-        private void TextBox_KeyUp(object sender, KeyEventArgs e)
+        private static void TextBox_KeyUp(object sender, KeyEventArgs e)
         {
+            if (window == null)
+                return;
             if (e.Key != Key.Enter) return;
             e.Handled = true;
 
-            if (Directory.Exists(urlBox.Text))
-                OpenPath(urlBox.Text);
+            if (Directory.Exists(window.urlBox.Text))
+                window.OpenPath(window.urlBox.Text);
             else
-                OpenPath(currentPath);
+                window.OpenPath(window.currentPath);
         }
 
         private void SetLFolders()

@@ -86,6 +86,16 @@ namespace VTOLVR_ModLoader.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap image_not_found {
+            get {
+                object obj = ResourceManager.GetObject("image_not_found", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         public static byte[] vtolvr_mod_boilerplate_master {

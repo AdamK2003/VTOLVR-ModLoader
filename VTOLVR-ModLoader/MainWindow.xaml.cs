@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading;
 using Console = VTOLVR_ModLoader.Views.Console;
 using System.Windows.Controls;
+using FileDialog = VTOLVR_ModLoader.Windows.FileDialog;
 
 namespace VTOLVR_ModLoader
 {

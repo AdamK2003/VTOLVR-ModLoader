@@ -43,7 +43,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Button HorizontalContentAlignment="Stretch" Style="{StaticResource transparentButton}"
-                                        Tag="{Binding Path}">
+                                        Tag="{Binding Path}" Click="EditProject">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>

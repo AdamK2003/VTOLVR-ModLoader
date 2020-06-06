@@ -182,5 +182,11 @@ namespace VTOLVR_ModLoader.Views
                 DateTime = dateTime;
             }
         }
+
+        private void EditProject(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            MainWindow.OpenPage(new EditProject(button.Tag.ToString()));
+        }
     }
 }

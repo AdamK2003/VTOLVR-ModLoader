@@ -63,6 +63,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Runtime.Serialization" />
@@ -104,6 +105,9 @@
     <Compile Include="Views\DevTools.xaml.cs">
       <DependentUpon>DevTools.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditProject.xaml.cs">
+      <DependentUpon>EditProject.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\NewProject.xaml.cs">
       <DependentUpon>NewProject.xaml</DependentUpon>
     </Compile>
@@ -115,6 +119,9 @@
     </Compile>
     <Compile Include="Views\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\FileDialog.xaml.cs">
+      <DependentUpon>FileDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\FolderDialog.xaml.cs">
       <DependentUpon>FolderDialog.xaml</DependentUpon>
@@ -146,6 +153,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\EditProject.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\NewProject.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -159,6 +170,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\FileDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -210,7 +225,6 @@
     <Resource Include="Resources\Logo.ico" />
     <Resource Include="Resources\LogoSpinning.gif" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>IF EXIST "A:\Program Files\Steam\steamapps\common\VTOL VR\VTOLVR.exe" (

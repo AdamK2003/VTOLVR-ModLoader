@@ -23,7 +23,6 @@ using System.Text;
 using System.Threading;
 using Console = VTOLVR_ModLoader.Views.Console;
 using System.Windows.Controls;
-using FileDialog = VTOLVR_ModLoader.Windows.FileDialog;
 
 namespace VTOLVR_ModLoader
 {
@@ -35,7 +34,7 @@ namespace VTOLVR_ModLoader
 
         //Pages
         public News news { get; private set; }
-        public Settings settings { get; private set; }
+        public Views.Settings settings { get; private set; }
         public DevTools devTools { get; private set; }
         public Console console { get; private set; }
         public ProjectManager pManager { get; private set; }
@@ -82,7 +81,7 @@ namespace VTOLVR_ModLoader
         {
             console = new Console();
             news = new News();
-            settings = new Settings();
+            settings = new Views.Settings();
             devTools = new DevTools();
             pManager = new ProjectManager();
             DataContext = news;
@@ -401,7 +400,7 @@ namespace VTOLVR_ModLoader
         private void OpenSettings(object sender, RoutedEventArgs e)
         {
             if (settings == null)
-                settings = new Settings();
+                settings = new Views.Settings();
             DataContext = settings;
         }
 

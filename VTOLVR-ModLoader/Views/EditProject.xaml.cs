@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -56,24 +57,24 @@ namespace VTOLVR_ModLoader.Views
                 return;
             }
 
-            if (_currentJson["Name"] != null)
+            if (_currentJson[ProjectManager.jName] != null)
             {
-                projectName.Text = _currentJson["Name"].ToString();
+                projectName.Text = _currentJson[ProjectManager.jName].ToString();
             }
-            if (_currentJson["Description"] != null)
+            if (_currentJson[ProjectManager.jDescription] != null)
             {
-                projectDescription.Text = _currentJson["Description"].ToString();
+                projectDescription.Text = _currentJson[ProjectManager.jDescription].ToString();
             }
-            if (_currentJson["Preview Image"] != null)
+            if (_currentJson[ProjectManager.jPImage] != null)
             {
                 previewImage.Source = new BitmapImage(
-                    new Uri(_currentPath + @"\" + _currentJson["Preview Image"].ToString()));
+                    new Uri(_currentPath + @"\" + _currentJson[ProjectManager.jPImage].ToString()));
                 previewImageText.Visibility = Visibility.Hidden;
             }
-            if (_currentJson["Web Preview Image"] != null)
+            if (_currentJson[ProjectManager.jWImage] != null)
             {
                 webPageImage.Source = new BitmapImage(
-                    new Uri(_currentPath + @"\" + _currentJson["Web Preview Image"].ToString()));
+                    new Uri(_currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString()));
                 webPageImageText.Visibility = Visibility.Hidden;
             }
 
@@ -91,9 +92,9 @@ namespace VTOLVR_ModLoader.Views
             sourceText.Visibility = Visibility.Visible;
             modSource.Visibility = Visibility.Visible;
 
-            if (_currentJson["Source"] != null)
+            if (_currentJson[ProjectManager.jSource] != null)
             {
-                modSource.Text = _currentJson["Source"].ToString();
+                modSource.Text = _currentJson[ProjectManager.jSource].ToString();
             }
         }
 
@@ -116,16 +117,23 @@ namespace VTOLVR_ModLoader.Views
 
         private void Upload(object sender, RoutedEventArgs e)
         {
+            SaveProject();
+            UploadProject();
+        }
 
+        private void UploadProject()
+        {
+            if (!AssemblyChecks())
+                return;
         }
 
         private void SaveProject()
         {
-            _currentJson["Name"] = projectName.Text;
-            _currentJson["Description"] = projectDescription.Text;
+            _currentJson[ProjectManager.jName] = projectName.Text;
+            _currentJson[ProjectManager.jDescription] = projectDescription.Text;
             if (_isMod)
-                _currentJson["Source"] = modSource.Text;
-            _currentJson["Last Edit"] = DateTime.Now.Ticks;
+                _currentJson[ProjectManager.jSource] = modSource.Text;
+            _currentJson[ProjectManager.jEdit] = DateTime.Now.Ticks;
 
             try
             {
@@ -163,10 +171,10 @@ namespace VTOLVR_ModLoader.Views
             File.Copy(filePath, _currentPath + @"\preview.png");
             filePath = _currentPath + @"\preview.png";
 
-            if (_currentJson["Preview Image"] != null)
-                _currentJson["Preview Image"] = "preview.png";
+            if (_currentJson[ProjectManager.jPImage] != null)
+                _currentJson[ProjectManager.jPImage] = "preview.png";
             else
-                _currentJson.Add("Preview Image", "preview.png");
+                _currentJson.Add(ProjectManager.jPImage, "preview.png");
 
             previewImageText.Visibility = Visibility.Hidden;
 
@@ -185,10 +193,10 @@ namespace VTOLVR_ModLoader.Views
             File.Copy(filePath, _currentPath + @"\web_preview.png");
             filePath = _currentPath + @"\web_preview.png";
 
-            if (_currentJson["Web Preview Image"] != null)
-                _currentJson["Web Preview Image"] = "web_preview.png";
+            if (_currentJson[ProjectManager.jWImage] != null)
+                _currentJson[ProjectManager.jWImage] = "web_preview.png";
             else
-                _currentJson.Add("Web Preview Image", "web_preview.png");
+                _currentJson.Add(ProjectManager.jWImage, "web_preview.png");
 
             webPageImageText.Visibility = Visibility.Hidden;
 
@@ -225,6 +233,53 @@ namespace VTOLVR_ModLoader.Views
                 Notification.Show($"{info.Name} is over 1mb", "File not excepted");
                 return false;
             }
+            return true;
+        }
+
+        private bool AssemblyChecks()
+        {
+            if (!_isMod)
+            {
+                Console.Log("Somehow Assemblychecks ran in a skin project");
+                return false;
+            }
+
+            if (_currentJson[ProjectManager.jDll] == null)
+            {
+                Notification.Show("info.json seems to be missing the dll file name.\nMod was not uploaded.", "Missing Item");
+                return false;
+            }
+
+            if (!File.Exists(_currentPath + @"\Builds\" + _currentJson[ProjectManager.jDll].ToString()))
+            {
+                Notification.Show($"Can't find {_currentJson[ProjectManager.jDll]}", $"Missing {_currentJson[ProjectManager.jDll]}");
+                return false;
+            }
+
+            IEnumerable<Type> source =
+                from t in Assembly.Load(File.ReadAllBytes(_currentPath + @"\Builds\" + _currentJson[ProjectManager.jDll].ToString())).GetTypes()
+                where t.IsSubclassOf(typeof(VTOLMOD))
+                select t;
+
+            if (source == null)
+            {
+                Notification.Show($"It seems there is no class deriving from VTOLMOD in {_currentJson[ProjectManager.jDll]}",
+                    "Missing VTOLMOD class");
+                return false;
+            }
+            if (source.Count() > 1)
+            {
+                Notification.Show($"It seems there is two or more classes deriving from VTOLMOD in {_currentJson[ProjectManager.jDll]}",
+                    "Too many VTOLMOD classes");
+                return false;
+            }
+            else if (source.Count() == 0)
+            {
+                Notification.Show($"It seems there is no classes deriving from VTOLMOD in {_currentJson[ProjectManager.jDll]}",
+                    "No VTOLMOD classes");
+                return false;
+            }
+
             return true;
         }
     }

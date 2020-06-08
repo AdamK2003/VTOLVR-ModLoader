@@ -379,9 +379,6 @@
     <comment>Json string of all the campaigns from verion 0.16.1f</comment>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="image_not_found" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\image not found.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="vtolvr_mod_boilerplate_master" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\vtolvr-mod-boilerplate-master.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

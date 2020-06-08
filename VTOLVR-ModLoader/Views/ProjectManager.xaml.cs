@@ -24,6 +24,13 @@ namespace VTOLVR_ModLoader.Views
     {
         public const string modsFolder = @"\My Mods";
         public const string skinsFolder = @"\My Skins";
+        public const string jName = "Name";
+        public const string jDescription = "Description";
+        public const string jDll = "Dll File";
+        public const string jEdit = "Last Edit";
+        public const string jSource = "Source";
+        public const string jPImage = "Preview Image";
+        public const string jWImage = "Web Preview Image";
         public ProjectManager()
         {
             InitializeComponent();
@@ -81,19 +88,19 @@ namespace VTOLVR_ModLoader.Views
                         continue;
                     }
 
-                    if (jObject["Name"] != null || jObject["Description"] != null)
+                    if (jObject[jName] != null || jObject[jDescription] != null)
                     {
                         string lastedit = string.Empty;
                         long result = 0;
-                        if (jObject["Last Edit"] != null)
+                        if (jObject[jEdit] != null)
                         {
-                            if (long.TryParse(jObject["Last Edit"].ToString(), out result))
+                            if (long.TryParse(jObject[jEdit].ToString(), out result))
                             {
                                 lastedit = new DateTime(result).ToString();
                             }
                         }
-                        localProjects.Add(new MyProject(jObject["Name"].ToString(),
-                        jObject["Description"].ToString(),
+                        localProjects.Add(new MyProject(jObject[jName].ToString(),
+                        jObject[jDescription].ToString(),
                         mods[i].FullName,
                         lastedit,
                         new DateTime(result)));
@@ -130,19 +137,19 @@ namespace VTOLVR_ModLoader.Views
                         continue;
                     }
 
-                    if (jObject["Name"] != null || jObject["Description"] != null)
+                    if (jObject[jName] != null || jObject[jDescription] != null)
                     {
                         string lastedit = string.Empty;
                         long result = 0;
-                        if (jObject["Last Edit"] != null)
+                        if (jObject[jEdit] != null)
                         {
-                            if (long.TryParse(jObject["Last Edit"].ToString(), out result))
+                            if (long.TryParse(jObject[jEdit].ToString(), out result))
                             {
                                 lastedit = new DateTime(result).ToString();
                             }
                         }
-                        localProjects.Add(new MyProject(jObject["Name"].ToString(),
-                        jObject["Description"].ToString(),
+                        localProjects.Add(new MyProject(jObject[jName].ToString(),
+                        jObject[jDescription].ToString(),
                         skins[i].FullName,
                         lastedit,
                         new DateTime(result)));

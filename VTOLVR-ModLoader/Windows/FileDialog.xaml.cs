@@ -116,7 +116,7 @@ namespace VTOLVR_ModLoader.Windows
         {
             List<Item> directories = new List<Item>();
 
-            DirectoryInfo lastDirectory = new DirectoryInfo(Settings.projectsFolder);
+            DirectoryInfo lastDirectory = new DirectoryInfo(Views.Settings.projectsFolder);
             directories.Add(new Item(lastDirectory.FullName, lastDirectory.Name, true));
 
             lastDirectory = new DirectoryInfo(Program.vtolFolder);

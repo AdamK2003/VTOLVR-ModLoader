@@ -61,6 +61,37 @@ namespace VTOLVR_ModLoader.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [
+        ///  &quot;0Harmony.dll&quot;,
+        ///  &quot;Accessibility.dll&quot;,
+        ///  &quot;Assembly-CSharp-firstpass.dll&quot;,
+        ///  &quot;Assembly-CSharp.dll&quot;,
+        ///  &quot;CsvHelper.dll&quot;,
+        ///  &quot;HttpAuth.dll&quot;,
+        ///  &quot;Microsoft.CSharp.dll&quot;,
+        ///  &quot;Mono.Security.dll&quot;,
+        ///  &quot;MP3Sharp.dll&quot;,
+        ///  &quot;mscorlib.dll&quot;,
+        ///  &quot;NAudio.dll&quot;,
+        ///  &quot;netstandard.dll&quot;,
+        ///  &quot;Newtonsoft.Json.dll&quot;,
+        ///  &quot;Oculus.VR.dll&quot;,
+        ///  &quot;Rewired_Core.dll&quot;,
+        ///  &quot;Rewired_Windows_Lib.dll&quot;,
+        ///  &quot;SharpDX.DirectInput.dll&quot;,
+        ///  &quot;SharpDX.dll&quot;,
+        ///  &quot;SteamVR.dll&quot;,
+        ///  &quot;SteamVR_Actions.dll&quot;,
+        ///  &quot;System.ComponentModel.Composition.dll&quot;,
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string BaseDLLS {
+            get {
+                return ResourceManager.GetString("BaseDLLS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;Campaigns&quot;: [
         ///    {

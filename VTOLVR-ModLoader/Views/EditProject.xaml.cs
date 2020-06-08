@@ -112,11 +112,13 @@ namespace VTOLVR_ModLoader.Views
 
         private void Save(object sender, RoutedEventArgs e)
         {
+            UpdateDependencies();
             SaveProject();
         }
 
         private void Upload(object sender, RoutedEventArgs e)
         {
+            UpdateDependencies();
             SaveProject();
             UploadProject();
         }
@@ -125,6 +127,7 @@ namespace VTOLVR_ModLoader.Views
         {
             if (!AssemblyChecks())
                 return;
+            ZipCurrentProject();
         }
 
         private void SaveProject()
@@ -281,6 +284,53 @@ namespace VTOLVR_ModLoader.Views
             }
 
             return true;
+        }
+
+        private void UpdateDependencies()
+        {
+            if (!_isMod)
+            {
+                Console.Log("Update Dependencies somehow ran when a skin project was opened");
+                return;
+            }
+
+            if (!Directory.Exists(_currentPath + @"\Dependencies"))
+            {
+                Console.Log($"There is no dependencies folder in {_currentPath}");
+                return;
+            }
+
+            FileInfo[] dependencies = new DirectoryInfo(_currentPath + @"\Dependencies").GetFiles("*.dll");
+            JArray jArray = JArray.Parse(Properties.Resources.BaseDLLS);
+            List<string> newDependencies = new List<string>();
+            bool hasDefaultDep = false;
+            for (int i = 0; i < dependencies.Length; i++)
+            {
+                hasDefaultDep = false;
+                for (int j = 0; j < jArray.Count; j++)
+                {
+                    if (jArray[j].ToString().Equals(dependencies[i].Name))
+                        hasDefaultDep = true;
+                }
+                if (dependencies[i].Name.Equals("ModLoader.dll") || hasDefaultDep)
+                    continue;
+                newDependencies.Add(dependencies[i].Name);
+            }
+
+            if (_currentJson[ProjectManager.jDeps] != null)
+            {
+                _currentJson[ProjectManager.jDeps] = JArray.FromObject(newDependencies.ToArray());
+            }
+            else
+            {
+                _currentJson.Add(new JProperty(ProjectManager.jDeps, JArray.FromObject(newDependencies.ToArray())));
+            }
+        }
+
+        private string ZipCurrentProject()
+        {
+
+            return string.Empty;
         }
     }
 }

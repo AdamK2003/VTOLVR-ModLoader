@@ -31,6 +31,7 @@ namespace VTOLVR_ModLoader.Views
         public const string jSource = "Source";
         public const string jPImage = "Preview Image";
         public const string jWImage = "Web Preview Image";
+        public const string jDeps = "Dependencies";
         public ProjectManager()
         {
             InitializeComponent();

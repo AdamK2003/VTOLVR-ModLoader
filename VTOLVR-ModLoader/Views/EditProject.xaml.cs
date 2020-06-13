@@ -290,7 +290,6 @@ namespace VTOLVR_ModLoader.Views
         {
             if (!_isMod)
             {
-                Console.Log("Update Dependencies somehow ran when a skin project was opened");
                 return;
             }
 

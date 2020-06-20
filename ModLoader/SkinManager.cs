@@ -578,12 +578,26 @@ namespace ModLoader
             }
             else
             {
+                //In update 0.0.15 mat_afighterExt1 changed to mat_afighterExt1_livery
+                path = CheckForOldName(path, material);
                 WWW www = new WWW("file:///" + path);
                 while (!www.isDone)
                     yield return null;
                 material.SetTexture("_MainTex", www.texture);
                 Log($"Set Material for {material.name} to texture located at {path}");
             }
+        }
+
+        private string CheckForOldName(string path, Material material)
+        {
+            if (material.name.Equals("mat_afighterExt1"))
+            {
+                string newPath = path.Replace(".png", "_livery.png");
+                File.Move(path, newPath);
+                LogWarning($"Detected an old material name {material.name} , it has been renamed to the new format \nOld: ({path})\nNew: ({newPath})");
+                return newPath;
+            }
+            return path;
         }
 
         private void ClampCount()

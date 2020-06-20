@@ -12,6 +12,7 @@ using System.Reflection;
 using UnityEngine.UI;
 using System.Net;
 using System.ComponentModel;
+using Harmony;
 
 namespace ModLoader
 {
@@ -125,6 +126,9 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
             api.CreateCommand("print", PrintMessage);
             api.CreateCommand("help", api.ShowHelp);
             api.CreateCommand("vrinteract", VRInteract);
+
+            HarmonyInstance harmony = HarmonyInstance.Create("vtolvrmodding.modloader");
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
         private void ConsoleInput(string obj)

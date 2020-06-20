@@ -25,7 +25,7 @@ namespace VTOLVR_ModLoader
         private static string updatesFile = @"\updates.xml";
         private static string updatesFileTemp = @"\updates_TEMP.xml";
         private static string updatesURL = @"/files/updates.xml";
-        private string url = @"https://vtolvr-mods.com";
+        private string url = @"https://new.vtolvr-mods.com";
         public static string root;
         public static string vtolFolder;
 
@@ -77,9 +77,6 @@ namespace VTOLVR_ModLoader
         public MainWindow()
         {
             SearchForProcess();
-#if DEBUG
-            url = "http://localhost";
-#endif
             InitializeComponent();
         }
         private void SearchForProcess()
@@ -224,6 +221,7 @@ namespace VTOLVR_ModLoader
             if (CheckForInternet())
             {
                 client = new WebClient();
+                client.Headers.Add("user-agent", "VTOL VR Mod Loader");
                 client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(UpdatesProgress);
                 client.DownloadFileCompleted += new AsyncCompletedEventHandler(UpdatesDone);
                 client.DownloadFileAsync(new Uri(url + updatesURL), root + updatesFileTemp);

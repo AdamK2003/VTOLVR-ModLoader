@@ -127,7 +127,7 @@ public class VTOLAPI : MonoBehaviour
     /// Returns the parent gameobject of what vehicle the player is currently flying, it will return null if nothing is found.
     /// </summary>
     /// <returns></returns>
-    public GameObject GetPlayersVehicleGameObject()
+    public static GameObject GetPlayersVehicleGameObject()
     {
         VTOLVehicles currentVehicle = GetPlayersVehicleEnum();
 

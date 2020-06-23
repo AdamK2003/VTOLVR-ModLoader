@@ -593,8 +593,12 @@ namespace VTOLVR_ModLoader
                 return;
 
             string[] split = uriDownload.Split('/');
-            uriFileName = split[3];
+            uriFileName = split[4];
             bool isMod = split[0].Contains("mod");
+            if (isMod)
+                uriDownload = uriDownload.Remove(0, 4); //Removes "mod"
+            else
+                uriDownload = uriDownload.Remove(0, 5); //Removes "skin"
             client = new WebClient();
             client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(FileProgress);
             client.DownloadFileCompleted += new AsyncCompletedEventHandler(FileDone);

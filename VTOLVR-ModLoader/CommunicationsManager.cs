@@ -40,7 +40,6 @@ namespace VTOLVR_ModLoader
             {
                 line = line.Replace("url=", string.Empty);
                 Program.url = line;
-                MessageBox.Show(Program.url, "Set URL to");
             }
         }
 

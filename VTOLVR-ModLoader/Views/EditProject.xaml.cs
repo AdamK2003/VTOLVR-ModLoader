@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -67,10 +68,10 @@ namespace VTOLVR_ModLoader.Views
             }
             if (_currentJson[ProjectManager.jPImage] != null)
             {
-                if (File.Exists(_currentPath + @"\Builds\" + _currentJson[ProjectManager.jPImage].ToString()))
+                if (File.Exists(_currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString()))
                 {
                     previewImage.Source = new BitmapImage(
-                    new Uri(_currentPath + @"\Builds\" + _currentJson[ProjectManager.jPImage].ToString()));
+                    new Uri(_currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString()));
                     previewImageText.Visibility = Visibility.Hidden;
                 }
             }
@@ -131,9 +132,11 @@ namespace VTOLVR_ModLoader.Views
 
         private void UploadProject()
         {
-            if (!AssemblyChecks())
+            if (_isMod && !AssemblyChecks())
                 return;
             ZipCurrentProject();
+
+
         }
 
         private void SaveProject()
@@ -175,10 +178,10 @@ namespace VTOLVR_ModLoader.Views
             if (!PreviewImageChecks(filePath))
                 return;
 
-            if (File.Exists(_currentPath + @"\Builds\preview.png"))
-                File.Delete(_currentPath + @"\Builds\preview.png");
-            File.Copy(filePath, _currentPath + @"\Builds\preview.png");
-            filePath = _currentPath + @"\Builds\preview.png";
+            if (File.Exists(_currentPath + (_isMod ? @"\Builds" : string.Empty) + @"\preview.png"))
+                File.Delete(_currentPath + (_isMod ? @"\Builds" : string.Empty) + @"\preview.png");
+            File.Copy(filePath, _currentPath + (_isMod? @"\Builds" : string.Empty) + @"\preview.png");
+            filePath = _currentPath + (_isMod ? @"\Builds" : string.Empty) + @"\preview.png";
 
             if (_currentJson[ProjectManager.jPImage] != null)
                 _currentJson[ProjectManager.jPImage] = "preview.png";
@@ -218,9 +221,9 @@ namespace VTOLVR_ModLoader.Views
             Bitmap image = new Bitmap(path);
             FileInfo info = new FileInfo(path);
 
-            if (info.Length > 1000000)
+            if (info.Length > 2000000)
             {
-                Notification.Show($"{info.Name} is over 1mb", "File not excepted");
+                Notification.Show($"{info.Name} is over 2mb", "File not excepted");
                 return false;
             }
 
@@ -237,9 +240,9 @@ namespace VTOLVR_ModLoader.Views
         {
             FileInfo info = new FileInfo(path);
 
-            if (info.Length > 1000000)
+            if (info.Length > 2000000)
             {
-                Notification.Show($"{info.Name} is over 1mb", "File not excepted");
+                Notification.Show($"{info.Name} is over 2mb", "File not excepted");
                 return false;
             }
             return true;
@@ -334,8 +337,42 @@ namespace VTOLVR_ModLoader.Views
 
         private string ZipCurrentProject()
         {
+            if (File.Exists($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip"))
+                File.Delete($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip");
+            ZipArchive zip = ZipFile.Open($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip", ZipArchiveMode.Update);
+            
+            if (_isMod)
+            {
+                DirectoryInfo buildFolder = new DirectoryInfo(_currentPath + @"\Builds");
+                FileInfo[] files = buildFolder.GetFiles();
+                
+                for (int i = 0; i < files.Length; i++)
+                {
+                    zip.CreateEntryFromFile(files[i].FullName, files[i].Name);
+                }
 
-            return string.Empty;
+                if (_currentJson[ProjectManager.jDeps] != null)
+                {
+                    JArray array = _currentJson[ProjectManager.jDeps] as JArray;
+                    for (int i = 0; i < array.Count; i++)
+                    {
+                        zip.CreateEntryFromFile(_currentPath + @"\Dependencies\" + array[i].ToString(), @"Dependencies\" + array[i].ToString()); ;
+                    }
+                }
+            }
+            else
+            {
+                DirectoryInfo folder = new DirectoryInfo(_currentPath);
+                FileInfo[] files = folder.GetFiles("*.png");
+                for (int i = 0; i < files.Length; i++)
+                {
+                    if (!files[i].Name.Contains("web_preview.png"))
+                        zip.CreateEntryFromFile(files[i].FullName, files[i].Name);
+                }
+                zip.CreateEntryFromFile($"{_currentPath}\\info.json", "info.json");
+            }
+            zip.Dispose();
+            return $"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip";
         }
     }
 }

@@ -75,7 +75,7 @@ namespace VTOLVR_ModLoader.Views
                 client.Headers.Add("user-agent", "VTOL VR Mod Loader");
                 client.Headers.Add("Authorization", "Token " + token);
                 client.DownloadStringCompleted += TestTokenDone;
-                client.DownloadStringAsync(new Uri(Program.url + Program.apiURL + userURL + Program.jsonFormat));
+                client.DownloadStringAsync(new Uri(Program.url + Program.apiURL + userURL + Program.jsonFormat));                
             }
             else
             {

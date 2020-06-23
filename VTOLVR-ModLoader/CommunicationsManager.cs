@@ -27,6 +27,23 @@ namespace VTOLVR_ModLoader
             args = Environment.GetCommandLineArgs();
         }
 
+        public static void CheckCustomBranch()
+        {
+            if (CheckArgs("branch", out string line))
+            {
+                Program.branch = line;
+            }
+        }
+        public static void CheckCustomURL()
+        {
+            if (CheckArgs("url", out string line))
+            {
+                line = line.Replace("url=", string.Empty);
+                Program.url = line;
+                MessageBox.Show(Program.url, "Set URL to");
+            }
+        }
+
         public static void CheckURI()
         {
             if (CheckArgs("vtolvrml", out string line))

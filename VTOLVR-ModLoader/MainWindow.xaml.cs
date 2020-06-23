@@ -70,12 +70,13 @@ namespace VTOLVR_ModLoader
 
         #region Startup
         public MainWindow()
-        { 
+        {
             _instance = this;
             Startup.RunStartUp();
             Program.SetupAfterUI();
-
+            
             InitializeComponent();
+            
         }
         public void CreatePages()
         {

@@ -28,7 +28,7 @@ namespace VTOLVR_ModLoader.Views
                 WebClient client = new WebClient();
                 client.Headers.Add("user-agent", "VTOL VR Mod Loader");
                 client.DownloadStringCompleted += NewsDone;
-                client.DownloadStringAsync(new Uri(Program.url + Program.apiURL + modLoaderURL + Program.jsonFormat  + (page == 0? "" : Program.pageFormat + page)));
+                client.DownloadStringAsync(new Uri(Program.url + Program.apiURL + modLoaderURL + Program.jsonFormat  + (page == 0? "" : Program.pageFormat + page))); //+ (Program.branch != string.Empty? "?" + Program.branch : string.Empty)
             }
             else
             {

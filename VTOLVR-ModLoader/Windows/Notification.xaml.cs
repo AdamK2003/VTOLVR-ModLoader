@@ -23,13 +23,15 @@ namespace VTOLVR_ModLoader.Windows
     {
         public enum Results { None, Ok,No,Yes,Cancel}
         public enum Buttons { None, Ok, NoYes, OkCancel}
-        public Notification()
+        private Action callback;
+        public Notification(Action callback)
         {
+            this.callback = callback;
             InitializeComponent();
         }
-        public static void Show(string message, string title = "Message", Buttons buttons = Buttons.None)
+        public static void Show(string message, string title = "Message", Buttons buttons = Buttons.None, Action callback = null)
         {
-            Notification window = new Notification();
+            Notification window = new Notification(callback);
             window.textBlock.Text = message;
             window.Title = title;
             window.titleText.Text = " " + title;
@@ -39,11 +41,15 @@ namespace VTOLVR_ModLoader.Windows
         }
         private void ButtonClicked(object sender, RoutedEventArgs e)
         {
+            if (callback != null)
+                callback.Invoke();
             Close();
         }
 
         private void Quit(object sender, RoutedEventArgs e)
         {
+            if (callback != null)
+                callback.Invoke();
             Close();
         }
 

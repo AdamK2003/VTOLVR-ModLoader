@@ -23,7 +23,7 @@ namespace VTOLVR_ModLoader
         public const string skinsFolder = @"\skins";
         public const string injector = @"\injector.exe";
         public static string url = @"https://vtolvr-mods.com";
-        public const string debugURL = @"https://dev.vtolvr-mods.com";
+        public static string branch = string.Empty;
         public const string pageFormat = "&page=";
         public const string jsonFormat = "/?format=json";
         public const string apiURL = "/api";
@@ -36,6 +36,8 @@ namespace VTOLVR_ModLoader
         public async static void SetupAfterUI()
         {
             await WaitForUI();
+            CommunicationsManager.CheckCustomURL();
+            CommunicationsManager.CheckCustomBranch();
             MainWindow._instance.CreatePages();
             AutoStart();
             CommunicationsManager.CheckURI();
@@ -46,9 +48,6 @@ namespace VTOLVR_ModLoader
         {
             root = Directory.GetCurrentDirectory();
             vtolFolder = root.Replace("VTOLVR_ModLoader", "");
-#if DEBUG
-            url = debugURL;
-#endif
         }
 
         private async static Task WaitForUI()

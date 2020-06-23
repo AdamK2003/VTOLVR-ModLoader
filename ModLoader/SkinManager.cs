@@ -590,7 +590,7 @@ namespace ModLoader
 
         private string CheckForOldName(string path, Material material)
         {
-            if (material.name.Equals("mat_afighterExt1") || material.name.Equals("mat_afighterExt2_livery"))
+            if (material.name.Equals("mat_afighterExt1"))
             {
                 string newPath = path.Replace(".png", "_livery.png");
                 File.Move(path, newPath);

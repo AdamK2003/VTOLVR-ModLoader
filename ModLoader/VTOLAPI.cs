@@ -30,6 +30,10 @@ public class VTOLAPI : MonoBehaviour
     /// </summary>
     public static UnityAction<VTOLScenes> SceneLoaded;
     /// <summary>
+    /// This gets invoked when the mission as been reloaded by the player.
+    /// </summary>
+    public static UnityAction MissionReloaded;
+    /// <summary>
     /// The current scene which is active.
     /// </summary>
     public static VTOLScenes currentScene { get; private set; }
@@ -127,7 +131,7 @@ public class VTOLAPI : MonoBehaviour
     /// Returns the parent gameobject of what vehicle the player is currently flying, it will return null if nothing is found.
     /// </summary>
     /// <returns></returns>
-    public GameObject GetPlayersVehicleGameObject()
+    public static GameObject GetPlayersVehicleGameObject()
     {
         VTOLVehicles currentVehicle = GetPlayersVehicleEnum();
 

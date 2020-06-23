@@ -77,9 +77,6 @@ namespace VTOLVR_ModLoader
         public MainWindow()
         {
             SearchForProcess();
-#if DEBUG
-            url = "http://localhost";
-#endif
             InitializeComponent();
         }
         private void SearchForProcess()
@@ -145,13 +142,8 @@ namespace VTOLVR_ModLoader
             vtolFolder = root.Replace("VTOLVR_ModLoader", "");
 
             string argument = args[1].Remove(0, 11);
-            if (argument.Contains("files"))
-            {
-                uriDownload = argument;
-                uriSet = true;
-            }
-            else
-                MessageBox.Show(argument, "URI Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            uriDownload = argument;
+            uriSet = true;
         }
 
         private void CheckBaseFolder()
@@ -224,6 +216,7 @@ namespace VTOLVR_ModLoader
             if (CheckForInternet())
             {
                 client = new WebClient();
+                client.Headers.Add("user-agent", "VTOL VR Mod Loader");
                 client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(UpdatesProgress);
                 client.DownloadFileCompleted += new AsyncCompletedEventHandler(UpdatesDone);
                 client.DownloadFileAsync(new Uri(url + updatesURL), root + updatesFileTemp);
@@ -599,8 +592,9 @@ namespace VTOLVR_ModLoader
             if (uriDownload.Equals(string.Empty) || uriDownload.Split('/').Length < 4)
                 return;
 
-            uriFileName = uriDownload.Split('/')[3];
-            bool isMod = uriDownload.Contains("mods");
+            string[] split = uriDownload.Split('/');
+            uriFileName = split[3];
+            bool isMod = split[0].Contains("mod");
             client = new WebClient();
             client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(FileProgress);
             client.DownloadFileCompleted += new AsyncCompletedEventHandler(FileDone);

@@ -148,6 +148,15 @@ public class VTOLAPI : MonoBehaviour
         }
     }
     /// <summary>
+    /// Returns the parent gameobject of what vehicle the player is currently flying, it will return null if nothing is found.
+    /// </summary>
+    /// <returns></returns>
+    [Obsolete]
+    public GameObject GetPlayersVehicleGameObject(bool random = false)
+    {
+        return VTOLAPI.GetPlayersVehicleGameObject();
+    }
+    /// <summary>
     /// Returns which vehicle the player is using in a Enum.
     /// </summary>
     /// <returns></returns>

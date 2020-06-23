@@ -25,7 +25,7 @@ namespace VTOLVR_ModLoader
         private static string updatesFile = @"\updates.xml";
         private static string updatesFileTemp = @"\updates_TEMP.xml";
         private static string updatesURL = @"/files/updates.xml";
-        private string url = @"https://new.vtolvr-mods.com";
+        private string url = @"https://vtolvr-mods.com";
         public static string root;
         public static string vtolFolder;
 
@@ -142,13 +142,8 @@ namespace VTOLVR_ModLoader
             vtolFolder = root.Replace("VTOLVR_ModLoader", "");
 
             string argument = args[1].Remove(0, 11);
-            if (argument.Contains("files"))
-            {
-                uriDownload = argument;
-                uriSet = true;
-            }
-            else
-                MessageBox.Show(argument, "URI Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            uriDownload = argument;
+            uriSet = true;
         }
 
         private void CheckBaseFolder()
@@ -597,8 +592,9 @@ namespace VTOLVR_ModLoader
             if (uriDownload.Equals(string.Empty) || uriDownload.Split('/').Length < 4)
                 return;
 
-            uriFileName = uriDownload.Split('/')[3];
-            bool isMod = uriDownload.Contains("mods");
+            string[] split = uriDownload.Split('/');
+            uriFileName = split[3];
+            bool isMod = split[0].Contains("mod");
             client = new WebClient();
             client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(FileProgress);
             client.DownloadFileCompleted += new AsyncCompletedEventHandler(FileDone);

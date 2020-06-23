@@ -46,41 +46,10 @@ namespace Updater
 
             
             Log($"Path = {path}\nvtolFolder = {vtolFolder}", false);
-#if DEBUG
-            //GenerateUpdatesXML();
-            url = "http://localhost";
-            Log("In Debug Mode");
-#endif
 
             InitializeComponent();
 
             FetchUpdatesData();
-        }
-
-        private void GenerateUpdatesXML()
-        {
-            updateData = new UpdateData();
-            updateData.Updates = new Update[]
-            {
-                new Update("2.1.0 Auto Updater","The auto updater has been improved", new Item[]
-                {
-                    new Item("/files/updates/210/WpfAnimatedGif.dll", "VTOLVR_ModLoader/WpfAnimatedGif.dll", "89974C6A9574F7EC7335648EC050E808", "WpfAnimatedGif"),
-                    new Item("/files/updates/210/VTOLVR-ModLoader.exe", "VTOLVR_ModLoader/VTOLVR-ModLoader.exe", "C67B67AE753CBBA879328759B88311EF", "VTOLVR-ModLoader"),
-                    new Item("/files/updates/210/SharpMonoInjector.dll","VTOLVR_ModLoader/SharpMonoInjector.dll","D5F8EF2CDC4323DDD7845C9B90E4C6FD","SharpMonoInjector"),
-                    new Item("/files/updates/210/ModLoader.dll", "VTOLVR_ModLoader/ModLoader.dll", "C064F7DCA4AA3A37B5E1B59FD8261554", "ModLoader"),
-                    new Item("/files/updates/210/injector.exe", "VTOLVR_ModLoader/injector.exe", "C0A17812234AAE6CD4365C67EC39A842", "injector"),
-                    new Item("/files/updates/210/discord-rpc.dll","VTOLVR_Data/Plugins/discord-rpc.dll", "5882C37B79BAE47A0D090006564EDB22", "discord-rpc"),
-                    new Item("/files/updates/210/0Harmony.dll","VTOLVR_Data/Managed/0Harmony.dll","E11A2FA00D46A40C485B41126CD7D1C8","0Harmony"),
-                    new Item("/files/updates/210/mscorlib.dll","VTOLVR_Data/Managed/mscorlib.dll","25411134436CD0724346F889ABED7E8A","mscorlib")
-                })
-            };
-
-            using (FileStream stream = new FileStream(path + @"\updates.xml", FileMode.Create))
-            {
-                XmlSerializer xml = new XmlSerializer(typeof(UpdateData));
-                xml.Serialize(stream, updateData);
-            }
-            
         }
 
         private void FetchUpdatesData()
@@ -132,11 +101,18 @@ namespace Updater
             client = new WebClient();
             client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(FileProgress);
             client.DownloadFileCompleted += new AsyncCompletedEventHandler(FileDone);
-
             items = new Queue<Item>(updateData.Updates[0].Files.Length);
             for (int i = 0; i < updateData.Updates[0].Files.Length; i++)
             {
+                
                 items.Enqueue(updateData.Updates[0].Files[i]);
+            }
+            for (int i = 0; i < updateData.Updates.Length; i++)
+            {
+                for (int f = 0; f < updateData.Updates[i].Files.Length; f++)
+                {
+                    Log(updateData.Updates[i].Files[f].FileName);
+                }
             }
 
             DownloadFiles();
@@ -161,13 +137,11 @@ namespace Updater
             }
 
             currentDownload = items.Dequeue();
-
             string currentHash = "";
             if (File.Exists(vtolFolder + currentDownload.FileLocation))
             {
                 currentHash = CalculateMD5(vtolFolder + currentDownload.FileLocation);
             }
-
             if (currentHash != currentDownload.FileHash.ToLower())
             {
                 Log($"Starting download for {currentDownload.FileName} from {url + currentDownload.URLDownload}");

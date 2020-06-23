@@ -100,7 +100,7 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log("Error:\n" + e.Error.Message);
             }
             updateButton.IsEnabled = true;
-            MainWindow._instance.uploadModButton.IsEnabled = tokenValid;
+            //MainWindow._instance.uploadModButton.IsEnabled = tokenValid;
         }
 
         private void NoInternet()
@@ -186,7 +186,7 @@ namespace VTOLVR_ModLoader.Views
             projectsFolder = folder;
             projectsText.Text = "My Projects folder:\n" + projectsFolder;
             projectsButton.Content = "Change";
-
+            MainWindow._instance.uploadModButton.IsEnabled = true;
             SaveSettings();
         }
     }

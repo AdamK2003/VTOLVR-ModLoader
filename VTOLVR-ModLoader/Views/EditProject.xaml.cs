@@ -67,15 +67,21 @@ namespace VTOLVR_ModLoader.Views
             }
             if (_currentJson[ProjectManager.jPImage] != null)
             {
-                previewImage.Source = new BitmapImage(
-                    new Uri(_currentPath + @"\" + _currentJson[ProjectManager.jPImage].ToString()));
-                previewImageText.Visibility = Visibility.Hidden;
+                if (File.Exists(_currentPath + @"\Builds\" + _currentJson[ProjectManager.jPImage].ToString()))
+                {
+                    previewImage.Source = new BitmapImage(
+                    new Uri(_currentPath + @"\Builds\" + _currentJson[ProjectManager.jPImage].ToString()));
+                    previewImageText.Visibility = Visibility.Hidden;
+                }
             }
             if (_currentJson[ProjectManager.jWImage] != null)
             {
-                webPageImage.Source = new BitmapImage(
+                if (File.Exists(_currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString()))
+                {
+                    webPageImage.Source = new BitmapImage(
                     new Uri(_currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString()));
-                webPageImageText.Visibility = Visibility.Hidden;
+                    webPageImageText.Visibility = Visibility.Hidden;
+                }
             }
 
             if (_isMod)
@@ -169,10 +175,10 @@ namespace VTOLVR_ModLoader.Views
             if (!PreviewImageChecks(filePath))
                 return;
 
-            if (File.Exists(_currentPath + @"\preview.png"))
-                File.Delete(_currentPath + @"\preview.png");
-            File.Copy(filePath, _currentPath + @"\preview.png");
-            filePath = _currentPath + @"\preview.png";
+            if (File.Exists(_currentPath + @"\Builds\preview.png"))
+                File.Delete(_currentPath + @"\Builds\preview.png");
+            File.Copy(filePath, _currentPath + @"\Builds\preview.png");
+            filePath = _currentPath + @"\Builds\preview.png";
 
             if (_currentJson[ProjectManager.jPImage] != null)
                 _currentJson[ProjectManager.jPImage] = "preview.png";

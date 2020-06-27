@@ -141,26 +141,6 @@ namespace VTOLVR_ModLoader.Views
                 return;
             string zipPath = ZipCurrentProject();
 
-            //JObject json = new JObject();
-            //json.Add("version", _currentJson[ProjectManager.jVersion].ToString());
-            //json.Add("name", _currentJson[ProjectManager.jName].ToString());
-            //json.Add("tagline", _currentJson[ProjectManager.jTagline].ToString());
-            //json.Add("description", _currentJson[ProjectManager.jDescription].ToString());
-            //json.Add("unlisted", false);
-            //if (_isMod)
-            //    json.Add("repository", _currentJson[ProjectManager.jSource].ToString());
-            //else
-            //    json.Add("repository", "");
-            //json.Add("header_image", Encoding.Default.GetString(File.ReadAllBytes(_currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString())));
-            //json.Add("thumbnail", Encoding.Default.GetString(File.ReadAllBytes(_currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString())));
-            //json.Add("user_uploaded_file", Encoding.Default.GetString(File.ReadAllBytes(zipPath)));
-
-            //json.Add("header_image", null);
-            //json.Add("thumbnail", null);
-            //json.Add("user_uploaded_file", null);
-
-            //Clipboard.SetText(json.ToString());
-
             HttpForm form = new HttpForm(Program.url + Program.apiURL + Program.modsURL + @"\");
             form.SetToken(Settings.Token);
             form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
@@ -175,7 +155,7 @@ namespace VTOLVR_ModLoader.Views
 
             form.AttachFile("header_image", _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
             form.AttachFile("thumbnail", _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
-            form.AttachFile("user_uploaded_file", _currentPath + $"\\{_currentJson[ProjectManager.jName]}.zip");
+            form.AttachFile("user_uploaded_file", zipPath);
 
             HttpWebResponse responce = form.Submit();
             

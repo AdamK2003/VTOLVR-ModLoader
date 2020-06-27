@@ -16,7 +16,7 @@ public enum VTOLVehicles { None, AV42C, FA26B, F45A }
 /// <summary>
 /// All the different scenes in order.
 /// </summary>
-public enum VTOLScenes { SplashScene, SamplerScene, ReadyRoom, VehicleConfiguration, LoadingScene, MeshTerrain, OpenWater, Akutan, VTEditMenu, VTEditLoadingScene, VTMapEditMenu, CustomMapBase, CommRadioTest, ShaderVariantsScene };
+public enum VTOLScenes { SplashScene, SamplerScene, ReadyRoom, VehicleConfiguration, LoadingScene, MeshTerrain, OpenWater, Akutan, VTEditMenu, VTEditLoadingScene, VTMapEditMenu, CustomMapBase, CommRadioTest, ShaderVariantsScene, CustomMapBase_OverCloud };
 public class VTOLAPI : MonoBehaviour
 {
     public static VTOLAPI instance { get; private set; }
@@ -89,6 +89,9 @@ public class VTOLAPI : MonoBehaviour
                 break;
             case 13:
                 CallSceneLoaded(VTOLScenes.ShaderVariantsScene);
+                break;
+            case 14:
+                StartCoroutine(WaitForScenario(VTOLScenes.CustomMapBase_OverCloud));
                 break;
         }
     }

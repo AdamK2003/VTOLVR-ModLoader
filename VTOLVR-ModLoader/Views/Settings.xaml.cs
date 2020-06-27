@@ -34,7 +34,7 @@ namespace VTOLVR_ModLoader.Views
         private Action<bool, string> callBack;
 
         //Settings
-        private string token;
+        public static string Token { get; private set; }
         public static string projectsFolder { get; private set; }
         public Settings()
         {
@@ -52,7 +52,7 @@ namespace VTOLVR_ModLoader.Views
         }
         public void SetUserToken(string token)
         {
-            this.token = token;
+            Token = token;
             tokenBox.Password = token;
             SaveSettings();
             TestToken();
@@ -73,7 +73,7 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log("Testing new token");
                 WebClient client = new WebClient();
                 client.Headers.Add("user-agent", "VTOL VR Mod Loader");
-                client.Headers.Add("Authorization", "Token " + token);
+                client.Headers.Add("Authorization", "Token " + Token);
                 client.DownloadStringCompleted += TestTokenDone;
                 client.DownloadStringAsync(new Uri(Program.url + Program.apiURL + userURL + Program.jsonFormat));                
             }
@@ -113,8 +113,8 @@ namespace VTOLVR_ModLoader.Views
         private void SaveSettings()
         {
             JObject jObject = new JObject();
-            if (!string.IsNullOrEmpty(token))
-                jObject.Add("token", token);
+            if (!string.IsNullOrEmpty(Token))
+                jObject.Add("token", Token);
 
             if (!string.IsNullOrEmpty(projectsFolder))
                 jObject.Add("projectsFolder", projectsFolder);
@@ -149,8 +149,8 @@ namespace VTOLVR_ModLoader.Views
 
             if (json["token"] != null)
             {
-                token = json["token"].ToString();
-                tokenBox.Password = token;
+                Token = json["token"].ToString();
+                tokenBox.Password = Token;
             }
 
             if (json["projectsFolder"] != null)

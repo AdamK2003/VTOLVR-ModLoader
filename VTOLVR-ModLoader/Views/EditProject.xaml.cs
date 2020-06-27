@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,6 +62,10 @@ namespace VTOLVR_ModLoader.Views
             if (_currentJson[ProjectManager.jName] != null)
             {
                 projectName.Text = _currentJson[ProjectManager.jName].ToString();
+            }
+            if (_currentJson[ProjectManager.jTagline] != null)
+            {
+                tagline.Text = _currentJson[ProjectManager.jTagline].ToString();
             }
             if (_currentJson[ProjectManager.jDescription] != null)
             {
@@ -134,15 +139,67 @@ namespace VTOLVR_ModLoader.Views
         {
             if (_isMod && !AssemblyChecks())
                 return;
-            ZipCurrentProject();
+            string zipPath = ZipCurrentProject();
 
+            //JObject json = new JObject();
+            //json.Add("version", _currentJson[ProjectManager.jVersion].ToString());
+            //json.Add("name", _currentJson[ProjectManager.jName].ToString());
+            //json.Add("tagline", _currentJson[ProjectManager.jTagline].ToString());
+            //json.Add("description", _currentJson[ProjectManager.jDescription].ToString());
+            //json.Add("unlisted", false);
+            //if (_isMod)
+            //    json.Add("repository", _currentJson[ProjectManager.jSource].ToString());
+            //else
+            //    json.Add("repository", "");
+            //json.Add("header_image", Encoding.Default.GetString(File.ReadAllBytes(_currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString())));
+            //json.Add("thumbnail", Encoding.Default.GetString(File.ReadAllBytes(_currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString())));
+            //json.Add("user_uploaded_file", Encoding.Default.GetString(File.ReadAllBytes(zipPath)));
 
+            //json.Add("header_image", null);
+            //json.Add("thumbnail", null);
+            //json.Add("user_uploaded_file", null);
+
+            //Clipboard.SetText(json.ToString());
+
+            HttpForm form = new HttpForm(Program.url + Program.apiURL + Program.modsURL + @"\");
+            form.SetToken(Settings.Token);
+            form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
+            form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
+            form.SetValue("tagline", _currentJson[ProjectManager.jTagline].ToString());
+            form.SetValue("description", _currentJson[ProjectManager.jDescription].ToString());
+            form.SetValue("unlisted", "false");
+            if (_isMod)
+                form.SetValue("repository", _currentJson[ProjectManager.jSource].ToString());
+            else
+                form.SetValue("repository", "");
+
+            form.AttachFile("header_image", _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
+            form.AttachFile("thumbnail", _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
+            form.AttachFile("user_uploaded_file", _currentPath + $"\\{_currentJson[ProjectManager.jName]}.zip");
+
+            HttpWebResponse responce = form.Submit();
+            
+        }
+
+        private void UploadDataComplete(object sender, UploadValuesCompletedEventArgs e)
+        {
+            if (!e.Cancelled && e.Error == null)
+            {
+                Notification.Show(e.Result.Length + "");
+            }
+            else
+            {
+                Console.Log("Error:\n" + e.Error.ToString());
+                Notification.Show(e.Error.ToString());
+            }
         }
 
         private void SaveProject()
         {
             _currentJson[ProjectManager.jName] = projectName.Text;
+            _currentJson[ProjectManager.jTagline] = tagline.Text;
             _currentJson[ProjectManager.jDescription] = projectDescription.Text;
+            _currentJson[ProjectManager.jVersion] = projectVersion.Text;
             if (_isMod)
                 _currentJson[ProjectManager.jSource] = modSource.Text;
             _currentJson[ProjectManager.jEdit] = DateTime.Now.Ticks;

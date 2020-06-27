@@ -12,6 +12,8 @@
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="30"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="200"/>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
@@ -28,20 +30,24 @@
                      Background="Transparent" Foreground="White" TextWrapping="Wrap" MaxLength="40" 
                      TextChanged="ProjectNameChanged"/>
 
-            <TextBlock Grid.Row="2" Text="Project Description:" Foreground="LightGray" FontSize="20"/>
-            <TextBox Grid.Row="3" x:Name="projectDescription" Text="Your Projects Description" FontSize="20" 
+            <TextBlock Grid.Row="2" Text="Tagline:" Foreground="LightGray" FontSize="20"/>
+            <TextBox Grid.Row="3" x:Name="tagline" Text="The tagline is displayed on the mod listing. Provide a brief summary of what it does."
+                     FontSize="20" Background="Transparent" Foreground="White" TextWrapping="Wrap" MaxLength="100"/>
+
+            <TextBlock Grid.Row="4" Text="Project Description:" Foreground="LightGray" FontSize="20"/>
+            <TextBox Grid.Row="5" x:Name="projectDescription" Text="Your Projects Description" FontSize="20" 
                      Background="Transparent" Foreground="White" TextWrapping="Wrap"/>
 
-            <TextBlock Grid.Row="4" Text="Product Version:" Foreground="LightGray" FontSize="20"/>
-            <TextBox Grid.Row="5" x:Name="projectVersion" Text="1.0.0" FontSize="20" 
+            <TextBlock Grid.Row="6" Text="Product Version:" Foreground="LightGray" FontSize="20"/>
+            <TextBox Grid.Row="7" x:Name="projectVersion" Text="1.0.0" FontSize="20" 
                      Background="Transparent" Foreground="White" TextWrapping="Wrap"/>
             
-            <TextBlock Grid.Row="6" Text="Source Code:" Foreground="LightGray" FontSize="20" Visibility="Hidden"
+            <TextBlock Grid.Row="8" Text="Source Code:" Foreground="LightGray" FontSize="20" Visibility="Hidden"
                        x:Name="sourceText" Grid.RowSpan="2"/>
-            <TextBox Grid.Row="7" x:Name="modSource" Foreground="White" Background="Transparent" Visibility="Hidden"/>
+            <TextBox Grid.Row="9" x:Name="modSource" Foreground="White" Background="Transparent" Visibility="Hidden"/>
             
-            <TextBlock Grid.Row="8" Text="Images:" Foreground="LightGray" FontSize="20"/>
-            <Grid Grid.Row="9">
+            <TextBlock Grid.Row="10" Text="Images:" Foreground="LightGray" FontSize="20"/>
+            <Grid Grid.Row="11">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>

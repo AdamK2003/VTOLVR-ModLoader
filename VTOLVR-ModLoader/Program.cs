@@ -27,6 +27,7 @@ namespace VTOLVR_ModLoader
         public const string pageFormat = "&page=";
         public const string jsonFormat = "/?format=json";
         public const string apiURL = "/api";
+        public const string modsURL = "/mods";
 
         public static string root;
         public static string vtolFolder;

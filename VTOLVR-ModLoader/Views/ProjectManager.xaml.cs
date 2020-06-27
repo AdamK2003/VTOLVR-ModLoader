@@ -26,6 +26,8 @@ namespace VTOLVR_ModLoader.Views
         public const string skinsFolder = @"\My Skins";
         public const string jName = "Name";
         public const string jDescription = "Description";
+        public const string jTagline = "Tagline";
+        public const string jVersion = "Version";
         public const string jDll = "Dll File";
         public const string jEdit = "Last Edit";
         public const string jSource = "Source";

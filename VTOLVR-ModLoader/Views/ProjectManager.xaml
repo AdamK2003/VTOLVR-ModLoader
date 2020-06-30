@@ -42,26 +42,38 @@
                     <ItemsControl x:Name="folders" Margin="10,0,10,0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button HorizontalContentAlignment="Stretch" Style="{StaticResource transparentButton}"
-                                        Tag="{Binding Path}" Click="EditProject">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="300"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="100"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
 
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" 
-                               Foreground="White" FontSize="20"/>
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Path}" 
-                               Foreground="Gray" FontSize="10"/>
-                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding LastEdit}" 
-                               Foreground="Gray" FontSize="10" TextAlignment="Right"/>
-                                    </Grid>
-                                </Button>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" 
+                                                Foreground="White" FontSize="20"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding LastEdit}" 
+                                                Foreground="Gray" FontSize="10"/>
+
+                                    <Button Style="{StaticResource transparentButton}"
+                                            Tag="{Binding Path}" Click="OpenProject" 
+                                            Content="Open" Grid.Column="1" Grid.Row="0"
+                                            Grid.RowSpan="2" Foreground="White" />
+                                    
+                                    <Button Style="{StaticResource transparentButton}"
+                                            Tag="{Binding Path}" Click="EditProject" 
+                                            Content="Edit" Grid.Column="2" Grid.Row="0"
+                                            Grid.RowSpan="2" Foreground="White" />
+                                    
+                                    <Button Style="{StaticResource transparentButton}"
+                                            Tag="{Binding Path}" Click="UpdateProject" 
+                                            Content="Update" Grid.Column="3" Grid.Row="0"
+                                            Grid.RowSpan="2" Foreground="White" />
+                                </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

@@ -198,5 +198,15 @@ namespace VTOLVR_ModLoader.Views
             Button button = (Button)sender;
             MainWindow.OpenPage(new EditProject(button.Tag.ToString()));
         }
+
+        private void OpenProject(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void UpdateProject(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

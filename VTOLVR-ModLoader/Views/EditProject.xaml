@@ -86,17 +86,8 @@
                         Content="Select"/>
             </Grid>
             
-            <Grid x:Name="buttonsGrid" Grid.Row="90">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0" x:Name="saveButton" Click="Save" Style="{StaticResource darkButton}" 
+            <Button Grid.Row="99" x:Name="saveButton" Click="Save" Style="{StaticResource darkButton}" 
                         Content="Save"/>
-                <Button Grid.Column="1" x:Name="uploadButton" Click="Upload" Style="{StaticResource darkButton}"
-                        Content="Save and Upload"/>
-            </Grid>
             
         </Grid>
     </ScrollViewer>

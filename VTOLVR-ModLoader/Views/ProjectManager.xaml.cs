@@ -34,6 +34,7 @@ namespace VTOLVR_ModLoader.Views
         public const string jPImage = "Preview Image";
         public const string jWImage = "Web Preview Image";
         public const string jDeps = "Dependencies";
+        public const string jID = "Public ID";
         public ProjectManager()
         {
             InitializeComponent();
@@ -206,7 +207,8 @@ namespace VTOLVR_ModLoader.Views
 
         private void UpdateProject(object sender, RoutedEventArgs e)
         {
-
+            Button button = (Button)sender;
+            MainWindow.OpenPage(new NewVersion(button.Tag.ToString()));
         }
     }
 }

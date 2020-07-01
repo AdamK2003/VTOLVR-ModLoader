@@ -126,40 +126,7 @@ namespace VTOLVR_ModLoader.Views
         {
             UpdateDependencies();
             SaveProject();
-        }
-
-        private void Upload(object sender, RoutedEventArgs e)
-        {
-            UpdateDependencies();
-            SaveProject();
-            UploadProject();
-        }
-
-        private void UploadProject()
-        {
-            if (_isMod && !AssemblyChecks())
-                return;
-            string zipPath = ZipCurrentProject();
-
-            HttpForm form = new HttpForm(Program.url + Program.apiURL + Program.modsURL + @"\");
-            form.SetToken(Settings.Token);
-            form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
-            form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
-            form.SetValue("tagline", _currentJson[ProjectManager.jTagline].ToString());
-            form.SetValue("description", _currentJson[ProjectManager.jDescription].ToString());
-            form.SetValue("unlisted", "false");
-            if (_isMod)
-                form.SetValue("repository", _currentJson[ProjectManager.jSource].ToString());
-            else
-                form.SetValue("repository", "");
-
-            form.AttachFile("header_image", _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
-            form.AttachFile("thumbnail", _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
-            form.AttachFile("user_uploaded_file", zipPath);
-
-            HttpWebResponse responce = form.Submit();
-            
-        }
+        }        
 
         private void UploadDataComplete(object sender, UploadValuesCompletedEventArgs e)
         {
@@ -285,52 +252,7 @@ namespace VTOLVR_ModLoader.Views
             return true;
         }
 
-        private bool AssemblyChecks()
-        {
-            if (!_isMod)
-            {
-                Console.Log("Somehow Assemblychecks ran in a skin project");
-                return false;
-            }
-
-            if (_currentJson[ProjectManager.jDll] == null)
-            {
-                Notification.Show("info.json seems to be missing the dll file name.\nMod was not uploaded.", "Missing Item");
-                return false;
-            }
-
-            if (!File.Exists(_currentPath + @"\Builds\" + _currentJson[ProjectManager.jDll].ToString()))
-            {
-                Notification.Show($"Can't find {_currentJson[ProjectManager.jDll]}", $"Missing {_currentJson[ProjectManager.jDll]}");
-                return false;
-            }
-
-            IEnumerable<Type> source =
-                from t in Assembly.Load(File.ReadAllBytes(_currentPath + @"\Builds\" + _currentJson[ProjectManager.jDll].ToString())).GetTypes()
-                where t.IsSubclassOf(typeof(VTOLMOD))
-                select t;
-
-            if (source == null)
-            {
-                Notification.Show($"It seems there is no class deriving from VTOLMOD in {_currentJson[ProjectManager.jDll]}",
-                    "Missing VTOLMOD class");
-                return false;
-            }
-            if (source.Count() > 1)
-            {
-                Notification.Show($"It seems there is two or more classes deriving from VTOLMOD in {_currentJson[ProjectManager.jDll]}",
-                    "Too many VTOLMOD classes");
-                return false;
-            }
-            else if (source.Count() == 0)
-            {
-                Notification.Show($"It seems there is no classes deriving from VTOLMOD in {_currentJson[ProjectManager.jDll]}",
-                    "No VTOLMOD classes");
-                return false;
-            }
-
-            return true;
-        }
+        
 
         private void UpdateDependencies()
         {
@@ -370,46 +292,6 @@ namespace VTOLVR_ModLoader.Views
             {
                 _currentJson.Add(new JProperty(ProjectManager.jDeps, JArray.FromObject(newDependencies.ToArray())));
             }
-        }
-
-        private string ZipCurrentProject()
-        {
-            if (File.Exists($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip"))
-                File.Delete($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip");
-            ZipArchive zip = ZipFile.Open($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip", ZipArchiveMode.Update);
-            
-            if (_isMod)
-            {
-                DirectoryInfo buildFolder = new DirectoryInfo(_currentPath + @"\Builds");
-                FileInfo[] files = buildFolder.GetFiles();
-                
-                for (int i = 0; i < files.Length; i++)
-                {
-                    zip.CreateEntryFromFile(files[i].FullName, files[i].Name);
-                }
-
-                if (_currentJson[ProjectManager.jDeps] != null)
-                {
-                    JArray array = _currentJson[ProjectManager.jDeps] as JArray;
-                    for (int i = 0; i < array.Count; i++)
-                    {
-                        zip.CreateEntryFromFile(_currentPath + @"\Dependencies\" + array[i].ToString(), @"Dependencies\" + array[i].ToString()); ;
-                    }
-                }
-            }
-            else
-            {
-                DirectoryInfo folder = new DirectoryInfo(_currentPath);
-                FileInfo[] files = folder.GetFiles("*.png");
-                for (int i = 0; i < files.Length; i++)
-                {
-                    if (!files[i].Name.Contains("web_preview.png"))
-                        zip.CreateEntryFromFile(files[i].FullName, files[i].Name);
-                }
-                zip.CreateEntryFromFile($"{_currentPath}\\info.json", "info.json");
-            }
-            zip.Dispose();
-            return $"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip";
         }
     }
 }

@@ -35,6 +35,8 @@ namespace VTOLVR_ModLoader.Views
         public const string jWImage = "Web Preview Image";
         public const string jDeps = "Dependencies";
         public const string jID = "Public ID";
+        public const string jPublic = "Is Public";
+        public const string jUnlisted = "Unlisted";
         public ProjectManager()
         {
             InitializeComponent();

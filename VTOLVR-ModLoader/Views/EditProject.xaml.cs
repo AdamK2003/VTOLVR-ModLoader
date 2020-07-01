@@ -252,7 +252,17 @@ namespace VTOLVR_ModLoader.Views
             return true;
         }
 
-        
+        private void UnlistedChanged(object sender, RoutedEventArgs e)
+        {
+            if (_currentJson != null)
+                _currentJson[ProjectManager.jUnlisted] = ((CheckBox)e.Source).IsChecked.ToString();
+        }
+
+        private void PublicChanged(object sender, RoutedEventArgs e)
+        {
+            if(_currentJson != null)
+                _currentJson[ProjectManager.jPublic] = ((CheckBox)e.Source).IsChecked.ToString();
+        }
 
         private void UpdateDependencies()
         {

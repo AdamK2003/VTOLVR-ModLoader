@@ -101,7 +101,8 @@ namespace VTOLVR_ModLoader.Views
             form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
             form.SetValue("tagline", _currentJson[ProjectManager.jTagline].ToString());
             form.SetValue("description", _currentJson[ProjectManager.jDescription].ToString());
-            form.SetValue("unlisted", "false");
+            form.SetValue("unlisted", _currentJson[ProjectManager.jUnlisted].ToString());
+            form.SetValue("is_public", _currentJson[ProjectManager.jPublic].ToString());
             if (_isMod)
                 form.SetValue("repository", _currentJson[ProjectManager.jSource].ToString());
             else

@@ -61,17 +61,17 @@
 
                                     <Button Style="{StaticResource transparentButton}"
                                             Tag="{Binding Path}" Click="OpenProject" 
-                                            Content="Open" Grid.Column="1" Grid.Row="0"
+                                            Content="Open Project" Grid.Column="1" Grid.Row="0"
                                             Grid.RowSpan="2" Foreground="White" />
                                     
                                     <Button Style="{StaticResource transparentButton}"
                                             Tag="{Binding Path}" Click="EditProject" 
-                                            Content="Edit" Grid.Column="2" Grid.Row="0"
+                                            Content="Edit Info" Grid.Column="2" Grid.Row="0"
                                             Grid.RowSpan="2" Foreground="White" />
                                     
                                     <Button Style="{StaticResource transparentButton}"
                                             Tag="{Binding Path}" Click="UpdateProject" 
-                                            Content="Update" Grid.Column="3" Grid.Row="0"
+                                            Content="New Version" Grid.Column="3" Grid.Row="0"
                                             Grid.RowSpan="2" Foreground="White" />
                                 </Grid>
                             </DataTemplate>

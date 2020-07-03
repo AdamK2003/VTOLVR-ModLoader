@@ -95,7 +95,7 @@ namespace VTOLVR_ModLoader.Views
                 return;
             string zipPath = ZipCurrentProject();
 
-            HttpForm form = new HttpForm(Program.url + Program.apiURL + Program.modsURL + @"\");
+            HttpHelper form = new HttpHelper(Program.url + Program.apiURL + Program.modsURL + @"\");
             form.SetToken(Settings.Token);
             form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
             form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
@@ -108,11 +108,11 @@ namespace VTOLVR_ModLoader.Views
             else
                 form.SetValue("repository", "");
 
-            form.AttachFile("header_image", _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
-            form.AttachFile("thumbnail", _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
-            form.AttachFile("user_uploaded_file", zipPath);
+            form.AttachFile("header_image", _currentJson[ProjectManager.jWImage].ToString(), _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
+            form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
+            form.AttachFile("user_uploaded_file","test.zip", zipPath);
 
-            HttpWebResponse responce = form.Submit();
+            form.SendDataAsync();
         }
         private void UpdateProject()
         {
@@ -216,6 +216,13 @@ namespace VTOLVR_ModLoader.Views
                 return;
             }
             Console.Log("Saved Project!");
+        }
+        private void UploadComplete(IAsyncResult result)
+        {
+            using (WebResponse response = (result.AsyncState as HttpWebRequest).EndGetResponse(result))
+            {
+                Notification.Show(response.ContentType);
+            }
         }
     }
 }

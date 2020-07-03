@@ -51,12 +51,11 @@ namespace VTOLVR_ModLoader.Classes
         {
             _values[field] = value;
         }
-
-        public HttpWebResponse Submit()
+        public HttpWebRequest SubmitAsync(Action<IAsyncResult> action)
         {
-            return UploadFiles(_files, _values);
+            return UploadFiles(_files, _values, action);
         }
-        private HttpWebResponse UploadFiles(Dictionary<string, string> files, Dictionary<string, string> otherValues)
+        private HttpWebRequest UploadFiles(Dictionary<string, string> files, Dictionary<string, string> otherValues, Action<IAsyncResult> action)
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(_url);
 
@@ -64,6 +63,7 @@ namespace VTOLVR_ModLoader.Classes
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
             req.AllowAutoRedirect = false;
             req.UserAgent = UserAgent;
+            req.Proxy = null;
             if (!_token.Equals(string.Empty))
                 req.Headers.Add("Authorization", "Token " + _token);
 
@@ -133,10 +133,8 @@ namespace VTOLVR_ModLoader.Classes
 
                     s.Write(_footer, 0, _footer.Length);
                 }
-
-                var res = (HttpWebResponse)req.GetResponse();
-
-                return res;
+                req.BeginGetResponse(new AsyncCallback(action), null);
+                return req;
             }
             catch (Exception ex)
             {
@@ -145,7 +143,8 @@ namespace VTOLVR_ModLoader.Classes
                     if (part.Data != null)
                         part.Data.Dispose();
 
-                return (HttpWebResponse)req.GetResponse();
+                req.BeginGetResponse(new AsyncCallback(action), null);
+                return req;
             }
         }
 

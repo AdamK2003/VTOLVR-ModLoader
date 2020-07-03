@@ -93,10 +93,10 @@
                 </Grid.ColumnDefinitions>
 
                 <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"
-                          Content="Is Public" Foreground="White"  Checked="PublicChanged"
+                          Content="Is Public" Foreground="White"  Checked="PublicChanged" x:Name="isPublic"
                           ToolTip="Set if your mod should be visible on the mods list. This should be used if you want to do private testing."/>
                 <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="False" VerticalAlignment="Center" 
-                          Content="Is Unlisted" Foreground="White" Checked="UnlistedChanged"
+                          Content="Is Unlisted" Foreground="White" Checked="UnlistedChanged" x:Name="unlisted"
                           ToolTip="Set if your mod should be hidden from the mods list. This should be used if you want to do private testing, your mod must still be marked public to be accessible. Anyone with a link would be able to access your mod."/>
             </Grid>
             <Button Grid.Row="99" x:Name="saveButton" Click="Save" Style="{StaticResource darkButton}" 

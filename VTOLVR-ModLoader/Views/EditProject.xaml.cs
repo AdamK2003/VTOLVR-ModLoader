@@ -150,7 +150,8 @@ namespace VTOLVR_ModLoader.Views
             if (_isMod)
                 _currentJson[ProjectManager.jSource] = modSource.Text;
             _currentJson[ProjectManager.jEdit] = DateTime.Now.Ticks;
-
+            _currentJson[ProjectManager.jPublic] = isPublic.IsChecked.ToString();
+            _currentJson[ProjectManager.jUnlisted] = unlisted.IsChecked.ToString();
             try
             {
                 File.WriteAllText(_currentPath + (_isMod ? @"\Builds\info.json" : @"\info.json"), _currentJson.ToString());
@@ -255,13 +256,13 @@ namespace VTOLVR_ModLoader.Views
         private void UnlistedChanged(object sender, RoutedEventArgs e)
         {
             if (_currentJson != null)
-                _currentJson[ProjectManager.jUnlisted] = ((CheckBox)e.Source).IsChecked.ToString();
+                _currentJson[ProjectManager.jUnlisted] = unlisted.IsChecked.ToString();
         }
 
         private void PublicChanged(object sender, RoutedEventArgs e)
         {
             if(_currentJson != null)
-                _currentJson[ProjectManager.jPublic] = ((CheckBox)e.Source).IsChecked.ToString();
+                _currentJson[ProjectManager.jPublic] = isPublic.IsChecked.ToString();
         }
 
         private void UpdateDependencies()

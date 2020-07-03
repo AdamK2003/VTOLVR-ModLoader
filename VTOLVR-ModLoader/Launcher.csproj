@@ -69,6 +69,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -90,6 +91,7 @@
     </ApplicationDefinition>
     <Compile Include="Classes\ExtensionMethods.cs" />
     <Compile Include="Classes\HttpForm.cs" />
+    <Compile Include="Classes\HttpHelper.cs" />
     <Compile Include="Classes\Pilot.cs" />
     <Compile Include="Classes\Scenario.cs" />
     <Compile Include="Classes\Updates.cs" />

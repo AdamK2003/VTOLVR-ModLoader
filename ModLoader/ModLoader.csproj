@@ -37,13 +37,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\dll\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\Stupid Dependencies\Harmony\v 1.2 Release\net45\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\dll\Assembly-CSharp.dll</HintPath>
+      <HintPath>D:\Vidjagames\steamapps\common\VTOL VR\VTOLVR_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\dll\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>D:\Vidjagames\steamapps\common\VTOL VR\VTOLVR_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>..\dll\netstandard.dll</HintPath>
@@ -58,29 +58,29 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>..\dll\UnityEngine.dll</HintPath>
+      <HintPath>D:\Vidjagames\steamapps\common\VTOL VR\VTOLVR_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\dll\UnityEngine.AssetBundleModule.dll</HintPath>
+      <HintPath>D:\Vidjagames\steamapps\common\VTOL VR\VTOLVR_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\dll\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>D:\Vidjagames\steamapps\common\VTOL VR\VTOLVR_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CrashReportingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\dll\UnityEngine.CrashReportingModule.dll</HintPath>
+      <HintPath>D:\Vidjagames\steamapps\common\VTOL VR\VTOLVR_Data\Managed\UnityEngine.CrashReportingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\dll\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>D:\Vidjagames\steamapps\common\VTOL VR\VTOLVR_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\dll\UnityEngine.UI.dll</HintPath>
+      <HintPath>D:\Vidjagames\steamapps\common\VTOL VR\VTOLVR_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestWWWModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\dll\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+      <HintPath>D:\Vidjagames\steamapps\common\VTOL VR\VTOLVR_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

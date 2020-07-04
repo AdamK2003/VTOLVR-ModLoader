@@ -96,7 +96,7 @@ namespace ModLoader
             if (MainScreen == null)
                 LogError("Main Screen was null");
 
-            Log("Spawning Keyboards");
+            Log("Spawning Keyboards"); 
             stringKeyboard = Instantiate(assetBundle.LoadAsset<GameObject>("StringKeyboard")).GetComponent<VRKeyboard>();
             floatKeyboard = Instantiate(assetBundle.LoadAsset<GameObject>("FloatKeyboard")).GetComponent<VRKeyboard>();
             intKeyboard = Instantiate(assetBundle.LoadAsset<GameObject>("IntKeyboard")).GetComponent<VRKeyboard>();
@@ -107,7 +107,7 @@ namespace ModLoader
             Log("Creating Mods Button");//Mods Button
             GameObject SettingsButton = MainScreen.transform.GetChild(0).GetChild(0).GetChild(8).gameObject;
             GameObject ModsButton = Instantiate(assetBundle.LoadAsset<GameObject>("ModsButton"), SettingsButton.transform.parent);
-            ModsButton.transform.localPosition = new Vector3(-811,-112,0);
+            ModsButton.transform.localPosition = new Vector3(-811,-412,0);
             VRInteractable modsInteractable = ModsButton.GetComponent<VRInteractable>();
             modsInteractable.OnInteract.AddListener(delegate { OpenPage(Pages.Mods); SetDefaultText(); });
 

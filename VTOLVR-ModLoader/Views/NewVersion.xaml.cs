@@ -165,6 +165,22 @@ namespace VTOLVR_ModLoader.Views
                 Notification.Show("Uploaded!", "Success");
                 Console.Log($"Uploaded new project at {Program.url}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
                 MainWindow._instance.Creator(null, null);
+                
+                if (_currentJson[ProjectManager.jID] == null)
+                {
+                    _currentJson[ProjectManager.jID] = json["pub_id"].ToString();
+
+                    try
+                    {
+                        File.WriteAllText(_currentPath + (_isMod ? @"\Builds\info.json" : @"\info.json"), _currentJson.ToString());
+                    }
+                    catch (Exception e)
+                    {
+                        Console.Log($"Failed to save project\n{e}");
+                        return;
+                    }
+                    Console.Log("Saved Project!");
+                }
             }
         }
         private bool AssemblyChecks()

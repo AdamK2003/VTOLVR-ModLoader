@@ -37,12 +37,11 @@ namespace VTOLVR_ModLoader.Classes
         {
             _form.Add(new StringContent(value), field);
         }
-        public async Task SendDataAsync()
+        public async Task<HttpContent> SendDataAsync()
         {
             var message = await _client.PostAsync(_url, _form);
 
-            string result = await message.Content.ReadAsStringAsync();
-            Notification.Show(result);
+            return message.Content;
         }
     }
 }

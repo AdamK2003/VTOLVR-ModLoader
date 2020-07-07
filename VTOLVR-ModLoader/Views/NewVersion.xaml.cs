@@ -1,10 +1,13 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -81,21 +84,21 @@ namespace VTOLVR_ModLoader.Views
             if (versionNumber != null && _currentJson != null)
                 _currentJson[ProjectManager.jVersion] = versionNumber.Text;
         }
-        private void Upload(object sender, RoutedEventArgs e)
+        private async void Upload(object sender, RoutedEventArgs e)
         {
             SaveProject();
             if (_currentJson[ProjectManager.jID] != null)
                 UpdateProject();
             else
-                UploadNewProject();
+                await UploadNewProject();
         }
-        private void UploadNewProject()
+        private async Task UploadNewProject()
         {
             if (_isMod && !AssemblyChecks())
                 return;
             string zipPath = ZipCurrentProject();
 
-            HttpHelper form = new HttpHelper(Program.url + Program.apiURL + Program.modsURL + @"\");
+            HttpHelper form = new HttpHelper(Program.url + Program.apiURL + (_isMod? Program.modsURL : Program.skinsURL) + @"\");
             form.SetToken(Settings.Token);
             form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
             form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
@@ -112,11 +115,52 @@ namespace VTOLVR_ModLoader.Views
             form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
             form.AttachFile("user_uploaded_file","test.zip", zipPath);
 
-            form.SendDataAsync();
+            HttpContent result = await form.SendDataAsync();
+            APIResult(JObject.Parse(await result.ReadAsStringAsync()));
         }
         private void UpdateProject()
         {
 
+        }
+        private void APIResult(JObject json)
+        {
+            if (json["name"] != null)
+            {
+                if (json["name"].ToString().Equals("Mod with this name already exists.") ||
+                    json["name"].ToString().Equals("Invalid Mod Name."))
+                {
+                    Notification.Show(json["name"].ToString(), "Failed");
+                }
+            }
+            else if (json["version"] != null)
+            {
+                if (json["version"].ToString().StartsWith("Invalid version number"))
+                {
+                    Notification.Show(json["version"].ToString(), "Failed");
+                }
+            }
+            else if (json["header_image"] != null)
+            {
+                if (json["header_image"].ToString().Equals("Mod image file too large ( > 2mb )") ||
+                    json["header_image"].ToString().Equals("Incorrect format (png or jpg)") ||
+                    json["header_image"].ToString().Equals("Couldn't read uploaded image"))
+                {
+                    Notification.Show(json["header_image"].ToString(), "Failed");
+                }
+            }
+            else if (json["user_uploaded_file"] != null)
+            {
+                if (json["user_uploaded_file"].ToString().Equals("Incorrect extension (zip)"))
+                {
+                    Notification.Show(json["user_uploaded_file"].ToString(), "Failed");
+                }
+            }
+            else if (json["pub_id"] != null)
+            {
+                Process.Start($"{Program.url}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
+                Notification.Show("Uploaded!", "Success");
+                MainWindow._instance.Creator(null, null);
+            }
         }
         private bool AssemblyChecks()
         {

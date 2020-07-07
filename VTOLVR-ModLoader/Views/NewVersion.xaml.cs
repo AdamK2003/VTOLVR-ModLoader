@@ -130,6 +130,7 @@ namespace VTOLVR_ModLoader.Views
                     json["name"].ToString().Equals("Invalid Mod Name."))
                 {
                     Notification.Show(json["name"].ToString(), "Failed");
+                    Console.Log($"Failed to upload project\n{json["name"]}");
                 }
             }
             else if (json["version"] != null)
@@ -137,6 +138,7 @@ namespace VTOLVR_ModLoader.Views
                 if (json["version"].ToString().StartsWith("Invalid version number"))
                 {
                     Notification.Show(json["version"].ToString(), "Failed");
+                    Console.Log($"Failed to upload project\n{json["version"]}");
                 }
             }
             else if (json["header_image"] != null)
@@ -146,6 +148,7 @@ namespace VTOLVR_ModLoader.Views
                     json["header_image"].ToString().Equals("Couldn't read uploaded image"))
                 {
                     Notification.Show(json["header_image"].ToString(), "Failed");
+                    Console.Log($"Failed to upload project\n{json["header_image"]}");
                 }
             }
             else if (json["user_uploaded_file"] != null)
@@ -153,12 +156,14 @@ namespace VTOLVR_ModLoader.Views
                 if (json["user_uploaded_file"].ToString().Equals("Incorrect extension (zip)"))
                 {
                     Notification.Show(json["user_uploaded_file"].ToString(), "Failed");
+                    Console.Log($"Failed to upload project\n{json["user_uploaded_file"]}");
                 }
             }
             else if (json["pub_id"] != null)
             {
                 Process.Start($"{Program.url}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
                 Notification.Show("Uploaded!", "Success");
+                Console.Log($"Uploaded new project at {Program.url}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
                 MainWindow._instance.Creator(null, null);
             }
         }

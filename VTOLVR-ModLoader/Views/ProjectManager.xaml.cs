@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VTOLVR_ModLoader.Windows;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -204,7 +206,17 @@ namespace VTOLVR_ModLoader.Views
 
         private void OpenProject(object sender, RoutedEventArgs e)
         {
-
+            Button button = (Button)sender;
+            string projectPath = button.Tag.ToString();
+            FileInfo[] slns = new DirectoryInfo(projectPath).GetFiles("*.sln");
+            if (slns.Length == 1)
+            {
+                Process.Start(slns[0].FullName);
+            }
+            else
+            {
+                Process.Start(projectPath);
+            }
         }
 
         private void UpdateProject(object sender, RoutedEventArgs e)

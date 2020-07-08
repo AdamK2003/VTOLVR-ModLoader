@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +31,7 @@ namespace VTOLVR_ModLoader
         public const string modsURL = "/mods";
         public const string skinsURL = "/skins";
 
+        private const string _programName = "VTOL VR Mod Loader";
         public static string root;
         public static string vtolFolder;
         public static bool autoStart { get; private set; }
@@ -44,6 +46,13 @@ namespace VTOLVR_ModLoader
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.news.LoadNews(0);
+
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            bool debug = false;
+#if DEBUG
+            debug = true;
+#endif
+            MainWindow._instance.Title.Text = $" {_programName} {version.Major}.{version.Minor}.{version.Build} {(debug? "[Development Mode]" : string.Empty)}";
         }
 
         public static void SetVariables()
@@ -79,25 +88,6 @@ namespace VTOLVR_ModLoader
                 }
             }
         }
-
-        public static bool CheckForInternet()
-        {
-            try
-            {
-                using (var client = new WebClient())
-                {
-                    using (client.OpenRead("http://clients3.google.com/generate_204"))
-                    {
-                        return true;
-                    }
-                }
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         public static void LaunchGame()
         {
             Process.Start("steam://run/667970");

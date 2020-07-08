@@ -74,9 +74,7 @@ namespace VTOLVR_ModLoader
             _instance = this;
             Startup.RunStartUp();
             Program.SetupAfterUI();
-            
             InitializeComponent();
-            
         }
         public void CreatePages()
         {

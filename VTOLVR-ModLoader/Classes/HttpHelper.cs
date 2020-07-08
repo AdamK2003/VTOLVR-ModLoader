@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Security.Policy;
 using System.Text;
@@ -42,6 +44,14 @@ namespace VTOLVR_ModLoader.Classes
             var message = await _client.PostAsync(_url, _form);
 
             return message.Content;
+        }
+        public static async Task<bool> CheckForInternet()
+        {
+            HttpResponseMessage response = await _client.GetAsync("https://vtolvr-mods.com");
+            if (response.StatusCode == HttpStatusCode.OK)
+                return true;
+            else
+                return false;
         }
     }
 }

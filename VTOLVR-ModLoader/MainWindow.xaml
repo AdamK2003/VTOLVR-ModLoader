@@ -35,9 +35,9 @@
                 <ColumnDefinition Width="70"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text=" VTOL VR Mod Loader 3.0.0" Grid.Column="0" Foreground="White" 
+            <TextBlock Text=" VTOL VR Mod Loader Unknow" Grid.Column="0" Foreground="White" 
                        FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                       FontSize="20" VerticalAlignment="Center" 
+                       FontSize="20" VerticalAlignment="Center" x:Name="Title"
                        MouseDown="TopBarDown" MouseUp="TopBarUp" MouseMove="TopBarMove" MouseLeave="TopBarLeave"/>
             <Button Grid.Column="1" Foreground="White"
                        FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"

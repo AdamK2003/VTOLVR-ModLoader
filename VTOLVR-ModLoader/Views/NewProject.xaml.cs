@@ -115,10 +115,10 @@ namespace VTOLVR_ModLoader.Views
             return true;
         }
 
-        private void CreateModProject(string name)
+        private async void CreateModProject(string name)
         {
             currentFolder = Directory.CreateDirectory(Settings.projectsFolder + ProjectManager.modsFolder + @"\" + name);
-            if (Program.CheckForInternet())
+            if (await HttpHelper.CheckForInternet())
             {
                 DownloadModBoilerplate();
             }

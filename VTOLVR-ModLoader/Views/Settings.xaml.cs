@@ -19,6 +19,7 @@ using System.Windows.Shapes;
 using System.Xml.Serialization;
 using UserControl = System.Windows.Controls.UserControl;
 using VTOLVR_ModLoader.Windows;
+using VTOLVR_ModLoader.Classes;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -63,10 +64,10 @@ namespace VTOLVR_ModLoader.Views
             SetUserToken(tokenBox.Password);
         }
 
-        public void TestToken(bool hideResult = false)
+        public async void TestToken(bool hideResult = false)
         {
             this.hideResult = hideResult;
-            if (Program.CheckForInternet())
+            if (await HttpHelper.CheckForInternet())
             {
                 updateButton.IsEnabled = false;
                 tokenValid = false;

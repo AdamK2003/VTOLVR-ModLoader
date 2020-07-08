@@ -20,9 +20,9 @@ namespace VTOLVR_ModLoader.Views
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
-        public void LoadNews(int page)
+        public async void LoadNews(int page)
         {
-            if (Program.CheckForInternet())
+            if (await HttpHelper.CheckForInternet())
             {
                 Console.Log("Connecting to API for latest releases");
                 WebClient client = new WebClient();

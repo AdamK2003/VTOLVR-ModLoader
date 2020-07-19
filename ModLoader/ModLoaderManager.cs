@@ -316,11 +316,6 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
 
             Debug.Log($"Loading Level\nPilot={pilotName}\ncID={cID}\nsID={sID}");
             VTMapManager.nextLaunchMode = VTMapManager.MapLaunchModes.Scenario;
-            LoadingSceneController.LoadScene(7);
-
-            yield return new WaitForSeconds(5);
-            //After here we should be in the loader scene
-
             Debug.Log("Setting Pilot");
             PilotSaveManager.current = PilotSaveManager.pilots[pilotName];
             Debug.Log("Going though All built in campaigns");
@@ -358,6 +353,8 @@ Special Thanks to Ketkev for his continuous support to the mod loader and the we
                 PilotSaveManager.currentCampaign.campaignName, PilotSaveManager.currentScenario.scenarioName,
                 PilotSaveManager.currentVehicle.vehicleName, pilotName));
 
+            VTScenario.LaunchScenario(VTScenario.currentScenarioInfo);
+            yield return new WaitForSeconds(5); // Waiting for us to be in the loader scene
             LoadingSceneController.instance.PlayerReady(); //<< Auto Ready
             Debug.Log("Player is ready");
 

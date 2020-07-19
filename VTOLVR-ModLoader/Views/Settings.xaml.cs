@@ -20,6 +20,7 @@ using System.Xml.Serialization;
 using UserControl = System.Windows.Controls.UserControl;
 using VTOLVR_ModLoader.Windows;
 using VTOLVR_ModLoader.Classes;
+using System.Net.Http;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -72,45 +73,38 @@ namespace VTOLVR_ModLoader.Views
                 updateButton.IsEnabled = false;
                 tokenValid = false;
                 Console.Log("Testing new token");
-                WebClient client = new WebClient();
-                client.Headers.Add("user-agent", "VTOL VR Mod Loader");
-                client.Headers.Add("Authorization", "Token " + Token);
-                client.DownloadStringCompleted += TestTokenDone;
-                client.DownloadStringAsync(new Uri(Program.url + Program.apiURL + userURL + Program.jsonFormat));                
+                await HttpHelper.DownloadStringAsync(
+                    Program.url + Program.apiURL + userURL + Program.jsonFormat,
+                    TestTokenDone,
+                    Token);         
             }
             else
             {
                 NoInternet();
             }
         }
-
-        private void TestTokenDone(object sender, DownloadStringCompletedEventArgs e)
+        private void TestTokenDone(HttpResponseMessage response)
         {
-            if (!e.Cancelled && e.Error == null)
+            if (response.IsSuccessStatusCode)
             {
                 if (!hideResult)
                     Notification.Show("Token was successful!");
                 tokenValid = true;
-
+                Console.Log("Token is valid");
             }
             else
             {
                 tokenValid = false;
                 if (!hideResult)
-                    Notification.Show(e.Error.Message);
-                Console.Log("Error:\n" + e.Error.Message);
+                    Notification.Show(response.StatusCode.ToString(), "Token Failed");
+                Console.Log("Token Failed:\n" + response.StatusCode.ToString());
             }
             updateButton.IsEnabled = true;
-            //MainWindow._instance.uploadModButton.IsEnabled = tokenValid;
         }
-
         private void NoInternet()
         {
             updateButton.IsEnabled = false;
         }
-
-        
-
         private void SaveSettings()
         {
             JObject jObject = new JObject();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Windows.Controls;
 using Newtonsoft.Json.Linq;
 using VTOLVR_ModLoader.Classes;
@@ -24,14 +25,26 @@ namespace VTOLVR_ModLoader.Views
         {
             if (await HttpHelper.CheckForInternet())
             {
-                Console.Log("Connecting to API for latest releases");
-                WebClient client = new WebClient();
-                client.Headers.Add("user-agent", "VTOL VR Mod Loader");
-                client.DownloadStringCompleted += NewsDone;
-                client.DownloadStringAsync(new Uri(Program.url + Program.apiURL + modLoaderURL + Program.jsonFormat  + (page == 0? "" : Program.pageFormat + page))); //+ (Program.branch != string.Empty? "?" + Program.branch : string.Empty)
+                Console.Log($"Connecting to API for latest releases (Page {page})");
+                await HttpHelper.DownloadStringAsync(
+                    Program.url + Program.apiURL + modLoaderURL + Program.jsonFormat + (page == 0 ? "" : Program.pageFormat + page),
+                    NewsDone);
             }
             else
             {
+                NoInternet();
+            }
+        }
+        private async void NewsDone(HttpResponseMessage response)
+        {
+            if (response.IsSuccessStatusCode)
+            {
+                ConvertUpdates(await response.Content.ReadAsStringAsync());
+            }
+            else
+            {
+                //Failed
+                Console.Log("Error:\n" + response.StatusCode);
                 NoInternet();
             }
         }

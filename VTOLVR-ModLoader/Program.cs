@@ -30,10 +30,13 @@ namespace VTOLVR_ModLoader
         public const string apiURL = "/api";
         public const string modsURL = "/mods";
         public const string skinsURL = "/skins";
+        public const string modsChangelogsURL = "/mods-changelogs";
+        public const string skinsChangelogsURL = "/skins-changelogs";
+        public const string ProgramNameBase = "VTOL VR Mod Loader";
 
-        private const string _programName = "VTOL VR Mod Loader";
         public static string root;
         public static string vtolFolder;
+        public static string ProgramName;
         public static bool autoStart { get; private set; }
         private static bool uiLoaded = false;
 
@@ -46,13 +49,7 @@ namespace VTOLVR_ModLoader
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.news.LoadNews(0);
-
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            bool debug = false;
-#if DEBUG
-            debug = true;
-#endif
-            MainWindow._instance.Title.Text = $" {_programName} {version.Major}.{version.Minor}.{version.Build} {(debug? "[Development Mode]" : string.Empty)}";
+            MainWindow._instance.Title.Text = $" {ProgramName}";
         }
 
         public static void SetVariables()

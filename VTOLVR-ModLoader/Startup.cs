@@ -20,6 +20,8 @@ using Gameloop;
 using Gameloop.Vdf;
 using Gameloop.Vdf.Linq;
 using VTOLVR_ModLoader.Windows;
+using System.Reflection;
+using VTOLVR_ModLoader.Classes;
 
 namespace VTOLVR_ModLoader
 {
@@ -43,6 +45,13 @@ namespace VTOLVR_ModLoader
         private static readonly string[] neededDLLFiles = { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll", @"\Managed\Newtonsoft.Json.dll" };
         public static void RunStartUp()
         {
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            bool debug = false;
+#if DEBUG
+            debug = true;
+#endif
+            Program.ProgramName = $"{Program.ProgramNameBase} {version.Major}.{version.Minor}.{version.Build} {(debug ? "[Development Mode]" : string.Empty)}";
+            HttpHelper.SetHeader();
             Program.SetVariables();
             SearchForProcess();
             CheckBaseFolder();

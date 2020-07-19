@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -130,18 +131,22 @@ namespace VTOLVR_ModLoader.Views
         private void DownloadModBoilerplate()
         {
             progressBar.Visibility = Visibility.Visible;
-            WebClient client = new WebClient();
-            client.Headers.Add("user-agent", "VTOL VR Mod Loader");
-            client.DownloadProgressChanged += DownloadProgress;
-            client.DownloadFileCompleted += DownloadDone;
-            client.DownloadFileAsync(new Uri(modBoilerplateURL), currentFolder.FullName + @"\boilerplate.zip");
+            HttpHelper.DownloadFileAsync(modBoilerplateURL, currentFolder.FullName + @"\boilerplate.zip", Done);
+            //WebClient client = new WebClient();
+            //client.Headers.Add("user-agent", "VTOL VR Mod Loader");
+            //client.DownloadProgressChanged += DownloadProgress;
+            //client.DownloadFileCompleted += DownloadDone;
+            //client.DownloadFileAsync(new Uri(modBoilerplateURL), currentFolder.FullName + @"\boilerplate.zip");
         }
 
         private void DownloadProgress(object sender, DownloadProgressChangedEventArgs e)
         {
             progressBar.Value = e.ProgressPercentage;
         }
-
+        private void Done()
+        {
+            Process.Start(currentFolder.FullName);
+        }
         private void DownloadDone(object sender, AsyncCompletedEventArgs e)
         {
             if (!e.Cancelled && e.Error == null)

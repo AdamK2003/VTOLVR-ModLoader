@@ -91,7 +91,6 @@
     </ApplicationDefinition>
     <Compile Include="Classes\ExtensionMethods.cs" />
     <Compile Include="Classes\HttpForm.cs" />
-    <Compile Include="Classes\HttpHelper.cs" />
     <Compile Include="Classes\Pilot.cs" />
     <Compile Include="Classes\Scenario.cs" />
     <Compile Include="Classes\Updates.cs" />

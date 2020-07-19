@@ -29,7 +29,7 @@ namespace VTOLVR_ModLoader.Classes
         }
         public static async Task<bool> CheckForInternet()
         {
-            HttpResponseMessage response = await _client.GetAsync("https://vtolvr-mods.com");
+            HttpResponseMessage response = await _client.GetAsync(Program.url);
             if (response.IsSuccessStatusCode)
                 return true;
             else
@@ -37,7 +37,7 @@ namespace VTOLVR_ModLoader.Classes
         }
         public static async Task DownloadStringAsync(string url, Action<HttpResponseMessage> callback, string token = "")
         {
-            if (!token.Equals(""))
+            if (token == null || !token.Equals(""))
             {
                 if (_client.DefaultRequestHeaders.Contains("Authorization"))
                     _client.DefaultRequestHeaders.Remove("Authorization");

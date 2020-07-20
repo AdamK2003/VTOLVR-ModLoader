@@ -48,8 +48,6 @@ namespace VTOLVR_ModLoader.Views
                 if (!line.Contains("token"))
                     TestToken(true);
             }
-            else
-                TestToken(true);
 
         }
         public void SetUserToken(string token)

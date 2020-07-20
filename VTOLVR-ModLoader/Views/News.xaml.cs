@@ -47,6 +47,7 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log("Error:\n" + response.StatusCode);
                 NoInternet();
             }
+            MainWindow._instance.settings.TestToken(true);
         }
         private void NewsDone(object sender, DownloadStringCompletedEventArgs e)
         {

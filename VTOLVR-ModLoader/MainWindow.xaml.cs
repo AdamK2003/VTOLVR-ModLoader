@@ -358,44 +358,6 @@ namespace VTOLVR_ModLoader
             Program.LaunchGame();
         }
 
-        private void Quit(object sender, RoutedEventArgs e)
-        {
-            Quit();
-        }
-
-#region Moving Window
-        private void TopBarDown(object sender, MouseButtonEventArgs e)
-        {
-            holdingDown = true;
-            lm = Mouse.GetPosition(Application.Current.MainWindow);
-        }
-
-        private void TopBarUp(object sender, MouseButtonEventArgs e)
-        {
-            holdingDown = false;
-        }
-
-        private void TopBarMove(object sender, MouseEventArgs e)
-        {
-            if (holdingDown)
-            {
-                this.Left += Mouse.GetPosition(Application.Current.MainWindow).X - lm.X;
-                this.Top += Mouse.GetPosition(Application.Current.MainWindow).Y - lm.Y;
-            }
-        }
-
-        private void WindowClosing(object sender, CancelEventArgs e)
-        {
-
-        }
-
-        private void TopBarLeave(object sender, MouseEventArgs e)
-        {
-            holdingDown = false;
-        }
-
-#endregion
-
         private void OpenSettings(object sender, RoutedEventArgs e)
         {
             if (settings == null)

@@ -49,7 +49,7 @@ namespace VTOLVR_ModLoader
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.news.LoadNews(0);
-            MainWindow._instance.Title.Text = $" {ProgramName}";
+            MainWindow._instance.Title = $"{ProgramName}";
         }
 
         public static void SetVariables()

@@ -8,7 +8,7 @@
         xmlns:views="clr-namespace:VTOLVR_ModLoader.Views"
         mc:Ignorable="d"
         Title="VTOL VR Modloader" Height="600" Width="1200" Icon="Resources/Logo.ico" MinWidth="800" MinHeight="490" 
-        Background="#FF4B4B4B" WindowStartupLocation="CenterScreen" WindowStyle="None" Closing="WindowClosing"
+        Background="#FF4B4B4B" WindowStartupLocation="CenterScreen" WindowState="Maximized"
         Style="{StaticResource FontStyle}">
     <Window.Resources>
         <DataTemplate x:Name="settingsViewTemplate" DataType="{x:Type views:Settings}">
@@ -23,30 +23,11 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="29"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="86"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="#FF2E2E2E">
-            <!-- Top Bar -->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="70"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Text=" VTOL VR Mod Loader Unknow" Grid.Column="0" Foreground="White" 
-                       FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                       FontSize="20" VerticalAlignment="Center" x:Name="Title"
-                       MouseDown="TopBarDown" MouseUp="TopBarUp" MouseMove="TopBarMove" MouseLeave="TopBarLeave"/>
-            <Button Grid.Column="1" Foreground="White"
-                       FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                       FontSize="20" BorderBrush="{x:Null}" Click="Quit"
-                    Content="x" Style="{StaticResource darkButton}">
-            </Button>
-        </Grid>
-
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="135"/>
                 <ColumnDefinition Width="*"/>
@@ -193,7 +174,7 @@
             <ContentControl Grid.Column="1" Content="{Binding}"/>
         </Grid>
 
-        <Grid Grid.Row="2" Background="#696969">
+        <Grid Grid.Row="1" Background="#696969">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="*"/>

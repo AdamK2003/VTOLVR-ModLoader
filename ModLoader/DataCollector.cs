@@ -8,8 +8,8 @@ is always uptodate after they have ran the game modded once.
  */
 
 using ModLoader.Classes;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Valve.Newtonsoft.Json;
+using Valve.Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;

@@ -1,7 +1,7 @@
 ﻿/*
 This class is used for saving the data collected in DataCollector class
  */
-using Newtonsoft.Json;
+using Valve.Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 

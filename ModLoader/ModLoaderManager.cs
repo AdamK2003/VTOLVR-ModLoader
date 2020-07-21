@@ -16,7 +16,7 @@ using System.IO.Pipes;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
+using Valve.Newtonsoft.Json.Linq;
 
 namespace ModLoader
 {
@@ -49,10 +49,10 @@ Thank you for download VTOL VR Mod loader by . Marsh.Mello .
 
 Please don't report bugs unless you can reproduce them without any mods loaded
 if you are having any issues with mods and would like to report a bug, please contact @. Marsh.Mello .#0001 
-on the offical VTOL VR Discord or post an issue on github. 
+on the offical VTOL VR Discord or post an issue on gitlab. 
 
 VTOL VR Modding Discord Server: https://discord.gg/XZeeafp
-Mod Loader Github: https://github.com/MarshMello0/VTOLVR-ModLoader
+Mod Loader Gitlab: https://gitlab.com/vtolvr-mods/ModLoader
 Mod Loader Website: https://vtolvr-mods.com/
 
 Special Thanks to Ketkev for his continuous support to the mod loader and the website.

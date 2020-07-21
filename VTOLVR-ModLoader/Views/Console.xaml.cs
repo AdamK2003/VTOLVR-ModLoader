@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -70,7 +71,7 @@ namespace VTOLVR_ModLoader.Views
                         {
                             byte[] array2 = new byte[num];
                             Array.Copy(array, 0, array2, 0, num);
-                            Application.Current.Dispatcher.Invoke(new Action(() => { Log(Encoding.ASCII.GetString(array2)); }));
+                            Application.Current.Dispatcher.Invoke(new Action(() => { Log(Encoding.ASCII.GetString(array2), false); }));
                         }
                         Application.Current.Dispatcher.Invoke(new Action(() => { _instance.SendStoredMessages(); }));
                     }
@@ -87,13 +88,25 @@ namespace VTOLVR_ModLoader.Views
             _instance.scrollView.ScrollToBottom();
         }
 
-        public static void Log(string message)
+        public static void Log(string message, bool isApplication = true)
         {
             System.Console.WriteLine(message);
             _instance.consoleFeed.Add(new Feed(message));
             _instance.console.ItemsSource = _instance.consoleFeed.ToArray();
             _instance.scrollView.ScrollToBottom();
 
+            if (isApplication)
+            {
+                try
+                {
+                    File.AppendAllText(System.IO.Path.Combine(Directory.GetCurrentDirectory(), Program.LogName), $"[{DateTime.Now}]{message}\n");
+                }
+                catch 
+                {
+
+                }
+                
+            }
         }
         private void SendCommand(object sender, RoutedEventArgs e)
         {

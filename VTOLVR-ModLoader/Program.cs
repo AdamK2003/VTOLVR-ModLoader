@@ -33,6 +33,7 @@ namespace VTOLVR_ModLoader
         public const string modsChangelogsURL = "/mods-changelogs";
         public const string skinsChangelogsURL = "/skins-changelogs";
         public const string ProgramNameBase = "VTOL VR Mod Loader";
+        public const string LogName = "Launcher Log.txt";
 
         public static string root;
         public static string vtolFolder;

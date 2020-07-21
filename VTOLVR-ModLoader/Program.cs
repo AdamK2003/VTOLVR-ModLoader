@@ -38,7 +38,6 @@ namespace VTOLVR_ModLoader
         public static string root;
         public static string vtolFolder;
         public static string ProgramName;
-        public static string steamPath;
         public static bool autoStart { get; private set; }
         private static bool uiLoaded = false;
 
@@ -86,17 +85,8 @@ namespace VTOLVR_ModLoader
                 Views.Console.Log("Found a steam vr process");
                 return;
             }
-
-            if (!File.Exists(Path.Combine(steamPath, "steam.exe")))
-            {
-                Notification.Show("Please make sure steamvr is running before you press play!");
-                Views.Console.Log($"I couldn't find steam.exe in {Program.steamPath}");
-                return;
-            }
-
-            Process.Start(Path.Combine(steamPath, "steam.exe"), "-applaunch 250820");
+            Process.Start("steam://run/250820");
             Views.Console.Log("Started SteamVR");
-
         }
 
         private static void AutoStart()

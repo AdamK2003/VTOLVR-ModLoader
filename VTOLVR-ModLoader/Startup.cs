@@ -56,10 +56,6 @@ namespace VTOLVR_ModLoader
             SearchForProcess();
             CheckBaseFolder();
             CheckFolder();
-            Program.steamPath = (string)Registry.GetValue(
-                @"HKEY_CURRENT_USER\Software\Valve\Steam",
-                @"SteamPath",
-                @"NULL");
         }
 
         private static void SearchForProcess()
@@ -164,7 +160,11 @@ namespace VTOLVR_ModLoader
 
         private static void FindSteamFolders()
         {
-            string regPath = Program.steamPath;
+            string regPath = (string)Registry.GetValue(
+                @"HKEY_CURRENT_USER\Software\Valve\Steam",
+                @"SteamPath",
+                @"NULL");
+
             if (CheckForVTOL(regPath))
             {
                 SetWorkingDirectory(regPath);

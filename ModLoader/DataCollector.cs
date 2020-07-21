@@ -24,6 +24,7 @@ namespace ModLoader
         {
             Debug.Log("Collecting Data");
             CampaignsScenarios();
+            FindMaterials();
             SaveGameData();
         }
 
@@ -35,6 +36,25 @@ namespace ModLoader
             Debug.Log("Finished collecting camps");
             gameData.Add(new JProperty("Campaigns", JArray.FromObject(campaigns.Campaigns)));
             Debug.Log("Addded it");
+        }
+
+        private static void FindMaterials()
+        {
+            Debug.Log("Collecting Materials for skins");
+            Material[] mats = Resources.FindObjectsOfTypeAll<Material>();
+            List<string> names = new List<string>(mats.Length);
+            for (int i = 0; i < mats.Length; i++)
+            {
+                try
+                {
+                    names.Add($"\"{mats[i].GetTexture("_MainTex").name}.png\" should be renamed to \"{mats[i].name}.png\"");
+                }
+                catch 
+                {
+                }
+            }
+            gameData.Add(new JProperty("Skin Texture Names", JArray.FromObject(names.ToArray())));
+            Debug.Log("Finished Collecting Materials");
         }
 
         private static void SaveGameData()

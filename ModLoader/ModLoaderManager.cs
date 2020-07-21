@@ -55,7 +55,7 @@ VTOL VR Modding Discord Server: https://discord.gg/XZeeafp
 Mod Loader Gitlab: https://gitlab.com/vtolvr-mods/ModLoader
 Mod Loader Website: https://vtolvr-mods.com/
 
-Special Thanks to Ketkev for his continuous support to the mod loader and the website.
+Special Thanks to Ketkev and Nebriv for their continuous support to the mod loader and the website.
 
  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  ##### 
                                                                                                          

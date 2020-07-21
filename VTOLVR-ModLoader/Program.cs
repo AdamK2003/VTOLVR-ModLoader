@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using VTOLVR_ModLoader.Views;
+using VTOLVR_ModLoader.Windows;
 
 namespace VTOLVR_ModLoader
 {
@@ -38,6 +38,7 @@ namespace VTOLVR_ModLoader
         public static string root;
         public static string vtolFolder;
         public static string ProgramName;
+        public static string steamPath;
         public static bool autoStart { get; private set; }
         private static bool uiLoaded = false;
 
@@ -47,6 +48,7 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckCustomURL();
             CommunicationsManager.CheckCustomBranch();
             MainWindow._instance.CreatePages();
+            CheckForSteamVR();
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.news.LoadNews(0);
@@ -74,6 +76,27 @@ namespace VTOLVR_ModLoader
             //This stops the timer from running as it would just continue
             DispatcherTimer timer = sender as DispatcherTimer; 
             timer.Stop();
+        }
+
+        private static void CheckForSteamVR()
+        {
+            Process[] processes = Process.GetProcessesByName("vrmonitor");
+            if (processes.Length > 0)
+            {
+                Views.Console.Log("Found a steam vr process");
+                return;
+            }
+
+            if (!File.Exists(Path.Combine(steamPath, "steam.exe")))
+            {
+                Notification.Show("Please make sure steamvr is running before you press play!");
+                Views.Console.Log($"I couldn't find steam.exe in {Program.steamPath}");
+                return;
+            }
+
+            Process.Start(Path.Combine(steamPath, "steam.exe"), "-applaunch 250820");
+            Views.Console.Log("Started SteamVR");
+
         }
 
         private static void AutoStart()

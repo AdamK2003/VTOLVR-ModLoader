@@ -53,6 +53,7 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckURI();
             MainWindow._instance.news.LoadNews(0);
             MainWindow._instance.Title = $"{ProgramName}";
+            MainWindow._instance.progressText.Text = "Ready";
         }
 
         public static void SetVariables()

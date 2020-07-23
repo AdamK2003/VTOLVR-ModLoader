@@ -363,14 +363,6 @@ namespace VTOLVR_ModLoader.Views
             }
             Console.Log("Saved Project!");
         }
-        private void UploadComplete(IAsyncResult result)
-        {
-            using (WebResponse response = (result.AsyncState as HttpWebRequest).EndGetResponse(result))
-            {
-                Notification.Show(response.ContentType);
-            }
-        }
-
         private void TextChanged(object sender, TextChangedEventArgs e)
         {
             if (title != null && description != null &&

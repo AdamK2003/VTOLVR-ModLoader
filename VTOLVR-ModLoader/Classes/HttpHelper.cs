@@ -91,7 +91,7 @@ namespace VTOLVR_ModLoader.Classes
         {
             _form.Add(new StringContent(value), field);
         }
-        public async Task<HttpContent> SendDataAsync(HttpMethod method)
+        public async Task<HttpResponseMessage> SendDataAsync(HttpMethod method)
         {
             HttpResponseMessage message = null;
             switch (method)
@@ -110,7 +110,7 @@ namespace VTOLVR_ModLoader.Classes
             if (_client.DefaultRequestHeaders.Contains("Authorization"))
                 _client.DefaultRequestHeaders.Remove("Authorization");
 
-            return message.Content;
+            return message;
         }
     }
 }

@@ -86,16 +86,19 @@ namespace VTOLVR_ModLoader.Views
         }
         private async void Upload(object sender, RoutedEventArgs e)
         {
+            uploadButton.IsEnabled = false;
             SaveProject();
             if (_currentJson[ProjectManager.jID] != null)
-                UpdateProject();
+                await UpdateProject();
             else
                 await UploadNewProject();
         }
         private async Task UploadNewProject()
         {
+            uploadButton.Content = "Uploading...";
             if (_isMod && !AssemblyChecks())
                 return;
+            Console.Log("Zipping up project");
             string zipPath = ZipCurrentProject();
 
             HttpHelper form = new HttpHelper(Program.url + Program.apiURL + (_isMod? Program.modsURL : Program.skinsURL) + @"\");
@@ -115,12 +118,75 @@ namespace VTOLVR_ModLoader.Views
             form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
             form.AttachFile("user_uploaded_file","test.zip", zipPath);
 
-            HttpContent result = await form.SendDataAsync();
-            APIResult(JObject.Parse(await result.ReadAsStringAsync()));
+            Console.Log("Sending Data");
+            HttpResponseMessage result = await form.SendDataAsync(HttpHelper.HttpMethod.POST);
+            string content = await result.Content.ReadAsStringAsync();
+            Console.Log("Raw Responce\n" + content);
+            APIResult(JObject.Parse(content));
         }
-        private void UpdateProject()
+        private async Task UpdateProject()
         {
+            uploadButton.Content = "Updating...";
+            if (_isMod && !AssemblyChecks())
+                return;
+            Console.Log("Zipping up project");
+            string zipPath = ZipCurrentProject();
 
+            HttpHelper form = new HttpHelper(Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _currentJson[ProjectManager.jID].ToString() + "/");
+            form.SetToken(Settings.Token);
+            form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
+            form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
+            form.SetValue("tagline", _currentJson[ProjectManager.jTagline].ToString());
+            form.SetValue("description", _currentJson[ProjectManager.jDescription].ToString());
+            form.SetValue("unlisted", _currentJson[ProjectManager.jUnlisted].ToString());
+            form.SetValue("is_public", _currentJson[ProjectManager.jPublic].ToString());
+            if (_isMod)
+                form.SetValue("repository", _currentJson[ProjectManager.jSource].ToString());
+            else
+                form.SetValue("repository", "");
+
+            form.AttachFile("header_image", _currentJson[ProjectManager.jWImage].ToString(), _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
+            form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
+            form.AttachFile("user_uploaded_file", $"{_currentJson[ProjectManager.jName]}.zip", zipPath);
+
+
+
+            HttpResponseMessage result = await form.SendDataAsync(HttpHelper.HttpMethod.PUT);
+            string response = await result.Content.ReadAsStringAsync();
+            Console.Log($"Raw Responce from {Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _currentJson[ProjectManager.jID].ToString() + "/"}\n{response}");
+            JObject json = JObject.Parse(response);
+
+            if (json["detail"] != null)
+            {
+                Notification.Show(json["detail"].ToString(), "Error");
+                Process.Start(Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _currentJson[ProjectManager.jID].ToString() + "/");
+                return;
+            }
+
+            HttpHelper form2 = new HttpHelper(Program.url + Program.apiURL + (_isMod ? Program.modsChangelogsURL : Program.skinsChangelogsURL) + "/" + _currentJson[ProjectManager.jID] + "/");
+            form2.SetToken(Settings.Token);
+            form2.SetValue("change_name", title.Text);
+            form2.SetValue("change_log", description.Text);
+            form2.SetValue("change_version", versionNumber.Text);
+            form2.SetValue("version_increase", "true");
+
+            Console.Log("Sending Changelog");
+            HttpResponseMessage changelogResult = await form2.SendDataAsync(HttpHelper.HttpMethod.PUT);
+            response = await changelogResult.Content.ReadAsStringAsync();
+            Console.Log($"Raw Response from {Program.url + Program.apiURL + (_isMod ? Program.modsChangelogsURL : Program.skinsChangelogsURL) + "/" + _currentJson[ProjectManager.jID] + "/"}\n{response}");
+            
+            if (changelogResult.IsSuccessStatusCode)
+            {
+                Notification.Show("Success!");
+                Console.Log("Successfuly updated!");
+            }
+            else
+            {
+                Notification.Show($"Error Code: {changelogResult.StatusCode}", "Error");
+                Console.Log($"There was an error trying to submit a change log.\n Error Code: {changelogResult.StatusCode}");
+            }
+
+            MainWindow._instance.Creator(null, null);
         }
         private void APIResult(JObject json)
         {
@@ -133,7 +199,7 @@ namespace VTOLVR_ModLoader.Views
                     Console.Log($"Failed to upload project\n{json["name"]}");
                 }
             }
-            else if (json["version"] != null)
+            if (json["version"] != null)
             {
                 if (json["version"].ToString().StartsWith("Invalid version number"))
                 {
@@ -141,7 +207,7 @@ namespace VTOLVR_ModLoader.Views
                     Console.Log($"Failed to upload project\n{json["version"]}");
                 }
             }
-            else if (json["header_image"] != null)
+            if (json["header_image"] != null)
             {
                 if (json["header_image"].ToString().Equals("Mod image file too large ( > 2mb )") ||
                     json["header_image"].ToString().Equals("Incorrect format (png or jpg)") ||
@@ -151,7 +217,7 @@ namespace VTOLVR_ModLoader.Views
                     Console.Log($"Failed to upload project\n{json["header_image"]}");
                 }
             }
-            else if (json["user_uploaded_file"] != null)
+            if (json["user_uploaded_file"] != null)
             {
                 if (json["user_uploaded_file"].ToString().Equals("Incorrect extension (zip)"))
                 {
@@ -159,7 +225,7 @@ namespace VTOLVR_ModLoader.Views
                     Console.Log($"Failed to upload project\n{json["user_uploaded_file"]}");
                 }
             }
-            else if (json["pub_id"] != null)
+            if (json["pub_id"] != null)
             {
                 Process.Start($"{Program.url}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
                 Notification.Show("Uploaded!", "Success");
@@ -182,6 +248,8 @@ namespace VTOLVR_ModLoader.Views
                     Console.Log("Saved Project!");
                 }
             }
+            Console.Log("End of API results");
+            MainWindow._instance.Creator(null, null);
         }
         private bool AssemblyChecks()
         {

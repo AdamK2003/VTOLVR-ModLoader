@@ -76,6 +76,8 @@ namespace VTOLVR_ModLoader.Views
                 {
                     grid.RowDefinitions.RemoveAt(2);
                 }
+                approvalWarning.SetValue(Grid.RowProperty, 2);
+                contentGuidelines.SetValue(Grid.RowProperty, 3);
                 uploadButton.Content = "Release";
             }
         }

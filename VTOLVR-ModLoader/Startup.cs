@@ -60,7 +60,6 @@ namespace VTOLVR_ModLoader
 
         private static void SearchForProcess()
         {
-            //Stopping their being more than one open (Yes this could close the other one half way through a download)
             Process[] p = Process.GetProcessesByName("VTOLVR-ModLoader");
             for (int i = 0; i < p.Length; i++)
             {

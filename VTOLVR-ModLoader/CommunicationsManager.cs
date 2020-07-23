@@ -25,6 +25,13 @@ namespace VTOLVR_ModLoader
         private static void Setup()
         {
             args = Environment.GetCommandLineArgs();
+            StringBuilder builder = new StringBuilder("Started with \"");
+            for (int i = 0; i < args.Length; i++)
+            {
+                builder.Append(args[i] + " ");
+            }
+            builder.Append("\"");
+            Views.Console.Log(builder.ToString());
         }
 
         public static void CheckCustomBranch()
@@ -68,6 +75,10 @@ namespace VTOLVR_ModLoader
 
                 }
             }
+        }
+        public static bool CheckSteamVR()
+        {
+            return !CheckArgs("novr", out string line);
         }
 
         public static bool CheckArgs(string search, out string contents)

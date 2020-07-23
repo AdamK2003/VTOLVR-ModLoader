@@ -44,10 +44,11 @@ namespace VTOLVR_ModLoader
         public async static void SetupAfterUI()
         {
             await WaitForUI();
+            MainWindow._instance.CreatePages();
             CommunicationsManager.CheckCustomURL();
             CommunicationsManager.CheckCustomBranch();
-            MainWindow._instance.CreatePages();
-            CheckForSteamVR();
+            if (CommunicationsManager.CheckSteamVR())
+                CheckForSteamVR();
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.news.LoadNews(0);

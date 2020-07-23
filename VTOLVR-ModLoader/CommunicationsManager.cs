@@ -38,6 +38,7 @@ namespace VTOLVR_ModLoader
         {
             if (CheckArgs("branch", out string line))
             {
+                line = line.Replace("branch=", string.Empty);
                 Program.branch = line;
             }
         }

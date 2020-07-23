@@ -39,6 +39,12 @@ namespace VTOLVR_ModLoader.Views
         public const string jID = "Public ID";
         public const string jPublic = "Is Public";
         public const string jUnlisted = "Unlisted";
+
+        private const string openFolderText = "Open Folder";
+        private const string openProjectText = "Open Project";
+        private const string releaseText = "Release";
+        private const string newReleaseText = "New Release";
+
         public ProjectManager()
         {
             InitializeComponent();
@@ -111,6 +117,8 @@ namespace VTOLVR_ModLoader.Views
                         jObject[jDescription].ToString(),
                         mods[i].FullName,
                         lastedit,
+                        openProjectText,
+                        jObject[jID] == null ? releaseText : newReleaseText,
                         new DateTime(result)));
                     }
                     else
@@ -160,6 +168,8 @@ namespace VTOLVR_ModLoader.Views
                         jObject[jDescription].ToString(),
                         skins[i].FullName,
                         lastedit,
+                        openFolderText,
+                        jObject[jID] == null? releaseText : newReleaseText,
                         new DateTime(result)));
                     }
                     else
@@ -186,14 +196,18 @@ namespace VTOLVR_ModLoader.Views
             public string Description { get; set; }
             public string Path { get; set; }
             public string LastEdit { get; set; }
+            public string OpenProjectText { get; set; }
+            public string NewReleaseText { get; set; }
             public DateTime DateTime { get; set; }
 
-            public MyProject(string name, string description, string path, string lastEdit, DateTime dateTime)
+            public MyProject(string name, string description, string path, string lastEdit, string openProjectText, string newReleaseText, DateTime dateTime)
             {
                 Name = name;
                 Description = description;
                 Path = path;
                 LastEdit = lastEdit;
+                OpenProjectText = openProjectText;
+                NewReleaseText = newReleaseText;
                 DateTime = dateTime;
             }
         }

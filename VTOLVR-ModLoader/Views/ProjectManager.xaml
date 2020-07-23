@@ -61,7 +61,7 @@
 
                                     <Button Style="{StaticResource transparentButton}"
                                             Tag="{Binding Path}" Click="OpenProject" 
-                                            Content="Open Project" Grid.Column="1" Grid.Row="0"
+                                            Content="{Binding OpenProjectText}" Grid.Column="1" Grid.Row="0"
                                             Grid.RowSpan="2" Foreground="White" />
                                     
                                     <Button Style="{StaticResource transparentButton}"
@@ -71,7 +71,7 @@
                                     
                                     <Button Style="{StaticResource transparentButton}"
                                             Tag="{Binding Path}" Click="UpdateProject" 
-                                            Content="New Version" Grid.Column="3" Grid.Row="0"
+                                            Content="{Binding NewReleaseText}" Grid.Column="3" Grid.Row="0"
                                             Grid.RowSpan="2" Foreground="White" />
                                 </Grid>
                             </DataTemplate>

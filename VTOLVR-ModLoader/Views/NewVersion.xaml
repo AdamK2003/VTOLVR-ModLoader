@@ -32,11 +32,13 @@
                        x:Name="titleHeader"/>
 
             <TextBox Grid.Row="4" x:Name="title" FontSize="20" 
-                     Background="Transparent" Foreground="White" TextWrapping="Wrap"/>
+                     Background="Transparent" Foreground="White" TextWrapping="Wrap"
+                     TextChanged="TextChanged"/>
             <TextBlock Grid.Row="5" Text="Description:" Foreground="LightGray" FontSize="20"
                        x:Name="descriptionHeader"/>
             <TextBox Grid.Row="6" x:Name="description" FontSize="20" 
-                     Background="Transparent" Foreground="White" TextWrapping="Wrap"/>
+                     Background="Transparent" Foreground="White" TextWrapping="Wrap"
+                     TextChanged="TextChanged"/>
             
             <TextBlock Grid.Row="7" Foreground="White" FontSize="15" TextAlignment="Center" 
                        x:Name="approvalWarning">
@@ -54,7 +56,7 @@
             </TextBlock>
             
             <Button Grid.Row="99" x:Name="uploadButton" Click="Upload" Style="{StaticResource darkButton}" 
-                        Content="Update"/>
+                        Content="Update" IsEnabled="False"/>
         </Grid>
     </ScrollViewer>
 </UserControl>

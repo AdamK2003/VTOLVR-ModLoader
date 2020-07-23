@@ -400,6 +400,16 @@ namespace VTOLVR_ModLoader
         {
             _instance.DataContext = control;
         }
+        public static void SetBusy(bool isBusy)
+        {
+            _instance.homeButton.IsEnabled = !isBusy;
+            _instance.consoleButton.IsEnabled = !isBusy;
+            _instance.uploadModButton.IsEnabled = !isBusy;
+            _instance.devTButton.IsEnabled = !isBusy;
+            _instance.settingsButton.IsEnabled = !isBusy;
+            _instance.launchButton.IsEnabled = !isBusy;
+            _instance.launchButton.Content = isBusy ? "Busy" : "Play";
+        }
     }
 
     public class Mod

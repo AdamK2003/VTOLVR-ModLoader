@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -79,6 +80,12 @@ namespace VTOLVR_ModLoader.Views
                 approvalWarning.SetValue(Grid.RowProperty, 2);
                 contentGuidelines.SetValue(Grid.RowProperty, 3);
                 uploadButton.Content = "Release";
+                uploadButton.IsEnabled = true;
+            }
+            else
+            {
+                uploadButton.IsEnabled = false;
+                uploadButton.Content = "Please fill out all the sections before uploading";
             }
         }
         private void VersionNumberChanged(object sender, TextChangedEventArgs e)
@@ -89,6 +96,7 @@ namespace VTOLVR_ModLoader.Views
         private async void Upload(object sender, RoutedEventArgs e)
         {
             uploadButton.IsEnabled = false;
+            MainWindow.SetBusy(true);
             SaveProject();
             if (_currentJson[ProjectManager.jID] != null)
                 await UpdateProject();
@@ -99,7 +107,10 @@ namespace VTOLVR_ModLoader.Views
         {
             uploadButton.Content = "Uploading...";
             if (_isMod && !AssemblyChecks())
+            {
+                MainWindow.SetBusy(false);
                 return;
+            }
             Console.Log("Zipping up project");
             string zipPath = ZipCurrentProject();
 
@@ -128,7 +139,10 @@ namespace VTOLVR_ModLoader.Views
         {
             uploadButton.Content = "Updating...";
             if (_isMod && !AssemblyChecks())
+            {
+                MainWindow.SetBusy(false);
                 return;
+            }
             Console.Log("Zipping up project");
             string zipPath = ZipCurrentProject();
 
@@ -157,7 +171,7 @@ namespace VTOLVR_ModLoader.Views
             if (json["detail"] != null)
             {
                 Notification.Show(json["detail"].ToString(), "Error");
-                Process.Start(Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _currentJson[ProjectManager.jID].ToString() + "/");
+                MainWindow.SetBusy(false);
                 return;
             }
 
@@ -183,7 +197,7 @@ namespace VTOLVR_ModLoader.Views
                 Notification.Show($"Error Code: {changelogResult.StatusCode}", "Error");
                 Console.Log($"There was an error trying to submit a change log.\n Error Code: {changelogResult.StatusCode}");
             }
-
+            MainWindow.SetBusy(false);
             MainWindow._instance.Creator(null, null);
         }
         private void APIResult(JObject json)
@@ -241,12 +255,13 @@ namespace VTOLVR_ModLoader.Views
                     catch (Exception e)
                     {
                         Console.Log($"Failed to save project\n{e}");
+                        MainWindow.SetBusy(false);
                         return;
                     }
                     Console.Log("Saved Project!");
                 }
             }
-            Console.Log("End of API results");
+            MainWindow.SetBusy(false);
             MainWindow._instance.Creator(null, null);
         }
         private bool AssemblyChecks()
@@ -353,6 +368,22 @@ namespace VTOLVR_ModLoader.Views
             using (WebResponse response = (result.AsyncState as HttpWebRequest).EndGetResponse(result))
             {
                 Notification.Show(response.ContentType);
+            }
+        }
+
+        private void TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (title != null && description != null &&
+                title.Visibility == Visibility.Visible &&
+                !string.IsNullOrEmpty(title.Text) && !string.IsNullOrEmpty(description.Text))
+            {
+                uploadButton.IsEnabled = true;
+                uploadButton.Content = "Update";
+            }
+            else if (title.Visibility == Visibility.Visible)
+            {
+                uploadButton.IsEnabled = false;
+                uploadButton.Content = "Please fill out all the sections before uploading";
             }
         }
     }

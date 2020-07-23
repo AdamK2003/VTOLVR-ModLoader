@@ -111,8 +111,6 @@ namespace VTOLVR_ModLoader.Views
             form.SetValue("is_public", _currentJson[ProjectManager.jPublic].ToString());
             if (_isMod)
                 form.SetValue("repository", _currentJson[ProjectManager.jSource].ToString());
-            else
-                form.SetValue("repository", "");
 
             form.AttachFile("header_image", _currentJson[ProjectManager.jWImage].ToString(), _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
             form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
@@ -142,8 +140,6 @@ namespace VTOLVR_ModLoader.Views
             form.SetValue("is_public", _currentJson[ProjectManager.jPublic].ToString());
             if (_isMod)
                 form.SetValue("repository", _currentJson[ProjectManager.jSource].ToString());
-            else
-                form.SetValue("repository", "");
 
             form.AttachFile("header_image", _currentJson[ProjectManager.jWImage].ToString(), _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
             form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());

@@ -151,15 +151,6 @@ public class VTOLAPI : MonoBehaviour
         }
     }
     /// <summary>
-    /// Returns the parent gameobject of what vehicle the player is currently flying, it will return null if nothing is found.
-    /// </summary>
-    /// <returns></returns>
-    [Obsolete]
-    public GameObject GetPlayersVehicleGameObject(bool random = false)
-    {
-        return VTOLAPI.GetPlayersVehicleGameObject();
-    }
-    /// <summary>
     /// Returns which vehicle the player is using in a Enum.
     /// </summary>
     /// <returns></returns>
@@ -227,6 +218,14 @@ public class VTOLAPI : MonoBehaviour
             stringBuilder.AppendLine("Command: " + list[i]);
         }
         Debug.Log(stringBuilder.ToString());
+    }
+    /// <summary>
+    /// Returns a list of mods which the user currently has loaded.
+    /// </summary>
+    /// <returns></returns>
+    public static List<Mod> GetUsersMods()
+    {
+        return ModLoader.ModLoader.LoadedMods;
     }
 }
 

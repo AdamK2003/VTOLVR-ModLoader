@@ -20,6 +20,7 @@ namespace ModLoader
         public enum KeyboardType { DisableAll, Int, Float, String }
         public static ModLoader instance { get; private set; }
         public static AssetBundle assetBundle;
+        public List<Mod> ModsLoaded { get; private set; } = new List<Mod>();
         private ModLoaderManager manager;
         private VTOLAPI api;
         
@@ -346,7 +347,7 @@ namespace ModLoader
                 selectedMod.isLoaded = true;
                 loadButton.text = "Loaded!";
                 mod.ModLoaded();
-
+                ModsLoaded.Add(selectedMod);
                 ModLoaderManager.instance.loadedModsCount++;
                 ModLoaderManager.instance.UpdateDiscord();
             }

@@ -143,29 +143,28 @@ namespace ModLoader
             return newMods;
         }
     }
+}
 
-    public class Mod
+public class Mod
+{
+    public string name;
+    public string description;
+    [XmlIgnore]
+    public string dllPath;
+    [XmlIgnore]
+    public GameObject listGO, settingsGO, settingsHolerGO;
+    [XmlIgnore]
+    public bool isLoaded;
+    [XmlIgnore]
+    public string imagePath;
+
+    public Mod() { }
+
+    public Mod(string name, string description, string dllPath)
     {
-        public string name;
-        public string description;
-        [XmlIgnore]
-        public string dllPath;
-        [XmlIgnore]
-        public GameObject listGO, settingsGO,settingsHolerGO;
-        [XmlIgnore]
-        public bool isLoaded;
-        [XmlIgnore]
-        public string imagePath;
-
-        public Mod() { }
-
-        public Mod(string name, string description, string dllPath)
-        {
-            this.name = name;
-            this.description = description;
-            this.dllPath = dllPath;
-        }
+        this.name = name;
+        this.description = description;
+        this.dllPath = dllPath;
     }
-
 }
 

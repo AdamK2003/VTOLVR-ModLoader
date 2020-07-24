@@ -16,7 +16,7 @@ public enum VTOLVehicles { None, AV42C, FA26B, F45A }
 /// <summary>
 /// All the different scenes in order.
 /// </summary>
-public enum VTOLScenes { SplashScene, SamplerScene, ReadyRoom, VehicleConfiguration, LoadingScene, MeshTerrain, OpenWater, Akutan, VTEditMenu, VTEditLoadingScene, VTMapEditMenu, CustomMapBase, CommRadioTest, ShaderVariantsScene };
+public enum VTOLScenes { SplashScene, SamplerScene, ReadyRoom, VehicleConfiguration, LoadingScene, MeshTerrain, OpenWater, Akutan, VTEditMenu, VTEditLoadingScene, VTMapEditMenu, CustomMapBase, CommRadioTest, ShaderVariantsScene, CustomMapBase_OverCloud };
 public class VTOLAPI : MonoBehaviour
 {
     public static VTOLAPI instance { get; private set; }
@@ -94,6 +94,9 @@ public class VTOLAPI : MonoBehaviour
             case 13:
                 CallSceneLoaded(VTOLScenes.ShaderVariantsScene);
                 break;
+            case 14:
+                StartCoroutine(WaitForScenario(VTOLScenes.CustomMapBase_OverCloud));
+                break;
         }
     }
     private IEnumerator WaitForScenario(VTOLScenes Scene)
@@ -146,15 +149,6 @@ public class VTOLAPI : MonoBehaviour
             default: //It should be none here
                 return null;
         }
-    }
-    /// <summary>
-    /// Returns the parent gameobject of what vehicle the player is currently flying, it will return null if nothing is found.
-    /// </summary>
-    /// <returns></returns>
-    [Obsolete]
-    public GameObject GetPlayersVehicleGameObject(bool random = false)
-    {
-        return VTOLAPI.GetPlayersVehicleGameObject();
     }
     /// <summary>
     /// Returns which vehicle the player is using in a Enum.
@@ -224,6 +218,14 @@ public class VTOLAPI : MonoBehaviour
             stringBuilder.AppendLine("Command: " + list[i]);
         }
         Debug.Log(stringBuilder.ToString());
+    }
+    /// <summary>
+    /// Returns a list of mods which the user currently has loaded.
+    /// </summary>
+    /// <returns></returns>
+    public static List<Mod> GetUsersMods()
+    {
+        return ModLoader.ModLoader.LoadedMods;
     }
 }
 

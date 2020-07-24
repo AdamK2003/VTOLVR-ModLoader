@@ -19,6 +19,7 @@ namespace ModLoader
         public enum KeyboardType { DisableAll, Int, Float, String }
         public static ModLoader instance { get; private set; }
         public static AssetBundle assetBundle;
+        public static List<Mod> LoadedMods { get; private set; } = new List<Mod>();
         private ModLoaderManager manager;
         private VTOLAPI api;
         
@@ -96,7 +97,7 @@ namespace ModLoader
             if (MainScreen == null)
                 LogError("Main Screen was null");
 
-            Log("Spawning Keyboards");
+            Log("Spawning Keyboards"); 
             stringKeyboard = Instantiate(assetBundle.LoadAsset<GameObject>("StringKeyboard")).GetComponent<VRKeyboard>();
             floatKeyboard = Instantiate(assetBundle.LoadAsset<GameObject>("FloatKeyboard")).GetComponent<VRKeyboard>();
             intKeyboard = Instantiate(assetBundle.LoadAsset<GameObject>("IntKeyboard")).GetComponent<VRKeyboard>();
@@ -107,7 +108,14 @@ namespace ModLoader
             Log("Creating Mods Button");//Mods Button
             GameObject SettingsButton = MainScreen.transform.GetChild(0).GetChild(0).GetChild(8).gameObject;
             GameObject ModsButton = Instantiate(assetBundle.LoadAsset<GameObject>("ModsButton"), SettingsButton.transform.parent);
-            ModsButton.transform.localPosition = new Vector3(-811,-112,0);
+            if (GameStartup.version > new GameVersion(0, 1, 0, 2, GameVersion.ReleaseTypes.Testing))
+            {
+                ModsButton.transform.localPosition = new Vector3(-811, -412, 0);
+            }
+            else
+            {
+                ModsButton.transform.localPosition = new Vector3(-811, -112, 0);
+            }
             VRInteractable modsInteractable = ModsButton.GetComponent<VRInteractable>();
             modsInteractable.OnInteract.AddListener(delegate { OpenPage(Pages.Mods); SetDefaultText(); });
 
@@ -221,7 +229,7 @@ namespace ModLoader
                 selectedMod.isLoaded = true;
                 SelectButton.text = "Loaded!";
                 mod.ModLoaded();
-
+                LoadedMods.Add(selectedMod);
                 ModLoaderManager.instance.loadedModsCount++;
                 ModLoaderManager.instance.UpdateDiscord();
             }

@@ -104,17 +104,8 @@ namespace Updater
             items = new Queue<Item>(updateData.Updates[0].Files.Length);
             for (int i = 0; i < updateData.Updates[0].Files.Length; i++)
             {
-                
                 items.Enqueue(updateData.Updates[0].Files[i]);
             }
-            for (int i = 0; i < updateData.Updates.Length; i++)
-            {
-                for (int f = 0; f < updateData.Updates[i].Files.Length; f++)
-                {
-                    Log(updateData.Updates[i].Files[f].FileName);
-                }
-            }
-
             DownloadFiles();
         }
 

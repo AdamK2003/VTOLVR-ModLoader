@@ -219,7 +219,7 @@ public class VTOLAPI : MonoBehaviour
     /// Returns a list of mods which are currently loaded
     /// </summary>
     /// <returns></returns>
-    public List<Mod> GetUsersMods()
+    public static List<Mod> GetUsersMods()
     {
         return ModLoader.ModLoader.instance.ModsLoaded;
     }

@@ -26,7 +26,7 @@ namespace VTOLVR_ModLoader.Views
             if (await HttpHelper.CheckForInternet())
             {
                 Console.Log($"Connecting to API for latest releases (Page {page})");
-                await HttpHelper.DownloadStringAsync(
+                HttpHelper.DownloadStringAsync(
                     Program.url + Program.apiURL + modLoaderURL + Program.jsonFormat + (page == 0 ? "" : Program.pageFormat + page),
                     NewsDone);
             }

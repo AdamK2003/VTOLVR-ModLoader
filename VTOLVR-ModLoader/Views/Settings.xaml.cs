@@ -71,7 +71,7 @@ namespace VTOLVR_ModLoader.Views
                 updateButton.IsEnabled = false;
                 tokenValid = false;
                 Console.Log("Testing new token");
-                await HttpHelper.DownloadStringAsync(
+                HttpHelper.DownloadStringAsync(
                     Program.url + Program.apiURL + userURL + Program.jsonFormat,
                     TestTokenDone,
                     Token);         

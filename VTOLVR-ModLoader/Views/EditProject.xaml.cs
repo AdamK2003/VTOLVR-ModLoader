@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,6 +90,15 @@ namespace VTOLVR_ModLoader.Views
                     webPageImageText.Visibility = Visibility.Hidden;
                 }
             }
+            if (_currentJson[ProjectManager.jPublic] != null)
+            {
+                isPublic.IsChecked = _currentJson[ProjectManager.jPublic].ToString().Equals("true") ? true : false;
+            }
+            if (_currentJson[ProjectManager.jUnlisted] != null)
+            {
+                unlisted.IsChecked = _currentJson[ProjectManager.jUnlisted].ToString().Equals("true") ? true : false;
+            }
+
 
             if (_isMod)
                 LoadMod();
@@ -143,6 +153,8 @@ namespace VTOLVR_ModLoader.Views
 
         private void SaveProject()
         {
+            saveButton.IsEnabled = false;
+            saveButton.Content = "Saving...";
             _currentJson[ProjectManager.jName] = projectName.Text;
             _currentJson[ProjectManager.jTagline] = tagline.Text;
             _currentJson[ProjectManager.jDescription] = projectDescription.Text;
@@ -160,9 +172,48 @@ namespace VTOLVR_ModLoader.Views
             {
                 Notification.Show($"Failed to save project\n{e.Message}", "Error");
                 Console.Log($"Failed to save project\n{e}");
+                saveButton.IsEnabled = true;
+                saveButton.Content = "Save";
                 return;
             }
             Console.Log("Saved Project!");
+            
+            if (_currentJson[ProjectManager.jID] != null)
+            {
+                Console.Log("Submitting changes to website");
+                HttpHelper form = new HttpHelper($"{Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL)}/{_currentJson[ProjectManager.jID]}/");
+                form.SetToken(Settings.Token);
+                form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
+                form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
+                form.SetValue("tagline", _currentJson[ProjectManager.jTagline].ToString());
+                form.SetValue("description", _currentJson[ProjectManager.jDescription].ToString());
+                form.SetValue("unlisted", _currentJson[ProjectManager.jUnlisted].ToString());
+                form.SetValue("is_public", _currentJson[ProjectManager.jPublic].ToString());
+                if (_isMod)
+                    form.SetValue("repository", _currentJson[ProjectManager.jSource].ToString());
+
+                form.AttachFile("header_image", _currentJson[ProjectManager.jWImage].ToString(), _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
+                form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
+                form.SetValue("user_uploaded_file", string.Empty);
+                form.SendDataAsync(HttpHelper.HttpMethod.PUT, UpdateSent);
+            }
+        }
+
+        private async void UpdateSent(HttpResponseMessage response)
+        {
+            saveButton.IsEnabled = true;
+            if (!response.IsSuccessStatusCode)
+            {
+                Notification.Show($"Failed to update your {(_isMod? "mod": "skin")} on the website.\nError Code: {response.StatusCode}\nChanges have been saved locally, please try again later.",
+                    "Failed to update on website");
+                Console.Log("There was an error when trying to submit the saved data to the website.\n" +
+                    $"Error Code: {response.StatusCode}\n" +
+                    $"URL: { Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL)}/{ _currentJson[ProjectManager.jID]}/\n" +
+                    $"Raw Response: {await response.Content.ReadAsStringAsync()}");
+                saveButton.Content = "Save";
+                return;
+            }
+            saveButton.Content = "Saved";
         }
 
         private void PreviewImageButton(object sender, RoutedEventArgs e)

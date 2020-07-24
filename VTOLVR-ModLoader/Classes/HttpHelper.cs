@@ -35,7 +35,7 @@ namespace VTOLVR_ModLoader.Classes
             else
                 return false;
         }
-        public static async Task DownloadStringAsync(string url, Action<HttpResponseMessage> callback, string token = "")
+        public static async void DownloadStringAsync(string url, Action<HttpResponseMessage> callback, string token = "")
         {
             if (token == null || !token.Equals(""))
             {
@@ -50,7 +50,7 @@ namespace VTOLVR_ModLoader.Classes
             if (_client.DefaultRequestHeaders.Contains("Authorization"))
                 _client.DefaultRequestHeaders.Remove("Authorization");
         }
-        public static async Task DownloadFileAsync(string url, string path, Action finishedCallback)
+        public static async void DownloadFileAsync(string url, string path, Action finishedCallback)
         {
             var response = await _client.GetAsync(url);
             
@@ -111,6 +111,11 @@ namespace VTOLVR_ModLoader.Classes
                 _client.DefaultRequestHeaders.Remove("Authorization");
 
             return message;
+        }
+        public async void SendDataAsync(HttpMethod method, Action<HttpResponseMessage> callback)
+        {
+            HttpResponseMessage response = await SendDataAsync(method);
+            callback?.Invoke(response);
         }
     }
 }

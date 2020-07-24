@@ -131,21 +131,17 @@ namespace VTOLVR_ModLoader.Views
         private void DownloadModBoilerplate()
         {
             progressBar.Visibility = Visibility.Visible;
-            HttpHelper.DownloadFileAsync(modBoilerplateURL, currentFolder.FullName + @"\boilerplate.zip", Done);
-            //WebClient client = new WebClient();
-            //client.Headers.Add("user-agent", "VTOL VR Mod Loader");
-            //client.DownloadProgressChanged += DownloadProgress;
-            //client.DownloadFileCompleted += DownloadDone;
-            //client.DownloadFileAsync(new Uri(modBoilerplateURL), currentFolder.FullName + @"\boilerplate.zip");
+            //I can't get the progress with a HttpClient, so I am using WebClient instead.
+            WebClient client = new WebClient();
+            client.Headers.Add("user-agent", "VTOL VR Mod Loader");
+            client.DownloadProgressChanged += DownloadProgress;
+            client.DownloadFileCompleted += DownloadDone;
+            client.DownloadFileAsync(new Uri(modBoilerplateURL), currentFolder.FullName + @"\boilerplate.zip");
         }
 
         private void DownloadProgress(object sender, DownloadProgressChangedEventArgs e)
         {
             progressBar.Value = e.ProgressPercentage;
-        }
-        private void Done()
-        {
-            Process.Start(currentFolder.FullName);
         }
         private void DownloadDone(object sender, AsyncCompletedEventArgs e)
         {

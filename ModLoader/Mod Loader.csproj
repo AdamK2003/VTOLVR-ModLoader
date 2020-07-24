@@ -22,8 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>bin\Debug\ModLoader.xml</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -34,6 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Release\ModLoader.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -113,6 +113,8 @@
   <PropertyGroup>
     <PostBuildEvent>IF EXIST "A:\Program Files\Steam\steamapps\common\VTOL VR\VTOLVR.exe" (
 copy "$(TargetPath)" "A:\Program Files\Steam\steamapps\common\VTOL VR\VTOLVR_ModLoader\ModLoader.dll"
-)</PostBuildEvent>
+copy "$(TargetDir)ModLoader.xml" "A:\Program Files\Steam\steamapps\common\VTOL VR\VTOLVR_ModLoader\ModLoader.xml"
+)
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

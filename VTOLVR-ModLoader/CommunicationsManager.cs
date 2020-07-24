@@ -33,7 +33,14 @@ namespace VTOLVR_ModLoader
             builder.Append("\"");
             Views.Console.Log(builder.ToString());
         }
-
+        public static void CheckNoInternet()
+        {
+            if (CheckArgs("nointernet", out string line))
+            {
+                Views.Console.Log("Internet has been disabled");
+                Program.disableInternet = true;
+            }
+        }
         public static void CheckCustomBranch()
         {
             if (CheckArgs("branch", out string line))

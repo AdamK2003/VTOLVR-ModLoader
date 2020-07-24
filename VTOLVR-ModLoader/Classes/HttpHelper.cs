@@ -29,6 +29,8 @@ namespace VTOLVR_ModLoader.Classes
         }
         public static async Task<bool> CheckForInternet()
         {
+            if (Program.disableInternet)
+                return false;
             HttpResponseMessage response = await _client.GetAsync(Program.url);
             if (response.IsSuccessStatusCode)
                 return true;

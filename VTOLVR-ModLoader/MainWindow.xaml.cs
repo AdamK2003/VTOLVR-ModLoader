@@ -362,6 +362,7 @@ namespace VTOLVR_ModLoader
         {
             if (settings == null)
                 settings = new Views.Settings();
+            settings.UpdateButtons();
             DataContext = settings;
         }
 

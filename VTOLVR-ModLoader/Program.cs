@@ -39,12 +39,14 @@ namespace VTOLVR_ModLoader
         public static string vtolFolder;
         public static string ProgramName;
         public static bool autoStart { get; private set; }
+        public static bool disableInternet = false;
         private static bool uiLoaded = false;
 
         public async static void SetupAfterUI()
         {
             await WaitForUI();
             MainWindow._instance.CreatePages();
+            CommunicationsManager.CheckNoInternet();
             CommunicationsManager.CheckCustomURL();
             CommunicationsManager.CheckCustomBranch();
             if (CommunicationsManager.CheckSteamVR())

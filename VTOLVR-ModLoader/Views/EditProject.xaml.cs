@@ -107,6 +107,14 @@ namespace VTOLVR_ModLoader.Views
 
             previewImageCallBack += PreviewImageCallBack;
             webImageCallBack += WebImageCallBack;
+            CheckForInternet();
+        }
+        public async void CheckForInternet()
+        {
+            if (!await HttpHelper.CheckForInternet())
+            {
+                saveButton.Content = "Save Locally (Can't connect to server)";
+            }
         }
 
         private void LoadMod()

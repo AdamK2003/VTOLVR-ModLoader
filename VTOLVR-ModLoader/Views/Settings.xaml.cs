@@ -48,7 +48,14 @@ namespace VTOLVR_ModLoader.Views
                 if (!line.Contains("token"))
                     TestToken(true);
             }
-
+        }
+        public async void UpdateButtons()
+        {
+            if (!await HttpHelper.CheckForInternet())
+            {
+                updateButton.Content = "Disabled";
+                updateButton.IsEnabled = false;
+            }
         }
         public void SetUserToken(string token)
         {
@@ -101,6 +108,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private void NoInternet()
         {
+            updateButton.Content = "Disabled";
             updateButton.IsEnabled = false;
         }
         private void SaveSettings()

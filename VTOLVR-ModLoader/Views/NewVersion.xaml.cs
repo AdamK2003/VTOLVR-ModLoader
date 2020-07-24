@@ -34,6 +34,7 @@ namespace VTOLVR_ModLoader.Views
         private JObject _currentJson;
         private string _currentPath;
         private bool _isMod;
+        private bool _hasInternet = true;
         public NewVersion(string currentPath)
         {
             _currentPath = currentPath;
@@ -86,6 +87,16 @@ namespace VTOLVR_ModLoader.Views
             {
                 uploadButton.IsEnabled = false;
                 uploadButton.Content = "Please fill out all the sections before uploading";
+            }
+            CheckForInternet();
+        }
+        public async void CheckForInternet()
+        {
+            if (!await HttpHelper.CheckForInternet())
+            {
+                uploadButton.IsEnabled = false;
+                uploadButton.Content = "Disabled (Can't connect to server)";
+                _hasInternet = false;
             }
         }
         private void VersionNumberChanged(object sender, TextChangedEventArgs e)
@@ -365,6 +376,8 @@ namespace VTOLVR_ModLoader.Views
         }
         private void TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (!_hasInternet)
+                return;
             if (title != null && description != null &&
                 title.Visibility == Visibility.Visible &&
                 !string.IsNullOrEmpty(title.Text) && !string.IsNullOrEmpty(description.Text))

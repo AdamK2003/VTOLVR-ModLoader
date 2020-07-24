@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using VTOLVR_ModLoader.Windows;
+using VTOLVR_ModLoader.Classes;
 
 namespace VTOLVR_ModLoader
 {

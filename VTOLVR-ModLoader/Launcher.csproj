@@ -94,8 +94,8 @@
     <Compile Include="Classes\Pilot.cs" />
     <Compile Include="Classes\Scenario.cs" />
     <Compile Include="Classes\Updates.cs" />
-    <Compile Include="CommunicationsManager.cs" />
-    <Compile Include="Helper.cs" />
+    <Compile Include="Classes\CommunicationsManager.cs" />
+    <Compile Include="Classes\Helper.cs" />
     <Compile Include="Classes\SettingSave.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Startup.cs" />

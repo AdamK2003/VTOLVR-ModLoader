@@ -7,6 +7,11 @@ Some other classes though may talk to others such as the console page.
 Possiable URI's
 - token/ndkahjsbdjahbfsdf
 
+Possiable Args
+- nointernet
+- branch=branchname
+- url=https://url.com
+- novr
  */
 using System;
 using System.Collections.Generic;
@@ -16,7 +21,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using VTOLVR_ModLoader.Windows;
 
-namespace VTOLVR_ModLoader
+namespace VTOLVR_ModLoader.Classes
 {
     static class CommunicationsManager
     {

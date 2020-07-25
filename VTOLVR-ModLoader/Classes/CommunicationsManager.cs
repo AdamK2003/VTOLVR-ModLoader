@@ -6,6 +6,8 @@ Some other classes though may talk to others such as the console page.
 
 Possiable URI's
 - token/ndkahjsbdjahbfsdf
+- mod/pub_id/filename.extention
+- skin/pub_id/filename.extention
 
 Possiable Args
 - nointernet
@@ -143,6 +145,8 @@ namespace VTOLVR_ModLoader.Classes
                 MainWindow.SetProgress(100, $"Ready");
                 Notification.Show($"{e.Error.Message}", "Error when downloading file");
                 Console.Log("Error:\n" + e.Error.ToString());
+                if (File.Exists(Path.Combine(Program.root, currentDownloadFile)))
+                    File.Delete(Path.Combine(Program.root, currentDownloadFile));
             }
             Program.FinishedQueue();
         }

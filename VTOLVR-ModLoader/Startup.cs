@@ -53,12 +53,12 @@ namespace VTOLVR_ModLoader
             Program.ProgramName = $"{Program.ProgramNameBase} {version.Major}.{version.Minor}.{version.Build} {(debug ? "[Development Mode]" : string.Empty)}";
             HttpHelper.SetHeader();
             Program.SetVariables();
-            SearchForProcess();
             CheckBaseFolder();
             CheckFolder();
+            CommunicationsManager.StartTCP();
         }
 
-        private static void SearchForProcess()
+        public static bool SearchForProcess()
         {
             Process[] p = Process.GetProcessesByName("VTOLVR-ModLoader");
             for (int i = 0; i < p.Length; i++)
@@ -74,9 +74,10 @@ namespace VTOLVR_ModLoader
 
                     // set user the focus to the window
                     SetForegroundWindow(p[i].MainWindowHandle);
-                    MainWindow.Quit();
+                    return true;
                 }
             }
+            return false;
         }
 
         private static void CheckBaseFolder()

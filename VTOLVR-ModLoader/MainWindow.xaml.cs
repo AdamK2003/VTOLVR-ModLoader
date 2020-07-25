@@ -38,17 +38,8 @@ namespace VTOLVR_ModLoader
         public DevTools devTools { get; private set; }
         public Console console { get; private set; }
         public ProjectManager pManager { get; private set; }
-
-        //Moving Window
-        private bool holdingDown;
-        private Point lm = new Point();
-        private bool isBusy;
         //Updates
         WebClient client;
-        //URI
-        private bool uriSet = false;
-        private string uriDownload;
-        private string uriFileName;
         //Notifications
         private NotificationWindow notification;
         //Storing completed tasks
@@ -56,23 +47,17 @@ namespace VTOLVR_ModLoader
         private int extractedSkins = 0;
         private int movedDep = 0;
 
-        private static string CalculateMD5(string filename)
-        {
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(filename))
-                {
-                    var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-                }
-            }
-        }
 
-        #region Startup
         public MainWindow()
         {
             _instance = this;
             Startup.RunStartUp();
+            if (Startup.SearchForProcess())
+            {
+                // There is another mod loader open.
+                CommunicationsManager.ConnectToInstance();
+                return;
+            }
             Program.SetupAfterUI();
             InitializeComponent();
         }
@@ -85,209 +70,6 @@ namespace VTOLVR_ModLoader
             pManager = new ProjectManager();
             DataContext = news;
         }     
-#endregion
-
-        #region Handeling Mods
-        private void ExtractMods()
-        {
-            if (uriSet)
-            {
-                DownloadFile();
-                return;
-            }
-            SetPlayButton(true);
-            SetProgress(0, "Extracting  mods...");
-            DirectoryInfo folder = new DirectoryInfo(Program.root + Program.modsFolder);
-            FileInfo[] files = folder.GetFiles("*.zip");
-            if (files.Length == 0)
-            {
-                SetPlayButton(false);
-                SetProgress(100, "No new mods were found");
-                MoveDependencies();
-                return;
-            }
-            float zipAmount = 100 / files.Length;
-            string currentFolder;
-
-            for (int i = 0; i < files.Length; i++)
-            {
-                SetProgress((int)Math.Ceiling(zipAmount * i), "Extracting mods... [" + files[i].Name + "]");
-                //This should remove the .zip at the end for the folder path
-                currentFolder = files[i].FullName.Split('.')[0];
-
-                //We don't want to overide any mod folder incase of user data
-                //So mod users have to update by hand
-                if (Directory.Exists(currentFolder))
-                    continue;
-
-                Directory.CreateDirectory(currentFolder);
-                ZipFile.ExtractToDirectory(files[i].FullName, currentFolder);
-                extractedMods++;
-
-                //Deleting the zip
-                //File.Delete(files[i].FullName);
-            }
-
-            SetPlayButton(false);
-            SetProgress(100, extractedMods == 0 ? "No mods were extracted" : "Extracted " + extractedMods +
-                (extractedMods == 1 ? " mod" : " mods"));
-            MoveDependencies();
-
-        }
-        private void ExtractSkins()
-        {
-            SetPlayButton(true);
-            SetProgress(0, "Extracting skins...");
-            DirectoryInfo folder = new DirectoryInfo(Program.root + Program.skinsFolder);
-            FileInfo[] files = folder.GetFiles("*.zip");
-            if (files.Length == 0)
-            {
-                SetPlayButton(false);
-                SetProgress(100,
-                    (extractedMods == 0 ? "0 Mods" : (extractedMods == 1 ? "1 Mod" : extractedMods + " Mods")) +
-                    " and " +
-                    (extractedSkins == 0 ? "0 Skins" : (extractedSkins == 1 ? "1 Skin" : extractedSkins + " Skins")) +
-                    " extracted" +
-                    " and " +
-                    (movedDep == 0 ? "0 Dependencies" : (movedDep == 1 ? "1 Dependencies" : movedDep + " Dependencies")) +
-                    " moved");
-                
-                return;
-            }
-            float zipAmount = 100 / files.Length;
-            string currentFolder;
-
-            for (int i = 0; i < files.Length; i++)
-            {
-                SetProgress((int)Math.Ceiling(zipAmount * i), "Extracting skins... [" + files[i].Name + "]");
-                //This should remove the .zip at the end for the folder path
-                currentFolder = files[i].FullName.Split('.')[0];
-
-                //We don't want to overide any mod folder incase of user data
-                //So mod users have to update by hand
-                if (Directory.Exists(currentFolder))
-                    continue;
-
-                Directory.CreateDirectory(currentFolder);
-                ZipFile.ExtractToDirectory(files[i].FullName, currentFolder);
-                extractedSkins++;
-            }
-
-            SetPlayButton(false);
-            //This is the final text displayed in the progress text
-            SetProgress(100,
-                (extractedMods == 0 ? "0 Mods" : (extractedMods == 1 ? "1 Mod" : extractedMods + " Mods")) +
-                " and " +
-                (extractedSkins == 0 ? "0 Skins" : (extractedSkins == 1 ? "1 Skin" : extractedSkins + " Skins")) +
-                " extracted" +
-                " and " +
-                (movedDep == 0 ? "0 Dependencies" : (movedDep == 1 ? "1 Dependencies" : movedDep + " Dependencies")) +
-                " moved");
-            
-        }
-
-        private void MoveDependencies()
-        {
-            SetPlayButton(true);
-            string[] modFolders = Directory.GetDirectories(Program.root + Program.modsFolder);
-
-            string fileName;
-            string[] split;
-            for (int i = 0; i < modFolders.Length; i++)
-            {
-                string[] subFolders = Directory.GetDirectories(modFolders[i]);
-                for (int j = 0; j < subFolders.Length; j++)
-                {
-                    Console.Log("Checking " + subFolders[j].ToLower());
-                    if (subFolders[j].ToLower().Contains("dependencies"))
-                    {
-                        Console.Log("Found the folder dependencies");
-                        string[] depFiles = Directory.GetFiles(subFolders[j], "*.dll");
-                        for (int k = 0; k < depFiles.Length; k++)
-                        {
-                            split = depFiles[k].Split('\\');
-                            fileName = split[split.Length - 1];
-
-                            if (File.Exists(Directory.GetParent(Program.root).FullName +
-                                        @"\VTOLVR_Data\Managed\" + fileName))
-                            {
-                                string oldHash = CalculateMD5(Directory.GetParent(Program.root).FullName +
-                                        @"\VTOLVR_Data\Managed\" + fileName);
-                                string newHash = CalculateMD5(depFiles[k]);
-                                if (!oldHash.Equals(newHash))
-                                {
-                                    File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
-                                        @"\VTOLVR_Data\Managed\" + fileName,
-                                        true);
-                                    movedDep++;
-                                }
-                            }
-                            else
-                            {
-                                Console.Log("Moved file \n" + Directory.GetParent(Program.root).FullName +
-                                        @"\VTOLVR_Data\Managed\" + fileName);
-                                File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
-                                            @"\VTOLVR_Data\Managed\" + fileName,
-                                            true);
-                                movedDep++;
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-
-            SetPlayButton(false);
-            SetProgress(100, movedDep == 0 ? "Checked Dependencies" : "Moved " + movedDep
-                + (movedDep == 1 ? " dependency" : " dependencies"));
-
-            ExtractSkins();
-        }
-
-        private void DownloadFile()
-        {
-            if (uriDownload.Equals(string.Empty) || uriDownload.Split('/').Length < 4)
-                return;
-
-            uriFileName = uriDownload.Split('/')[3];
-            bool isMod = uriDownload.Contains("mods");
-            client = new WebClient();
-            client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(FileProgress);
-            client.DownloadFileCompleted += new AsyncCompletedEventHandler(FileDone);
-            client.DownloadFileAsync(new Uri(Program.url + "/" + uriDownload), Program.root + (isMod ? Program.modsFolder : Program.skinsFolder) + @"\" + uriFileName);
-        }
-
-        private void FileDone(object sender, AsyncCompletedEventArgs e)
-        {
-            if (!e.Cancelled && e.Error == null)
-            {
-                ShowNotification("Downloaded " + uriFileName);
-                //Checking if they already had the mod extracted incase they wanted to update it
-                bool isMod = uriDownload.Contains("mods");
-                if (Directory.Exists(Program.root + (isMod ? Program.modsFolder : Program.skinsFolder) + @"\" + uriFileName.Split('.')[0]))
-                {
-                    Directory.Delete(Program.root + (isMod ? Program.modsFolder : Program.skinsFolder) + @"\" + uriFileName.Split('.')[0], true);
-                }
-            }
-            else
-            {
-                Notification.Show("Failed Downloading " + uriFileName + "\n" + e.Error.ToString(),
-                    "Failed Downloading File");
-            }
-
-            uriSet = false;
-            SetProgress(100, "Downloaded " + uriFileName);
-            SetPlayButton(false);
-            ExtractMods();
-        }
-
-        private void FileProgress(object sender, DownloadProgressChangedEventArgs e)
-        {
-            SetProgress(e.ProgressPercentage / 100, "Downloading " + uriFileName + "...");
-        }
-
-#endregion
-
         private void ShowNotification(string text)
         {
             if (notification != null)
@@ -298,21 +80,21 @@ namespace VTOLVR_ModLoader
             notification.Owner = this;
             notification.Show();
         }
-        public void SetProgress(int barValue, string text)
+        public static void SetProgress(int barValue, string text)
         {
             Console.Log(text);
-            progressText.Text = text;
-            progressBar.Value = barValue;
+            _instance.progressText.Text = text;
+            _instance.progressBar.Value = barValue;
         }
-        public void SetPlayButton(bool disabled)
+        public static void SetPlayButton(bool disabled)
         {
-            launchButton.Content = disabled ? "Busy" : "Play";
-            isBusy = disabled;
+            _instance.launchButton.Content = disabled ? "Busy" : "Play";
+            Program.isBusy = disabled;
         }
-        public void GifState(gifStates state, int frame = 0)
+        public static void GifState(gifStates state, int frame = 0)
         {
             //Changing the gif's state
-            var controller = ImageBehavior.GetAnimationController(LogoGif);
+            var controller = ImageBehavior.GetAnimationController(_instance.LogoGif);
             switch (state)
             {
                 case gifStates.Paused:

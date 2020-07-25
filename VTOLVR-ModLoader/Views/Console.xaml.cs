@@ -84,7 +84,7 @@ namespace VTOLVR_ModLoader.Views
                     }
                 }
                 Application.Current.Dispatcher.Invoke(new Action(() => { _instance.GameClosed(); }));
-                Application.Current.Dispatcher.Invoke(new Action(() => { MainWindow._instance.GifState(MainWindow.gifStates.Paused); }));
+                Application.Current.Dispatcher.Invoke(new Action(() => { MainWindow.GifState(MainWindow.gifStates.Paused); }));
                 
             }
         }

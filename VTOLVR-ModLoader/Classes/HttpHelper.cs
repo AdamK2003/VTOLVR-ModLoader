@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -58,25 +59,13 @@ namespace VTOLVR_ModLoader.Classes
             if (_client.DefaultRequestHeaders.Contains("Authorization"))
                 _client.DefaultRequestHeaders.Remove("Authorization");
         }
-        public static async void DownloadFileAsync(string url, string path, Action finishedCallback)
+        public static void DownloadFile(string url, string path, DownloadProgressChangedEventHandler downloadProgress, AsyncCompletedEventHandler downloadComplete)
         {
-            var response = await _client.GetAsync(url);
-            
-            if (!response.IsSuccessStatusCode)
-            {
-                //Failed
-                return;
-            }
-
-            using (var stream = await response.Content.ReadAsStreamAsync())
-            using (var streamReader = new StreamReader(stream))
-            using (FileStream fileStream = File.Create(path))
-            {
-                await stream.CopyToAsync(fileStream);
-            }
-
-            if (finishedCallback != null)
-                finishedCallback.Invoke();
+            WebClient client = new WebClient();
+            client.Headers.Add("user-agent", Program.ProgramName.RemoveSpecialCharacters());
+            client.DownloadProgressChanged += downloadProgress;
+            client.DownloadFileCompleted += downloadComplete;
+            client.DownloadFileAsync(new Uri(url), path);
         }
 
         public HttpHelper(string url)

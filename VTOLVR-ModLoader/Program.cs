@@ -5,16 +5,20 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using VTOLVR_ModLoader.Classes;
+using VTOLVR_ModLoader.Views;
+using Console = VTOLVR_ModLoader.Views.Console;
 
 namespace VTOLVR_ModLoader
 {
@@ -40,8 +44,11 @@ namespace VTOLVR_ModLoader
         public static string ProgramName;
         public static bool autoStart { get; private set; }
         public static bool disableInternet = false;
-        private static bool uiLoaded = false;
+        public static bool isBusy;
 
+        private static bool uiLoaded = false;
+        private static int extractedMods, extractedSkins, movedDep;
+        private static Queue<Action> actionQueue = new Queue<Action>();
         public async static void SetupAfterUI()
         {
             await WaitForUI();
@@ -55,7 +62,7 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckURI();
             MainWindow._instance.news.LoadNews(0);
             MainWindow._instance.Title = $"{ProgramName}";
-            MainWindow._instance.progressText.Text = "Ready";
+            Queue(ExtractMods);
         }
 
         public static void SetVariables()
@@ -107,9 +114,9 @@ namespace VTOLVR_ModLoader
         {
             Process.Start("steam://run/667970");
 
-            MainWindow._instance.SetPlayButton(false);
-            MainWindow._instance.SetProgress(0, "Launching Game");
-            MainWindow._instance.GifState(MainWindow.gifStates.Play);
+            MainWindow.SetPlayButton(false);
+            MainWindow.SetProgress(0, "Launching Game");
+            MainWindow.GifState(MainWindow.gifStates.Play);
 
             WaitForProcess();
         }
@@ -120,7 +127,7 @@ namespace VTOLVR_ModLoader
             for (int i = 1; i <= maxTries; i++)
             {
                 //Doing 5 tries to search for the process
-                MainWindow._instance.SetProgress(10 * i, "Searching for process...   (Attempt " + i + ")");
+                MainWindow.SetProgress(10 * i, "Searching for process...   (Attempt " + i + ")");
                 await Task.Delay(5000);
 
                 if (Process.GetProcessesByName("vtolvr").Length == 1)
@@ -131,19 +138,19 @@ namespace VTOLVR_ModLoader
                 if (i == maxTries)
                 {
                     //If we couldn't find it, go back to how it was at the start
-                    MainWindow._instance.GifState(MainWindow.gifStates.Paused);
-                    MainWindow._instance.SetProgress(100, "Couldn't find VTOLVR process.");
-                    MainWindow._instance.SetPlayButton(false);
+                    MainWindow.GifState(MainWindow.gifStates.Paused);
+                    MainWindow.SetProgress(100, "Couldn't find VTOLVR process.");
+                    MainWindow.SetPlayButton(false);
                     return;
                 }
             }
 
             //A delay just to make sure the game has fully launched,
-            MainWindow._instance.SetProgress(50, "Waiting for game...");
+            MainWindow.SetProgress(50, "Waiting for game...");
             await Task.Delay(10000);
 
             //Injecting Default Mod
-            MainWindow._instance.SetProgress(75, "Injecting Mod Loader...");
+            MainWindow.SetProgress(75, "Injecting Mod Loader...");
             InjectDefaultMod();
 
 
@@ -160,6 +167,192 @@ namespace VTOLVR_ModLoader
         public static void Quit()
         {
             Process.GetCurrentProcess().Kill();
+        }
+
+        #region Mod/Skin Handeling
+        public static void ExtractMods()
+        {
+            MainWindow.SetPlayButton(true);
+            MainWindow.SetProgress(0, "Extracting  mods...");
+            DirectoryInfo folder = new DirectoryInfo(root + modsFolder);
+            FileInfo[] files = folder.GetFiles("*.zip");
+            if (files.Length == 0)
+            {
+                MainWindow.SetPlayButton(false);
+                MainWindow.SetProgress(100, "No new mods were found");
+                MoveDependencies();
+                return;
+            }
+            float zipAmount = 100 / files.Length;
+            string currentFolder;
+
+            for (int i = 0; i < files.Length; i++)
+            {
+                MainWindow.SetProgress((int)Math.Ceiling(zipAmount * i), "Extracting mods... [" + files[i].Name + "]");
+                //This should remove the .zip at the end for the folder path
+                currentFolder = files[i].FullName.Split('.')[0];
+
+                Directory.CreateDirectory(currentFolder);
+                Helper.ExtractZipToDirectory(files[i].FullName, currentFolder);
+                extractedMods++;
+
+                //Deleting the zip
+                File.Delete(files[i].FullName);
+            }
+
+            MainWindow.SetPlayButton(false);
+            MainWindow.SetProgress(100, extractedMods == 0 ? "No mods were extracted" : "Extracted " + extractedMods +
+                (extractedMods == 1 ? " new mod" : " new mods"));
+            MoveDependencies();
+
+        }
+        private static void ExtractSkins()
+        {
+            MainWindow.SetPlayButton(true);
+            MainWindow.SetProgress(0, "Extracting skins...");
+            DirectoryInfo folder = new DirectoryInfo(Program.root + Program.skinsFolder);
+            FileInfo[] files = folder.GetFiles("*.zip");
+            if (files.Length == 0)
+            {
+                MainWindow.SetPlayButton(false);
+                MainWindow.SetProgress(100,
+                    (extractedMods == 0 ? "0 New Mods" : (extractedMods == 1 ? "1 New Mod" : extractedMods + " New Mods")) +
+                    " and " +
+                    (extractedSkins == 0 ? "0 New Skins" : (extractedSkins == 1 ? "1 New Skin" : extractedSkins + " New Skins")) +
+                    " extracted" +
+                    " and " +
+                    (movedDep == 0 ? "0 New Dependencies" : (movedDep == 1 ? "1 New Dependencies" : movedDep + " New Dependencies")) +
+                    " moved");
+
+                return;
+            }
+            float zipAmount = 100 / files.Length;
+            string currentFolder;
+
+            for (int i = 0; i < files.Length; i++)
+            {
+                MainWindow.SetProgress((int)Math.Ceiling(zipAmount * i), "Extracting skins... [" + files[i].Name + "]");
+                //This should remove the .zip at the end for the folder path
+                currentFolder = files[i].FullName.Split('.')[0];
+
+                Directory.CreateDirectory(currentFolder);
+                Helper.ExtractZipToDirectory(files[i].FullName, currentFolder);
+                extractedSkins++;
+
+                //Deleting the zip
+                File.Delete(files[i].FullName);
+            }
+
+            MainWindow.SetPlayButton(false);
+            //This is the final text displayed in the progress text
+            MainWindow.SetProgress(100,
+                (extractedMods == 0 ? "0 New Mods" : (extractedMods == 1 ? "1 New Mod" : extractedMods + " New Mods")) +
+                " and " +
+                (extractedSkins == 0 ? "0 New Skins" : (extractedSkins == 1 ? "1 New Skin" : extractedSkins + " New Skins")) +
+                " extracted" +
+                " and " +
+                (movedDep == 0 ? "0 New Dependencies" : (movedDep == 1 ? "1 New Dependencies" : movedDep + " New Dependencies")) +
+                " moved");
+            FinishedQueue();
+        }
+
+        private static void MoveDependencies()
+        {
+            MainWindow.SetPlayButton(true);
+            string[] modFolders = Directory.GetDirectories(Program.root + Program.modsFolder);
+
+            string fileName;
+            string[] split;
+            for (int i = 0; i < modFolders.Length; i++)
+            {
+                string[] subFolders = Directory.GetDirectories(modFolders[i]);
+                for (int j = 0; j < subFolders.Length; j++)
+                {
+                    Console.Log("Checking " + subFolders[j].ToLower());
+                    if (subFolders[j].ToLower().Contains("dependencies"))
+                    {
+                        Console.Log("Found the folder dependencies");
+                        string[] depFiles = Directory.GetFiles(subFolders[j], "*.dll");
+                        for (int k = 0; k < depFiles.Length; k++)
+                        {
+                            split = depFiles[k].Split('\\');
+                            fileName = split[split.Length - 1];
+
+                            if (File.Exists(Directory.GetParent(Program.root).FullName +
+                                        @"\VTOLVR_Data\Managed\" + fileName))
+                            {
+                                string oldHash = CalculateMD5(Directory.GetParent(Program.root).FullName +
+                                        @"\VTOLVR_Data\Managed\" + fileName);
+                                string newHash = CalculateMD5(depFiles[k]);
+                                if (!oldHash.Equals(newHash))
+                                {
+                                    File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
+                                        @"\VTOLVR_Data\Managed\" + fileName,
+                                        true);
+                                    movedDep++;
+                                }
+                            }
+                            else
+                            {
+                                Console.Log("Moved file \n" + Directory.GetParent(Program.root).FullName +
+                                        @"\VTOLVR_Data\Managed\" + fileName);
+                                File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
+                                            @"\VTOLVR_Data\Managed\" + fileName,
+                                            true);
+                                movedDep++;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            MainWindow.SetPlayButton(false);
+            MainWindow.SetProgress(100, movedDep == 0 ? "Checked Dependencies" : "Moved " + movedDep
+                + (movedDep == 1 ? " dependency" : " dependencies"));
+
+            ExtractSkins();
+        }
+
+        private static string CalculateMD5(string filename)
+        {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(filename))
+                {
+                    var hash = md5.ComputeHash(stream);
+                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                }
+            }
+        }
+        #endregion
+
+        /*
+         * FinishedQueue and Queue is a queuing system so that
+         * only one thing will use the progress bar
+         * and progress text at a time.
+         */
+
+        public static void FinishedQueue()
+        {
+            if (actionQueue.Count == 0)
+            {
+                isBusy = false;
+                return;
+            }
+            actionQueue.Dequeue().Invoke();
+        }
+        public static void Queue(Action action)
+        {
+            if (!isBusy)
+            {
+                action.Invoke();
+                isBusy = true;
+            }
+            else
+            {
+                actionQueue.Enqueue(action);
+            }
         }
     }
 }

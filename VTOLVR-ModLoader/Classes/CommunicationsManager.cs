@@ -189,8 +189,8 @@ namespace VTOLVR_ModLoader.Classes
                 }
                 client.GetStream().Close();
                 client.Close();
-                MainWindow.Quit();
             }
+            MainWindow.Quit();
         }
 
         public static void StartTCP()

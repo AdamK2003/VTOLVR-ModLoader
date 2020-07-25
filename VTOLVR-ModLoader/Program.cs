@@ -253,6 +253,10 @@ namespace VTOLVR_ModLoader
                 " and " +
                 (movedDep == 0 ? "0 New Dependencies" : (movedDep == 1 ? "1 New Dependencies" : movedDep + " New Dependencies")) +
                 " moved");
+
+            extractedMods = 0;
+            extractedSkins = 0;
+            movedDep = 0;
             FinishedQueue();
         }
 

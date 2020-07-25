@@ -29,6 +29,7 @@ namespace VTOLVR_ModLoader.Views
         private static TcpListener tcpListener;
         private static TcpClient TcpClient;
         private static NetworkStream nwStream;
+        private static Queue<Feed> consoleQueue = new Queue<Feed>();
 
         public List<Feed> consoleFeed = new List<Feed>();
         private List<string> storedMessages = new List<string>();
@@ -37,6 +38,12 @@ namespace VTOLVR_ModLoader.Views
             InitializeComponent();
             _instance = this;
             inputBox.KeyDown += inputBoxKeyDown;
+            for (int i = 0; i < consoleQueue.Count; i++)
+            {
+                consoleFeed.Add(consoleQueue.Dequeue());
+            }
+            console.ItemsSource = _instance.consoleFeed.ToArray();
+            scrollView.ScrollToBottom();
         }
 
         private void inputBoxKeyDown(object sender, KeyEventArgs e)
@@ -91,9 +98,16 @@ namespace VTOLVR_ModLoader.Views
         public static void Log(string message, bool isApplication = true)
         {
             System.Console.WriteLine(message);
-            _instance.consoleFeed.Add(new Feed(message));
-            _instance.console.ItemsSource = _instance.consoleFeed.ToArray();
-            _instance.scrollView.ScrollToBottom();
+            if (_instance == null)
+            {
+                consoleQueue.Enqueue(new Feed(message));
+            }
+            else
+            {
+                _instance.consoleFeed.Add(new Feed(message));
+                _instance.console.ItemsSource = _instance.consoleFeed.ToArray();
+                _instance.scrollView.ScrollToBottom();
+            }
 
             if (isApplication)
             {

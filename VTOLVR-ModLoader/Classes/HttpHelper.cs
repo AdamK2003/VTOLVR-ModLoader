@@ -31,11 +31,17 @@ namespace VTOLVR_ModLoader.Classes
         {
             if (Program.disableInternet)
                 return false;
-            HttpResponseMessage response = await _client.GetAsync(Program.url);
-            if (response.IsSuccessStatusCode)
-                return true;
-            else
-                return false;
+            try
+            {
+                HttpResponseMessage response = await _client.GetAsync(Program.url);
+                if (response.IsSuccessStatusCode)
+                    return true;
+            }
+            catch 
+            {
+
+            }
+            return false;
         }
         public static async void DownloadStringAsync(string url, Action<HttpResponseMessage> callback, string token = "")
         {

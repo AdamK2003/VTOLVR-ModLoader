@@ -38,14 +38,6 @@ namespace VTOLVR_ModLoader
         public DevTools devTools { get; private set; }
         public Console console { get; private set; }
         public ProjectManager pManager { get; private set; }
-        //Updates
-        WebClient client;
-        //Notifications
-        private NotificationWindow notification;
-        //Storing completed tasks
-        private int extractedMods = 0;
-        private int extractedSkins = 0;
-        private int movedDep = 0;
 
 
         public MainWindow()
@@ -69,16 +61,6 @@ namespace VTOLVR_ModLoader
             devTools = new DevTools();
             pManager = new ProjectManager();
             DataContext = news;
-        }     
-        private void ShowNotification(string text)
-        {
-            if (notification != null)
-            {
-                notification.Close();
-            }
-            notification = new NotificationWindow(text, this, 5);
-            notification.Owner = this;
-            notification.Show();
         }
         public static void SetProgress(int barValue, string text)
         {

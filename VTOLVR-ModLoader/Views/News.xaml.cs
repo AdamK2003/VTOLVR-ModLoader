@@ -27,7 +27,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 Console.Log($"Connecting to API for latest releases");
                 HttpHelper.DownloadStringAsync(
-                    Program.url + Program.apiURL + modLoaderURL + Program.jsonFormat,
+                    Program.url + Program.apiURL + modLoaderURL + "/" + (Program.branch == string.Empty? string.Empty : $"?branch={Program.branch}"),
                     NewsDone);
             }
             else

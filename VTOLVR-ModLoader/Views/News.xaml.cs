@@ -11,9 +11,9 @@ namespace VTOLVR_ModLoader.Views
 {
     public partial class News : UserControl
     {
-        private const string modLoaderURL = "/modloader";
+        private const string modLoaderURL = "/releases";
         private MainWindow main;
-        private List<Updates> updates = new List<Updates>();
+        private List<Update> updates = new List<Update>();
         public News()
         {
             InitializeComponent();
@@ -21,13 +21,13 @@ namespace VTOLVR_ModLoader.Views
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
-        public async void LoadNews(int page)
+        public async void LoadNews()
         {
             if (await HttpHelper.CheckForInternet())
             {
-                Console.Log($"Connecting to API for latest releases (Page {page})");
+                Console.Log($"Connecting to API for latest releases");
                 HttpHelper.DownloadStringAsync(
-                    Program.url + Program.apiURL + modLoaderURL + Program.jsonFormat + (page == 0 ? "" : Program.pageFormat + page),
+                    Program.url + Program.apiURL + modLoaderURL + Program.jsonFormat,
                     NewsDone);
             }
             else
@@ -49,58 +49,41 @@ namespace VTOLVR_ModLoader.Views
             }
             MainWindow._instance.settings.TestToken(true);
         }
-        private void NewsDone(object sender, DownloadStringCompletedEventArgs e)
-        {
-            if (!e.Cancelled && e.Error == null)
-            {
-                ConvertUpdates(e.Result);
-            }
-            else
-            {
-                //Failed
-                Console.Log("Error:\n" + e.Error.ToString());
-                NoInternet();
-            } 
-        }
 
         private void ConvertUpdates(string jsonString)
         {
-            JObject json = JObject.Parse(jsonString);
-            JArray results = JArray.FromObject(json["results"]);
+            JArray results = JArray.Parse(jsonString);
+            Update lastUpdate;
+            JArray lastFilesJson;
+            List<UpdateFile> files;
             for (int i = 0; i < results.Count; i++)
             {
-                updates.Add(new Updates(results[i]["name"].ToString(),
+                lastUpdate = new Update(results[i]["name"].ToString(),
                     results[i]["tag_name"].ToString(),
-                    results[i]["body"].ToString(),
-                    results[i]["installer_file"].ToString(),
-                    results[i]["zip_file"].ToString(),
-                    int.Parse(results[i]["download_count"].ToString())));
+                    results[i]["body"].ToString());
+                Console.Log(lastUpdate.name);
+                if (results[i]["files"]  != null)
+                {
+                    lastFilesJson = JArray.FromObject(results[i]["files"]);
+                    files = new List<UpdateFile>(lastFilesJson.Count);
+                    for (int j = 0; j < lastFilesJson.Count; j++)
+                    {
+                        files.Add(new UpdateFile(
+                            lastFilesJson[j]["file_name"].ToString(),
+                            lastFilesJson[j]["file_hash"].ToString(),
+                            lastFilesJson[j]["file_location"].ToString(),
+                            lastFilesJson[j]["file"].ToString()));
+                    }
+                    lastUpdate.SetFiles(files.ToArray());
+                }
+                updates.Add(lastUpdate);                
             }
-
-            if (json["next"].ToString() != "")
-            {
-                string url = json["next"].ToString();
-                string pageNum = url.Replace(Program.url + Program.apiURL + modLoaderURL + Program.jsonFormat + Program.pageFormat, "");
-                Console.Log($"Getting next page of releases ({pageNum})");
-                LoadNews(int.Parse(pageNum));
-            }
-            else
-            {
-                Console.Log("Collected all pages of releases");
-                updateFeed.ItemsSource = updates.ToArray();
-            }
+            updateFeed.ItemsSource = updates.ToArray();
         }
 
         private void NoInternet()
         {
-            Updates[] updates = new Updates[1];
-            updates[0] = new Updates("No Internet Connection",
-                                    string.Empty,
-                                    "Please connect to the internet to see the latest releases",
-                                    string.Empty,
-                                    string.Empty,
-                                    0);
-            updateFeed.ItemsSource = updates.ToArray();
+            updateFeed.ItemsSource = new Update[1] { new Update() };
             Console.Log("Can't connect to internet");
         }
     }

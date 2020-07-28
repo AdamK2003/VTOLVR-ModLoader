@@ -60,7 +60,7 @@ namespace VTOLVR_ModLoader
                 CheckForSteamVR();
             AutoStart();
             CommunicationsManager.CheckURI();
-            MainWindow._instance.news.LoadNews(0);
+            MainWindow._instance.news.LoadNews();
             MainWindow._instance.Title = $"{ProgramName}";
             Queue(ExtractMods);
         }

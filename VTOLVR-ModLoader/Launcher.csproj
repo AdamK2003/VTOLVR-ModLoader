@@ -93,13 +93,12 @@
     <Compile Include="Classes\HttpHelper.cs" />
     <Compile Include="Classes\Pilot.cs" />
     <Compile Include="Classes\Scenario.cs" />
-    <Compile Include="Classes\Updates.cs" />
+    <Compile Include="Classes\Update.cs" />
     <Compile Include="Classes\CommunicationsManager.cs" />
     <Compile Include="Classes\Helper.cs" />
     <Compile Include="Classes\SettingSave.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="UpdateData.cs" />
     <Compile Include="NotificationWindow.xaml.cs">
       <DependentUpon>NotificationWindow.xaml</DependentUpon>
     </Compile>

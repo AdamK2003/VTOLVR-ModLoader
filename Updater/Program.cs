@@ -16,7 +16,7 @@ namespace Updater
     static class Program
     {
         public const string ProgramNameBase = "VTOL VR Mod Loader Updater";
-        public const string LogPath = @"\updater_log.txt";
+        public const string LogPath = @"\Updater Log.txt";
         public const string apiURL = "/api";
         private const string releasesURL = "/releases";
 

@@ -6,33 +6,33 @@ using System.Threading.Tasks;
 
 namespace VTOLVR_ModLoader.Classes
 {
-    class Update
+    public class Release
     {
         public string name { get; set; }
         public string tag_Name { get; set; }
         public string body { get; set; }
         public UpdateFile[] files;
 
-        public Update() 
+        public Release() 
         {
             name = "No Internet Connection";
             body = "Please connect to the internet to see the latest releases";
         }
 
-        public Update(string name, string tag_Name, string body)
+        public Release(string name, string tag_Name, string body)
         {
             this.name = name;
             this.tag_Name = tag_Name;
             this.body = body;
         }
 
-        public Update SetFiles(UpdateFile[] files)
+        public Release SetFiles(UpdateFile[] files)
         {
             this.files = files;
             return this;
         }
     }
-    class UpdateFile
+    public class UpdateFile
     {
         public readonly string Name;
         public readonly string Hash;

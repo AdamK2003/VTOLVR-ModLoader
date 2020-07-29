@@ -64,7 +64,6 @@ namespace VTOLVR_ModLoader
         }
         public static void SetProgress(int barValue, string text)
         {
-            Console.Log(text);
             _instance.progressText.Text = text;
             _instance.progressBar.Value = barValue;
         }

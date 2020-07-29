@@ -64,6 +64,7 @@ namespace VTOLVR_ModLoader.Classes
             {
                 line = line.Replace("branch=", string.Empty);
                 Program.branch = line;
+                Program.ProgramName += $" [{Program.branch} Branch]";
             }
         }
         public static void CheckCustomURL()
@@ -138,7 +139,7 @@ namespace VTOLVR_ModLoader.Classes
             if (!e.Cancelled && e.Error == null)
             {
                 MainWindow.SetProgress(100, $"Ready");
-                Program.Queue(Program.ExtractMods);
+                //Program.Queue(Program.ExtractMods);
             }
             else
             {
@@ -148,7 +149,6 @@ namespace VTOLVR_ModLoader.Classes
                 if (File.Exists(Path.Combine(Program.root, currentDownloadFile)))
                     File.Delete(Path.Combine(Program.root, currentDownloadFile));
             }
-            Program.FinishedQueue();
         }
         public static bool CheckSteamVR()
         {

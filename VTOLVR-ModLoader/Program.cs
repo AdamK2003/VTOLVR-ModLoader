@@ -1,6 +1,7 @@
 ﻿/* This is the main class which stores and runs the core background things.
 
 */
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,6 +9,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -34,6 +36,7 @@ namespace VTOLVR_ModLoader
         public const string apiURL = "/api";
         public const string modsURL = "/mods";
         public const string skinsURL = "/skins";
+        private const string releasesURL = "/releases";
         public const string modsChangelogsURL = "/mods-changelogs";
         public const string skinsChangelogsURL = "/skins-changelogs";
         public const string ProgramNameBase = "VTOL VR Mod Loader";
@@ -45,6 +48,7 @@ namespace VTOLVR_ModLoader
         public static bool autoStart { get; private set; }
         public static bool disableInternet = false;
         public static bool isBusy;
+        public static List<Release> Releases { get; private set; }
 
         private static bool uiLoaded = false;
         private static int extractedMods, extractedSkins, movedDep;
@@ -58,9 +62,9 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckCustomBranch();
             if (CommunicationsManager.CheckSteamVR())
                 CheckForSteamVR();
+            GetReleases();
             AutoStart();
             CommunicationsManager.CheckURI();
-            MainWindow._instance.news.LoadNews();
             MainWindow._instance.Title = $"{ProgramName}";
             Queue(ExtractMods);
         }
@@ -223,7 +227,9 @@ namespace VTOLVR_ModLoader
                     " and " +
                     (movedDep == 0 ? "0 New Dependencies" : (movedDep == 1 ? "1 New Dependencies" : movedDep + " New Dependencies")) +
                     " moved");
-
+                extractedMods = 0;
+                extractedSkins = 0;
+                movedDep = 0;
                 return;
             }
             float zipAmount = 100 / files.Length;
@@ -257,7 +263,6 @@ namespace VTOLVR_ModLoader
             extractedMods = 0;
             extractedSkins = 0;
             movedDep = 0;
-            FinishedQueue();
         }
 
         private static void MoveDependencies()
@@ -331,32 +336,83 @@ namespace VTOLVR_ModLoader
         }
         #endregion
 
+        #region Action Queueing
         /*
-         * FinishedQueue and Queue is a queuing system so that
+         * Queue is a queuing system so that
          * only one thing will use the progress bar
          * and progress text at a time.
          */
-
-        public static void FinishedQueue()
-        {
-            if (actionQueue.Count == 0)
-            {
-                isBusy = false;
-                return;
-            }
-            actionQueue.Dequeue().Invoke();
-        }
         public static void Queue(Action action)
         {
-            if (!isBusy)
+            actionQueue.Enqueue(action);
+            if (isBusy)
+                return;
+
+            isBusy = true;
+            while (actionQueue.Count > 0)
             {
-                action.Invoke();
-                isBusy = true;
+                actionQueue.Dequeue().Invoke();
+            }
+            isBusy = false;
+        }
+        #endregion
+
+        public async static void GetReleases()
+        {
+            if (!await HttpHelper.CheckForInternet())
+                return;
+
+            Console.Log($"Connecting to API for latest releases");
+            HttpHelper.DownloadStringAsync(
+                url + apiURL + releasesURL + "/" + (branch == string.Empty ? string.Empty : $"?branch={branch}"),
+                NewsDone);
+        }
+
+        private static async void NewsDone(HttpResponseMessage response)
+        {
+            if (response.IsSuccessStatusCode)
+            {
+                Releases = new List<Release>();
+                ConvertUpdates(await response.Content.ReadAsStringAsync());
             }
             else
             {
-                actionQueue.Enqueue(action);
+                //Failed
+                Console.Log("Error:\n" + response.StatusCode);
             }
+            MainWindow._instance.settings.TestToken(true);
+        }
+
+        private static void ConvertUpdates(string jsonString)
+        {
+            JArray results = JArray.Parse(jsonString);
+            Release lastUpdate;
+            JArray lastFilesJson;
+            List<UpdateFile> files;
+            for (int i = 0; i < results.Count; i++)
+            {
+                lastUpdate = new Release(results[i]["name"].ToString(),
+                    results[i]["tag_name"].ToString(),
+                    results[i]["body"].ToString());
+                if (results[i]["files"] != null)
+                {
+                    lastFilesJson = JArray.FromObject(results[i]["files"]);
+                    files = new List<UpdateFile>(lastFilesJson.Count);
+                    for (int j = 0; j < lastFilesJson.Count; j++)
+                    {
+                        files.Add(new UpdateFile(
+                            lastFilesJson[j]["file_name"].ToString(),
+                            lastFilesJson[j]["file_hash"].ToString(),
+                            lastFilesJson[j]["file_location"].ToString(),
+                            lastFilesJson[j]["file"].ToString()));
+                    }
+                    lastUpdate.SetFiles(files.ToArray());
+                }
+                Releases.Add(lastUpdate);
+            }
+
+            MainWindow._instance.news.LoadNews();
+            Queue(Updater.CheckForUpdates);
         }
     }
 }

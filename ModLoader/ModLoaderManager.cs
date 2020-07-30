@@ -17,6 +17,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Valve.Newtonsoft.Json.Linq;
+using SimpleTCP;
 
 namespace ModLoader
 {
@@ -72,6 +73,8 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
     {
         public static ModLoaderManager instance { get; private set; }
 
+        private static SimpleTcpClient tcpClient;
+        private static List<Action> pending = new List<Action>();
 
         private VTOLAPI api;
         public string rootPath;
@@ -101,8 +104,18 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
             CreateAPI();
 
-            gameObject.AddComponent<TCPConsole>();
-
+            try
+            {
+                tcpClient = new SimpleTcpClient();
+                tcpClient.Connect("127.0.0.1", 9999);
+                tcpClient.WriteLine("Command:isgame");
+                tcpClient.DataReceived += TcpDataReceived;
+                Application.logMessageReceived += LogMessageReceived;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
 
             discord = gameObject.AddComponent<DiscordController>();
             discordDetail = "Launching Game";
@@ -122,6 +135,37 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             api.CreateCommand("help", api.ShowHelp);
             api.CreateCommand("vrinteract", VRInteract);
             api.CreateCommand("loadmod", LoadMod);
+        }
+        private void TcpDataReceived(object sender, Message e)
+        {
+            lock (pending)
+            {
+                pending.Add(delegate { VTOLAPI.instance.CheckConsoleCommand(e.MessageString.Remove(e.MessageString.Length - 1)); });
+            }
+        }
+        private void InvokePending()
+        {
+            lock (pending)
+            {
+                foreach (Action action in pending)
+                {
+                    action();
+                }
+
+                pending.Clear();
+            }
+        }
+        private void Update()
+        {
+            InvokePending();
+        }
+        private void LogMessageReceived(string condition, string stackTrace, LogType type)
+        {
+            tcpClient.WriteLine($"[{type}]{condition}\n");
+            /* The reason why there is a new line at the end is because
+             * sometimes it sends two log messages at once, so this is me
+             * just trying to split them in inside the launchers
+             * console.*/
         }
 
         private void CreateAPI()

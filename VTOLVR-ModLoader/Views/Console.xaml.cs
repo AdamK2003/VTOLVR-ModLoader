@@ -68,7 +68,11 @@ namespace VTOLVR_ModLoader.Views
             }
             else
             {
-                _instance.consoleFeed.Add(new Feed(message));
+                string[] lines = message.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    _instance.consoleFeed.Add(new Feed(lines[i]));
+                }
                 _instance.console.ItemsSource = _instance.consoleFeed.ToArray();
                 _instance.scrollView.ScrollToBottom();
             }
@@ -99,6 +103,7 @@ namespace VTOLVR_ModLoader.Views
             Log("Game Closed");
             _instance.inputBox.IsEnabled = false;
             _instance.sendButton.IsEnabled = false;
+            MainWindow.SetPlayButton(false);
         }
 
         public static void GameOpened()
@@ -106,9 +111,10 @@ namespace VTOLVR_ModLoader.Views
             _instance.inputBox.Text = string.Empty;
             _instance.inputBox.IsEnabled = true;
             _instance.sendButton.IsEnabled = true;
+            MainWindow.SetPlayButton(true);
         }
 
-        public class Feed
+        public struct Feed
         {
             public string message { get; set; }
 

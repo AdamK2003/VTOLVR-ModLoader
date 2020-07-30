@@ -207,22 +207,37 @@ namespace VTOLVR_ModLoader.Classes
 
         private static void TcpClientDisconnected(object sender, TcpClient e)
         {
-            if (GameTcpClient != null && e == GameTcpClient)
-            {
-                Console.GameClosed();
-                MainWindow.GifState(MainWindow.gifStates.Paused);
-                MainWindow.SetProgress(100, "Ready");
-            }
+            Application.Current.Dispatcher.Invoke(new Action(() => {
+                if (GameTcpClient != null && e == GameTcpClient)
+                {
+                    Console.GameClosed();
+                    MainWindow.GifState(MainWindow.gifStates.Paused);
+                    MainWindow.SetProgress(100, "Ready");
+                }
+            }));
+            
         }
 
         private static void TcpDataReceived(object sender, Message e)
         {
-            Console.Log(e.MessageString, false);
-            if (e.MessageString.StartsWith("Command:"))
-                ProcessCommand(e.MessageString);
+            string[] lines = e.MessageString.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                //I have no clue what '' is but it keeps showing up on the tcp message.
+                //I'm just trying to remove it here
+                lines[i] = lines[i].Replace("", string.Empty);
+                if (string.IsNullOrWhiteSpace(lines[i]))
+                    continue;
+                Application.Current.Dispatcher.Invoke(new Action(() => {
+                    Console.Log(lines[i].Remove(lines[i].Length - 1), false);
+                    if (lines[i].StartsWith("Command:"))
+                        ProcessCommand(lines[i], e.TcpClient);
+                }));
+            }
+             
         }
 
-        private static void ProcessCommand(string message, TcpClient client = null)
+        private static void ProcessCommand(string message, TcpClient client)
         {
             message = message.Replace("Command:", string.Empty);
             Console.Log($"Recevied command:{message}");
@@ -230,7 +245,7 @@ namespace VTOLVR_ModLoader.Classes
             {
                 CheckURI(message);
             }
-            else if (message.StartsWith("isgame") && client != null)
+            else if (message.StartsWith("isgame"))
             {
                 GameTcpClient = client;
                 Console.Log("Connected to game");

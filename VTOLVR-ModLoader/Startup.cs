@@ -41,8 +41,8 @@ namespace VTOLVR_ModLoader
             Restore = 9, ShowDefault = 10, ForceMinimized = 11
         };
 
-        private static readonly string[] needFiles = { "SharpMonoInjector.dll", "injector.exe", "Updater.exe", "Gameloop.Vdf.dll","Newtonsoft.Json.dll" };
-        private static readonly string[] neededDLLFiles = { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll", @"\Managed\Newtonsoft.Json.dll" };
+        private static readonly string[] needFiles = { "SharpMonoInjector.dll", "injector.exe", "Updater.exe", "Gameloop.Vdf.dll", "Valve.Newtonsoft.Json.dll", "SimpleTCP.dll" };
+        private static readonly string[] neededDLLFiles = { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll"};
         public static void RunStartUp()
         {
             Version version = Assembly.GetExecutingAssembly().GetName().Version;

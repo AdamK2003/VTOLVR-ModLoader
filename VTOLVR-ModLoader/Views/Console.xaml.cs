@@ -53,43 +53,6 @@ namespace VTOLVR_ModLoader.Views
                 SendCommand(null, null);
         }
 
-        public void StartTCPListener()
-        {
-            tcpListenerThread = new Thread(new ThreadStart(Listener));
-            tcpListenerThread.IsBackground = true;
-            tcpListenerThread.Start();
-        }
-
-        private static void Listener()
-        {
-            tcpListener = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
-            tcpListener.Start();
-            byte[] array = new byte[32000];
-            Application.Current.Dispatcher.Invoke(new Action(() => { _instance.GameOpened(); }));
-            while (true)
-            {
-                using (TcpClient = tcpListener.AcceptTcpClient())
-                {
-                    nwStream = TcpClient.GetStream();
-                    int num;
-                    while(TcpClient.Connected)
-                    {
-                        num = nwStream.Read(array, 0, array.Length);
-                        if (num != 0)
-                        {
-                            byte[] array2 = new byte[num];
-                            Array.Copy(array, 0, array2, 0, num);
-                            Application.Current.Dispatcher.Invoke(new Action(() => { Log(Encoding.ASCII.GetString(array2), false); }));
-                        }
-                        Application.Current.Dispatcher.Invoke(new Action(() => { _instance.SendStoredMessages(); }));
-                    }
-                }
-                Application.Current.Dispatcher.Invoke(new Action(() => { _instance.GameClosed(); }));
-                Application.Current.Dispatcher.Invoke(new Action(() => { MainWindow.GifState(MainWindow.gifStates.Paused); }));
-                
-            }
-        }
-
         public void UpdateFeed()
         {
             console.ItemsSource = consoleFeed.ToArray();
@@ -125,58 +88,24 @@ namespace VTOLVR_ModLoader.Views
         }
         private void SendCommand(object sender, RoutedEventArgs e)
         {
-            if (!TcpClient.Connected)
-            {
-                Log("Connection with TCP client is false");
-                GameClosed();
+            if (CommunicationsManager.TcpServer == null)
                 return;
-            }
-
-            byte[] bytesToSend = Encoding.ASCII.GetBytes(inputBox.Text);
-            nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+            CommunicationsManager.TcpServer.BroadcastLine(inputBox.Text);
             inputBox.Text = string.Empty;
         }
-        public void SendCommand(string message, bool waitForGame = false)
-        {
-            if (TcpClient == null && waitForGame)
-            {
-                storedMessages.Add(message);
-                Log("Stored Message " + message);
-                return;
-            }
-            else if (TcpClient != null && !TcpClient.Connected && !waitForGame)
-            {
-                Log("Connection with TCP client is false");
-                GameClosed();
-                return;
-            }
-            byte[] bytesToSend = Encoding.ASCII.GetBytes(message);
-            nwStream.Write(bytesToSend, 0, bytesToSend.Length);
-            inputBox.Text = string.Empty;
-        }
-        public void SendStoredMessages()
-        {
-            if (storedMessages.Count == 0)
-                return;
-            for (int i = 0; i < storedMessages.Count; i++)
-            {
-                SendCommand(storedMessages[i]);
-            }
-            storedMessages.Clear();
-        }
 
-        private void GameClosed()
+        public static void GameClosed()
         {
             Log("Game Closed");
-            inputBox.IsEnabled = false;
-            sendButton.IsEnabled = false;
+            _instance.inputBox.IsEnabled = false;
+            _instance.sendButton.IsEnabled = false;
         }
 
-        private void GameOpened()
+        public static void GameOpened()
         {
-            inputBox.Text = string.Empty;
-            inputBox.IsEnabled = true;
-            sendButton.IsEnabled = true;
+            _instance.inputBox.Text = string.Empty;
+            _instance.inputBox.IsEnabled = true;
+            _instance.sendButton.IsEnabled = true;
         }
 
         public class Feed

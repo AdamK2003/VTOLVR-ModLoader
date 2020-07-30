@@ -37,6 +37,7 @@ namespace VTOLVR_ModLoader.Classes
     {
         public static SimpleTcpServer TcpServer { get; private set; }
         public static SimpleTcpClient TcpClient { get; private set; }
+        public static TcpClient GameTcpClient { get; private set; }
         private static TcpListener TcpListener;
         private static string[] args;
         private static Thread tcpListenerThread;
@@ -184,6 +185,7 @@ namespace VTOLVR_ModLoader.Classes
                     TcpServer = new SimpleTcpServer();
                     TcpServer.Start(IPAddress.Parse("127.0.0.1"), 9999);
                     TcpServer.DataReceived += TcpDataReceived;
+                    TcpServer.ClientDisconnected += TcpClientDisconnected;
                 }
                 catch (Exception e)
                 {
@@ -203,22 +205,37 @@ namespace VTOLVR_ModLoader.Classes
             }
         }
 
+        private static void TcpClientDisconnected(object sender, TcpClient e)
+        {
+            if (GameTcpClient != null && e == GameTcpClient)
+            {
+                Console.GameClosed();
+                MainWindow.GifState(MainWindow.gifStates.Paused);
+                MainWindow.SetProgress(100, "Ready");
+            }
+        }
+
         private static void TcpDataReceived(object sender, Message e)
         {
             Console.Log(e.MessageString, false);
-            CheckTcpMessage(e.MessageString);
+            if (e.MessageString.StartsWith("Command:"))
+                ProcessCommand(e.MessageString);
         }
 
-        private static void CheckTcpMessage(string message)
+        private static void ProcessCommand(string message, TcpClient client = null)
         {
-            if (message.Contains("Command:"))
+            message = message.Replace("Command:", string.Empty);
+            Console.Log($"Recevied command:{message}");
+            if (message.StartsWith("vtolvrml://"))
             {
-                message = message.Replace("Command:", string.Empty);
-                Console.Log($"Recevied command:{message}");
-                if (message.Contains("vtolvrml://"))
-                {
-                    CheckURI(message);
-                }
+                CheckURI(message);
+            }
+            else if (message.StartsWith("isgame") && client != null)
+            {
+                GameTcpClient = client;
+                Console.Log("Connected to game");
+                MainWindow.SetProgress(100, "Launched!");
+                Console.GameOpened();
             }
         }
     }

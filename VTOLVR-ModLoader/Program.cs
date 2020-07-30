@@ -156,10 +156,6 @@ namespace VTOLVR_ModLoader
             //Injecting Default Mod
             MainWindow.SetProgress(75, "Injecting Mod Loader...");
             InjectDefaultMod();
-
-
-            //Starting a new thread for the console
-            MainWindow._instance.console.StartTCPListener();
         }
         private static void InjectDefaultMod()
         {

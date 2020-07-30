@@ -15,6 +15,7 @@ Possiable Args
 - url=https://url.com
 - novr
  */
+using SimpleTCP;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,9 +35,11 @@ namespace VTOLVR_ModLoader.Classes
 {
     static class CommunicationsManager
     {
+        public static SimpleTcpServer TcpServer { get; private set; }
+        public static SimpleTcpClient TcpClient { get; private set; }
+        private static TcpListener TcpListener;
         private static string[] args;
         private static Thread tcpListenerThread;
-        private static TcpListener tcpListener;
         private static string currentDownloadFile;
 
         private static void Setup()
@@ -48,7 +51,7 @@ namespace VTOLVR_ModLoader.Classes
                 builder.Append(args[i] + " ");
             }
             builder.Append("\"");
-            Views.Console.Log(builder.ToString());
+            Console.Log(builder.ToString());
         }
         public static void CheckNoInternet()
         {
@@ -171,73 +174,39 @@ namespace VTOLVR_ModLoader.Classes
             }
             return false;
         }
-        public static void ConnectToInstance()
-        {
-            if (CheckArgs("vtolvrml://", out string line))
-            {
-                Console.Log("Connecting to other instance");
-                //Port in use. There must be another instant of the mod loader open.
-                TcpClient client = new TcpClient("127.0.0.1", 9999);
 
-                if (client == null || !client.Connected)
+        public static void StartTCP(bool isServer)
+        {
+            if (isServer)
+            {
+                try
                 {
-                    Console.Log("Failed to connect to other instance");
-                    return;
+                    TcpServer = new SimpleTcpServer();
+                    TcpServer.Start(IPAddress.Parse("127.0.0.1"), 9999);
+                    TcpServer.DataReceived += TcpDataReceived;
                 }
-                //lock ensure that no other threads try to use the stream at the same time.
-                lock (client.GetStream())
+                catch (Exception e)
                 {
-                    StreamWriter writer = new StreamWriter(client.GetStream());
-                    writer.Write($"Command:{line}");
-                    writer.Flush();
+                    Console.Log($"Failed to start TCP Server.\n{e}");
                 }
-                client.GetStream().Close();
-                client.Close();
             }
-            MainWindow.Quit();
+            else
+            {
+                TcpClient = new SimpleTcpClient();
+                TcpClient.Connect("127.0.0.1", 9999);
+                if (CheckArgs("vtolvrml://", out string line))
+                {
+                    TcpClient.WriteLine($"Command:{line}");
+                }
+                TcpClient.Disconnect();
+                MainWindow.Quit();
+            }
         }
 
-        public static void StartTCP()
+        private static void TcpDataReceived(object sender, Message e)
         {
-            tcpListenerThread = new Thread(new ThreadStart(Listener));
-            tcpListenerThread.IsBackground = true;
-            tcpListenerThread.Start();
-        }
-
-        private static void Listener()
-        {
-            try
-            {
-                tcpListener = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
-                tcpListener.Start();
-                while (true)
-                {
-                    ThreadPool.QueueUserWorkItem(TCPClient, tcpListener.AcceptTcpClient());
-                }
-            }
-            catch
-            {
-                
-            }
-            
-        }
-        private static void TCPClient(object obj)
-        {
-            TcpClient client = (TcpClient)obj;
-            NetworkStream nwStream = client.GetStream();
-            int num;
-            byte[] array = new byte[32000];
-            while (client.Connected && nwStream.CanRead)
-            {
-                num = nwStream.Read(array, 0, array.Length);
-                if (num != 0)
-                {
-                    byte[] array2 = new byte[num];
-                    Array.Copy(array, 0, array2, 0, num);
-                    Application.Current.Dispatcher.Invoke(new Action(() => { Console.Log(Encoding.ASCII.GetString(array2), false); }));
-                    Application.Current.Dispatcher.Invoke(new Action(() => { CheckTcpMessage(Encoding.ASCII.GetString(array2)); }));
-                }
-            }
+            Console.Log(e.MessageString, false);
+            CheckTcpMessage(e.MessageString);
         }
 
         private static void CheckTcpMessage(string message)

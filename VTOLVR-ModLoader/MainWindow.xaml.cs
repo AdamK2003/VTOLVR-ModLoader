@@ -44,12 +44,7 @@ namespace VTOLVR_ModLoader
         {
             _instance = this;
             Startup.RunStartUp();
-            if (Startup.SearchForProcess())
-            {
-                // There is another mod loader open.
-                CommunicationsManager.ConnectToInstance();
-                return;
-            }
+            CommunicationsManager.StartTCP(!Startup.SearchForProcess());
             Program.SetupAfterUI();
             InitializeComponent();
         }

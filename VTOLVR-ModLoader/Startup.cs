@@ -55,9 +55,11 @@ namespace VTOLVR_ModLoader
             Program.SetVariables();
             CheckBaseFolder();
             CheckFolder();
-            CommunicationsManager.StartTCP();
         }
-
+        /// <summary>
+        /// Returns True if another instance of the mod loader is found.
+        /// </summary>
+        /// <returns></returns>
         public static bool SearchForProcess()
         {
             Process[] p = Process.GetProcessesByName("VTOLVR-ModLoader");

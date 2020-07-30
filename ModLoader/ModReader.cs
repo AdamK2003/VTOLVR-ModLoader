@@ -46,11 +46,12 @@ namespace ModLoader
                     JObject json;
                     try
                     {
-                        json = JObject.Parse($"{folders[i]}/info.json");
+                        json = JObject.Parse(File.ReadAllText($"{folders[i]}/info.json"));
+                        hasInfo = true;
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError($"Failed to read json file {folders[i]}/info.json");
+                        Debug.LogError($"Failed to read json file {folders[i]}/info.json\n{e}");
                         continue;
                     }
                     
@@ -76,7 +77,12 @@ namespace ModLoader
                     }
                     else
                     {
-                        currentMod.dllPath =  json["Dll File"].ToString();
+                        currentMod.dllPath = folders[i] + @"\" + json["Dll File"].ToString();
+                        hasDLL = true;
+                    }
+                    if (json["Preview Image"] != null)
+                    {
+                        currentMod.imagePath = folders[i] + @"\" + json["Preview Image"].ToString();
                     }
                 }
                 if (hasInfo && hasDLL)
@@ -199,9 +205,14 @@ namespace ModLoader
                 JObject json = new JObject();
                 json.Add("Name", currentMod.name);
                 json.Add("Description", currentMod.description);
-                json.Add("Dll File", currentMod.dllPath);
+                string[] pathSpit = currentMod.dllPath.Split('\\');
+                json.Add("Dll File", pathSpit[pathSpit.Length - 1]);
                 if (hasPreview)
-                    json.Add("Preview Image", currentMod.imagePath);
+                {
+                    pathSpit = currentMod.imagePath.Split('\\');
+                    json.Add("Preview Image", pathSpit[pathSpit.Length - 1]);
+                }
+                    
                 File.WriteAllText(folder + @"\info.json", json.ToString());
                 File.Delete(folder + @"\info.xml");
             }

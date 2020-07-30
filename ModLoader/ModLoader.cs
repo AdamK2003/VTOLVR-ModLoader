@@ -82,77 +82,6 @@ namespace ModLoader
             assetBundle = request.assetBundle;
             Log("AssetBundle Loaded");
         }
-        private void CreateUI()
-        {
-            if (!assetBundle)
-                LogError("Asset Bundle is null");
-
-            Log("Creating UI for Ready Room");
-            GameObject InteractableCanvas = GameObject.Find("InteractableCanvas");
-            if (InteractableCanvas == null)
-                LogError("InteractableCanvas was null");
-            InteractableCanvasScript = InteractableCanvas.GetComponent<VRPointInteractableCanvas>();
-            GameObject CampaignDisplay = GameObject.Find("CampaignSelector").transform.GetChild(0).GetChild(0).gameObject;
-            if (CampaignDisplay == null)
-                LogError("CampaignDisplay was null");
-            //CampaignDisplay.SetActive(true);
-            MainScreen = GameObject.Find("MainScreen");
-            if (MainScreen == null)
-                LogError("Main Screen was null");
-
-            Log("Creating Mods Button");//Mods Button
-            GameObject SettingsButton = MainScreen.transform.GetChild(0).GetChild(0).GetChild(8).gameObject;
-            GameObject ModsButton = Instantiate(SettingsButton, SettingsButton.transform.parent);
-            ModsButton.transform.localPosition = SettingsButton.transform.localPosition + new Vector3(0, 200, 0);
-            ModsButton.name = "Mods";
-
-            //This part is still hard coded, meaning it's mostliky break.
-            VRInteractable modsButtonInteractable = ModsButton.GetComponent<VRInteractable>();
-            modsButtonInteractable.interactableName = "Open Mods";
-            modsButtonInteractable.OnInteract = new UnityEvent();
-            modsButtonInteractable.OnInteract.AddListener(delegate { OpenPage(Pages.Mods); SetModInfo(hideImage:true); });
-            ModsButton.transform.GetChild(0).GetComponent<Text>().text = "Mods";
-            ModsButton.GetComponent<Image>().color = Color.cyan;
-
-            modsPage = Instantiate(assetBundle.LoadAsset<GameObject>("Modded Canvas"), InteractableCanvas.transform);
-            modName = modsPage.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
-            modDescription = modsPage.transform.GetChild(0).GetChild(1).GetChild(2).GetComponent<TextMeshProUGUI>();
-            modImage = modsPage.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<RawImage>();
-
-            AddInteractable(modsPage.transform.GetChild(0).GetChild(4).gameObject,"Back to main menu", onInteractCall: delegate { OpenPage(Pages.MainMenu); });
-            AddInteractable(modsPage.transform.GetChild(0).GetChild(3).gameObject, "Load Mod", onInteractCall: LoadMod);
-            AddInteractable(modsPage.transform.GetChild(0).GetChild(5).gameObject, "Mod Settings", onInteractCall: delegate { OpenPage(Pages.Settings); });
-
-            Scroll_View = modsPage.transform.GetChild(0).GetChild(2).GetComponent<ScrollRect>();
-            modTemplate = Scroll_View.content.GetChild(0).gameObject;
-            GetMods();
-
-            loadButton = modsPage.transform.GetChild(0).GetChild(3).GetComponentInChildren<TextMeshProUGUI>();
-            selectionTF = (RectTransform)Scroll_View.content.GetChild(1).transform;
-            selectionTF.GetComponent<RawImage>().color = new Color(0, 0, 0, 0);
-
-
-            Scroll_View.content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (2f + currentMods.Count) * buttonHeight);
-            Scroll_View.ClampVertical();
-            modsPage.SetActive(false);
-            InteractableCanvasScript.RefreshInteractables();
-            Log("Mods Page Position = " + modsPage.transform.position);
-            settingsPage = new GameObject();
-        }
-
-        private VRInteractable AddInteractable(GameObject gameObject, string interactablename, VRInteractable.Buttons button = VRInteractable.Buttons.Trigger, float radius = 0.19f, UnityAction onInteractCall = null)
-        {
-            VRInteractable interactable = gameObject.AddComponent<VRInteractable>();
-            interactable.interactableName = interactablename;
-            interactable.button = button;
-            interactable.radius = radius;
-            interactable.OnInteract = new UnityEvent();
-            if (onInteractCall != null)
-                interactable.OnInteract.AddListener(onInteractCall);
-            //gameObject.transform.GetChild(0).gameObject.AddComponent<VRInteractableUIButton>();
-            return interactable;
-        }
-
         private void SetModInfo(string modName = "", string modDescription = "", bool hideImage = false, string imagePath = "")
         {
             if (this.modName)
@@ -169,42 +98,7 @@ namespace ModLoader
             if (modName == "" && modDescription == "")
                 selectionTF.GetComponent<RawImage>().color = new Color(0, 0, 0, 0);
         }
-
-        private void GetMods()
-        {
-            if (currentMods.Count == 0)
-            {
-                Log("Finding mods");
-                currentMods = ModReader.GetMods(ModLoaderManager.instance.rootPath + @"\mods");
-            }
-            else
-            {
-                Log("Searching for any new mods\nCurrent Count = " + currentMods.Count);
-                if (ModReader.GetNewMods(ModLoaderManager.instance.rootPath + @"\mods", ref currentMods))
-                {
-                    Log("Found new mods\nNew count = " + currentMods.Count);
-                }
-                else
-                {
-                    Log("Didn't find any new mods");
-                }
-            }
-
-
-            for (int i = 0; i < currentMods.Count; i++)
-            {
-                currentMods[i].listGO = Instantiate(modTemplate, Scroll_View.content);
-                currentMods[i].listGO.transform.localPosition = new Vector3(0f, -50 + (-i * buttonHeight), 0f);
-                currentMods[i].listGO.AddComponent<ListItemTemplate>().Setup(currentMods[i].name, i, OpenMod);
-                //Button currentButton = currentMods[i].listGO.transform.GetChild(2).GetComponent<Button>();
-                //currentButton.onClick.RemoveAllListeners(); //Trying to remove the existing button click
-                Log("Added Mod:\n" + currentMods[i].name + "\n" + currentMods[i].description);
-            }
-
-            modTemplate.SetActive(false);
-            Log("Loaded " + currentMods.Count + " mods");
-        }
-        private void CreateUI_OLD()
+        private void CreateUI()
         {
             if (!assetBundle)
                 LogError("Asset Bundle is null");
@@ -256,7 +150,7 @@ namespace ModLoader
             backInteractable.OnInteract.AddListener(delegate { OpenPage(Pages.MainMenu); });
             VRInteractable settingsInteractable = modsPage.transform.GetChild(4).GetComponent<VRInteractable>();
             settingsInteractable.OnInteract.AddListener(delegate { OpenPage(Pages.Settings); });
-            
+
 
             if (currentMods.Count == 0)
             {
@@ -345,7 +239,7 @@ namespace ModLoader
                 newModGo.name = selectedMod.name;
                 DontDestroyOnLoad(newModGo);
                 selectedMod.isLoaded = true;
-                loadButton.text = "Loaded!";
+                SelectButton.text = "Loaded!";
                 mod.ModLoaded();
                 ModsLoaded.Add(selectedMod);
                 ModLoaderManager.instance.loadedModsCount++;
@@ -365,18 +259,22 @@ namespace ModLoader
             }
             Log("Opening Mod " + id);
             selectedMod = currentMods[id];
-            loadButton.text = selectedMod.isLoaded ? "Loaded!" : "Load";
+            SelectButton.text = selectedMod.isLoaded ? "Loaded!" : "Load";
             Scroll_View.ViewContent((RectTransform)selectedMod.listGO.transform);
             selectionTF.position = selectedMod.listGO.transform.position;
-            selectionTF.GetComponent<RawImage>().color = new Color(0.3529411764705882f, 0.196078431372549f, 0);
+            selectionTF.GetComponent<Image>().color = new Color(0.3529411764705882f, 0.196078431372549f, 0);
+            modInfoUI.campaignName.text = selectedMod.name;
+            modInfoUI.campaignDescription.text = selectedMod.description;
             if (!string.IsNullOrWhiteSpace(selectedMod.imagePath))
             {
-                SetModInfo(selectedMod.name, selectedMod.description, false, selectedMod.imagePath);
+                modInfoUI.campaignImage.color = Color.white;
+                StartCoroutine(SetModPreviewImage(modInfoUI.campaignImage, selectedMod.imagePath));
             }
             else
             {
-                SetModInfo(selectedMod.name, selectedMod.description, true);
+                modInfoUI.campaignImage.color = new Color(0, 0, 0, 0);
             }
+
         }
         private void SetDefaultText()
         {

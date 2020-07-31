@@ -344,7 +344,10 @@ namespace Installer
                 List<ZipArchiveEntry> filesInZip = zip.Entries.ToList();
                 for (int f = 0; f < filesInZip.Count; f++)
                 {
-                    filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName), File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
+                    if (!filesInZip[f].FullName.EndsWith("/"))
+                        filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName), File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
+                    else if (!Directory.Exists(Path.Combine(extractPath, filesInZip[f].FullName)))
+                        Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
                 }
             }
         }

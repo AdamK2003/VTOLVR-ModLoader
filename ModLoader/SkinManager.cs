@@ -49,7 +49,7 @@ namespace ModLoader
             mod.name = "Skin Manger";
             SetModInfo(mod);
             VTOLAPI.SceneLoaded += SceneLoaded;
-            Directory.CreateDirectory(ModLoaderManager.instance.rootPath + @"\skins");           
+            Directory.CreateDirectory(ModLoaderManager.RootPath + @"\skins");           
         }
 
         private void GetDefaultTextures()
@@ -118,7 +118,7 @@ namespace ModLoader
         private void FindSkins()
         {
             Log("Searching for Skins!");
-            string path = ModLoaderManager.instance.rootPath + @"\skins";
+            string path = ModLoaderManager.RootPath + @"\skins";
             foreach (string folder in Directory.GetDirectories(path))
             {
                 Skin currentSkin = new Skin();

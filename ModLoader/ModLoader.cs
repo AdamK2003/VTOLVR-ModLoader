@@ -55,7 +55,7 @@ namespace ModLoader
         }
         private void Start()
         {
-            manager = ModLoaderManager.instance;
+            manager = ModLoaderManager.Instance;
             api = VTOLAPI.instance;
 
             SceneManager.sceneLoaded += SceneLoaded;
@@ -155,12 +155,12 @@ namespace ModLoader
             if (currentMods.Count == 0)
             {
                 Log("Finding mods");
-                currentMods = ModReader.GetMods(ModLoaderManager.instance.rootPath + @"\mods");
+                currentMods = ModReader.GetMods(ModLoaderManager.RootPath + @"\mods");
             }
             else
             {
                 Log("Searching for any new mods\nCurrent Count = " + currentMods.Count);
-                if (ModReader.GetNewMods(ModLoaderManager.instance.rootPath + @"\mods", ref currentMods))
+                if (ModReader.GetNewMods(ModLoaderManager.RootPath + @"\mods", ref currentMods))
                 {
                     Log("Found new mods\nNew count = " + currentMods.Count);
                 }
@@ -242,8 +242,8 @@ namespace ModLoader
                 SelectButton.text = "Loaded!";
                 mod.ModLoaded();
                 ModsLoaded.Add(selectedMod);
-                ModLoaderManager.instance.loadedModsCount++;
-                ModLoaderManager.instance.UpdateDiscord();
+                ModLoaderManager.LoadedModsCount++;
+                ModLoaderManager.Instance.UpdateDiscord();
             }
             else
             {

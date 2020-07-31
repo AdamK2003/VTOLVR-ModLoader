@@ -96,7 +96,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Campaigns.cs" />
-    <Compile Include="CSharp.cs" />
     <Compile Include="DataCollector.cs" />
     <Compile Include="DiscordController.cs" />
     <Compile Include="DiscordRpc.cs" />

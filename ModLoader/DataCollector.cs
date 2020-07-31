@@ -60,7 +60,7 @@ namespace ModLoader
         private static void SaveGameData()
         {
             Debug.Log("Saving the data we have collected!");
-            File.WriteAllText(ModLoaderManager.instance.rootPath + GameDataFile,gameData.ToString());
+            File.WriteAllText(ModLoaderManager.RootPath + GameDataFile,gameData.ToString());
         }
     }
 }

@@ -20,6 +20,8 @@ namespace VTOLVR_ModLoader.Classes
         private static UpdateFile currentFile;
         public static void CheckForUpdates()
         {
+            if (!Views.Settings.AutoUpdate)
+                return;
             Console.Log("Checking for updates");
             if (Program.Releases == null || Program.Releases.Count == 0)
             {

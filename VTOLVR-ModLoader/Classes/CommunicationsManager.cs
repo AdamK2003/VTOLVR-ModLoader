@@ -79,6 +79,21 @@ namespace VTOLVR_ModLoader.Classes
                 Program.url = line;
             }
         }
+        public static void CheckAutoUpdate()
+        {
+            if (CheckArgs("autoupdate", out string line))
+            {
+                line = line.Replace("autoupdate=", string.Empty);
+                if (bool.TryParse(line, out bool result))
+                {
+                    Views.Settings.SetAutoUpdate(result);
+                }
+                else
+                {
+                    Console.Log($"Failed to convert {line} to bool");
+                }
+            }
+        }
 
         public static void CheckURI(string lineOveride = "")
         {
@@ -158,7 +173,6 @@ namespace VTOLVR_ModLoader.Classes
         {
             return !CheckArgs("novr", out string line);
         }
-
         public static bool CheckArgs(string search, out string contents)
         {
             if (args == null)
@@ -175,7 +189,7 @@ namespace VTOLVR_ModLoader.Classes
             }
             return false;
         }
-
+        
         public static void StartTCP(bool isServer)
         {
             if (isServer)

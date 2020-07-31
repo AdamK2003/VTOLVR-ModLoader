@@ -29,6 +29,7 @@ namespace VTOLVR_ModLoader.Views
     /// </summary>
     public partial class Settings : UserControl
     {
+        public static Settings Instance;
         private const string userURL = "/get-token";
         private const string savePath = @"\settings.json";
         public static bool tokenValid = false;
@@ -38,8 +39,10 @@ namespace VTOLVR_ModLoader.Views
         //Settings
         public static string Token { get; private set; }
         public static string projectsFolder { get; private set; }
+        public static bool AutoUpdate { get; private set; } = true;
         public Settings()
         {
+            Instance = this;
             callBack += SetProjectsFolder;
             InitializeComponent();
             LoadSettings();
@@ -111,7 +114,7 @@ namespace VTOLVR_ModLoader.Views
             updateButton.Content = "Disabled";
             updateButton.IsEnabled = false;
         }
-        private void SaveSettings()
+        private static void SaveSettings()
         {
             JObject jObject = new JObject();
             if (!string.IsNullOrEmpty(Token))
@@ -119,6 +122,8 @@ namespace VTOLVR_ModLoader.Views
 
             if (!string.IsNullOrEmpty(projectsFolder))
                 jObject.Add("projectsFolder", projectsFolder);
+
+            jObject.Add("AutoUpdate", AutoUpdate);
 
             try
             {
@@ -167,6 +172,16 @@ namespace VTOLVR_ModLoader.Views
                 projectsText.Text = "My Projects folder not set.";
                 projectsButton.Content = "Set";
             }
+
+            if (json["AutoUpdate"] != null)
+            {
+                if (bool.TryParse(json["AutoUpdate"].ToString(), out bool result))
+                {
+                    autoUpdateCheckbox.IsChecked = result;
+                }
+                else
+                    Console.Log("Failed to convert AutoUpdate setting to bool");
+            }
         }
 
         private void SetMyProjectsFolder(object sender, RoutedEventArgs e)
@@ -188,6 +203,26 @@ namespace VTOLVR_ModLoader.Views
             projectsText.Text = "My Projects folder:\n" + projectsFolder;
             projectsButton.Content = "Change";
             MainWindow._instance.uploadModButton.IsEnabled = true;
+            SaveSettings();
+        }
+        private void AutoUpdateChanged(object sender, RoutedEventArgs e)
+        {
+            if (autoUpdateCheckbox.IsChecked != null && autoUpdateCheckbox.IsChecked == true)
+                SetAutoUpdate(true);
+            else
+                SetAutoUpdate(false);
+            
+        }
+
+        public static void SetAutoUpdate(bool state)
+        {
+            if (Instance.autoUpdateCheckbox != null &&
+                Instance.autoUpdateCheckbox.IsChecked != null)
+            {
+                Instance.autoUpdateCheckbox.IsChecked = state;
+            }
+            AutoUpdate = state;
+            Console.Log($"Changed Auto Update to {AutoUpdate}");
             SaveSettings();
         }
     }

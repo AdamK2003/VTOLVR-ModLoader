@@ -21,17 +21,19 @@ namespace ModLoader
         /// Gets all of the mods info localed in the path into memory
         /// </summary>
         /// <param name="path">The folder to check for mods</param>
-        public static List<Mod> GetMods(string path)
+        /// <param name="isDevFolder">If we are checking through the users My Projects Folder</param>
+        public static List<Mod> GetMods(string path, bool isDevFolder = false)
         {
             List<Mod> mods = new List<Mod>();
             string[] folders = Directory.GetDirectories(path);
             
             //Files used in loop
-            string[] subFiles;
             Assembly lastAssembly;
             IEnumerable<Type> source;
             for (int i = 0; i < folders.Length; i++)
             {
+                if (isDevFolder)
+                    folders[i] = Path.Combine(folders[i], "Builds");
                 Mod currentMod = new Mod();
                 bool hasDLL = false;
                 bool hasInfo = false;
@@ -75,9 +77,9 @@ namespace ModLoader
                     {
                         Debug.LogError($"Dll is missing in json");
                     }
-                    else
+                    else if (File.Exists(Path.Combine(folders[i], json["Dll File"].ToString())))
                     {
-                        currentMod.dllPath = folders[i] + @"\" + json["Dll File"].ToString();
+                        currentMod.dllPath = Path.Combine(folders[i], json["Dll File"].ToString());
                         hasDLL = true;
                     }
                     if (json["Preview Image"] != null)

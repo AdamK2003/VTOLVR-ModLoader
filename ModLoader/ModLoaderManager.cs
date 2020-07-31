@@ -72,7 +72,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
     class ModLoaderManager : MonoBehaviour
     {
         public static ModLoaderManager Instance { get; private set; }
-        public static string RootPath;
+        public static string RootPath, MyProjectsPath;
         public static int LoadedModsCount;
 
         private static SimpleTcpClient _tcpClient;
@@ -103,6 +103,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             _args = Environment.GetCommandLineArgs();
 
             CreateAPI();
+            FindProjectFolder();
 
             try
             {
@@ -128,13 +129,12 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
             SceneManager.sceneLoaded += SceneLoaded;
 
-            //gameObject.AddComponent<CSharp>();
-
             _api.CreateCommand("quit", delegate { Application.Quit(); });
             _api.CreateCommand("print", PrintMessage);
             _api.CreateCommand("help", _api.ShowHelp);
             _api.CreateCommand("vrinteract", VRInteract);
             _api.CreateCommand("loadmod", LoadMod);
+            _api.CreateCommand("listinteract", ListInteractables);
         }
         private void TcpDataReceived(object sender, Message e)
         {
@@ -407,6 +407,40 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                 //Pausing this method till the loader scene is unloaded
                 yield return null;
             }
+        }
+        private void FindProjectFolder()
+        {
+            if (!File.Exists(Path.Combine(RootPath, "settings.json")))
+                return;
+            JObject json;
+            try
+            {
+                json = JObject.Parse(File.ReadAllText(Path.Combine(RootPath, "settings.json")));
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Failed to read settings.json\n{e.Message}");
+                return;
+            }
+
+            if (json["projectsFolder"] != null)
+            {
+                MyProjectsPath = json["projectsFolder"].ToString();
+            }
+            else
+            {
+                Debug.LogWarning($"Couldn't find projects folder in settings.json");
+            }
+        }
+        private static void ListInteractables(string message)
+        {
+            VRInteractable[] interactables = GameObject.FindObjectsOfType<VRInteractable>();
+            StringBuilder builder = new StringBuilder($"Found {interactables.Length} interactables\n");
+            for (int i = 0; i < interactables.Length; i++)
+            {
+                builder.AppendLine($"{interactables[i].name}");
+            }
+            Debug.Log(builder.ToString());
         }
     }
 }

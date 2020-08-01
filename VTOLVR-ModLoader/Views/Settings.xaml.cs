@@ -15,7 +15,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml.Serialization;
 using UserControl = System.Windows.Controls.UserControl;
 using VTOLVR_ModLoader.Windows;
@@ -116,18 +115,49 @@ namespace VTOLVR_ModLoader.Views
         }
         private static void SaveSettings()
         {
-            JObject jObject = new JObject();
+            JObject jObject;
+
+            if (File.Exists(Program.root + savePath))
+            {
+                try
+                {
+                    jObject = JObject.Parse(File.ReadAllText(Program.root + savePath));
+                }
+                catch
+                {
+                    Console.Log("Failed to read settings, overiding it.");
+                    jObject = new JObject();
+                }
+            }
+            else
+            {
+                jObject = new JObject();
+            }
             if (!string.IsNullOrEmpty(Token))
-                jObject.Add("token", Token);
+            {
+                if (jObject["token"] == null)
+                    jObject.Add("token", Token);
+                else
+                    jObject["token"] = Token;
+            }
 
-            if (!string.IsNullOrEmpty(projectsFolder))
-                jObject.Add("projectsFolder", projectsFolder);
+            if (!string.IsNullOrWhiteSpace(projectsFolder))
+            {
+                if (jObject["projectsFolder"] == null)
+                    jObject.Add("projectsFolder", projectsFolder);
+                else
+                    jObject["projectsFolder"] = projectsFolder;
+            }
 
-            jObject.Add("AutoUpdate", AutoUpdate);
+            if (jObject["AutoUpdate"] == null)
+                jObject.Add("AutoUpdate", AutoUpdate);
+            else
+                jObject["AutoUpdate"] = AutoUpdate;
 
             try
             {
                 File.WriteAllText(Program.root + savePath, jObject.ToString());
+                Console.Log("Saved Settings");
             }
             catch (Exception e)
             {
@@ -163,7 +193,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 string path = json["projectsFolder"].ToString();
                 if (Directory.Exists(path))
-                    SetProjectsFolder(path);
+                    SetProjectsFolder(path, true);
                 else
                     Notification.Show($"Projects Folder in settings.json is not valid\n({path})", "Invalid Folder");
             }
@@ -178,6 +208,7 @@ namespace VTOLVR_ModLoader.Views
                 if (bool.TryParse(json["AutoUpdate"].ToString(), out bool result))
                 {
                     autoUpdateCheckbox.IsChecked = result;
+                    AutoUpdate = result;
                 }
                 else
                     Console.Log("Failed to convert AutoUpdate setting to bool");
@@ -197,21 +228,24 @@ namespace VTOLVR_ModLoader.Views
                 SetProjectsFolder(path);
         }
 
-        private void SetProjectsFolder(string folder)
+        private void SetProjectsFolder(string folder, bool dontSave = false)
         {
             projectsFolder = folder;
             projectsText.Text = "My Projects folder:\n" + projectsFolder;
             projectsButton.Content = "Change";
             MainWindow._instance.uploadModButton.IsEnabled = true;
-            SaveSettings();
+            if (!dontSave)
+                SaveSettings();
         }
         private void AutoUpdateChanged(object sender, RoutedEventArgs e)
         {
             if (autoUpdateCheckbox.IsChecked != null && autoUpdateCheckbox.IsChecked == true)
                 SetAutoUpdate(true);
-            else
+            else if (autoUpdateCheckbox.IsChecked != null)
                 SetAutoUpdate(false);
-            
+
+            Console.Log($"Changed Auto Update to {AutoUpdate}");
+            SaveSettings();
         }
 
         public static void SetAutoUpdate(bool state)
@@ -222,8 +256,6 @@ namespace VTOLVR_ModLoader.Views
                 Instance.autoUpdateCheckbox.IsChecked = state;
             }
             AutoUpdate = state;
-            Console.Log($"Changed Auto Update to {AutoUpdate}");
-            SaveSettings();
         }
     }
 }

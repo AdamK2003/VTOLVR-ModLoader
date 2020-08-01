@@ -52,8 +52,8 @@
             </Grid>
             
             <CheckBox Content="Auto Update Mod Loader Files" IsChecked="True" Grid.Row="4" Foreground="White"
-                      Margin="10,10,0,0" FontSize="15" x:Name="autoUpdateCheckbox" Checked="AutoUpdateChanged"
-                      Unchecked="AutoUpdateChanged"/>
+                      Margin="10,10,0,0" FontSize="15" x:Name="autoUpdateCheckbox"
+                      Click="AutoUpdateChanged"/>
         </Grid>
     </ScrollViewer>
 </UserControl>

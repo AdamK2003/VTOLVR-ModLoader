@@ -23,15 +23,36 @@ namespace VTOLVR_ModLoader.Windows
     {
         public enum Results { None, Ok,No,Yes,Cancel}
         public enum Buttons { None, Ok, NoYes, OkCancel}
+        private Buttons buttons;
         private Action callback;
-        public Notification(Action callback)
+        private Action<bool> _yesNoCallback;
+        public Notification(Action callback, Action<bool> yesnoCallback, Buttons buttons)
         {
             this.callback = callback;
+            this.buttons = buttons;
             InitializeComponent();
+
+            switch (buttons)
+            {
+                case Buttons.None:
+                    OkayButton.Visibility = Visibility.Visible;
+                    break;
+                case Buttons.Ok:
+                    OkayButton.Visibility = Visibility.Visible;
+                    break;
+                case Buttons.NoYes:
+                    YesNoButtons.Visibility = Visibility.Visible;
+                    _yesNoCallback = yesnoCallback;
+                    break;
+                case Buttons.OkCancel:
+                    break;
+                default:
+                    break;
+            }
         }
-        public static void Show(string message, string title = "Message", Buttons buttons = Buttons.None, Action callback = null)
+        public static void Show(string message, string title = "Message", Buttons buttons = Buttons.None, Action closedCallback = null, Action<bool> yesNoResultCallback = null)
         {
-            Notification window = new Notification(callback);
+            Notification window = new Notification(closedCallback, yesNoResultCallback, buttons);
             window.textBlock.Text = message;
             window.Title = title;
             window.titleText.Text = " " + title;
@@ -88,5 +109,17 @@ namespace VTOLVR_ModLoader.Windows
         }
 
         #endregion
+
+        private void NoClicked(object sender, RoutedEventArgs e)
+        {
+            if (_yesNoCallback != null)
+                _yesNoCallback.Invoke(false);
+        }
+
+        private void YesClicked(object sender, RoutedEventArgs e)
+        {
+            if (_yesNoCallback != null)
+                _yesNoCallback.Invoke(true);
+        }
     }
 }

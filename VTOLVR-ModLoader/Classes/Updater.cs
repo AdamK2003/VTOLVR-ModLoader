@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -18,6 +19,7 @@ namespace VTOLVR_ModLoader.Classes
     {
         private static Queue<UpdateFile> filesToUpdate = new Queue<UpdateFile>();
         private static UpdateFile currentFile;
+        private static bool _updateLauncher;
         public static void CheckForUpdates()
         {
             if (!Views.Settings.AutoUpdate)
@@ -37,7 +39,10 @@ namespace VTOLVR_ModLoader.Classes
             for (int i = 0; i < updateFiles.Length; i++)
             {
                 if (updateFiles[i].Name.Equals(Assembly.GetEntryAssembly().GetName().Name))
+                {
+                    _updateLauncher = true;
                     continue;
+                }
                 lastPath = Program.vtolFolder + "/" + updateFiles[i].Location;
                 if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(updateFiles[i].Hash))
                 {
@@ -97,8 +102,23 @@ namespace VTOLVR_ModLoader.Classes
             {
                 MainWindow.SetProgress(100, "Ready");
                 MainWindow.SetPlayButton(false);
+                Notification.Show("The launcher needs to be update.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
             }
                 
+        }
+
+        private static void UpdateLauncherCallback(bool result)
+        {
+            if (!result)
+                return;
+
+            if (!File.Exists(Path.Combine(Program.root, "Updater.exe")))
+            {
+                Notification.Show("Couldn't find the Updater.exe.", "Failed to Auto Update");
+                return;
+            }
+
+            Process.Start(Path.Combine(Program.root, "Updater.exe"), Program.branch == string.Empty ? string.Empty : $"?branch={Program.branch}");
         }
     }
 }

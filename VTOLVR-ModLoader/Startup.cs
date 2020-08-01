@@ -151,13 +151,13 @@ namespace VTOLVR_ModLoader
         {
             Notification.Show("I can't seem to find " + file + " in my folder. Make sure you place me in the same folder as this file.",
                 "Missing File",
-                callback: delegate { Program.Quit(); });
+                closedCallback: delegate { Program.Quit(); });
         }
         private static void MissingManagedFile(string file)
         {
             Notification.Show("I can't seem to find " + file + " in VTOL VR > VTOLVR_Data, please make sure this file is here otherwise the mod loader won't work",
                 "Missing File",
-                callback: delegate { Program.Quit(); });
+                closedCallback: delegate { Program.Quit(); });
         }
 
         private static void FindSteamFolders()

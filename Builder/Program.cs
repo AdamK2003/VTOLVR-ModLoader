@@ -93,7 +93,7 @@ namespace Build
         {
             Log("Building Updater");
             Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo Updater.csproj",
+                "-p:Configuration=Release;DocumentationFile=ModLoader.xml -nologo Updater.csproj",
                 @"\Updater");
         }
 

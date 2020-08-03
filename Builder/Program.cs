@@ -93,7 +93,7 @@ namespace Build
         {
             Log("Building Updater");
             Run(paths["msbuild"],
-                "Updater.csproj -property:Configuration=Release;TargetFrameworkVersion=4.6 -tv:14.0",
+                "-p:Configuration=Release -nologo Updater.csproj",
                 @"\Updater");
         }
 

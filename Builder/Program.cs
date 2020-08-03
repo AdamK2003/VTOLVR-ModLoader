@@ -51,6 +51,8 @@ namespace Build
                 ZIPContents();
             else if (args.Contains("buildinstaller"))
                 BuildInstaller();
+            else if (args.Contains("autoupdatezip"))
+                CreateUpdaterZip();
         }
         private static void MoveDeps()
         {
@@ -137,6 +139,38 @@ namespace Build
             Run(paths["msbuild"],
                 "Installer.csproj -property:Configuration=Release;TargetFrameworkVersion=4.6 -tv:14.0",
                 @"\Installer");
+        }
+
+        private static void CreateUpdaterZip()
+        {
+            Log("Creating zip for auto updater");
+            if (string.IsNullOrEmpty(templateFolder))
+            {
+                Log("ERROR: 'template' arg missing");
+                Environment.Exit(1);
+                return;
+            }
+
+            //Copy all folders
+            foreach (string dirPath in Directory.GetDirectories(templateFolder, "*",
+                SearchOption.AllDirectories))
+                Directory.CreateDirectory(dirPath.Replace(templateFolder, dir + @"\autoupdate"));
+            //Copy all files
+            foreach (string newPath in Directory.GetFiles(templateFolder, "*.*",
+                SearchOption.AllDirectories))
+                File.Copy(newPath, newPath.Replace(templateFolder, dir + @"\autoupdate"), true);
+
+            Directory.CreateDirectory(dir + @"\autoupdate\VTOLVR_Data\Managed");
+            Directory.CreateDirectory(dir + @"\autoupdate\VTOLVR_Data\Plugins");
+            Directory.CreateDirectory(dir + @"\autoupdate\VTOLVR_ModLoader\mods");
+            Directory.CreateDirectory(dir + @"\autoupdate\VTOLVR_ModLoader\skins");
+
+            TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\autoupdate\VTOLVR_ModLoader\ModLoader.dll");
+            TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\autoupdate\VTOLVR_ModLoader\ModLoader.xml");
+            TryMove(dir + @"\VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe", dir + @"\autoupdate\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
+            TryMove(dir + @"\Updater\bin\Release\Updater.exe", dir + @"\autoupdate\VTOLVR_ModLoader\Updater.exe");
+
+            ZipFile.CreateFromDirectory(dir + @"\autoupdate\", dir + @"\autoupdate.zip");
         }
 
         private static bool TryMove(string sourceFileName, string destFileName)

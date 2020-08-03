@@ -5,6 +5,7 @@ stages:
   - build_updater
   - zip
   - build_installer
+  - autoupdate_zip
 
 build_builder:
   stage: build_builder
@@ -73,6 +74,17 @@ build_installer:
   artifacts:
    paths:
    - Installer\bin\Release\Installer.exe
+   expire_in: 1 day
+  only:
+    - merge_requests
+
+autoupdate_zip:
+  stage: autoupdate_zip
+  script:
+   - .\Builder.exe autoupdatezip
+  artifacts:
+   paths:
+   - autoupdate.exe
    expire_in: 1 day
   only:
     - merge_requests

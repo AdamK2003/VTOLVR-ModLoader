@@ -114,12 +114,14 @@ namespace VTOLVR_ModLoader.Windows
         {
             if (_yesNoCallback != null)
                 _yesNoCallback.Invoke(false);
+            Close();
         }
 
         private void YesClicked(object sender, RoutedEventArgs e)
         {
             if (_yesNoCallback != null)
                 _yesNoCallback.Invoke(true);
+            Close();
         }
     }
 }

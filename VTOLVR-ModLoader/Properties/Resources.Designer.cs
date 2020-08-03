@@ -74,7 +74,7 @@ namespace VTOLVR_ModLoader.Properties {
         ///  &quot;mscorlib.dll&quot;,
         ///  &quot;NAudio.dll&quot;,
         ///  &quot;netstandard.dll&quot;,
-        ///  &quot;Newtonsoft.Json.dll&quot;,
+        ///  &quot;Valve.Newtonsoft.Json.dll&quot;,
         ///  &quot;Oculus.VR.dll&quot;,
         ///  &quot;Rewired_Core.dll&quot;,
         ///  &quot;Rewired_Windows_Lib.dll&quot;,
@@ -82,8 +82,7 @@ namespace VTOLVR_ModLoader.Properties {
         ///  &quot;SharpDX.dll&quot;,
         ///  &quot;SteamVR.dll&quot;,
         ///  &quot;SteamVR_Actions.dll&quot;,
-        ///  &quot;System.ComponentModel.Composition.dll&quot;,
-        ///   [rest of string was truncated]&quot;;.
+        ///  &quot;System.ComponentModel.Composition.dll [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BaseDLLS {
             get {

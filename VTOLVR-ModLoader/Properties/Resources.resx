@@ -131,7 +131,7 @@
   "mscorlib.dll",
   "NAudio.dll",
   "netstandard.dll",
-  "Newtonsoft.Json.dll",
+  "Valve.Newtonsoft.Json.dll",
   "Oculus.VR.dll",
   "Rewired_Core.dll",
   "Rewired_Windows_Lib.dll",
@@ -281,7 +281,7 @@
   "UnityEngine.WindModule.dll.mdb",
   "UnityEngine.XRModule.dll",
   "UnityEngine.XRModule.dll.mdb",
-  "Valve.Newtonsoft.Json.dll"
+  "Valve.Valve.Newtonsoft.Json.dll"
 ]</value>
     <comment>This is a JArray of all the dlls in the managed folder for the base game modded</comment>
   </data>

@@ -1,7 +1,7 @@
 ﻿/* This is the main class which stores and runs the core background things.
 
 */
-using Newtonsoft.Json.Linq;
+using Valve.Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

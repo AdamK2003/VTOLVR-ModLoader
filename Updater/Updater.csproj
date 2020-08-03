@@ -74,12 +74,19 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Classes\CommunicationsManager.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Classes\HttpHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Classes\Release.cs" />
     <Compile Include="Classes\Updater.cs" />
+    <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

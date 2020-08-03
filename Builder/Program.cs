@@ -154,21 +154,21 @@ namespace Build
             //Copy all folders
             foreach (string dirPath in Directory.GetDirectories(templateFolder, "*",
                 SearchOption.AllDirectories))
-                Directory.CreateDirectory(dirPath.Replace(templateFolder, dir + @"\autoupdate"));
+                Directory.CreateDirectory(dirPath.Replace(templateFolder, dir + @"\autoupdate\template"));
             //Copy all files
             foreach (string newPath in Directory.GetFiles(templateFolder, "*.*",
                 SearchOption.AllDirectories))
-                File.Copy(newPath, newPath.Replace(templateFolder, dir + @"\autoupdate"), true);
+                File.Copy(newPath, newPath.Replace(templateFolder, dir + @"\autoupdate\template"), true);
 
-            Directory.CreateDirectory(dir + @"\autoupdate\VTOLVR_Data\Managed");
-            Directory.CreateDirectory(dir + @"\autoupdate\VTOLVR_Data\Plugins");
-            Directory.CreateDirectory(dir + @"\autoupdate\VTOLVR_ModLoader\mods");
-            Directory.CreateDirectory(dir + @"\autoupdate\VTOLVR_ModLoader\skins");
+            Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_Data\Managed");
+            Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_Data\Plugins");
+            Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_ModLoader\mods");
+            Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_ModLoader\skins");
 
-            TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\autoupdate\VTOLVR_ModLoader\ModLoader.dll");
-            TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\autoupdate\VTOLVR_ModLoader\ModLoader.xml");
-            TryMove(dir + @"\VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe", dir + @"\autoupdate\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
-            TryMove(dir + @"\Updater\bin\Release\Updater.exe", dir + @"\autoupdate\VTOLVR_ModLoader\Updater.exe");
+            TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.dll");
+            TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.xml");
+            TryMove(dir + @"\VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
+            TryMove(dir + @"\Updater\bin\Release\Updater.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\Updater.exe");
 
             ZipFile.CreateFromDirectory(dir + @"\autoupdate\", dir + @"\autoupdate.zip");
         }

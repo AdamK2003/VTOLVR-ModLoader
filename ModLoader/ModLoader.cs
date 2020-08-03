@@ -127,7 +127,7 @@ namespace ModLoader
             Log("Creating Mods Button");//Mods Button
             GameObject SettingsButton = MainScreen.transform.GetChild(0).GetChild(0).GetChild(8).gameObject;
             GameObject ModsButton = Instantiate(assetBundle.LoadAsset<GameObject>("ModsButton"), SettingsButton.transform.parent);
-            ModsButton.transform.localPosition = new Vector3(-811,-112,0);
+            ModsButton.transform.localPosition = new Vector3(-811, -412, 0);
             VRInteractable modsInteractable = ModsButton.GetComponent<VRInteractable>();
             modsInteractable.OnInteract.AddListener(delegate { OpenPage(Pages.Mods); SetDefaultText(); });
 

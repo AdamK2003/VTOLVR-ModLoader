@@ -151,6 +151,7 @@ namespace Installer
                 nextButotn.Visibility = Visibility.Hidden;
                 cancelButton.Content = "Close";
                 SwitchPage();
+                Console.WriteLine(e.ToString());
                 return;
             }
             SetProgress(100);
@@ -344,8 +345,13 @@ namespace Installer
                 List<ZipArchiveEntry> filesInZip = zip.Entries.ToList();
                 for (int f = 0; f < filesInZip.Count; f++)
                 {
-                    if (!filesInZip[f].FullName.EndsWith("/"))
+                    Console.WriteLine(filesInZip[f].FullName);
+                    if (!filesInZip[f].FullName.EndsWith("\\"))
+                    {
+                        if (filesInZip[f].Name.Length > 0)
+                            Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName.Replace(filesInZip[f].Name, string.Empty)));
                         filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName), File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
+                    } 
                     else if (!Directory.Exists(Path.Combine(extractPath, filesInZip[f].FullName)))
                         Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
                 }

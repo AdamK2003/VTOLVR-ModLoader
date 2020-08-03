@@ -70,7 +70,7 @@ build_installer:
 autoupdate_zip:
   stage: autoupdate_zip
   script:
-   - .\Builder.exe autoupdatezip
+   - .\Builder.exe autoupdatezip template=$template
   artifacts:
    paths:
    - autoupdate.exe

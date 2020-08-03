@@ -66,8 +66,8 @@ namespace Build
         private static void BuildDLL()
         {
             Log("Building ModLoader.dll\n");
-            Run("cmd.exe",
-                "/c dotnet build --configuration Release",
+            Run(paths["msbuild"],
+                "-p:Configuration=Release;Documentationfile=bin\\Release\\ModLoader.xml -nologo \"Mod Loader.csproj\"",
                 @"\ModLoader");
         }
         private static void BuildWPFApp()
@@ -93,7 +93,7 @@ namespace Build
         {
             Log("Building Updater");
             Run(paths["msbuild"],
-                "-p:Configuration=Release;DocumentationFile=ModLoader.xml -nologo Updater.csproj",
+                "-p:Configuration=Release -nologo Updater.csproj",
                 @"\Updater");
         }
 

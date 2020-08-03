@@ -15,7 +15,7 @@ namespace Build
         private static List<Process> processes = new List<Process>();
         private static Dictionary<string, string> paths = new Dictionary<string, string>()
         {
-            { "msbuild", @"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"},
+            { "msbuild", @"C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe"},
             { "unity", @"C:\Program Files\Unity\Hub\Editor\2019.1.8f1\Editor\Unity.exe"},
             { "nuget", @"C:\Program Files\nuget.exe" }
         };
@@ -77,7 +77,7 @@ namespace Build
                 "restore -SolutionDirectory " + dir,
                 @"\VTOLVR-ModLoader");
             Run(paths["msbuild"],
-                "Launcher.csproj -property:Configuration=Release;TargetFrameworkVersion=4.5",
+                "-p:Configuration=Release -nologo Launcher.csproj",
                 @"\VTOLVR-ModLoader");
         }
 

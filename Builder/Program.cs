@@ -77,7 +77,7 @@ namespace Build
                 "restore -SolutionDirectory " + dir,
                 @"\VTOLVR-ModLoader");
             Run(paths["msbuild"],
-                "Launcher.csproj -property:Configuration=Release;TargetFrameworkVersion=4.5 -tv:14.0",
+                "Launcher.csproj -property:Configuration=Release;TargetFrameworkVersion=4.5",
                 @"\VTOLVR-ModLoader");
         }
 

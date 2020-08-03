@@ -33,7 +33,7 @@ build_dll:
 build_wpf:
   stage: build_wpf
   script:
-   - .\Builder.exe buildwpf
+   - .\Builder.exe buildwpf dlls=$dlls
   artifacts:
    paths:
    - VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe
@@ -42,7 +42,7 @@ build_wpf:
 build_updater:
   stage: build_updater
   script:
-   - .\Builder.exe buildupdater
+   - .\Builder.exe buildupdater dlls=$dlls
   artifacts:
    paths:
    - Updater\bin\Release\Updater.exe

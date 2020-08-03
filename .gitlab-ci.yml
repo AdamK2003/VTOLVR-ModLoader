@@ -73,5 +73,5 @@ autoupdate_zip:
    - .\Builder.exe autoupdatezip template=$template
   artifacts:
    paths:
-   - autoupdate.exe
+   - autoupdate.zip
    expire_in: 1 day

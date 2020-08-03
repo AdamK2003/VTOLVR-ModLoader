@@ -28,6 +28,7 @@ build_dll:
   artifacts:
    paths:
    - ModLoader\bin\Release\ModLoader.dll
+   - ModLoader\bin\Release\ModLoader.xml
    expire_in: 1 day
 
 build_wpf:

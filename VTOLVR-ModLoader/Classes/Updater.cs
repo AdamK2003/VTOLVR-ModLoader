@@ -102,7 +102,8 @@ namespace VTOLVR_ModLoader.Classes
             {
                 MainWindow.SetProgress(100, "Ready");
                 MainWindow.SetPlayButton(false);
-                Notification.Show("The launcher needs to be update.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
+                if (_updateLauncher)
+                    Notification.Show("The launcher needs to be update.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
             }
                 
         }
@@ -119,6 +120,7 @@ namespace VTOLVR_ModLoader.Classes
             }
 
             Process.Start(Path.Combine(Program.root, "Updater.exe"), Program.branch == string.Empty ? string.Empty : $"?branch={Program.branch}");
+            Program.Quit();
         }
     }
 }

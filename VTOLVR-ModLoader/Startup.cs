@@ -41,7 +41,7 @@ namespace VTOLVR_ModLoader
             Restore = 9, ShowDefault = 10, ForceMinimized = 11
         };
 
-        private static readonly string[] needFiles = { "SharpMonoInjector.dll", "injector.exe", "Updater.exe", "Gameloop.Vdf.dll", "Valve.Valve.Newtonsoft.Json.dll", "SimpleTCP.dll" };
+        private static readonly string[] needFiles = { "SharpMonoInjector.dll", "injector.exe", "Updater.exe", "Gameloop.Vdf.dll", "Valve.Newtonsoft.Json.dll", "SimpleTCP.dll" };
         private static readonly string[] neededDLLFiles = { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll"};
         public static void RunStartUp()
         {
@@ -152,6 +152,7 @@ namespace VTOLVR_ModLoader
             Notification.Show("I can't seem to find " + file + " in my folder. Make sure you place me in the same folder as this file.",
                 "Missing File",
                 closedCallback: delegate { Program.Quit(); });
+            Views.Console.Log("I can't seem to find " + file + " in my folder. Make sure you place me in the same folder as this file.");
         }
         private static void MissingManagedFile(string file)
         {

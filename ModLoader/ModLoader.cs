@@ -156,8 +156,10 @@ namespace ModLoader
             {
                 Log("Finding mods");
                 //The users created mods show at the top, then the downloaded ones.
-                currentMods = ModReader.GetMods(Path.Combine(ModLoaderManager.MyProjectsPath, "My Mods"), true);
-                currentMods.AddRange(ModReader.GetMods(ModLoaderManager.RootPath + @"\mods"));
+                currentMods = ModReader.GetMods(ModLoaderManager.RootPath + @"\mods");
+                if (!string.IsNullOrEmpty(ModLoaderManager.MyProjectsPath) &&
+                    Directory.Exists(Path.Combine(ModLoaderManager.MyProjectsPath, "My Mods")))
+                    currentMods.AddRange(ModReader.GetMods(Path.Combine(ModLoaderManager.MyProjectsPath, "My Mods"), true));
             }
             else
             {

@@ -395,7 +395,7 @@ namespace VTOLVR_ModLoader
             List<UpdateFile> files;
             for (int i = 0; i < results.Count; i++)
             {
-                lastUpdate = new Release(results[i]["name"].ToString(),
+                lastUpdate = new Release($"{results[i]["tag_name"]} {results[i]["name"]}",
                     results[i]["tag_name"].ToString(),
                     results[i]["body"].ToString());
                 if (results[i]["files"] != null)

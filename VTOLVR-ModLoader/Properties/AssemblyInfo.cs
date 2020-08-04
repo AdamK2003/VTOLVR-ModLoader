@@ -7,10 +7,10 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("VTOLVR-ModLoader")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("VTOL VR Mod Launcher")]
+[assembly: AssemblyDescription("Launches the game with mods and skins")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("https://vtolvr-mods.com/")]
 [assembly: AssemblyProduct("VTOLVR-ModLoader")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]

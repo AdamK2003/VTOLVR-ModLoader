@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("Updater")]
 [assembly: AssemblyDescription("An Auto Updater for VTOL VR Mod Loader")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("vtolvr-mods.com")]
+[assembly: AssemblyCompany("https://vtolvr-mods.com/")]
 [assembly: AssemblyProduct("Updater")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]

@@ -1,8 +1,8 @@
 # VTOL VR Mod Loader 
 
-[![Discord](https://img.shields.io/discord/597153468834119710?label=VTOL%20VR%20Modding&logo=discord&style=flat-square)](https://discord.gg/XZeeafp "Discord Invite") [![Total Downloads](https://img.shields.io/github/downloads/MarshMello0/VTOLVR-ModLoader/total?label=Total%20Downloads&style=flat-square)](https://vtolvr-mods.com/ "Mod Loader's Website") [![GitHub release (latest by date)](https://img.shields.io/github/v/release/MarshMello0/VTOLVR-ModLoader?label=Current%20Release&style=flat-square)](https://github.com/MarshMello0/VTOLVR-ModLoader/releases "Releases Tab") ![Website](https://img.shields.io/website?down_message=Offline&label=Website%20Status&up_message=Online&style=flat-square&url=https%3A%2F%2Fvtolvr-mods.com%2F)
+[![Discord](https://img.shields.io/discord/597153468834119710?label=VTOL%20VR%20Modding&logo=discord&style=flat-square)](https://discord.gg/XZeeafp "Discord Invite") [![GitHub release (latest by date)](https://img.shields.io/badge/dynamic/json?color=blue&label=Current%20Release&query=%24.results%5B0%5D.tag_name&url=https%3A%2F%2Fvtolvr-mods.com%2Fapi%2Fmodloader%2F&style=flat-square)](https://vtolvr-mods.com/ "Mod Loader's Website") ![Website](https://img.shields.io/website?down_message=Offline&label=Website%20Status&up_message=Online&style=flat-square&url=https%3A%2F%2Fvtolvr-mods.com%2F)
 
-![Mod Loader Program](https://vtolvr-mods.com/files/modloader2.gif#)
+![Mod Loader Program](https://vtolvr-mods.com/static/files/modloader2.gif)
 
 VTOLVR-Modloader is an application to inject mods into [VTOL VR on steam](https://github.com/warbler/SharpMonoInjector "VTOL VR Steam Page"). The mod loader was created by . Marsh.Mello . using WPF for the launcher and [SharpMonoInjector](https://github.com/warbler/SharpMonoInjector "Github Repository for SharpMonoInjector") for the injector into the game. 
 

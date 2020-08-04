@@ -12,4 +12,5 @@ Add the following dll's to this folder:
 	- UnityEngine.PhysicsModule.dll
 	- 0Harmony.dll
 	- ModLoader.dll
-	- Lidgren.Network.dll
+	- Valve.Newtonsoft.Json.dll
+	- SimpleTCP.dll

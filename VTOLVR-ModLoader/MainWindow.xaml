@@ -5,47 +5,43 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         xmlns:local="clr-namespace:VTOLVR_ModLoader"
+        xmlns:views="clr-namespace:VTOLVR_ModLoader.Views"
         mc:Ignorable="d"
-        Title="VTOL VR Modloader" Height="400" Width="800" ResizeMode="NoResize" Icon="Logo.ico" 
-        Background="#FF4B4B4B" WindowStartupLocation="CenterScreen" WindowStyle="None" Closing="WindowClosing" Initialized="Start">
+        Title="VTOL VR Modloader" Height="600" Width="1200" Icon="Resources/Logo.ico" MinWidth="800" MinHeight="490" 
+        Background="#FF4B4B4B" WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        Style="{StaticResource FontStyle}">
+    <Window.Resources>
+        <DataTemplate x:Name="settingsViewTemplate" DataType="{x:Type views:Settings}">
+            <views:Settings DataContext="{Binding}"/>
+        </DataTemplate>
+        <DataTemplate x:Name="newsViewTemplate" DataType="{x:Type views:News}">
+            <views:News DataContext="{Binding}"/>
+        </DataTemplate>
+        <DataTemplate x:Name="consoleViewTemplate" DataType="{x:Type views:Console}">
+            <views:Console DataContext="{Binding}"/>
+        </DataTemplate>
+    </Window.Resources>
     <Grid>
-
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.1*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.3*"/>
+            <RowDefinition Height="86"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="#FF2E2E2E">
-            <!-- Top Bar -->
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="0.1*"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Text=" VTOL VR Mod Loader 2.4.4" Grid.Column="0" Foreground="White" 
-                       FontFamily="/VTOLVR-ModLoader;component/#Squares Bold"
-                       FontSize="20" VerticalAlignment="Center" 
-                       MouseDown="TopBarDown" MouseUp="TopBarUp" MouseMove="TopBarMove" MouseLeave="TopBarLeave"/>
-            <Button Grid.Column="1" Foreground="White"
-                       FontFamily="/VTOLVR-ModLoader;component/#Squares Bold"
-                       FontSize="20" Background="#FF3D3D3D" BorderBrush="{x:Null}" Click="Quit"
-                    Content="x">
-            </Button>
-        </Grid>
-
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.2*"/>
+                <ColumnDefinition Width="135"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0" Background="#696969">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="45"/>
+                    <RowDefinition Height="45"/>
+                    <RowDefinition Height="45"/>
+                    <RowDefinition Height="45"/>
+                    <RowDefinition Height="45"/>
+                    <RowDefinition Height="45"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
@@ -62,7 +58,7 @@
                         <ColumnDefinition Width="0.05*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Image Grid.Column="1" Grid.Row="1" gif:ImageBehavior.RepeatBehavior="0x" gif:ImageBehavior.AnimatedSource="LogoSpinning.gif" x:Name="LogoGif" gif:ImageBehavior.AutoStart="False" />
+                    <Image Grid.Column="1" Grid.Row="1" gif:ImageBehavior.RepeatBehavior="0x" gif:ImageBehavior.AnimatedSource="Resources/LogoSpinning.gif" x:Name="LogoGif" gif:ImageBehavior.AutoStart="False" />
 
                 </Grid>
 
@@ -79,13 +75,13 @@
                         <ColumnDefinition Width="0.1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/#Squares Bold"
-                            Content="Website" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
-                            Click="Website"/>
+                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                            Content="Home" Foreground="White" BorderBrush="{x:Null}" Click="News" 
+                            Style="{StaticResource darkButton}" x:Name="homeButton"/>
                 </Grid>
 
                 <Grid Grid.Row="2">
-                    <!-- Skins Button -->
+                    <!-- Open Folder Button -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.3*"/>
                         <RowDefinition Height="*"/>
@@ -97,12 +93,13 @@
                         <ColumnDefinition Width="0.1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/#Squares Bold"
-                            Content="Discord" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" Click="Discord"/>
+                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                            Content="Open Folder" Foreground="White" BorderBrush="{x:Null}" 
+                            Click="OpenFolder" Style="{StaticResource darkButton}" x:Name="openFButton"/>
                 </Grid>
 
                 <Grid Grid.Row="3">
-                    <!-- Discord Button -->
+                    <!-- Console Button -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.3*"/>
                         <RowDefinition Height="*"/>
@@ -114,13 +111,13 @@
                         <ColumnDefinition Width="0.1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/#Squares Bold"
-                            Content="Open Folder" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
-                            Click="OpenFolder"/>
+                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                            Content="Console" Foreground="White" BorderBrush="{x:Null}" 
+                            Click="OpenConsole" Style="{StaticResource darkButton}" x:Name="consoleButton"/>
                 </Grid>
 
                 <Grid Grid.Row="4">
-                    <!-- Github Button -->
+                    <!-- Upload Mod Button -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.3*"/>
                         <RowDefinition Height="*"/>
@@ -132,45 +129,56 @@
                         <ColumnDefinition Width="0.1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/#Squares Bold"
-                            Content="Settings" Foreground="White" Background="#FF3D3D3D" BorderBrush="{x:Null}" 
-                            Click="OpenSettings"/>
+                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                            Content="Mod Creator" Foreground="White" BorderBrush="{x:Null}" 
+                            Click="Creator" x:Name="uploadModButton" Style="{StaticResource darkButton}">
+                    </Button>
+                </Grid>
+
+                <Grid Grid.Row="5">
+                    <!-- Dev Tools Button -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.3*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="0.3*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.1*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="0.1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                            Content="Dev Tools" Foreground="White" BorderBrush="{x:Null}" 
+                            Click="OpenTools" Style="{StaticResource darkButton}" x:Name="devTButton"/>
+                </Grid>
+                <Grid Grid.Row="6">
+                    <!-- Settings Button -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.3*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="0.3*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.1*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="0.1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                            Content="Settings" Foreground="White" BorderBrush="{x:Null}" 
+                            Click="OpenSettings" Style="{StaticResource darkButton}" x:Name="settingsButton"/>
                 </Grid>
             </Grid>
 
-
-            <ScrollViewer Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                <!-- Updates Feed -->
-                <ItemsControl x:Name="updateFeed" >
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Padding="0,0,0,50" >
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Title}" 
-                                           FontFamily="/VTOLVR-ModLoader;component/#Squares Bold"
-                                           Foreground="White" FontSize="20" TextWrapping="Wrap"
-                                               Background="#FF3D3D3D"/>
-
-                                    <TextBlock  Text="{Binding ChangeLog}" 
-                                           FontFamily="/VTOLVR-ModLoader;component/#Squares Bold"
-                                           Foreground="White" FontSize="10" TextWrapping="Wrap"
-                                                Background="#FF3D3D3D"/>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-
-
+            <ContentControl Grid.Column="1" Content="{Binding}"/>
         </Grid>
 
-        <Grid Grid.Row="2" Background="#696969">
+        <Grid Grid.Row="1" Background="#696969">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.03*"/>
+                <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="0.2*"/>
-                <ColumnDefinition Width="0.03*"/>
+                <ColumnDefinition Width="120"/>
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="1">
@@ -199,26 +207,27 @@
                 </Grid>
 
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="Progress Text..." 
-                           FontFamily="/VTOLVR-ModLoader;component/#Squares Bold" Foreground="White" 
+                           FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold" Foreground="White" 
                            VerticalAlignment="Center" x:Name="progressText"/>
             </Grid>
 
             <Grid Grid.Column="2">
                 <!-- Play Button -->
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="0.3*"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="0.3*"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.1*"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="0.1*"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/#Squares Bold"
-                            Content="Play" FontSize="30" Foreground="White" Background="#FF3D3D3D" 
-                        BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame" BorderThickness="1"/>
+                <Button Grid.Column="1" Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                            Content="Play" FontSize="30" Foreground="White"
+                        BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame" BorderThickness="1"
+                        Style="{StaticResource darkButton}"/>
             </Grid>
         </Grid>
     </Grid>

@@ -30,10 +30,6 @@ public class VTOLAPI : MonoBehaviour
     /// </summary>
     public static UnityAction<VTOLScenes> SceneLoaded;
     /// <summary>
-    /// This gets invoked when the mission as been reloaded by the player.
-    /// </summary>
-    public static UnityAction MissionReloaded;
-    /// <summary>
     /// The current scene which is active.
     /// </summary>
     public static VTOLScenes currentScene { get; private set; }
@@ -134,7 +130,7 @@ public class VTOLAPI : MonoBehaviour
     /// Returns the parent gameobject of what vehicle the player is currently flying, it will return null if nothing is found.
     /// </summary>
     /// <returns></returns>
-    public static GameObject GetPlayersVehicleGameObject()
+    public GameObject GetPlayersVehicleGameObject()
     {
         VTOLVehicles currentVehicle = GetPlayersVehicleEnum();
 
@@ -220,12 +216,12 @@ public class VTOLAPI : MonoBehaviour
         Debug.Log(stringBuilder.ToString());
     }
     /// <summary>
-    /// Returns a list of mods which the user currently has loaded.
+    /// Returns a list of mods which are currently loaded
     /// </summary>
     /// <returns></returns>
     public static List<Mod> GetUsersMods()
     {
-        return ModLoader.ModLoader.LoadedMods;
+        return ModLoader.ModLoader.instance.ModsLoaded;
     }
 }
 

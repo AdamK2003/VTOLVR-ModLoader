@@ -10,6 +10,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using System.Net;
 using System.Reflection;
+using TMPro;
 
 namespace ModLoader
 {
@@ -19,7 +20,7 @@ namespace ModLoader
         public enum KeyboardType { DisableAll, Int, Float, String }
         public static ModLoader instance { get; private set; }
         public static AssetBundle assetBundle;
-        public static List<Mod> LoadedMods { get; private set; } = new List<Mod>();
+        public List<Mod> ModsLoaded { get; private set; } = new List<Mod>();
         private ModLoaderManager manager;
         private VTOLAPI api;
         
@@ -29,7 +30,7 @@ namespace ModLoader
         private Text SelectButton;
         private RectTransform selectionTF, settingsSelection;
         private Mod selectedMod;
-        private float buttonHeight = 548;
+        private float buttonHeight = 100;
         private List<Mod> currentMods = new List<Mod>();
         private List<Settings> currentSettings = new List<Settings>();
         private VRPointInteractableCanvas InteractableCanvasScript;
@@ -37,8 +38,10 @@ namespace ModLoader
         private string currentSelectedSetting = string.Empty;
 
 
-        private GameObject MainScreen;
+        private GameObject MainScreen, modTemplate;
         private CampaignInfoUI modInfoUI;
+        private TextMeshProUGUI modName, modDescription, loadButton;
+        private RawImage modImage;
         private void Awake()
         {
             if (instance)
@@ -52,7 +55,7 @@ namespace ModLoader
         }
         private void Start()
         {
-            manager = ModLoaderManager.instance;
+            manager = ModLoaderManager.Instance;
             api = VTOLAPI.instance;
 
             SceneManager.sceneLoaded += SceneLoaded;
@@ -79,6 +82,22 @@ namespace ModLoader
             assetBundle = request.assetBundle;
             Log("AssetBundle Loaded");
         }
+        private void SetModInfo(string modName = "", string modDescription = "", bool hideImage = false, string imagePath = "")
+        {
+            if (this.modName)
+                this.modName.text = modName;
+            if (this.modDescription)
+                this.modDescription.text = modDescription;
+            if (modImage && hideImage)
+                modImage.color = new Color(0, 0, 0, 0);
+            if (hideImage == false)
+            {
+                modImage.color = Color.white;
+                StartCoroutine(SetModPreviewImage(modImage, imagePath));
+            }
+            if (modName == "" && modDescription == "")
+                selectionTF.GetComponent<RawImage>().color = new Color(0, 0, 0, 0);
+        }
         private void CreateUI()
         {
             if (!assetBundle)
@@ -97,7 +116,7 @@ namespace ModLoader
             if (MainScreen == null)
                 LogError("Main Screen was null");
 
-            Log("Spawning Keyboards"); 
+            Log("Spawning Keyboards");
             stringKeyboard = Instantiate(assetBundle.LoadAsset<GameObject>("StringKeyboard")).GetComponent<VRKeyboard>();
             floatKeyboard = Instantiate(assetBundle.LoadAsset<GameObject>("FloatKeyboard")).GetComponent<VRKeyboard>();
             intKeyboard = Instantiate(assetBundle.LoadAsset<GameObject>("IntKeyboard")).GetComponent<VRKeyboard>();
@@ -108,14 +127,7 @@ namespace ModLoader
             Log("Creating Mods Button");//Mods Button
             GameObject SettingsButton = MainScreen.transform.GetChild(0).GetChild(0).GetChild(8).gameObject;
             GameObject ModsButton = Instantiate(assetBundle.LoadAsset<GameObject>("ModsButton"), SettingsButton.transform.parent);
-            if (GameStartup.version > new GameVersion(0, 1, 0, 2, GameVersion.ReleaseTypes.Testing))
-            {
-                ModsButton.transform.localPosition = new Vector3(-811, -412, 0);
-            }
-            else
-            {
-                ModsButton.transform.localPosition = new Vector3(-811, -112, 0);
-            }
+            ModsButton.transform.localPosition = new Vector3(-811, -412, 0);
             VRInteractable modsInteractable = ModsButton.GetComponent<VRInteractable>();
             modsInteractable.OnInteract.AddListener(delegate { OpenPage(Pages.Mods); SetDefaultText(); });
 
@@ -138,17 +150,19 @@ namespace ModLoader
             backInteractable.OnInteract.AddListener(delegate { OpenPage(Pages.MainMenu); });
             VRInteractable settingsInteractable = modsPage.transform.GetChild(4).GetComponent<VRInteractable>();
             settingsInteractable.OnInteract.AddListener(delegate { OpenPage(Pages.Settings); });
-            
+
 
             if (currentMods.Count == 0)
             {
                 Log("Finding mods");
-                currentMods = ModReader.GetMods(ModLoaderManager.instance.rootPath + @"\mods");
+                //The users created mods show at the top, then the downloaded ones.
+                currentMods = ModReader.GetMods(Path.Combine(ModLoaderManager.MyProjectsPath, "My Mods"), true);
+                currentMods.AddRange(ModReader.GetMods(ModLoaderManager.RootPath + @"\mods"));
             }
             else
             {
                 Log("Searching for any new mods\nCurrent Count = " + currentMods.Count);
-                if (ModReader.GetNewMods(ModLoaderManager.instance.rootPath + @"\mods", ref currentMods))
+                if (ModReader.GetNewMods(ModLoaderManager.RootPath + @"\mods", ref currentMods))
                 {
                     Log("Found new mods\nNew count = " + currentMods.Count);
                 }
@@ -229,9 +243,9 @@ namespace ModLoader
                 selectedMod.isLoaded = true;
                 SelectButton.text = "Loaded!";
                 mod.ModLoaded();
-                LoadedMods.Add(selectedMod);
-                ModLoaderManager.instance.loadedModsCount++;
-                ModLoaderManager.instance.UpdateDiscord();
+                ModsLoaded.Add(selectedMod);
+                ModLoaderManager.LoadedModsCount++;
+                ModLoaderManager.Instance.UpdateDiscord();
             }
             else
             {
@@ -262,6 +276,7 @@ namespace ModLoader
             {
                 modInfoUI.campaignImage.color = new Color(0, 0, 0, 0);
             }
+
         }
         private void SetDefaultText()
         {
@@ -298,7 +313,7 @@ namespace ModLoader
         private IEnumerator SetModPreviewImage(RawImage raw, string path)
         {
             if (raw == null)
-                Debug.Log("Mat is null");
+                LogError("Image is null");
             WWW www = new WWW("file:///" + path);
             while (!www.isDone)
                 yield return null;

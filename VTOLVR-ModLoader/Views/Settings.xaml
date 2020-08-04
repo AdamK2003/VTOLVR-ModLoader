@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="VTOLVR_ModLoader.Views.Settings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VTOLVR_ModLoader.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Settings" Foreground="White" FontSize="30"
+                       HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Token:" VerticalAlignment="Center" Foreground="White"
+                       FontSize="30"/>
+                <PasswordBox Grid.Column="1" x:Name="tokenBox" FontSize="25"/>
+                <Button Grid.Column="2" Click="UpdateToken" x:Name="updateButton" 
+                        Style="{StaticResource transparentButton}">
+                    <TextBlock Text="Update" Foreground="White" TextAlignment="Center"/>
+                </Button>
+            </Grid>
+            <TextBlock Grid.Row="2" Foreground="White" FontSize="15" TextWrapping="Wrap" Padding="0,0,0,10">
+                User tokens are currently only for mod/skin creators. It gives them access to uploading mods from the mod loader.<LineBreak/>
+                To apply this code, you can press this button or paste it manually in the settings page of the mod loader.<LineBreak/><LineBreak/>
+                Make sure you don't share this token otherwise others will be able to upload/update mods and skins on your account.</TextBlock>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Foreground="White" FontSize="15" x:Name="projectsText">
+                    My Projects folder not set.
+                </TextBlock>
+
+                <Button Grid.Column="1" Style="{StaticResource darkButton}" Margin="5,10,5,10"
+                        Content="Set" Click="SetMyProjectsFolder" x:Name="projectsButton"/>
+            </Grid>
+            
+            <CheckBox Content="Auto Update Mod Loader Files" IsChecked="True" Grid.Row="4" Foreground="White"
+                      Margin="10,10,0,0" FontSize="15" x:Name="autoUpdateCheckbox"
+                      Click="AutoUpdateChanged"/>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

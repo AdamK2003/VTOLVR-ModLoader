@@ -120,33 +120,13 @@ namespace Installer
         {
             //If they change the folder path by typing it in by hand
             vtFolder = folderBox.Text;
-            if (Directory.Exists(vtFolder + @"VTOLVR_ModLoader"))
-            {
-                //Delete the files we are going to place in there
-                TryDelete(vtFolder + @"VTOLVR_ModLoader\injector.exe");
-                TryDelete(vtFolder + @"VTOLVR_ModLoader\ModLoader.dll");
-                TryDelete(vtFolder + @"VTOLVR_ModLoader\modloader.assets");
-                TryDelete(vtFolder + @"VTOLVR_ModLoader\SharpMonoInjector.dll");
-                TryDelete(vtFolder + @"VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
-                TryDelete(vtFolder + @"VTOLVR_ModLoader\WpfAnimatedGif.dll");
-                TryDelete(vtFolder + @"VTOLVR_ModLoader\data.xml");
-                TryDelete(vtFolder + @"VTOLVR_ModLoader\versions.xml");
-                TryDelete(vtFolder + @"VTOLVR_ModLoader\Updater.exe");
-            }
             SetProgress(0);
             TryDelete(vtFolder + @"ModLoader.zip");
             try
             {
-
                 //Extracting the zip from resources to files
                 File.WriteAllBytes(vtFolder + "ModLoader.zip", Properties.Resources.ModLoader);
-
-                //Stopping a possible error
-                TryDelete(vtFolder + @"VTOLVR_Data\Plugins\discord-rpc.dll");
-                TryDelete(vtFolder + @"VTOLVR_Data\Managed\0Harmony.dll");
-                TryDelete(vtFolder + @"VTOLVR_Data\Managed\mscorlib.dll");
-
-                ZipFile.ExtractToDirectory(vtFolder + @"ModLoader.zip", vtFolder);
+                ExtractZipToDirectory(vtFolder + @"ModLoader.zip", vtFolder);
                 SetProgress(50);
                 File.Delete(vtFolder + @"ModLoader.zip");
                 SetProgress(75);
@@ -171,6 +151,7 @@ namespace Installer
                 nextButotn.Visibility = Visibility.Hidden;
                 cancelButton.Content = "Close";
                 SwitchPage();
+                Console.WriteLine(e.ToString());
                 return;
             }
             SetProgress(100);
@@ -357,6 +338,24 @@ namespace Installer
 
         #endregion
 
-
+        public static void ExtractZipToDirectory(string zipPath, string extractPath)
+        {
+            using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Read))
+            {
+                List<ZipArchiveEntry> filesInZip = zip.Entries.ToList();
+                for (int f = 0; f < filesInZip.Count; f++)
+                {
+                    Console.WriteLine(filesInZip[f].FullName);
+                    if (!filesInZip[f].FullName.EndsWith("\\"))
+                    {
+                        if (filesInZip[f].Name.Length > 0)
+                            Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName.Replace(filesInZip[f].Name, string.Empty)));
+                        filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName), File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
+                    } 
+                    else if (!Directory.Exists(Path.Combine(extractPath, filesInZip[f].FullName)))
+                        Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
+                }
+            }
+        }
     }
 }

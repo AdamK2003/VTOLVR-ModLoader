@@ -19,10 +19,10 @@ namespace VTOLVR_ModLoader.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace VTOLVR_ModLoader.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("VTOLVR_ModLoader.Properties.Resources", typeof(Resources).Assembly);
@@ -51,12 +51,77 @@ namespace VTOLVR_ModLoader.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [
+        ///  &quot;0Harmony.dll&quot;,
+        ///  &quot;Accessibility.dll&quot;,
+        ///  &quot;Assembly-CSharp-firstpass.dll&quot;,
+        ///  &quot;Assembly-CSharp.dll&quot;,
+        ///  &quot;CsvHelper.dll&quot;,
+        ///  &quot;HttpAuth.dll&quot;,
+        ///  &quot;Microsoft.CSharp.dll&quot;,
+        ///  &quot;Mono.Security.dll&quot;,
+        ///  &quot;MP3Sharp.dll&quot;,
+        ///  &quot;mscorlib.dll&quot;,
+        ///  &quot;NAudio.dll&quot;,
+        ///  &quot;netstandard.dll&quot;,
+        ///  &quot;Valve.Newtonsoft.Json.dll&quot;,
+        ///  &quot;Oculus.VR.dll&quot;,
+        ///  &quot;Rewired_Core.dll&quot;,
+        ///  &quot;Rewired_Windows_Lib.dll&quot;,
+        ///  &quot;SharpDX.DirectInput.dll&quot;,
+        ///  &quot;SharpDX.dll&quot;,
+        ///  &quot;SteamVR.dll&quot;,
+        ///  &quot;SteamVR_Actions.dll&quot;,
+        ///  &quot;System.ComponentModel.Composition.dll [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string BaseDLLS {
+            get {
+                return ResourceManager.GetString("BaseDLLS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///  &quot;Campaigns&quot;: [
+        ///    {
+        ///      &quot;CampaignID&quot;: &quot;av42cTheIsland&quot;,
+        ///      &quot;CampaignName&quot;: &quot;The Island&quot;,
+        ///      &quot;Description&quot;: &quot;The Island campaign.&quot;,
+        ///      &quot;Vehicle&quot;: &quot;AV-42C&quot;,
+        ///      &quot;Scenarios&quot;: [
+        ///        {
+        ///          &quot;Id&quot;: &quot;01_preparations&quot;,
+        ///          &quot;Name&quot;: &quot;Preparations&quot;,
+        ///          &quot;Description&quot;: &quot;Help make preparations to defend the island. Transport personnel to coastal SAM site.&quot;,
+        ///          &quot;CampaignOrderIdx&quot;: 0
+        ///        },
+        ///        {
+        ///          &quot;Id&quot;: &quot;02_minesweeper&quot;,
+        ///          &quot;Name&quot;: &quot;Mines [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string CampaignsJsonString {
+            get {
+                return ResourceManager.GetString("CampaignsJsonString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] vtolvr_mod_boilerplate_master {
+            get {
+                object obj = ResourceManager.GetObject("vtolvr_mod_boilerplate_master", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

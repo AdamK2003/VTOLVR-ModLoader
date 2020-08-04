@@ -46,7 +46,7 @@
     
     mimetype: application/x-microsoft.net.object.binary.base64
     value   : The object must be serialized with 
-            : System.Serialization.Formatters.Binary.BinaryFormatter
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
     
     mimetype: application/x-microsoft.net.object.soap.base64
@@ -60,6 +60,7 @@
             : and then encoded with base64 encoding.
     -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -68,9 +69,10 @@
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="name" use="required" type="xsd:string" />
               <xsd:attribute name="type" type="xsd:string" />
               <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
@@ -85,9 +87,10 @@
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -109,9 +112,442 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BaseDLLS" xml:space="preserve">
+    <value>[
+  "0Harmony.dll",
+  "Accessibility.dll",
+  "Assembly-CSharp-firstpass.dll",
+  "Assembly-CSharp.dll",
+  "CsvHelper.dll",
+  "HttpAuth.dll",
+  "Microsoft.CSharp.dll",
+  "Mono.Security.dll",
+  "MP3Sharp.dll",
+  "mscorlib.dll",
+  "NAudio.dll",
+  "netstandard.dll",
+  "Valve.Newtonsoft.Json.dll",
+  "Oculus.VR.dll",
+  "Rewired_Core.dll",
+  "Rewired_Windows_Lib.dll",
+  "SharpDX.DirectInput.dll",
+  "SharpDX.dll",
+  "SteamVR.dll",
+  "SteamVR_Actions.dll",
+  "System.ComponentModel.Composition.dll",
+  "System.Configuration.dll",
+  "System.Core.dll",
+  "System.Data.dll",
+  "System.Diagnostics.StackTrace.dll",
+  "System.dll",
+  "System.Drawing.dll",
+  "System.EnterpriseServices.dll",
+  "System.Globalization.Extensions.dll",
+  "System.IO.Compression.dll",
+  "System.IO.Compression.FileSystem.dll",
+  "System.Net.Http.dll",
+  "System.Numerics.dll",
+  "System.Runtime.Serialization.dll",
+  "System.Runtime.Serialization.Xml.dll",
+  "System.ServiceModel.Internals.dll",
+  "System.Transactions.dll",
+  "System.Windows.Forms.dll",
+  "System.Xml.dll",
+  "System.Xml.Linq.dll",
+  "System.Xml.XPath.XDocument.dll",
+  "Unity.Analytics.DataPrivacy.dll",
+  "Unity.TextMeshPro.dll",
+  "Unity.Timeline.dll",
+  "UnityEngine.AccessibilityModule.dll",
+  "UnityEngine.AccessibilityModule.dll.mdb",
+  "UnityEngine.AIModule.dll",
+  "UnityEngine.AIModule.dll.mdb",
+  "UnityEngine.AnimationModule.dll",
+  "UnityEngine.AnimationModule.dll.mdb",
+  "UnityEngine.ARModule.dll",
+  "UnityEngine.ARModule.dll.mdb",
+  "UnityEngine.AssetBundleModule.dll",
+  "UnityEngine.AssetBundleModule.dll.mdb",
+  "UnityEngine.AudioModule.dll",
+  "UnityEngine.AudioModule.dll.mdb",
+  "UnityEngine.ClothModule.dll",
+  "UnityEngine.ClothModule.dll.mdb",
+  "UnityEngine.ClusterInputModule.dll",
+  "UnityEngine.ClusterInputModule.dll.mdb",
+  "UnityEngine.ClusterRendererModule.dll",
+  "UnityEngine.ClusterRendererModule.dll.mdb",
+  "UnityEngine.CoreModule.dll",
+  "UnityEngine.CoreModule.dll.mdb",
+  "UnityEngine.CrashReportingModule.dll",
+  "UnityEngine.CrashReportingModule.dll.mdb",
+  "UnityEngine.DirectorModule.dll",
+  "UnityEngine.DirectorModule.dll.mdb",
+  "UnityEngine.dll",
+  "UnityEngine.dll.mdb",
+  "UnityEngine.FileSystemHttpModule.dll",
+  "UnityEngine.FileSystemHttpModule.dll.mdb",
+  "UnityEngine.GameCenterModule.dll",
+  "UnityEngine.GameCenterModule.dll.mdb",
+  "UnityEngine.GridModule.dll",
+  "UnityEngine.GridModule.dll.mdb",
+  "UnityEngine.HotReloadModule.dll",
+  "UnityEngine.HotReloadModule.dll.mdb",
+  "UnityEngine.ImageConversionModule.dll",
+  "UnityEngine.ImageConversionModule.dll.mdb",
+  "UnityEngine.IMGUIModule.dll",
+  "UnityEngine.IMGUIModule.dll.mdb",
+  "UnityEngine.InputModule.dll",
+  "UnityEngine.InputModule.dll.mdb",
+  "UnityEngine.JSONSerializeModule.dll",
+  "UnityEngine.JSONSerializeModule.dll.mdb",
+  "UnityEngine.LocalizationModule.dll",
+  "UnityEngine.LocalizationModule.dll.mdb",
+  "UnityEngine.ParticleSystemModule.dll",
+  "UnityEngine.ParticleSystemModule.dll.mdb",
+  "UnityEngine.PerformanceReportingModule.dll",
+  "UnityEngine.PerformanceReportingModule.dll.mdb",
+  "UnityEngine.Physics2DModule.dll",
+  "UnityEngine.Physics2DModule.dll.mdb",
+  "UnityEngine.PhysicsModule.dll",
+  "UnityEngine.PhysicsModule.dll.mdb",
+  "UnityEngine.ProfilerModule.dll",
+  "UnityEngine.ProfilerModule.dll.mdb",
+  "UnityEngine.Purchasing.dll",
+  "UnityEngine.ScreenCaptureModule.dll",
+  "UnityEngine.ScreenCaptureModule.dll.mdb",
+  "UnityEngine.SharedInternalsModule.dll",
+  "UnityEngine.SharedInternalsModule.dll.mdb",
+  "UnityEngine.SpriteMaskModule.dll",
+  "UnityEngine.SpriteMaskModule.dll.mdb",
+  "UnityEngine.SpriteShapeModule.dll",
+  "UnityEngine.SpriteShapeModule.dll.mdb",
+  "UnityEngine.StreamingModule.dll",
+  "UnityEngine.StreamingModule.dll.mdb",
+  "UnityEngine.StyleSheetsModule.dll",
+  "UnityEngine.StyleSheetsModule.dll.mdb",
+  "UnityEngine.SubstanceModule.dll",
+  "UnityEngine.SubstanceModule.dll.mdb",
+  "UnityEngine.TerrainModule.dll",
+  "UnityEngine.TerrainModule.dll.mdb",
+  "UnityEngine.TerrainPhysicsModule.dll",
+  "UnityEngine.TerrainPhysicsModule.dll.mdb",
+  "UnityEngine.TextCoreModule.dll",
+  "UnityEngine.TextCoreModule.dll.mdb",
+  "UnityEngine.TextRenderingModule.dll",
+  "UnityEngine.TextRenderingModule.dll.mdb",
+  "UnityEngine.TilemapModule.dll",
+  "UnityEngine.TilemapModule.dll.mdb",
+  "UnityEngine.TLSModule.dll",
+  "UnityEngine.TLSModule.dll.mdb",
+  "UnityEngine.UI.dll",
+  "UnityEngine.UIElementsModule.dll",
+  "UnityEngine.UIElementsModule.dll.mdb",
+  "UnityEngine.UIModule.dll",
+  "UnityEngine.UIModule.dll.mdb",
+  "UnityEngine.UmbraModule.dll",
+  "UnityEngine.UmbraModule.dll.mdb",
+  "UnityEngine.UNETModule.dll",
+  "UnityEngine.UNETModule.dll.mdb",
+  "UnityEngine.UnityAnalyticsModule.dll",
+  "UnityEngine.UnityAnalyticsModule.dll.mdb",
+  "UnityEngine.UnityConnectModule.dll",
+  "UnityEngine.UnityConnectModule.dll.mdb",
+  "UnityEngine.UnityTestProtocolModule.dll",
+  "UnityEngine.UnityTestProtocolModule.dll.mdb",
+  "UnityEngine.UnityWebRequestAssetBundleModule.dll",
+  "UnityEngine.UnityWebRequestAssetBundleModule.dll.mdb",
+  "UnityEngine.UnityWebRequestAudioModule.dll",
+  "UnityEngine.UnityWebRequestAudioModule.dll.mdb",
+  "UnityEngine.UnityWebRequestModule.dll",
+  "UnityEngine.UnityWebRequestModule.dll.mdb",
+  "UnityEngine.UnityWebRequestTextureModule.dll",
+  "UnityEngine.UnityWebRequestTextureModule.dll.mdb",
+  "UnityEngine.UnityWebRequestWWWModule.dll",
+  "UnityEngine.UnityWebRequestWWWModule.dll.mdb",
+  "UnityEngine.VehiclesModule.dll",
+  "UnityEngine.VehiclesModule.dll.mdb",
+  "UnityEngine.VFXModule.dll",
+  "UnityEngine.VFXModule.dll.mdb",
+  "UnityEngine.VideoModule.dll",
+  "UnityEngine.VideoModule.dll.mdb",
+  "UnityEngine.VRModule.dll",
+  "UnityEngine.VRModule.dll.mdb",
+  "UnityEngine.WindModule.dll",
+  "UnityEngine.WindModule.dll.mdb",
+  "UnityEngine.XRModule.dll",
+  "UnityEngine.XRModule.dll.mdb",
+  "Valve.Valve.Newtonsoft.Json.dll"
+]</value>
+    <comment>This is a JArray of all the dlls in the managed folder for the base game modded</comment>
+  </data>
+  <data name="CampaignsJsonString" xml:space="preserve">
+    <value>{
+  "Campaigns": [
+    {
+      "CampaignID": "av42cTheIsland",
+      "CampaignName": "The Island",
+      "Description": "The Island campaign.",
+      "Vehicle": "AV-42C",
+      "Scenarios": [
+        {
+          "Id": "01_preparations",
+          "Name": "Preparations",
+          "Description": "Help make preparations to defend the island. Transport personnel to coastal SAM site.",
+          "CampaignOrderIdx": 0
+        },
+        {
+          "Id": "02_minesweeper",
+          "Name": "Minesweeper",
+          "Description": "Destroy the drone ships laying mines on supply routes.",
+          "CampaignOrderIdx": 1
+        },
+        {
+          "Id": "03_redirection",
+          "Name": "Redirection",
+          "Description": "Join the carrier fleet embarking on a pre-emptive naval strike.",
+          "CampaignOrderIdx": 2
+        },
+        {
+          "Id": "05_silentIsland",
+          "Name": "Silent Island",
+          "Description": "Return to the island to investigate why communications have gone silent.",
+          "CampaignOrderIdx": 4
+        },
+        {
+          "Id": "06_darkness",
+          "Name": "Darkness",
+          "Description": "Begin a counterattack under the cover of darkness.",
+          "CampaignOrderIdx": 5
+        },
+        {
+          "Id": "07_islandDefense",
+          "Name": "Island Defense",
+          "Description": "Begin to take back the island and eliminate the enemy fleet off the northern coast.",
+          "CampaignOrderIdx": 6
+        },
+        {
+          "Id": "04_openWater",
+          "Name": "Open Water",
+          "Description": "Meet the enemy in open water for a pre-emptive strike.",
+          "CampaignOrderIdx": 3
+        }
+      ]
+    },
+    {
+      "CampaignID": "av42cQuickFlight",
+      "CampaignName": "Quick Flight",
+      "Description": "Quick flights and practice scenarios for the AV-42C.",
+      "Vehicle": "AV-42C",
+      "Scenarios": [
+        {
+          "Id": "aerialRefuelPractice",
+          "Name": "Aerial Refueling Practice",
+          "Description": "Practice refueling in the air. Remember to lower your starting fuel.",
+          "CampaignOrderIdx": 2
+        },
+        {
+          "Id": "carrierLanding",
+          "Name": "Naval Landing Practice",
+          "Description": "Practice landing on the carrier or one of the cruisers.",
+          "CampaignOrderIdx": 3
+        },
+        {
+          "Id": "freeFlight",
+          "Name": "Free Flight",
+          "Description": "No objectives or hostiles.  Just fly around and have fun!",
+          "CampaignOrderIdx": 0
+        },
+        {
+          "Id": "targetPractice",
+          "Name": "Target Practice",
+          "Description": "Practice using different weapons on multiple groups of non-hostile targets.",
+          "CampaignOrderIdx": 1
+        }
+      ]
+    },
+    {
+      "CampaignID": "fa26bFreeFlight",
+      "CampaignName": "Quick Flight",
+      "Description": "Simple scenarios for the F/A-26B.",
+      "Vehicle": "F/A-26B",
+      "Scenarios": [
+        {
+          "Id": "2v2dogfight",
+          "Name": "2v2 Air Combat",
+          "Description": "Take on two enemy fighters with your wingman.",
+          "CampaignOrderIdx": 4
+        },
+        {
+          "Id": "carrierLandingPractice",
+          "Name": "Carrier Landing Practice",
+          "Description": "Practice landing on the aircraft carrier.",
+          "CampaignOrderIdx": 2
+        },
+        {
+          "Id": "FA26Difficult",
+          "Name": "Difficult Mission",
+          "Description": "A variety of hostile targets to destroy.  Practice using the aircraft as a fighter, a striker, or a mix of both.",
+          "CampaignOrderIdx": 5
+        },
+        {
+          "Id": "fa26Refuel",
+          "Name": "FA-26 Aerial Refuel Practice",
+          "Description": "Practice aerial refuelling.",
+          "CampaignOrderIdx": 3
+        },
+        {
+          "Id": "targetPractice",
+          "Name": "Target Practice",
+          "Description": "Practice using different weapons on multiple groups of non-hostile targets.",
+          "CampaignOrderIdx": 1
+        },
+        {
+          "Id": "Free Flight",
+          "Name": "Free Flight",
+          "Description": "No enemies or objectives.  Just fly around and have fun!",
+          "CampaignOrderIdx": 0
+        }
+      ]
+    },
+    {
+      "CampaignID": "j4Campaign",
+      "CampaignName": "July 4",
+      "Description": "Enter description...",
+      "Vehicle": "F/A-26B",
+      "Scenarios": [
+        {
+          "Id": "j4",
+          "Name": "July 4th",
+          "Description": "Happy Independence day!",
+          "CampaignOrderIdx": 0
+        }
+      ]
+    },
+    {
+      "CampaignID": "fa26-opDesertCobra",
+      "CampaignName": "Operation: Desert Cobra",
+      "Description": "A short campaign for the F/A-26B based around mountainous desert regions. ",
+      "Vehicle": "F/A-26B",
+      "Scenarios": [
+        {
+          "Id": "mission1",
+          "Name": "Base Defense",
+          "Description": "Defend the airbase supply depots from the incoming enemy attack.",
+          "CampaignOrderIdx": 0
+        },
+        {
+          "Id": "mission2",
+          "Name": "Retalliation",
+          "Description": "Turn the tables and attack the enemy airbases' supplies.",
+          "CampaignOrderIdx": 1
+        },
+        {
+          "Id": "mission3",
+          "Name": "Strike on Naval Test Lake",
+          "Description": "Escort a strike group sent to destroy ships at the enemy's naval testing area.",
+          "CampaignOrderIdx": 2
+        },
+        {
+          "Id": "mission4",
+          "Name": "Tanker Escort",
+          "Description": "Defend a tanker from airborne threats while it rendezvous with allied bombers.",
+          "CampaignOrderIdx": 3
+        },
+        {
+          "Id": "mission5",
+          "Name": "Departure",
+          "Description": "Our naval strike group will be departing from port on the western coast. Hostile forces are trying to stop them.",
+          "CampaignOrderIdx": 4
+        },
+        {
+          "Id": "mission6",
+          "Name": "Northern Assault",
+          "Description": "Participate in a strike on hostile military targets.",
+          "CampaignOrderIdx": 5
+        },
+        {
+          "Id": "mission7",
+          "Name": "Striking Oil",
+          "Description": "The carrier group's next target is one of the enemy's main sources of oil.",
+          "CampaignOrderIdx": 6
+        },
+        {
+          "Id": "mission8",
+          "Name": "Decapitation",
+          "Description": "End the conflict for good by launching a heavy strike on the command center.",
+          "CampaignOrderIdx": 7
+        }
+      ]
+    },
+    {
+      "CampaignID": "f45-quickFlight",
+      "CampaignName": "Quick Flight",
+      "Description": "A small collection of quick missions for the F-45A.",
+      "Vehicle": "F-45A",
+      "Scenarios": [
+        {
+          "Id": "f45-freeFlight",
+          "Name": "Free Flight",
+          "Description": "No enemies or objectives.",
+          "CampaignOrderIdx": 0
+        },
+        {
+          "Id": "f45_quickMission1",
+          "Name": "Stealth Strike",
+          "Description": "Search for and destroy enemy weapon caches. Avoid detection or pay the price. Once they know where you are, they'll do anything to stop you.",
+          "CampaignOrderIdx": 1
+        },
+        {
+          "Id": "45_2StageAttack",
+          "Name": "Counter-Bomber",
+          "Description": "Take the lead on this two-part mission to take down hostile bombers.",
+          "CampaignOrderIdx": 2
+        }
+      ]
+    },
+    {
+      "CampaignID": "arcadeTutorial",
+      "CampaignName": "Tutorials",
+      "Description": "Basic tutorials for the AV-42C",
+      "Vehicle": "AV-42C",
+      "Scenarios": [
+        {
+          "Id": "tut_gettingStarted",
+          "Name": "Getting Started",
+          "Description": "Cockpit familiarization, start-up procedures.",
+          "CampaignOrderIdx": 0
+        },
+        {
+          "Id": "tut_weapons1",
+          "Name": "Basic Weapons",
+          "Description": "Learn how to use the cannon, rockets, and targeting system.",
+          "CampaignOrderIdx": 2
+        },
+        {
+          "Id": "verticalFlight1",
+          "Name": "AP Vertical Flight",
+          "Description": "Learn how to use the hover autopilot feature.",
+          "CampaignOrderIdx": 3
+        },
+        {
+          "Id": "tut_basicFlight",
+          "Name": "Basic Flight",
+          "Description": "Taxi, take off, landing.",
+          "CampaignOrderIdx": 1
+        }
+      ]
+    }
+  ]
+}</value>
+    <comment>Json string of all the campaigns from verion 0.16.1f</comment>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="vtolvr_mod_boilerplate_master" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\vtolvr-mod-boilerplate-master.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

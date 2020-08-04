@@ -111,14 +111,14 @@ namespace ModLoader
             VRInteractable ApplyButton = scenarioDisplayObject.GetChild(1).GetChild(4).GetComponent<VRInteractable>();
             ApplyButton.OnInteract.AddListener(delegate { SelectSkin(); Apply(); });
 
-            FindSkins();
+            FindSkins(Path.Combine(ModLoaderManager.RootPath, "skins"));
+            FindSkins(Path.Combine(ModLoaderManager.MyProjectsPath, "My Skins"));
             UpdateUI();
 
         }
-        private void FindSkins()
+        private void FindSkins(string path)
         {
-            Log("Searching for Skins!");
-            string path = ModLoaderManager.RootPath + @"\skins";
+            Log("Searching for Skins in " + path);
             foreach (string folder in Directory.GetDirectories(path))
             {
                 Skin currentSkin = new Skin();

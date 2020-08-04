@@ -67,6 +67,7 @@ namespace VTOLVR_ModLoader
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
+            MainWindow.SetProgress(100, "Ready");
         }
 
         public static void SetVariables()

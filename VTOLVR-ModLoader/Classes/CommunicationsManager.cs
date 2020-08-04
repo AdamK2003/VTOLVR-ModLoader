@@ -160,7 +160,6 @@ namespace VTOLVR_ModLoader.Classes
             if (!e.Cancelled && e.Error == null)
             {
                 MainWindow.SetProgress(100, $"Ready");
-                //Program.Queue(Program.ExtractMods);
             }
             else
             {

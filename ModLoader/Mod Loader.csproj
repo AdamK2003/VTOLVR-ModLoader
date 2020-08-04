@@ -101,6 +101,7 @@
     <Compile Include="DiscordRpc.cs" />
     <Compile Include="ModLoader.cs" />
     <Compile Include="ModLoaderManager.cs" />
+    <Compile Include="Patches\VTMapManagerPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsMenu.cs" />
     <Compile Include="SkinManager.cs" />

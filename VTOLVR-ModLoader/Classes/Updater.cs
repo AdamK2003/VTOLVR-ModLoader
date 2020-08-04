@@ -38,16 +38,17 @@ namespace VTOLVR_ModLoader.Classes
             string lastPath;
             for (int i = 0; i < updateFiles.Length; i++)
             {
-                if (updateFiles[i].Name.Equals(Assembly.GetEntryAssembly().GetName().Name))
-                {
-                    _updateLauncher = true;
-                    continue;
-                }
+                
                 lastPath = Program.vtolFolder + "/" + updateFiles[i].Location;
                 if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(updateFiles[i].Hash))
                 {
                     Console.Log($"Need to update {updateFiles[i].Location}");
                     AddFile(updateFiles[i]);
+                    if (updateFiles[i].Name.Equals(Assembly.GetEntryAssembly().GetName().Name))
+                    {
+                        _updateLauncher = true;
+                        continue;
+                    }
                 }
             }
             if (filesToUpdate.Count > 0)
@@ -86,6 +87,29 @@ namespace VTOLVR_ModLoader.Classes
 
                 File.Move($"{Program.vtolFolder}/{currentFile.Location}.temp",
                     $"{Program.vtolFolder}/{currentFile.Location}");
+
+                //Checking if we need to update dependiences in users mods
+                string[] split = currentFile.Location.Split('/');
+                if (!string.IsNullOrEmpty(Views.Settings.projectsFolder) &&
+                    Directory.Exists(Views.Settings.projectsFolder + ProjectManager.modsFolder))
+                {
+                    DirectoryInfo folder = new DirectoryInfo(Views.Settings.projectsFolder + ProjectManager.modsFolder);
+                    DirectoryInfo[] subFolders = folder.GetDirectories();
+                    for (int i = 0; i < subFolders.Length; i++)
+                    {
+                        Console.Log($"Checking project {subFolders[i].Name}");
+                        if (!Directory.Exists(Path.Combine(subFolders[i].FullName, "Dependencies")))
+                            continue;
+
+                        if (File.Exists(Path.Combine(subFolders[i].FullName, "Dependencies", split[split.Length - 1])))
+                        {
+                            Console.Log($"Moved {split[split.Length - 1]} to {subFolders[i].Name}");
+                            File.Delete(Path.Combine(subFolders[i].FullName, "Dependencies", split[split.Length - 1]));
+                            File.Copy($"{Program.vtolFolder}/{currentFile.Location}",
+                                Path.Combine(subFolders[i].FullName, "Dependencies", split[split.Length - 1]));
+                        }
+                    }
+                }
             }
             else
             {

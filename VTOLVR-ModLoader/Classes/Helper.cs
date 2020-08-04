@@ -21,11 +21,16 @@ namespace VTOLVR_ModLoader.Classes
                 List<ZipArchiveEntry> filesInZip = zip.Entries.ToList();
                 for (int f = 0; f < filesInZip.Count; f++)
                 {
-                    Views.Console.Log(filesInZip[f].FullName);
                     if (!filesInZip[f].FullName.EndsWith("\\"))
                     {
-                        if (filesInZip[f].Name.Length > 0)
-                            Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName.Replace(filesInZip[f].Name, string.Empty)));
+                        if (filesInZip[f].Name.Length == 0)
+                        {
+                            //This is just a folder
+                            Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
+                            continue;
+                        }
+                        //This is a file
+                        Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName.Replace(filesInZip[f].Name, string.Empty)));
                         filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName), File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
                     }
                     else if (!Directory.Exists(Path.Combine(extractPath, filesInZip[f].FullName)))

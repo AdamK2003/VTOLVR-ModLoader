@@ -67,7 +67,6 @@ namespace VTOLVR_ModLoader
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
-            Queue(ExtractMods);
         }
 
         public static void SetVariables()
@@ -116,6 +115,12 @@ namespace VTOLVR_ModLoader
             }
         }
         public static void LaunchGame()
+        {
+            Queue(ExtractMods);
+            Queue(LaunchProcess);
+            
+        }
+        private static void LaunchProcess()
         {
             Process.Start("steam://run/667970");
 
@@ -194,6 +199,7 @@ namespace VTOLVR_ModLoader
                 currentFolder = files[i].FullName.Split('.')[0];
 
                 Directory.CreateDirectory(currentFolder);
+                Console.Log("Extracting " + files[i].FullName);
                 Helper.ExtractZipToDirectory(files[i].FullName, currentFolder);
                 extractedMods++;
 

@@ -95,10 +95,12 @@ namespace VTOLVR_ModLoader.Classes
             }
         }
 
-        public static void CheckURI(string lineOveride = "")
+        public static async void CheckURI(string lineOveride = "")
         {
             if (CheckArgs("vtolvrml", out string result) || !string.IsNullOrEmpty(lineOveride))
             {
+                if (!await HttpHelper.CheckForInternet())
+                    return;
                 string line;
                 if (!string.IsNullOrEmpty(lineOveride))
                     line = lineOveride;
@@ -158,7 +160,6 @@ namespace VTOLVR_ModLoader.Classes
             if (!e.Cancelled && e.Error == null)
             {
                 MainWindow.SetProgress(100, $"Ready");
-                //Program.Queue(Program.ExtractMods);
             }
             else
             {

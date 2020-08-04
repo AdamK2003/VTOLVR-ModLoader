@@ -234,6 +234,8 @@ namespace VTOLVR_ModLoader.Views
             projectsText.Text = "My Projects folder:\n" + projectsFolder;
             projectsButton.Content = "Change";
             MainWindow._instance.uploadModButton.IsEnabled = true;
+            Directory.CreateDirectory(projectsFolder + ProjectManager.modsFolder);
+            Directory.CreateDirectory(projectsFolder + ProjectManager.skinsFolder);
             if (!dontSave)
                 SaveSettings();
         }

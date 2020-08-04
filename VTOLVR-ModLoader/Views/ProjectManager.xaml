@@ -33,7 +33,7 @@
 
             <TextBlock Grid.Row="3" Foreground="White" FontSize="30" TextWrapping="Wrap" 
                        VerticalAlignment="Center" TextAlignment="Center" x:Name="settingsText" Visibility="Hidden">
-                It seems that you have set up a folder for your projects to be stored.<LineBreak/>
+                It seems that you haven't set up a folder for your projects to be stored.<LineBreak/>
                 Please head over to the settings page to set a workspace.
             </TextBlock>
 

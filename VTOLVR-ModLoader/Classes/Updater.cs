@@ -82,8 +82,18 @@ namespace VTOLVR_ModLoader.Classes
         {
             if (!e.Cancelled && e.Error == null)
             {
-                if (File.Exists($"{Program.vtolFolder}/{currentFile.Location}"))
-                    File.Delete($"{Program.vtolFolder}/{currentFile.Location}");
+                try
+                {
+                    if (File.Exists($"{Program.vtolFolder}/{currentFile.Location}"))
+                        File.Delete($"{Program.vtolFolder}/{currentFile.Location}");
+                }
+                catch (Exception error)
+                {
+                    Console.Log($"Failed to delete {Program.vtolFolder}/{currentFile.Location}\n{error.Message}");
+                    ClearUp();
+                    return;
+                }
+                
 
                 File.Move($"{Program.vtolFolder}/{currentFile.Location}.temp",
                     $"{Program.vtolFolder}/{currentFile.Location}");
@@ -116,7 +126,11 @@ namespace VTOLVR_ModLoader.Classes
                 Console.Log($"Failed to download {currentFile.Name}\n{e.Error}");
                 Notification.Show($"Failed to download {currentFile.Name}\n{e.Error.Message}", "Error downloading update");
             }
+            ClearUp();
+        }
 
+        private static void ClearUp()
+        {
             if (File.Exists($"{Program.vtolFolder}/{currentFile.Location}.temp"))
                 File.Delete($"{Program.vtolFolder}/{currentFile.Location}.temp");
 
@@ -129,7 +143,6 @@ namespace VTOLVR_ModLoader.Classes
                 if (_updateLauncher)
                     Notification.Show("The launcher needs to be updated.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
             }
-                
         }
 
         private static void UpdateLauncherCallback(bool result)

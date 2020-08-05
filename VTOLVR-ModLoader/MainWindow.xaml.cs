@@ -103,7 +103,6 @@ namespace VTOLVR_ModLoader
         }
         private void Patreon(object sender, RoutedEventArgs e)
         {
-            
             Process.Start("https://www.patreon.com/vtolvrmods");
             Console.Log("Patreon Opened!");
         }

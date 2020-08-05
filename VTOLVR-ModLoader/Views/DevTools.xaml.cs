@@ -14,9 +14,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml.Serialization;
 using VTOLVR_ModLoader.Classes;
+using VTOLVR_ModLoader.Properties;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -103,6 +103,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void FindMods()
         {
+            Console.Log("Finding Mods for Dev Tools");
             DirectoryInfo folder = new DirectoryInfo(Program.root + Program.modsFolder);
             FileInfo[] files = folder.GetFiles("*.dll");
             List<ModItem> mods = new List<ModItem>();
@@ -119,15 +120,66 @@ namespace VTOLVR_ModLoader.Views
             {
                 if (File.Exists(folders[i].FullName + "/" + folders[i].Name + ".dll"))
                 {
-                    if (modsToLoad.Contains(folders[i].Name + "/" + folders[i].Name + ".dll"))
+                    if (modsToLoad.Contains(folders[i].FullName + "/" + folders[i].Name + ".dll"))
                     {
-                        mods.Add(new ModItem(folders[i].Name + "/" + folders[i].Name + ".dll", true));
+                        mods.Add(new ModItem(folders[i].FullName + "/" + folders[i].Name + ".dll", true));
                     }
                     else
-                        mods.Add(new ModItem(folders[i].Name + "/" + folders[i].Name + ".dll"));
+                        mods.Add(new ModItem(folders[i].FullName + "/" + folders[i].Name + ".dll"));
+                }
+            }
+
+            //Finding users my projects mods
+            if (!string.IsNullOrEmpty(Settings.projectsFolder))
+            {
+                DirectoryInfo projectsFolder = new DirectoryInfo(Settings.projectsFolder + ProjectManager.modsFolder);
+                folders = projectsFolder.GetDirectories();
+                for (int i = 0; i < folders.Length; i++)
+                {
+                    if (!File.Exists(Path.Combine(folders[i].FullName,"Builds", "info.json")))
+                    {
+                        Console.Log("Missing info.json in " +
+                            Path.Combine(folders[i].FullName, "Builds", "info.json"));
+                        continue;
+                    }
+                    JObject json;
+                    try
+                    {
+                        json = JObject.Parse(File.ReadAllText(
+                            Path.Combine(folders[i].FullName, "Builds", "info.json")));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.Log($"Failed to read {Path.Combine(folders[i].FullName, "Builds", "info.json")}" +
+                            $"{e.Message}");
+                        continue;
+                    }
+
+                    if (json[ProjectManager.jDll] == null)
+                    {
+                        Console.Log($"Missing {ProjectManager.jDll} in {Path.Combine(folders[i].FullName, "Builds", "info.json")}");
+                        continue;
+                    }
+
+                    if (!File.Exists(Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString())))
+                    {
+                        Console.Log($"Couldn't find {json[ProjectManager.jDll]} at " +
+                            $"{Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString())}");
+                        continue;
+                    }
+
+                    if (modsToLoad.Contains(Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString())))
+                    {
+                        mods.Add(new ModItem(Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString()), true));
+                    }
+                    else
+                    {
+                        mods.Add(new ModItem(Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString())));
+                    }
                 }
             }
             this.mods.ItemsSource = mods;
+            Console.Log($"Found {mods.Count} mods");
         }
 
         private void ModChecked(object sender, RoutedEventArgs e)
@@ -136,11 +188,12 @@ namespace VTOLVR_ModLoader.Views
             if (checkBox.IsChecked == true)
             {
                 modsToLoad.Add(checkBox.ToolTip.ToString());
+                Console.Log($"Added {checkBox.ToolTip}");
             }
             else if (checkBox.IsChecked == false)
             {
                 modsToLoad.Remove(checkBox.ToolTip.ToString());
-                Console.Log($"Removed {checkBox.ToolTip.ToString()}");
+                Console.Log($"Removed {checkBox.ToolTip}");
             }
             SaveSettings();
         }

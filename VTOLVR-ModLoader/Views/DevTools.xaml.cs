@@ -262,6 +262,7 @@ namespace VTOLVR_ModLoader.Views
                         _scenarios[i].cID.Equals(scenario["cid"].ToString()))
                     {
                         ScenarioDropdown.SelectedIndex = i;
+                        scenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
                         break;
                     }
                 }

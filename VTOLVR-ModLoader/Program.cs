@@ -44,7 +44,7 @@ namespace VTOLVR_ModLoader
 
         public static string root;
         public static string vtolFolder;
-        public static string ProgramName;
+        public static string ProgramName = ProgramNameBase;
         public static bool autoStart { get; private set; }
         public static bool disableInternet = false;
         public static bool isBusy;
@@ -422,6 +422,12 @@ namespace VTOLVR_ModLoader
 
             MainWindow._instance.news.LoadNews();
             Queue(Updater.CheckForUpdates);
+        }
+
+        public static void TestCrash()
+        {
+            List<string> list = new List<string>(5);
+            list[100] = "Crash me now";
         }
     }
 }

@@ -123,6 +123,7 @@ namespace VTOLVR_ModLoader
         }
         private static void LaunchProcess()
         {
+            Console.Log("Launching VTOL VR");
             Process.Start("steam://run/667970");
 
             MainWindow.SetPlayButton(false);
@@ -134,6 +135,7 @@ namespace VTOLVR_ModLoader
 
         private static async void WaitForProcess()
         {
+            Console.Log("Waiting for VTOL VR Process");
             int maxTries = 5;
             for (int i = 1; i <= maxTries; i++)
             {
@@ -152,11 +154,13 @@ namespace VTOLVR_ModLoader
                     MainWindow.GifState(MainWindow.gifStates.Paused);
                     MainWindow.SetProgress(100, "Couldn't find VTOLVR process.");
                     MainWindow.SetPlayButton(false);
+                    Console.Log("Failed to find VTOL VR process");
                     return;
                 }
             }
 
-            //A delay just to make sure the game has fully launched,
+            //A delay just to make sure the game has fully launched
+            Console.Log("Found process, waiting a bit");
             MainWindow.SetProgress(50, "Waiting for game...");
             await Task.Delay(10000);
 
@@ -168,6 +172,7 @@ namespace VTOLVR_ModLoader
         {
             //Injecting the default mod
             string defaultStart = string.Format("inject -p {0} -a {1} -n {2} -c {3} -m {4}", "vtolvr", "ModLoader.dll", "ModLoader", "Load", "Init");
+            Console.Log("Injecting the ModLoader.dll");
             Process.Start(root + injector, defaultStart);
         }
 

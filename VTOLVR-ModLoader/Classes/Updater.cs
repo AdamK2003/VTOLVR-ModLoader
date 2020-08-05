@@ -127,7 +127,7 @@ namespace VTOLVR_ModLoader.Classes
                 MainWindow.SetProgress(100, "Ready");
                 MainWindow.SetPlayButton(false);
                 if (_updateLauncher)
-                    Notification.Show("The launcher needs to be update.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
+                    Notification.Show("The launcher needs to be updated.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
             }
                 
         }

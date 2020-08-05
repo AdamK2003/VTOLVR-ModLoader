@@ -213,6 +213,7 @@ namespace VTOLVR_ModLoader.Classes
                 TcpClient.Connect("127.0.0.1", 9999);
                 if (CheckArgs("vtolvrml://", out string line))
                 {
+                    Views.Console.Log($"Passing \"{line}\" to other instance");
                     TcpClient.WriteLine($"Command:{line}");
                 }
                 TcpClient.Disconnect();

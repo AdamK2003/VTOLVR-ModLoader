@@ -22,6 +22,7 @@ using Gameloop.Vdf.Linq;
 using VTOLVR_ModLoader.Windows;
 using System.Reflection;
 using VTOLVR_ModLoader.Classes;
+using VTOLVR_ModLoader.Views;
 
 namespace VTOLVR_ModLoader
 {
@@ -51,6 +52,7 @@ namespace VTOLVR_ModLoader
             debug = true;
 #endif
             Program.ProgramName = $"{Program.ProgramNameBase} {version.Major}.{version.Minor}.{version.Build} {(debug ? "[Development Mode]" : string.Empty)}";
+            Views.Console.Log(Program.ProgramName);
             HttpHelper.SetHeader();
             Program.SetVariables();
             CheckBaseFolder();
@@ -67,6 +69,7 @@ namespace VTOLVR_ModLoader
             {
                 if (p[i].Id != Process.GetCurrentProcess().Id)
                 {
+                    Views.Console.Log("Found another instance");
                     // check if the window is hidden / minimized
                     if (p[i].MainWindowHandle == IntPtr.Zero)
                     {
@@ -76,6 +79,7 @@ namespace VTOLVR_ModLoader
 
                     // set user the focus to the window
                     SetForegroundWindow(p[i].MainWindowHandle);
+                    
                     return true;
                 }
             }

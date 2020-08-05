@@ -44,7 +44,7 @@ namespace VTOLVR_ModLoader.Classes
                 {
                     Console.Log($"Need to update {updateFiles[i].Location}");
                     AddFile(updateFiles[i]);
-                    if (updateFiles[i].Name.Equals(Assembly.GetEntryAssembly().GetName().Name))
+                    if (updateFiles[i].Name.Equals("VTOLVR-ModLoader"))
                     {
                         _updateLauncher = true;
                         continue;

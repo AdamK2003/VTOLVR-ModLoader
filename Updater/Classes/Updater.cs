@@ -32,7 +32,7 @@ namespace Updater
             string lastPath;
             for (int i = 0; i < updateFiles.Length; i++)
             {
-                if (updateFiles[i].Name.Equals(Assembly.GetEntryAssembly().GetName().Name))
+                if (updateFiles[i].Name.Equals("Updater"))
                     continue;
                 lastPath = Program.VtolFolder + "/" + updateFiles[i].Location;
                 if (!File.Exists(lastPath) || !Program.CalculateMD5(lastPath).Equals(updateFiles[i].Hash))

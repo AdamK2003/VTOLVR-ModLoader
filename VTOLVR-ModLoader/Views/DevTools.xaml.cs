@@ -32,6 +32,8 @@ namespace VTOLVR_ModLoader.Views
         public List<string> modsToLoad = new List<string>();
         public string[] pilotsCFG;
 
+        private List<Scenario> _scenarios = new List<Scenario>();
+
         public DevTools()
         {
             InitializeComponent();
@@ -253,9 +255,16 @@ namespace VTOLVR_ModLoader.Views
             if (json["scenario"] != null)
             {
                 JObject scenario = json["scenario"] as JObject;
-                scenarioSelected = new Scenario(scenario["name"].ToString(),
-                                                scenario["id"].ToString(),
-                                                scenario["cid"].ToString());
+                for (int i = 0; i < _scenarios.Count; i++)
+                {
+                    if (_scenarios[i].Name.Equals(scenario["name"].ToString()) &&
+                        _scenarios[i].ID.Equals(scenario["id"].ToString()) &&
+                        _scenarios[i].cID.Equals(scenario["cid"].ToString()))
+                    {
+                        ScenarioDropdown.SelectedIndex = i;
+                        break;
+                    }
+                }
             }
 
             if (json["previousMods"] != null)
@@ -297,8 +306,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void AddScenarios(JObject json)
         {
-            List<Scenario> scenarios = new List<Scenario>();
-            scenarios.Add(new Scenario("No Selection", string.Empty, string.Empty));
+            _scenarios.Add(new Scenario("No Selection", string.Empty, string.Empty));
             if (json["Campaigns"] != null)
             {
                 JArray campaignJArray = json["Campaigns"] as JArray;
@@ -308,7 +316,7 @@ namespace VTOLVR_ModLoader.Views
                     scenariosJArray = campaignJArray[i]["Scenarios"] as JArray;
                     for (int s = 0; s < scenariosJArray.Count; s++)
                     {
-                        scenarios.Add(new Scenario(
+                        _scenarios.Add(new Scenario(
                             campaignJArray[i]["Vehicle"].ToString() + " " + scenariosJArray[s]["Name"].ToString(),
                             campaignJArray[i]["CampaignID"].ToString(),
                             scenariosJArray[s]["Id"].ToString()));
@@ -316,7 +324,7 @@ namespace VTOLVR_ModLoader.Views
                 }
             }
 
-            ScenarioDropdown.ItemsSource = scenarios.ToArray();
+            ScenarioDropdown.ItemsSource = _scenarios.ToArray();
             ScenarioDropdown.SelectedIndex = 0;
         }
     }

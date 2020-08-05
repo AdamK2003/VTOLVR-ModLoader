@@ -133,7 +133,6 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             _api.CreateCommand("print", PrintMessage);
             _api.CreateCommand("help", _api.ShowHelp);
             _api.CreateCommand("vrinteract", VRInteract);
-            _api.CreateCommand("loadmod", LoadMod);
             _api.CreateCommand("listinteract", ListInteractables);
         }
         private void TcpDataReceived(object sender, Message e)
@@ -263,22 +262,21 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             Harmony.Traverse.Create(interactable).Method("StartInteraction").GetValue();
             Debug.Log($"Invoked OnInteract on GameObject {message}");
         }
-        public void LoadMod(string message)
+        public void LoadMod(string path)
         {
-            message = message.Replace("loadmod ", string.Empty);
             try
             {
-                Debug.Log(RootPath + @"\mods\" + message);
+                Debug.Log($"Loading mod from {path}");
                 IEnumerable<Type> source =
-          from t in Assembly.Load(File.ReadAllBytes(RootPath + @"\mods\" + message)).GetTypes()
+          from t in Assembly.Load(File.ReadAllBytes(path)).GetTypes()
           where t.IsSubclassOf(typeof(VTOLMOD))
           select t;
                 if (source != null && source.Count() == 1)
                 {
-                    GameObject newModGo = new GameObject(message, source.First());
+                    GameObject newModGo = new GameObject(path, source.First());
                     VTOLMOD mod = newModGo.GetComponent<VTOLMOD>();
-                    mod.SetModInfo(new Mod(message, "STARTUPMOD", message));
-                    newModGo.name = message;
+                    mod.SetModInfo(new Mod(path, "STARTUPMOD", path));
+                    newModGo.name = path;
                     DontDestroyOnLoad(newModGo);
                     mod.ModLoaded();
 
@@ -290,7 +288,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                     Debug.LogError("Source is null");
                 }
 
-                Debug.Log("Loaded Startup mod from path = " + message);
+                Debug.Log("Loaded Startup mod from path = " + path);
             }
             catch (Exception e)
             {
@@ -319,7 +317,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             }
 
 
-            if (json["scenario"] != null)
+            if (json["scenario"] != null && json["pilot"] != null)
             {
                 _pilotName = json["pilot"].Value<string>() ?? null;
                 if (_pilotName == "No Selection" || string.IsNullOrEmpty(_pilotName))
@@ -327,12 +325,23 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
                 JObject scenario = json["scenario"] as JObject;
                 string scenarioName = scenario["name"].ToString();
-                string sID = scenario["id"].ToString();
-                string cID = scenario["cid"].ToString();
+                _sID = scenario["id"].ToString();
+                _cID = scenario["cid"].ToString();
 
-                if (scenarioName == "No Selection" || string.IsNullOrEmpty(sID))
+                if (scenarioName == "No Selection" || string.IsNullOrEmpty(_sID))
                     return;
                 _loadMission = true;
+                Debug.Log($"Devtools - Pilot={_pilotName} ScenarioName={scenarioName}" +
+                    $"sID={_sID} cID={_cID}");
+            }
+
+            if (json["previousMods"] != null)
+            {
+                JArray mods = JArray.FromObject(json["previousMods"]);
+                for (int i = 0; i < mods.Count; i++)
+                {
+                    LoadMod(mods[i].ToString());
+                }
             }
         }
         private IEnumerator LoadLevel()
@@ -341,22 +350,6 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             Debug.Log("Loading Pilots from file");
             PilotSaveManager.LoadPilotsFromFile();
             yield return new WaitForSeconds(2);
-
-            for (int i = 0; i < _args.Length; i++)
-            {
-                if (_args[i].Contains("PILOT="))
-                {
-                    _pilotName = _args[i].Replace("PILOT=", "");
-                }
-                else if (_args[i].Contains("SCENARIO_CID="))
-                {
-                    _cID = _args[i].Replace("SCENARIO_CID=", "");
-                }
-                else if (_args[i].Contains("SCENARIO_ID="))
-                {
-                    _sID = _args[i].Replace("SCENARIO_ID=", "");
-                }
-            }
 
             Debug.Log($"Loading Level\nPilot={_pilotName}\ncID={_cID}\nsID={_sID}");
             VTMapManager.nextLaunchMode = VTMapManager.MapLaunchModes.Scenario;

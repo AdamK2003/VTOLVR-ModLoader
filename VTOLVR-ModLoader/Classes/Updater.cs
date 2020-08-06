@@ -95,7 +95,7 @@ namespace VTOLVR_ModLoader.Classes
                 }
                 
 
-                File.Move($"{Program.vtolFolder}/{currentFile.Location}.temp",
+                Helper.TryMove($"{Program.vtolFolder}/{currentFile.Location}.temp",
                     $"{Program.vtolFolder}/{currentFile.Location}");
 
                 //Checking if we need to update dependiences in users mods

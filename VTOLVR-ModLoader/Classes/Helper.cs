@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using Console = VTOLVR_ModLoader.Views.Console;
 
 namespace VTOLVR_ModLoader.Classes
 {
@@ -48,6 +49,32 @@ namespace VTOLVR_ModLoader.Classes
                     return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
                 }
             }
+        }
+        public static bool TryCopy(string sourceFileName, string destFileName)
+        {
+            try
+            {
+                File.Copy(sourceFileName, destFileName);
+            }
+            catch (Exception e)
+            {
+                Console.Log($"Failed to move file: {sourceFileName}\n{e}");
+                return false;
+            }
+            return true;
+        }
+        public static bool TryDelete(string filePath)
+        {
+            try
+            {
+                File.Delete(filePath);
+            }
+            catch (Exception e)
+            {
+                Console.Log($"Failed to delete: {filePath}\n{e}");
+                return false;
+            }
+            return true;
         }
     }
 }

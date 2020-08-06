@@ -201,25 +201,11 @@ namespace VTOLVR_ModLoader.Views
 
         private void MoveDlls(string path)
         {
-            TryCopy(Program.root + @"\ModLoader.dll", path + @"\ModLoader.dll");
-            TryCopy(Program.root + @"\ModLoader.xml", path + @"\ModLoader.xml");
-            TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\Assembly-CSharp.dll", path + @"\Assembly-CSharp.dll");
-            TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\UnityEngine.dll", path + @"\UnityEngine.dll");
-            TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\UnityEngine.CoreModule.dll", path + @"\UnityEngine.CoreModule.dll");
-        }
-
-        private bool TryCopy(string sourceFileName, string destFileName)
-        {
-            try
-            {
-                File.Copy(sourceFileName, destFileName);
-            }
-            catch (Exception e)
-            {
-                Console.Log($"Failed to move file: {sourceFileName}\n{e}");
-                return false;
-            }
-            return true;
+            Helper.TryCopy(Program.root + @"\ModLoader.dll", path + @"\ModLoader.dll");
+            Helper.TryCopy(Program.root + @"\ModLoader.xml", path + @"\ModLoader.xml");
+            Helper.TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\Assembly-CSharp.dll", path + @"\Assembly-CSharp.dll");
+            Helper.TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\UnityEngine.dll", path + @"\UnityEngine.dll");
+            Helper.TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\UnityEngine.CoreModule.dll", path + @"\UnityEngine.CoreModule.dll");
         }
 
         private void ChangeFilesText()

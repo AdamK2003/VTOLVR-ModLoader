@@ -76,5 +76,18 @@ namespace VTOLVR_ModLoader.Classes
             }
             return true;
         }
+        public static bool TryMove(string sourceFileName, string destFileName)
+        {
+            try
+            {
+                File.Move(sourceFileName, destFileName);
+            }
+            catch (Exception e)
+            {
+                Console.Log($"Failed to move: {sourceFileName} to {destFileName}\n{e}");
+                return false;
+            }
+            return true;
+        }
     }
 }

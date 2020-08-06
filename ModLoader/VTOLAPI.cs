@@ -10,15 +10,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using System.Collections;
 /// <summary>
-/// Enum of the different vehicles in the game.
+/// This is the VTOL VR Modding API which aims to simplify repetitive tasks.
 /// </summary>
-public enum VTOLVehicles { None, AV42C, FA26B, F45A }
-/// <summary>
-/// All the different scenes in order.
-/// </summary>
-public enum VTOLScenes { SplashScene, SamplerScene, ReadyRoom, VehicleConfiguration, LoadingScene, MeshTerrain, OpenWater, Akutan, VTEditMenu, VTEditLoadingScene, VTMapEditMenu, CustomMapBase, CommRadioTest, ShaderVariantsScene, CustomMapBase_OverCloud };
 public class VTOLAPI : MonoBehaviour
 {
+    /// <summary>
+    /// This is the current instance of the API in the game world.
+    /// </summary>
     public static VTOLAPI instance { get; private set; }
     private string gamePath;
     private string modsPath = @"\VTOLVR_ModLoader\mods";

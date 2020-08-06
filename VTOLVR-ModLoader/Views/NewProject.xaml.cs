@@ -202,6 +202,7 @@ namespace VTOLVR_ModLoader.Views
         private void MoveDlls(string path)
         {
             TryCopy(Program.root + @"\ModLoader.dll", path + @"\ModLoader.dll");
+            TryCopy(Program.root + @"\ModLoader.xml", path + @"\ModLoader.xml");
             TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\Assembly-CSharp.dll", path + @"\Assembly-CSharp.dll");
             TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\UnityEngine.dll", path + @"\UnityEngine.dll");
             TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\UnityEngine.CoreModule.dll", path + @"\UnityEngine.CoreModule.dll");

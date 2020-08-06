@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Valve.Newtonsoft.Json.Linq;
 using SimpleTCP;
+using Harmony;
 
 namespace ModLoader
 {
@@ -134,6 +135,9 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             _api.CreateCommand("help", _api.ShowHelp);
             _api.CreateCommand("vrinteract", VRInteract);
             _api.CreateCommand("listinteract", ListInteractables);
+
+            HarmonyInstance harmony = HarmonyInstance.Create("vtolvrmodding.modloader");
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
         private void TcpDataReceived(object sender, Message e)
         {

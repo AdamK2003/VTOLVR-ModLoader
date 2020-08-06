@@ -95,6 +95,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\VTOLScenes.cs" />
+    <Compile Include="API\VTOLVehicles.cs" />
     <Compile Include="Classes\Campaigns.cs" />
     <Compile Include="DataCollector.cs" />
     <Compile Include="DiscordController.cs" />

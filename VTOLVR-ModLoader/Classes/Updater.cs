@@ -85,7 +85,7 @@ namespace VTOLVR_ModLoader.Classes
                 try
                 {
                     if (File.Exists($"{Program.vtolFolder}/{currentFile.Location}"))
-                        File.Delete($"{Program.vtolFolder}/{currentFile.Location}");
+                        Helper.TryDelete($"{Program.vtolFolder}/{currentFile.Location}");
                 }
                 catch (Exception error)
                 {
@@ -114,8 +114,8 @@ namespace VTOLVR_ModLoader.Classes
                         if (File.Exists(Path.Combine(subFolders[i].FullName, "Dependencies", split[split.Length - 1])))
                         {
                             Console.Log($"Moved {split[split.Length - 1]} to {subFolders[i].Name}");
-                            File.Delete(Path.Combine(subFolders[i].FullName, "Dependencies", split[split.Length - 1]));
-                            File.Copy($"{Program.vtolFolder}/{currentFile.Location}",
+                            Helper.TryDelete(Path.Combine(subFolders[i].FullName, "Dependencies", split[split.Length - 1]));
+                            Helper.TryCopy($"{Program.vtolFolder}/{currentFile.Location}",
                                 Path.Combine(subFolders[i].FullName, "Dependencies", split[split.Length - 1]));
                         }
                     }

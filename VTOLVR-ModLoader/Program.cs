@@ -61,7 +61,8 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckCustomURL();
             CommunicationsManager.CheckCustomBranch();
             CommunicationsManager.CheckAutoUpdate();
-            if (CommunicationsManager.CheckSteamVR())
+            Console.Log(Views.Settings.SteamVR.ToString());
+            if (CommunicationsManager.CheckSteamVR() && Views.Settings.SteamVR)
                 CheckForSteamVR();
             GetReleases();
             AutoStart();

@@ -14,6 +14,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="Settings" Foreground="White" FontSize="30"
@@ -54,6 +55,9 @@
             <CheckBox Content="Auto Update Mod Loader Files" IsChecked="True" Grid.Row="4" Foreground="White"
                       Margin="10,10,0,0" FontSize="15" x:Name="autoUpdateCheckbox"
                       Click="AutoUpdateChanged"/>
+            <CheckBox Content="Launch Steam VR when launcher is open" IsChecked="True" Grid.Row="5" Foreground="White"
+                      Margin="10,10,0,0" FontSize="15" x:Name="steamvrCheckbox"
+                      Click="SteamVRChanged"/>
         </Grid>
     </ScrollViewer>
 </UserControl>

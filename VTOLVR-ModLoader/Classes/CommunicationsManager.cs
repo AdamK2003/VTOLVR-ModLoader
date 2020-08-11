@@ -217,7 +217,7 @@ namespace VTOLVR_ModLoader.Classes
                     TcpClient.WriteLine($"Command:{line}");
                 }
                 TcpClient.Disconnect();
-                MainWindow.Quit();
+                Program.Quit("Another Instance Found");
             }
         }
 

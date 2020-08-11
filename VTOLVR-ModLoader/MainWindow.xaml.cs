@@ -85,12 +85,6 @@ namespace VTOLVR_ModLoader
             }
         }
 
-        public static void Quit()
-        {
-            Console.Log("Application Closing");
-            Program.Quit("Closed Button Pressed");
-        }
-
         private void Website(object sender, RoutedEventArgs e)
         {
             Process.Start("https://vtolvr-mods.com");

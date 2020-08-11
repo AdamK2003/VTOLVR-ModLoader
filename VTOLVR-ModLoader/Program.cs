@@ -177,8 +177,9 @@ namespace VTOLVR_ModLoader
             Process.Start(root + injector, defaultStart);
         }
 
-        public static void Quit()
+        public static void Quit(string reason)
         {
+            Console.Log($"Closing Application\nReason:{reason}");
             Process.GetCurrentProcess().Kill();
         }
 

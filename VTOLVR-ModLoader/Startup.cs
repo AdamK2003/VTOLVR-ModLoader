@@ -108,7 +108,7 @@ namespace VTOLVR_ModLoader
                 else
                 {
                     Notification.Show("It seems I am not in the folder \"VTOLVR_ModLoader\", place make sure I am in there other wise the in game menu won't load", "Wrong Folder");
-                    Program.Quit();
+                    Program.Quit("Not in correct folder");
                 }
                 
             }
@@ -118,7 +118,7 @@ namespace VTOLVR_ModLoader
             if (!File.Exists(vtolexe))
             {
                 Notification.Show("It seems the VTOLVR_ModLoader folder isn't with the other games files\nPlease move me to VTOL VR's game Program.root directory.", "Wrong Folder Location");
-                Program.Quit();
+                Program.Quit("VTOLVR_ModLoader isn't in the correct folder");
             }
         }
         /// <summary>
@@ -155,14 +155,14 @@ namespace VTOLVR_ModLoader
         {
             Notification.Show("I can't seem to find " + file + " in my folder. Make sure you place me in the same folder as this file.",
                 "Missing File",
-                closedCallback: delegate { Program.Quit(); });
+                closedCallback: delegate { Program.Quit($"Can't find {file} in my folder"); });
             Views.Console.Log("I can't seem to find " + file + " in my folder. Make sure you place me in the same folder as this file.");
         }
         private static void MissingManagedFile(string file)
         {
             Notification.Show("I can't seem to find " + file + " in VTOL VR > VTOLVR_Data, please make sure this file is here otherwise the mod loader won't work",
                 "Missing File",
-                closedCallback: delegate { Program.Quit(); });
+                closedCallback: delegate { Program.Quit($"Can't find {file} in VTOL VR > VTOLVR_Data"); });
         }
 
         private static void FindSteamFolders()

@@ -6,7 +6,10 @@ using ModLoader;
 /// </summary>
 public class VTOLMOD : MonoBehaviour
 {
-    public Mod thisMod { private set; get; } = null;
+    /// <summary>
+    /// Storing the Mods data in a class
+    /// </summary>
+    public Mod ThisMod { private set; get; } = null;
 
     /// <summary>
     /// The method which gets called when the mod is loaded.
@@ -23,10 +26,10 @@ public class VTOLMOD : MonoBehaviour
     /// <param name="message"></param>
     public void Log(object message)
     {
-        if (thisMod == null)
+        if (ThisMod == null)
             Debug.Log(gameObject.name + ": " + message);
         else
-            Debug.Log(thisMod.name + ": " + message);
+            Debug.Log(ThisMod.name + ": " + message);
     }
     /// <summary>
     /// Logs a warning message to the console with your mod name.
@@ -34,10 +37,10 @@ public class VTOLMOD : MonoBehaviour
     /// <param name="message"></param>
     public void LogWarning(object message)
     {
-        if (thisMod == null)
+        if (ThisMod == null)
             Debug.LogWarning(gameObject.name + ": " + message);
         else
-            Debug.LogWarning(thisMod.name + ": " + message);
+            Debug.LogWarning(ThisMod.name + ": " + message);
     }
     /// <summary>
     /// Logs a error message to the console with your mod name.
@@ -45,15 +48,15 @@ public class VTOLMOD : MonoBehaviour
     /// <param name="message"></param>
     public void LogError(object message)
     {
-        if (thisMod == null)
+        if (ThisMod == null)
             Debug.LogError(gameObject.name + ": " + message);
         else
-            Debug.LogError(thisMod.name + ": " + message);
+            Debug.LogError(ThisMod.name + ": " + message);
     }
 
     public void SetModInfo(Mod thisMod)
     {
-        if (this.thisMod == null)
-            this.thisMod = thisMod;
+        if (ThisMod == null)
+            ThisMod = thisMod;
     }
 }

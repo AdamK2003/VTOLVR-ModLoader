@@ -87,6 +87,7 @@ namespace ModLoader
                         currentMod.imagePath = folders[i] + @"\" + json["Preview Image"].ToString();
                     }
                 }
+                currentMod.ModFolder = folders[i];
                 if (hasInfo && hasDLL)
                     mods.Add(currentMod);
 
@@ -128,8 +129,8 @@ namespace ModLoader
                         currentName + " doesn't seem to derive from VTOLMOD");
                     continue;
                 }
-                
 
+                currentMod.ModFolder = path;
                 if (hasDLL)
                     mods.Add(currentMod);
             }
@@ -251,14 +252,19 @@ public class Mod
     /// The path to the preview image if one exists.
     /// </summary>
     public string imagePath;
+    /// <summary>
+    /// The folder which the mods dll and other files are stored.
+    /// </summary>
+    public string ModFolder;
 
     public Mod() { }
 
-    public Mod(string name, string description, string dllPath)
+    public Mod(string name, string description, string dllPath, string modFolder)
     {
         this.name = name;
         this.description = description;
         this.dllPath = dllPath;
+        ModFolder = modFolder;
     }
 }
 

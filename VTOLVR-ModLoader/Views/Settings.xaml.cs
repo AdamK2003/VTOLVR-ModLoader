@@ -20,6 +20,8 @@ using UserControl = System.Windows.Controls.UserControl;
 using VTOLVR_ModLoader.Windows;
 using VTOLVR_ModLoader.Classes;
 using System.Net.Http;
+using System.Security.Principal;
+using Microsoft.Win32;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -36,6 +38,7 @@ namespace VTOLVR_ModLoader.Views
         private const string jToken = "token";
         private const string userURL = "/get-token";
         private const string savePath = @"\settings.json";
+        private const string uriPath = @"HKEY_CLASSES_ROOT\VTOLVRML";
         public static bool tokenValid = false;
         private bool hideResult;
         private Action<bool, string> callBack;
@@ -55,6 +58,12 @@ namespace VTOLVR_ModLoader.Views
             {
                 if (!line.Contains("token"))
                     TestToken(true);
+            }
+
+            if (!CheckForAdmin())
+            {
+                oneclickInstallButton.Content = "(Admin Needed)";
+                oneclickInstallButton.IsEnabled = false;
             }
         }
         public async void UpdateButtons()
@@ -301,6 +310,54 @@ namespace VTOLVR_ModLoader.Views
                 Instance.steamvrCheckbox.IsChecked = state;
             }
             SteamVR = state;
+        }
+
+        private void SetOneClickInstall(object sender, RoutedEventArgs e)
+        {
+            CreateURI(Program.root);
+        }
+
+        /// <summary>
+        /// Returns True if window is in admin mode
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckForAdmin()
+        {
+            return new WindowsPrincipal(WindowsIdentity.GetCurrent())
+             .IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        private void CreateURI(string root)
+        {
+            Console.Log("Creating Registry entry for one click installing");
+            string value = (string)Registry.GetValue(
+                uriPath,
+                @"",
+                @"");
+            Console.Log($"Setting Default to URL:VTOLVRML");
+            Registry.SetValue(
+            uriPath,
+            @"",
+            @"URL:VTOLVRML");
+            Console.Log($"Setting {uriPath} key to \"URL Protocol\"");
+            Registry.SetValue(
+            uriPath,
+            @"URL Protocol",
+            @"");
+            Console.Log($"Setting \"{uriPath}\\DefaultIcon\"" +
+                $"to \"{root}\\VTOLVR-ModLoader.exe,1");
+            Registry.SetValue(
+                uriPath + @"\DefaultIcon",
+                @"",
+                root + @"\VTOLVR-ModLoader.exe,1");
+            Console.Log($"Setting \"{uriPath}\\shell\\open\\command\"" +
+                $"to \"\"{root}\\VTOLVR-ModLoader.exe\" \"%1\"");
+            Registry.SetValue(
+                uriPath + @"\shell\open\command",
+                @"",
+                "\"" + root + @"\VTOLVR-ModLoader.exe" + "\" \"" + @"%1" + "\"");
+            Console.Log("Finished!");
+            Notification.Show("Finished setting registry values for one click install", "Finished", Notification.Buttons.Ok);
         }
     }
 }

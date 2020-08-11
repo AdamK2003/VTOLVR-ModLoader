@@ -221,18 +221,35 @@ namespace ModLoader
         }
     }
 }
-
+/// <summary>
+/// The information stored about a mod which is used by the mod loader
+/// and can be used by mods with the API command GetUsersMods
+/// </summary>
 public class Mod
 {
+    /// <summary>
+    /// The name of the mod which displays on the mods page.
+    /// </summary>
     public string name;
+    /// <summary>
+    /// The description of the mod which displays when the mod is selected. 
+    /// </summary>
     public string description;
-    [XmlIgnore]
+    /// <summary>
+    /// The location of the .dll file of this mod.
+    /// </summary>
     public string dllPath;
-    [XmlIgnore]
+    /// <summary>
+    /// GameObjects used by the mod loader.
+    /// </summary>
     public GameObject listGO, settingsGO, settingsHolerGO;
-    [XmlIgnore]
+    /// <summary>
+    /// If the mod is currently loaded.
+    /// </summary>
     public bool isLoaded;
-    [XmlIgnore]
+    /// <summary>
+    /// The path to the preview image if one exists.
+    /// </summary>
     public string imagePath;
 
     public Mod() { }

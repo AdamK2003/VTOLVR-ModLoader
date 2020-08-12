@@ -38,7 +38,15 @@ namespace VTOLVR_ModLoader.Views
         {
             InitializeComponent();
             LoadScenarios();
-            LoadSettings();
+            try
+            {
+                LoadSettings();
+            }
+            catch (Exception e)
+            {
+                Console.Log("Failed Loading dev tool settings\n" + e);
+            }
+            
         }
         public void SetUI()
         {

@@ -61,7 +61,8 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckCustomURL();
             CommunicationsManager.CheckCustomBranch();
             CommunicationsManager.CheckAutoUpdate();
-            if (CommunicationsManager.CheckSteamVR())
+            Console.Log(Views.Settings.SteamVR.ToString());
+            if (CommunicationsManager.CheckSteamVR() && Views.Settings.SteamVR)
                 CheckForSteamVR();
             GetReleases();
             AutoStart();
@@ -176,8 +177,9 @@ namespace VTOLVR_ModLoader
             Process.Start(root + injector, defaultStart);
         }
 
-        public static void Quit()
+        public static void Quit(string reason)
         {
+            Console.Log($"Closing Application\nReason:{reason}");
             Process.GetCurrentProcess().Kill();
         }
 

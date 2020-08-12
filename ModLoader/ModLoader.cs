@@ -323,7 +323,7 @@ namespace ModLoader
         }
         public void CreateSettingsMenu(Settings settings)
         {
-            int currentModIndex = FindModIndex(settings.Mod.thisMod.name);
+            int currentModIndex = FindModIndex(settings.Mod.ThisMod.name);
 
             currentMods[currentModIndex].settingsGO = Instantiate(settingsCampaignListTemplate, settingsScrollView.content);
             currentMods[currentModIndex].settingsGO.SetActive(true);

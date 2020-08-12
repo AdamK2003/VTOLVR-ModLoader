@@ -87,6 +87,7 @@ namespace ModLoader
                         currentMod.imagePath = folders[i] + @"\" + json["Preview Image"].ToString();
                     }
                 }
+                currentMod.ModFolder = folders[i];
                 if (hasInfo && hasDLL)
                     mods.Add(currentMod);
 
@@ -128,8 +129,8 @@ namespace ModLoader
                         currentName + " doesn't seem to derive from VTOLMOD");
                     continue;
                 }
-                
 
+                currentMod.ModFolder = path;
                 if (hasDLL)
                     mods.Add(currentMod);
             }
@@ -221,27 +222,49 @@ namespace ModLoader
         }
     }
 }
-
+/// <summary>
+/// The information stored about a mod which is used by the mod loader
+/// and can be used by mods with the API command GetUsersMods
+/// </summary>
 public class Mod
 {
+    /// <summary>
+    /// The name of the mod which displays on the mods page.
+    /// </summary>
     public string name;
+    /// <summary>
+    /// The description of the mod which displays when the mod is selected. 
+    /// </summary>
     public string description;
-    [XmlIgnore]
+    /// <summary>
+    /// The location of the .dll file of this mod.
+    /// </summary>
     public string dllPath;
-    [XmlIgnore]
+    /// <summary>
+    /// GameObjects used by the mod loader.
+    /// </summary>
     public GameObject listGO, settingsGO, settingsHolerGO;
-    [XmlIgnore]
+    /// <summary>
+    /// If the mod is currently loaded.
+    /// </summary>
     public bool isLoaded;
-    [XmlIgnore]
+    /// <summary>
+    /// The path to the preview image if one exists.
+    /// </summary>
     public string imagePath;
+    /// <summary>
+    /// The folder which the mods dll and other files are stored.
+    /// </summary>
+    public string ModFolder;
 
     public Mod() { }
 
-    public Mod(string name, string description, string dllPath)
+    public Mod(string name, string description, string dllPath, string modFolder)
     {
         this.name = name;
         this.description = description;
         this.dllPath = dllPath;
+        ModFolder = modFolder;
     }
 }
 

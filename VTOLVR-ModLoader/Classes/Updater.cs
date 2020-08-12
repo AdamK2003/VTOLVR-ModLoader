@@ -157,7 +157,7 @@ namespace VTOLVR_ModLoader.Classes
             }
 
             Process.Start(Path.Combine(Program.root, "Updater.exe"), Program.branch == string.Empty ? string.Empty : $"?branch={Program.branch}");
-            Program.Quit();
+            Program.Quit("Updating Launcher.exe");
         }
     }
 }

@@ -85,12 +85,6 @@ namespace VTOLVR_ModLoader
             }
         }
 
-        public static void Quit()
-        {
-            Console.Log("Application Closing");
-            Program.Quit();
-        }
-
         private void Website(object sender, RoutedEventArgs e)
         {
             Process.Start("https://vtolvr-mods.com");
@@ -134,9 +128,13 @@ namespace VTOLVR_ModLoader
 
         private void News(object sender, RoutedEventArgs e)
         {
-            if (news == null)
-                news = new News();
-            DataContext = news;
+            News();
+        }
+        public static void News()
+        {
+            if (_instance.news == null)
+                _instance.news = new News();
+            _instance.DataContext = _instance.news;
         }
 
         private void OpenTools(object sender, RoutedEventArgs e)

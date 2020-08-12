@@ -44,7 +44,8 @@ namespace VTOLVR_ModLoader.Views
         {
             LoadSettings();
             FindMods();
-            FindPilots();
+            if (!FindPilots())
+                return;
             if (pilotSelected != null)
             {
                 foreach (Pilot p in PilotDropdown.ItemsSource)
@@ -69,10 +70,38 @@ namespace VTOLVR_ModLoader.Views
             }
         }
 
-        private void FindPilots()
+        private bool FindPilots()
         {
+            if (!Directory.Exists(Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "Boundless Dynamics, LLC",
+                        "VTOLVR",
+                        "SaveData")) ||
+                !File.Exists(Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "Boundless Dynamics, LLC",
+                        "VTOLVR",
+                        "SaveData",
+                        "pilots.cfg")))
+            {
+                Console.Log($"Couldn't find pilots.cfg at\n" +
+                    Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "Boundless Dynamics, LLC",
+                        "VTOLVR",
+                        "SaveData"));
+                Windows.Notification.Show("Couldn't find pilots.cfg", "Error", closedCallback: delegate { MainWindow.News(); });
+                
+                return false;
+            }
             if (pilotsCFG == null)
-                pilotsCFG = File.ReadAllLines(Program.vtolFolder + @"\SaveData\pilots.cfg");
+                pilotsCFG = File.ReadAllLines(
+                    Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "Boundless Dynamics, LLC",
+                        "VTOLVR",
+                        "SaveData",
+                        "pilots.cfg"));
             string result;
             List<Pilot> pilots = new List<Pilot>(1) { new Pilot("No Selection") };
             for (int i = 0; i < pilotsCFG.Length; i++)
@@ -89,6 +118,7 @@ namespace VTOLVR_ModLoader.Views
                 PilotDropdown.ItemsSource = pilots;
                 PilotDropdown.SelectedIndex = 0;
             }
+            return true;
         }
        
         private void PilotChanged(object sender, EventArgs e)

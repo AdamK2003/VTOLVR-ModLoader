@@ -20,6 +20,8 @@ using UserControl = System.Windows.Controls.UserControl;
 using VTOLVR_ModLoader.Windows;
 using VTOLVR_ModLoader.Classes;
 using System.Net.Http;
+using System.Security.Principal;
+using Microsoft.Win32;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -29,8 +31,14 @@ namespace VTOLVR_ModLoader.Views
     public partial class Settings : UserControl
     {
         public static Settings Instance;
+
+        private const string jProjectsFolder = "projectsFolder";
+        private const string jAutoUpdate = "AutoUpdate";
+        private const string jSteamVR = "Launch SteamVR";
+        private const string jToken = "token";
         private const string userURL = "/get-token";
         private const string savePath = @"\settings.json";
+        private const string uriPath = @"HKEY_CLASSES_ROOT\VTOLVRML";
         public static bool tokenValid = false;
         private bool hideResult;
         private Action<bool, string> callBack;
@@ -39,6 +47,7 @@ namespace VTOLVR_ModLoader.Views
         public static string Token { get; private set; }
         public static string projectsFolder { get; private set; }
         public static bool AutoUpdate { get; private set; } = true;
+        public static bool SteamVR { get; private set; } = true;
         public Settings()
         {
             Instance = this;
@@ -49,6 +58,12 @@ namespace VTOLVR_ModLoader.Views
             {
                 if (!line.Contains("token"))
                     TestToken(true);
+            }
+
+            if (!CheckForAdmin())
+            {
+                oneclickInstallButton.Content = "(Admin Needed)";
+                oneclickInstallButton.IsEnabled = false;
             }
         }
         public async void UpdateButtons()
@@ -135,24 +150,29 @@ namespace VTOLVR_ModLoader.Views
             }
             if (!string.IsNullOrEmpty(Token))
             {
-                if (jObject["token"] == null)
-                    jObject.Add("token", Token);
+                if (jObject[jToken] == null)
+                    jObject.Add(jToken, Token);
                 else
-                    jObject["token"] = Token;
+                    jObject[jToken] = Token;
             }
 
             if (!string.IsNullOrWhiteSpace(projectsFolder))
             {
-                if (jObject["projectsFolder"] == null)
-                    jObject.Add("projectsFolder", projectsFolder);
+                if (jObject[jProjectsFolder] == null)
+                    jObject.Add(jProjectsFolder, projectsFolder);
                 else
-                    jObject["projectsFolder"] = projectsFolder;
+                    jObject[jProjectsFolder] = projectsFolder;
             }
 
-            if (jObject["AutoUpdate"] == null)
-                jObject.Add("AutoUpdate", AutoUpdate);
+            if (jObject[jAutoUpdate] == null)
+                jObject.Add(jAutoUpdate, AutoUpdate);
             else
-                jObject["AutoUpdate"] = AutoUpdate;
+                jObject[jAutoUpdate] = AutoUpdate;
+
+            if (jObject[jSteamVR] == null)
+                jObject.Add(jSteamVR, SteamVR);
+            else
+                jObject[jSteamVR] = SteamVR;
 
             try
             {
@@ -183,15 +203,15 @@ namespace VTOLVR_ModLoader.Views
                 return;
             }
 
-            if (json["token"] != null)
+            if (json[jToken] != null)
             {
-                Token = json["token"].ToString();
+                Token = json[jToken].ToString();
                 tokenBox.Password = Token;
             }
 
-            if (json["projectsFolder"] != null)
+            if (json[jProjectsFolder] != null)
             {
-                string path = json["projectsFolder"].ToString();
+                string path = json[jProjectsFolder].ToString();
                 if (Directory.Exists(path))
                     SetProjectsFolder(path, true);
                 else
@@ -203,15 +223,26 @@ namespace VTOLVR_ModLoader.Views
                 projectsButton.Content = "Set";
             }
 
-            if (json["AutoUpdate"] != null)
+            if (json[jAutoUpdate] != null)
             {
-                if (bool.TryParse(json["AutoUpdate"].ToString(), out bool result))
+                if (bool.TryParse(json[jAutoUpdate].ToString(), out bool result))
                 {
                     autoUpdateCheckbox.IsChecked = result;
                     AutoUpdate = result;
                 }
                 else
-                    Console.Log("Failed to convert AutoUpdate setting to bool");
+                    Console.Log($"Failed to convert \"{jAutoUpdate}\" setting to bool");
+            }
+
+            if (json[jSteamVR] != null)
+            {
+                if (bool.TryParse(json[jSteamVR].ToString(), out bool result))
+                {
+                    steamvrCheckbox.IsChecked = result;
+                    SteamVR = result;
+                }
+                else
+                    Console.Log($"Failed to convert \"{jSteamVR}\" setting to bool");
             }
         }
 
@@ -258,6 +289,75 @@ namespace VTOLVR_ModLoader.Views
                 Instance.autoUpdateCheckbox.IsChecked = state;
             }
             AutoUpdate = state;
+        }
+
+        private void SteamVRChanged(object sender, RoutedEventArgs e)
+        {
+            if (steamvrCheckbox.IsChecked != null && steamvrCheckbox.IsChecked == true)
+                SetSteamVR(true);
+            else if (steamvrCheckbox.IsChecked != null)
+                SetSteamVR(false);
+
+            Console.Log($"Changed Launching SteamVR to {SteamVR}");
+            SaveSettings();
+        }
+
+        private void SetSteamVR(bool state)
+        {
+            if (Instance.steamvrCheckbox != null &&
+                Instance.steamvrCheckbox.IsChecked != null)
+            {
+                Instance.steamvrCheckbox.IsChecked = state;
+            }
+            SteamVR = state;
+        }
+
+        private void SetOneClickInstall(object sender, RoutedEventArgs e)
+        {
+            CreateURI(Program.root);
+        }
+
+        /// <summary>
+        /// Returns True if window is in admin mode
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckForAdmin()
+        {
+            return new WindowsPrincipal(WindowsIdentity.GetCurrent())
+             .IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        private void CreateURI(string root)
+        {
+            Console.Log("Creating Registry entry for one click installing");
+            string value = (string)Registry.GetValue(
+                uriPath,
+                @"",
+                @"");
+            Console.Log($"Setting Default to URL:VTOLVRML");
+            Registry.SetValue(
+            uriPath,
+            @"",
+            @"URL:VTOLVRML");
+            Console.Log($"Setting {uriPath} key to \"URL Protocol\"");
+            Registry.SetValue(
+            uriPath,
+            @"URL Protocol",
+            @"");
+            Console.Log($"Setting \"{uriPath}\\DefaultIcon\"" +
+                $"to \"{root}\\VTOLVR-ModLoader.exe,1");
+            Registry.SetValue(
+                uriPath + @"\DefaultIcon",
+                @"",
+                root + @"\VTOLVR-ModLoader.exe,1");
+            Console.Log($"Setting \"{uriPath}\\shell\\open\\command\"" +
+                $"to \"\"{root}\\VTOLVR-ModLoader.exe\" \"%1\"");
+            Registry.SetValue(
+                uriPath + @"\shell\open\command",
+                @"",
+                "\"" + root + @"\VTOLVR-ModLoader.exe" + "\" \"" + @"%1" + "\"");
+            Console.Log("Finished!");
+            Notification.Show("Finished setting registry values for one click install", "Finished", Notification.Buttons.Ok);
         }
     }
 }

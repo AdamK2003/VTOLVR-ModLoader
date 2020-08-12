@@ -279,7 +279,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                 {
                     GameObject newModGo = new GameObject(path, source.First());
                     VTOLMOD mod = newModGo.GetComponent<VTOLMOD>();
-                    mod.SetModInfo(new Mod(path, "STARTUPMOD", path));
+                    mod.SetModInfo(new Mod(path, "STARTUPMOD", path, new FileInfo(path).DirectoryName));
                     newModGo.name = path;
                     DontDestroyOnLoad(newModGo);
                     mod.ModLoaded();

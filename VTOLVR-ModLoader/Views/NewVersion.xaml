@@ -48,11 +48,12 @@
 
             <TextBlock Grid.Row="8" Foreground="White" FontSize="15" TextWrapping="Wrap" 
                        x:Name="contentGuidelines">
-                Content Guidelines: <LineBreak/>
+                By pressing release or update you agree to these Content Guidelines: <LineBreak/>
                 • Only upload mods and skins that you created yourself. Do not upload any copyrighted material such as VTOL VR game files, music, images, etc.<LineBreak/>
                 • No offensive, excessively violent, or inappropriate content. This includes but is not limited to, pornography, nudity or sexually explicit content, hate speech or symbology.<LineBreak/>
                 • No content that is distasteful or irrelevant to VTOL VR modding.<LineBreak/>
                 • Mods and skins must have a clear name and description. Misleading content will not be accepted.<LineBreak/>
+                • Don't create or upload mods that unlock unreleased or paid VTOL VR content.
             </TextBlock>
             
             <Button Grid.Row="99" x:Name="uploadButton" Click="Upload" Style="{StaticResource darkButton}" 

@@ -239,22 +239,27 @@ public class Mod
     /// <summary>
     /// The location of the .dll file of this mod.
     /// </summary>
+    [XmlIgnore]
     public string dllPath;
     /// <summary>
     /// GameObjects used by the mod loader.
     /// </summary>
+    [XmlIgnore]
     public GameObject listGO, settingsGO, settingsHolerGO;
     /// <summary>
     /// If the mod is currently loaded.
     /// </summary>
+    [XmlIgnore]
     public bool isLoaded;
     /// <summary>
     /// The path to the preview image if one exists.
     /// </summary>
+    [XmlIgnore]
     public string imagePath;
     /// <summary>
     /// The folder which the mods dll and other files are stored.
     /// </summary>
+    [XmlIgnore]
     public string ModFolder;
 
     public Mod() { }

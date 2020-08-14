@@ -113,10 +113,18 @@ namespace VTOLVR_ModLoader.Views
         public struct Feed
         {
             public string Message { get; set; }
+            public Brush Colour { get; set; }
 
             public Feed(string message)
             {
                 Message = message;
+                if (Message.StartsWith("[Warning]"))
+                    Colour = new SolidColorBrush(Color.FromRgb(255, 255, 0));
+                else if (Message.StartsWith("[Error]"))
+                    Colour = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                else
+                    Colour = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+
             }
         }
     }

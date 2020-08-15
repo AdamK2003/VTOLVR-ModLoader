@@ -391,7 +391,8 @@ namespace VTOLVR_ModLoader
                 //Failed
                 Console.Log("Error:\n" + response.StatusCode);
             }
-            MainWindow._instance.settings.TestToken(true);
+            if (!string.IsNullOrEmpty(Views.Settings.Token))
+                MainWindow._instance.settings.TestToken(true);
         }
 
         private static void ConvertUpdates(string jsonString)

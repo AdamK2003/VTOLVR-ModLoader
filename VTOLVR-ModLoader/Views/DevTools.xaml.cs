@@ -27,12 +27,12 @@ namespace VTOLVR_ModLoader.Views
     {
         private const string savePath = "/devtools.json";
         private const string gameData = "/gamedata.json";
-        public Pilot pilotSelected;
-        public Scenario scenarioSelected;
-        public List<string> modsToLoad = new List<string>();
-        public string[] pilotsCFG;
+        public static Pilot PilotSelected;
+        public static Scenario ScenarioSelected;
+        public static List<string> ModsToLoad = new List<string>();
+        public static string[] PilotsCFG;
 
-        private List<Scenario> _scenarios = new List<Scenario>();
+        private static List<Scenario> _scenarios = new List<Scenario>();
 
         public DevTools()
         {
@@ -54,22 +54,22 @@ namespace VTOLVR_ModLoader.Views
             FindMods();
             if (!FindPilots())
                 return;
-            if (pilotSelected != null)
+            if (PilotSelected != null)
             {
                 foreach (Pilot p in PilotDropdown.ItemsSource)
                 {
-                    if (p.Name == pilotSelected.Name)
+                    if (p.Name == PilotSelected.Name)
                     {
                         PilotDropdown.SelectedItem = p;
                         break;
                     }
                 }
             }
-            if (scenarioSelected != null)
+            if (ScenarioSelected != null)
             {
                 foreach (Scenario s in ScenarioDropdown.ItemsSource)
                 {
-                    if (s.ID == scenarioSelected.ID)
+                    if (s.ID == ScenarioSelected.ID)
                     {
                         ScenarioDropdown.SelectedItem = s;
                         break;
@@ -102,8 +102,8 @@ namespace VTOLVR_ModLoader.Views
                 
                 return false;
             }
-            if (pilotsCFG == null)
-                pilotsCFG = File.ReadAllLines(
+            if (PilotsCFG == null)
+                PilotsCFG = File.ReadAllLines(
                     Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                         "Boundless Dynamics, LLC",
@@ -112,9 +112,9 @@ namespace VTOLVR_ModLoader.Views
                         "pilots.cfg"));
             string result;
             List<Pilot> pilots = new List<Pilot>(1) { new Pilot("No Selection") };
-            for (int i = 0; i < pilotsCFG.Length; i++)
+            for (int i = 0; i < PilotsCFG.Length; i++)
             {
-                result = Helper.ClearSpaces(pilotsCFG[i]);
+                result = Helper.ClearSpaces(PilotsCFG[i]);
                 if (result.Contains("pilotName="))
                 {
                     pilots.Add(new Pilot(result.Replace("pilotName=", string.Empty)));
@@ -131,13 +131,13 @@ namespace VTOLVR_ModLoader.Views
        
         private void PilotChanged(object sender, EventArgs e)
         {
-            pilotSelected = (Pilot)PilotDropdown.SelectedItem;
+            PilotSelected = (Pilot)PilotDropdown.SelectedItem;
             SaveSettings();
         }
 
         private void ScenarioChanged(object sender, EventArgs e)
         {
-            scenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
+            ScenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
             SaveSettings();
         }
 
@@ -149,7 +149,7 @@ namespace VTOLVR_ModLoader.Views
             List<ModItem> mods = new List<ModItem>();
             for (int i = 0; i < files.Length; i++)
             {
-                if (modsToLoad.Contains(files[i].Name))
+                if (ModsToLoad.Contains(files[i].Name))
                     mods.Add(new ModItem(files[i].Name, true));
                 else
                     mods.Add(new ModItem(files[i].Name));
@@ -160,7 +160,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 if (File.Exists(folders[i].FullName + "/" + folders[i].Name + ".dll"))
                 {
-                    if (modsToLoad.Contains(folders[i].FullName + "/" + folders[i].Name + ".dll"))
+                    if (ModsToLoad.Contains(folders[i].FullName + "/" + folders[i].Name + ".dll"))
                     {
                         mods.Add(new ModItem(folders[i].FullName + "/" + folders[i].Name + ".dll", true));
                     }
@@ -208,7 +208,7 @@ namespace VTOLVR_ModLoader.Views
                         continue;
                     }
 
-                    if (modsToLoad.Contains(Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString())))
+                    if (ModsToLoad.Contains(Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString())))
                     {
                         mods.Add(new ModItem(Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString()), true));
                     }
@@ -227,12 +227,12 @@ namespace VTOLVR_ModLoader.Views
             CheckBox checkBox = (CheckBox)sender;
             if (checkBox.IsChecked == true)
             {
-                modsToLoad.Add(checkBox.ToolTip.ToString());
+                ModsToLoad.Add(checkBox.ToolTip.ToString());
                 Console.Log($"Added {checkBox.ToolTip}");
             }
             else if (checkBox.IsChecked == false)
             {
-                modsToLoad.Remove(checkBox.ToolTip.ToString());
+                ModsToLoad.Remove(checkBox.ToolTip.ToString());
                 Console.Log($"Removed {checkBox.ToolTip}");
             }
             SaveSettings();
@@ -241,20 +241,20 @@ namespace VTOLVR_ModLoader.Views
         private void SaveSettings()
         {
             JObject jObject = new JObject();
-            if (pilotSelected != null)
-                jObject.Add("pilot", pilotSelected.Name);
-            if (scenarioSelected != null)
+            if (PilotSelected != null)
+                jObject.Add("pilot", PilotSelected.Name);
+            if (ScenarioSelected != null)
             {
                 JObject scenario = new JObject();
-                scenario.Add("name", scenarioSelected.Name);
-                scenario.Add("id", scenarioSelected.ID);
-                scenario.Add("cid", scenarioSelected.cID);
+                scenario.Add("name", ScenarioSelected.Name);
+                scenario.Add("id", ScenarioSelected.ID);
+                scenario.Add("cid", ScenarioSelected.cID);
                 jObject.Add(new JProperty("scenario", scenario));
             }
 
-            if (modsToLoad.Count > 0)
+            if (ModsToLoad.Count > 0)
             {
-                JArray previousMods = new JArray(modsToLoad.ToArray());
+                JArray previousMods = new JArray(ModsToLoad.ToArray());
                 jObject.Add(new JProperty("previousMods", previousMods));
             }
 
@@ -288,7 +288,7 @@ namespace VTOLVR_ModLoader.Views
             }
             
 
-            pilotSelected = new Pilot(json["pilot"].Value<string>()) ?? null;
+            PilotSelected = new Pilot(json["pilot"].Value<string>()) ?? null;
 
             if (json["scenario"] != null)
             {
@@ -300,7 +300,7 @@ namespace VTOLVR_ModLoader.Views
                         _scenarios[i].cID.Equals(scenario["cid"].ToString()))
                     {
                         ScenarioDropdown.SelectedIndex = i;
-                        scenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
+                        ScenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
                         break;
                     }
                 }
@@ -311,8 +311,8 @@ namespace VTOLVR_ModLoader.Views
                 JArray mods = json["previousMods"] as JArray;
                 for (int i = 0; i < mods.Count; i++)
                 {
-                    if (!modsToLoad.Contains(mods[i].ToString()))
-                        modsToLoad.Add(mods[i].ToString());
+                    if (!ModsToLoad.Contains(mods[i].ToString()))
+                        ModsToLoad.Add(mods[i].ToString());
                 }
             }
         }

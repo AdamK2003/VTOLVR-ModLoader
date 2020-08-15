@@ -228,6 +228,10 @@
                             Content="Play" FontSize="30" Foreground="White"
                         BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame" BorderThickness="1"
                         Style="{StaticResource darkButton}"/>
+
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="Dev Tools Enabled" Background="#FFA69700" 
+                           Foreground="White" TextAlignment="Center" FontSize="10" VerticalAlignment="Center"
+                           x:Name="DevToolsText" Visibility="Hidden"/>
             </Grid>
         </Grid>
     </Grid>

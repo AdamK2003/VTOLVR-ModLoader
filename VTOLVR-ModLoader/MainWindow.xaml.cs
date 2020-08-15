@@ -167,6 +167,10 @@ namespace VTOLVR_ModLoader
             _instance.launchButton.IsEnabled = !isBusy;
             _instance.launchButton.Content = isBusy ? "Busy" : "Play";
         }
+        public static void DevToolsWarning(bool visable)
+        {
+            _instance.DevToolsText.Visibility = visable ? Visibility.Visible : Visibility.Hidden;
+        }
     }
 
     public class Mod

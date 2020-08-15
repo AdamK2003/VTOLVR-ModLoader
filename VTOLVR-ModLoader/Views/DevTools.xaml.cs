@@ -27,6 +27,7 @@ namespace VTOLVR_ModLoader.Views
     {
         private const string savePath = "/devtools.json";
         private const string gameData = "/gamedata.json";
+        public static bool DevToolsEnabled { get; private set; } = false;
         public static Pilot PilotSelected;
         public static Scenario ScenarioSelected;
         public static List<string> ModsToLoad = new List<string>();
@@ -133,12 +134,14 @@ namespace VTOLVR_ModLoader.Views
         {
             PilotSelected = (Pilot)PilotDropdown.SelectedItem;
             SaveSettings();
+            IsDevToolsEnabled();
         }
 
         private void ScenarioChanged(object sender, EventArgs e)
         {
             ScenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
             SaveSettings();
+            IsDevToolsEnabled();
         }
 
         private void FindMods()
@@ -236,6 +239,7 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log($"Removed {checkBox.ToolTip}");
             }
             SaveSettings();
+            IsDevToolsEnabled();
         }
 
         private void SaveSettings()
@@ -315,6 +319,8 @@ namespace VTOLVR_ModLoader.Views
                         ModsToLoad.Add(mods[i].ToString());
                 }
             }
+
+            IsDevToolsEnabled();
         }
 
         private void LoadScenarios()
@@ -340,7 +346,7 @@ namespace VTOLVR_ModLoader.Views
             }
             if (json == null)
                 return;
-            AddScenarios(json);            
+            AddScenarios(json);
         }
 
         private void AddScenarios(JObject json)
@@ -365,6 +371,21 @@ namespace VTOLVR_ModLoader.Views
 
             ScenarioDropdown.ItemsSource = _scenarios.ToArray();
             ScenarioDropdown.SelectedIndex = 0;
+        }
+        
+        private void IsDevToolsEnabled()
+        {
+            if (!PilotSelected.Name.Equals("No Selection") && 
+                !ScenarioSelected.Name.Equals("No Selection") ||
+                ModsToLoad.Count > 0)
+            {
+                DevToolsEnabled = true;
+            }
+            else
+            {
+                DevToolsEnabled = false;
+            }
+            MainWindow.DevToolsWarning(DevToolsEnabled);
         }
     }
     public class ModItem

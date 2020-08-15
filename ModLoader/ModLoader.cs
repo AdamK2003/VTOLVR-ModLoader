@@ -20,6 +20,7 @@ namespace ModLoader
         public enum KeyboardType { DisableAll, Int, Float, String }
         public static ModLoader instance { get; private set; }
         public static AssetBundle assetBundle;
+        private static List<Settings> _modSettings;
         public List<Mod> ModsLoaded { get; private set; } = new List<Mod>();
         private ModLoaderManager manager;
         private VTOLAPI api;
@@ -216,6 +217,7 @@ namespace ModLoader
             CampaignDisplay.SetActive(false);
             CampaignListTemplate.SetActive(false);
             SetDefaultText();
+            RecreateSettings();
         }
         public void LoadMod()
         {
@@ -321,7 +323,16 @@ namespace ModLoader
                 yield return null;
             raw.texture = www.texture;
         }
-        public void CreateSettingsMenu(Settings settings)
+        private void RecreateSettings()
+        {
+            if (_modSettings == null)
+                return;
+            for (int i = 0; i < _modSettings.Count; i++)
+            {
+                CreateSettingsMenu(_modSettings[i], true);
+            }
+        }
+        public void CreateSettingsMenu(Settings settings, bool recreating = false)
         {
             int currentModIndex = FindModIndex(settings.Mod.ThisMod.name);
 
@@ -403,6 +414,12 @@ namespace ModLoader
                 }
             }
             currentMods[currentModIndex].settingsHolerGO.SetActive(false);
+            if (!recreating)
+            {
+                if (_modSettings == null)
+                    _modSettings = new List<Settings>();
+                _modSettings.Add(settings);
+            }
             Debug.Log("Done spawning " + settings.subSettings.Count + " settings");
             RefreashSettings();
         }

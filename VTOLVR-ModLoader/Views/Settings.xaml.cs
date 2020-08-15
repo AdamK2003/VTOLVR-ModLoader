@@ -76,6 +76,7 @@ namespace VTOLVR_ModLoader.Views
         }
         public void SetUserToken(string token)
         {
+            Console.Log("Changed Token");
             Token = token;
             tokenBox.Password = token;
             SaveSettings();
@@ -94,7 +95,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 updateButton.IsEnabled = false;
                 tokenValid = false;
-                Console.Log("Testing new token");
+                Console.Log("Testing token");
                 HttpHelper.DownloadStringAsync(
                     Program.url + Program.apiURL + userURL + Program.jsonFormat,
                     TestTokenDone,

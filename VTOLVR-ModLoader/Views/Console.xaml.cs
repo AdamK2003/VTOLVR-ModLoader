@@ -25,25 +25,21 @@ namespace VTOLVR_ModLoader.Views
     /// </summary>
     public partial class Console : UserControl
     {
-        public static Console _instance { private set; get; }
-        private static Thread tcpListenerThread;
-        private static TcpListener tcpListener;
-        private static TcpClient TcpClient;
-        private static NetworkStream nwStream;
-        private static Queue<Feed> consoleQueue = new Queue<Feed>();
+        public static Console Instance { private set; get; }
+        private static Queue<Feed> _consoleQueue = new Queue<Feed>();
 
-        public List<Feed> consoleFeed = new List<Feed>();
-        private List<string> storedMessages = new List<string>();
+        public List<Feed> ConsoleFeed = new List<Feed>();
+        private List<string> _storedMessages = new List<string>();
         public Console()
         {
             InitializeComponent();
-            _instance = this;
+            Instance = this;
             inputBox.KeyDown += inputBoxKeyDown;
-            for (int i = 0; i < consoleQueue.Count; i++)
+            for (int i = 0; i < _consoleQueue.Count; i++)
             {
-                consoleFeed.Add(consoleQueue.Dequeue());
+                ConsoleFeed.Add(_consoleQueue.Dequeue());
             }
-            console.ItemsSource = _instance.consoleFeed.ToArray();
+            console.ItemsSource = Instance.ConsoleFeed.ToArray();
             scrollView.ScrollToBottom();
         }
 
@@ -55,26 +51,26 @@ namespace VTOLVR_ModLoader.Views
 
         public void UpdateFeed()
         {
-            console.ItemsSource = consoleFeed.ToArray();
-            _instance.scrollView.ScrollToBottom();
+            console.ItemsSource = ConsoleFeed.ToArray();
+            Instance.scrollView.ScrollToBottom();
         }
 
         public static void Log(string message, bool isApplication = true)
         {
             System.Console.WriteLine(message);
-            if (_instance == null)
+            if (Instance == null)
             {
-                consoleQueue.Enqueue(new Feed(message));
+                _consoleQueue.Enqueue(new Feed(message));
             }
             else
             {
                 string[] lines = message.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    _instance.consoleFeed.Add(new Feed(lines[i]));
+                    Instance.ConsoleFeed.Add(new Feed(lines[i]));
                 }
-                _instance.console.ItemsSource = _instance.consoleFeed.ToArray();
-                _instance.scrollView.ScrollToBottom();
+                Instance.console.ItemsSource = Instance.ConsoleFeed.ToArray();
+                Instance.scrollView.ScrollToBottom();
             }
 
             if (isApplication)
@@ -101,26 +97,34 @@ namespace VTOLVR_ModLoader.Views
         public static void GameClosed()
         {
             Log("Game Closed");
-            _instance.inputBox.IsEnabled = false;
-            _instance.sendButton.IsEnabled = false;
+            Instance.inputBox.IsEnabled = false;
+            Instance.sendButton.IsEnabled = false;
             MainWindow.SetPlayButton(false);
         }
 
         public static void GameOpened()
         {
-            _instance.inputBox.Text = string.Empty;
-            _instance.inputBox.IsEnabled = true;
-            _instance.sendButton.IsEnabled = true;
+            Instance.inputBox.Text = string.Empty;
+            Instance.inputBox.IsEnabled = true;
+            Instance.sendButton.IsEnabled = true;
             MainWindow.SetPlayButton(true);
         }
 
         public struct Feed
         {
-            public string message { get; set; }
+            public string Message { get; set; }
+            public Brush Colour { get; set; }
 
             public Feed(string message)
             {
-                this.message = message;
+                Message = message;
+                if (Message.StartsWith("[Warning]"))
+                    Colour = new SolidColorBrush(Color.FromRgb(255, 255, 0));
+                else if (Message.StartsWith("[Error]"))
+                    Colour = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                else
+                    Colour = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+
             }
         }
     }

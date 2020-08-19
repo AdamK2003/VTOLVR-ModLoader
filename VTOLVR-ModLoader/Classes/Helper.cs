@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Console = VTOLVR_ModLoader.Views.Console;
 
 namespace VTOLVR_ModLoader.Classes
@@ -15,29 +16,78 @@ namespace VTOLVR_ModLoader.Classes
         {
             return Regex.Replace(input, @"\s+", "");
         }
-        public static void ExtractZipToDirectory(string zipPath, string extractPath)
+        public static async void ExtractZipToDirectory(string zipPath, string extractPath, Action<string, string> completed)
         {
-            using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Read))
+            await Task.Run(() =>
             {
-                List<ZipArchiveEntry> filesInZip = zip.Entries.ToList();
-                for (int f = 0; f < filesInZip.Count; f++)
+                using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Read)) 
                 {
-                    if (!filesInZip[f].FullName.EndsWith("\\"))
+                    List<ZipArchiveEntry> filesInZip = zip.Entries.ToList();
+                    for (int f = 0; f < filesInZip.Count; f++)
                     {
-                        if (filesInZip[f].Name.Length == 0)
+                        if (!filesInZip[f].FullName.EndsWith("\\"))
                         {
-                            //This is just a folder
-                            Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
-                            continue;
+                            if (filesInZip[f].Name.Length == 0)
+                            {
+                                //This is just a folder
+                                Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
+                                continue;
+                            }
+                            //This is a file
+                            Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName.Replace(filesInZip[f].Name, string.Empty)));
+                            filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName), File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
                         }
-                        //This is a file
-                        Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName.Replace(filesInZip[f].Name, string.Empty)));
-                        filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName), File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
+                        else if (!Directory.Exists(Path.Combine(extractPath, filesInZip[f].FullName)))
+                            Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
                     }
-                    else if (!Directory.Exists(Path.Combine(extractPath, filesInZip[f].FullName)))
-                        Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
                 }
-            }
+            });
+            completed?.Invoke(zipPath, extractPath);
+            //using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Read))
+            //{
+            //    zip.
+            //    await Task.WhenAll(zip.Entries.Select(file => Task.Run(() =>
+            //    {
+            //        if (!file.FullName.EndsWith("\\"))
+            //        {
+            //            if (file.Name.Length == 0)
+            //            {
+            //                //This is just a folder
+            //                Directory.CreateDirectory(Path.Combine(extractPath, file.FullName));
+            //            }
+            //            else
+            //            {
+            //                //This is a file
+            //                Directory.CreateDirectory(Path.Combine(extractPath, file.FullName.Replace(file.Name, string.Empty)));
+            //                System.Console.WriteLine(file.Name);
+            //                file.ExtractToFile(Path.Combine(extractPath, file.FullName), File.Exists(Path.Combine(extractPath, file.FullName)));
+            //            }
+
+            //        }
+            //        else if (!Directory.Exists(Path.Combine(extractPath, file.FullName)))
+            //            Directory.CreateDirectory(Path.Combine(extractPath, file.FullName));
+            //    })));
+
+            //    
+            //    //List<ZipArchiveEntry> filesInZip = zip.Entries.ToList();
+            //    //for (int f = 0; f < filesInZip.Count; f++)
+            //    //{
+            //    //    if (!filesInZip[f].FullName.EndsWith("\\"))
+            //    //    {
+            //    //        if (filesInZip[f].Name.Length == 0)
+            //    //        {
+            //    //            //This is just a folder
+            //    //            Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
+            //    //            continue;
+            //    //        }
+            //    //        //This is a file
+            //    //        Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName.Replace(filesInZip[f].Name, string.Empty)));
+            //    //        filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName), File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
+            //    //    }
+            //    //    else if (!Directory.Exists(Path.Combine(extractPath, filesInZip[f].FullName)))
+            //    //        Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
+            //    //}
+            //}
         }
         public static string CalculateMD5(string filename)
         {

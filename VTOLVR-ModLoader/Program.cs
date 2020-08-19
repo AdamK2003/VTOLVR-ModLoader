@@ -123,7 +123,7 @@ namespace VTOLVR_ModLoader
         private static void LaunchProcess()
         {
             Console.Log("Launching VTOL VR");
-            //Process.Start("steam://run/667970");
+            Process.Start("steam://run/667970");
 
             MainWindow.SetPlayButton(false);
             MainWindow.SetProgress(0, "Launching Game");

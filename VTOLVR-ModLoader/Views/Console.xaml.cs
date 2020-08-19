@@ -39,7 +39,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 ConsoleFeed.Add(_consoleQueue.Dequeue());
             }
-            console.ItemsSource = Instance.ConsoleFeed.ToArray();
+            console.ItemsSource = Instance.ConsoleFeed;
             scrollView.ScrollToBottom();
         }
 
@@ -51,7 +51,7 @@ namespace VTOLVR_ModLoader.Views
 
         public void UpdateFeed()
         {
-            console.ItemsSource = ConsoleFeed.ToArray();
+            console.ItemsSource = ConsoleFeed;
             Instance.scrollView.ScrollToBottom();
         }
 
@@ -69,7 +69,7 @@ namespace VTOLVR_ModLoader.Views
                 {
                     Instance.ConsoleFeed.Add(new Feed(lines[i]));
                 }
-                Instance.console.ItemsSource = Instance.ConsoleFeed.ToArray();
+                Instance.console.ItemsSource = Instance.ConsoleFeed;
                 Instance.scrollView.ScrollToBottom();
             }
 

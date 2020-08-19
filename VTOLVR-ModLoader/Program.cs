@@ -51,7 +51,7 @@ namespace VTOLVR_ModLoader
         public static List<Release> Releases { get; private set; }
 
         private static bool uiLoaded = false;
-        private static int extractedMods, extractedSkins, movedDep;
+        private static int modsToExtract, skinsToExtract, extractedMods, extractedSkins, movedDep;
         private static Queue<Action> actionQueue = new Queue<Action>();
         public async static void SetupAfterUI()
         {
@@ -118,14 +118,12 @@ namespace VTOLVR_ModLoader
         }
         public static void LaunchGame()
         {
-            Queue(ExtractMods);
-            Queue(LaunchProcess);
-            
+            ExtractMods();
         }
         private static void LaunchProcess()
         {
             Console.Log("Launching VTOL VR");
-            Process.Start("steam://run/667970");
+            //Process.Start("steam://run/667970");
 
             MainWindow.SetPlayButton(false);
             MainWindow.SetProgress(0, "Launching Game");
@@ -197,30 +195,39 @@ namespace VTOLVR_ModLoader
                 MoveDependencies();
                 return;
             }
-            float zipAmount = 100 / files.Length;
+            modsToExtract = files.Length;
             string currentFolder;
 
+            MainWindow.SetProgress(0, "Extracting mods...");
             for (int i = 0; i < files.Length; i++)
             {
-                MainWindow.SetProgress((int)Math.Ceiling(zipAmount * i), "Extracting mods... [" + files[i].Name + "]");
                 //This should remove the .zip at the end for the folder path
                 currentFolder = files[i].FullName.Split('.')[0];
 
                 Directory.CreateDirectory(currentFolder);
                 Console.Log("Extracting " + files[i].FullName);
-                Helper.ExtractZipToDirectory(files[i].FullName, currentFolder);
-                extractedMods++;
-
-                //Deleting the zip
-                File.Delete(files[i].FullName);
+                Helper.ExtractZipToDirectory(files[i].FullName, currentFolder, ExtractedMod);
             }
-
-            MainWindow.SetPlayButton(false);
-            MainWindow.SetProgress(100, extractedMods == 0 ? "No mods were extracted" : "Extracted " + extractedMods +
-                (extractedMods == 1 ? " new mod" : " new mods"));
-            MoveDependencies();
-
         }
+
+        private static void ExtractedMod(string zipPath, string extractedPath)
+        {
+            extractedMods++;
+            Console.Log($"({extractedMods}/{modsToExtract})Finished Extracting {zipPath}");
+            MainWindow.SetProgress(extractedMods / modsToExtract * 100, $"({extractedMods}/{modsToExtract})Extracting mods...");
+            //Deleting the zip
+            File.Delete(zipPath);
+
+            if (extractedMods == modsToExtract)
+            {
+                MainWindow.SetPlayButton(false);
+                MainWindow.SetProgress(100, extractedMods == 0 ? "No mods were extracted" : "Extracted " + extractedMods +
+                    (extractedMods == 1 ? " new mod" : " new mods"));
+                
+                MoveDependencies();
+            }
+        }
+
         private static void ExtractSkins()
         {
             MainWindow.SetPlayButton(true);
@@ -241,92 +248,122 @@ namespace VTOLVR_ModLoader
                 extractedMods = 0;
                 extractedSkins = 0;
                 movedDep = 0;
+                skinsToExtract = 0;
+                modsToExtract = 0;
+
+
+                LaunchProcess();
                 return;
             }
-            float zipAmount = 100 / files.Length;
+            skinsToExtract = files.Length;
             string currentFolder;
-
+            MainWindow.SetProgress(0, "Extracting skins...");
             for (int i = 0; i < files.Length; i++)
             {
-                MainWindow.SetProgress((int)Math.Ceiling(zipAmount * i), "Extracting skins... [" + files[i].Name + "]");
                 //This should remove the .zip at the end for the folder path
                 currentFolder = files[i].FullName.Split('.')[0];
 
                 Directory.CreateDirectory(currentFolder);
-                Helper.ExtractZipToDirectory(files[i].FullName, currentFolder);
-                extractedSkins++;
-
-                //Deleting the zip
-                File.Delete(files[i].FullName);
+                Helper.ExtractZipToDirectory(files[i].FullName, currentFolder, SkinExtracted);
             }
+        }
 
-            MainWindow.SetPlayButton(false);
-            //This is the final text displayed in the progress text
-            MainWindow.SetProgress(100,
-                (extractedMods == 0 ? "0 New Mods" : (extractedMods == 1 ? "1 New Mod" : extractedMods + " New Mods")) +
-                " and " +
-                (extractedSkins == 0 ? "0 New Skins" : (extractedSkins == 1 ? "1 New Skin" : extractedSkins + " New Skins")) +
-                " extracted" +
-                " and " +
-                (movedDep == 0 ? "0 New Dependencies" : (movedDep == 1 ? "1 New Dependencies" : movedDep + " New Dependencies")) +
-                " moved");
+        private static void SkinExtracted(string zipPath, string extractedPath)
+        {
+            extractedSkins++;
+            Console.Log($"({extractedSkins}/{skinsToExtract})Finished Extracting {zipPath}");
+            MainWindow.SetProgress(extractedSkins / skinsToExtract * 100, $"({extractedSkins}/{skinsToExtract})Extracting skins...");
+            //Deleting the zip
+            File.Delete(zipPath);
 
-            extractedMods = 0;
-            extractedSkins = 0;
-            movedDep = 0;
+            if (extractedSkins == skinsToExtract)
+            {
+                MainWindow.SetPlayButton(false);
+                //This is the final text displayed in the progress text
+                MainWindow.SetProgress(100,
+                    (extractedMods == 0 ? "0 New Mods" : (extractedMods == 1 ? "1 New Mod" : extractedMods + " New Mods")) +
+                    " and " +
+                    (extractedSkins == 0 ? "0 New Skins" : (extractedSkins == 1 ? "1 New Skin" : extractedSkins + " New Skins")) +
+                    " extracted" +
+                    " and " +
+                    (movedDep == 0 ? "0 New Dependencies" : (movedDep == 1 ? "1 New Dependencies" : movedDep + " New Dependencies")) +
+                    " moved");
+
+                extractedMods = 0;
+                extractedSkins = 0;
+                movedDep = 0;
+                skinsToExtract = 0;
+                modsToExtract = 0;
+
+                LaunchProcess();
+            }
         }
 
         private static void MoveDependencies()
         {
             MainWindow.SetPlayButton(true);
-            string[] modFolders = Directory.GetDirectories(Program.root + Program.modsFolder);
-
-            string fileName;
-            string[] split;
-            for (int i = 0; i < modFolders.Length; i++)
+            Task.Run(delegate 
             {
-                string[] subFolders = Directory.GetDirectories(modFolders[i]);
-                for (int j = 0; j < subFolders.Length; j++)
-                {
-                    Console.Log("Checking " + subFolders[j].ToLower());
-                    if (subFolders[j].ToLower().Contains("dependencies"))
-                    {
-                        Console.Log("Found the folder dependencies");
-                        string[] depFiles = Directory.GetFiles(subFolders[j], "*.dll");
-                        for (int k = 0; k < depFiles.Length; k++)
-                        {
-                            split = depFiles[k].Split('\\');
-                            fileName = split[split.Length - 1];
+                string[] modFolders = Directory.GetDirectories(root + modsFolder);
 
-                            if (File.Exists(Directory.GetParent(Program.root).FullName +
-                                        @"\VTOLVR_Data\Managed\" + fileName))
+                string fileName;
+                string[] split;
+                for (int i = 0; i < modFolders.Length; i++)
+                {
+                    string[] subFolders = Directory.GetDirectories(modFolders[i]);
+                    for (int j = 0; j < subFolders.Length; j++)
+                    {
+                        if (subFolders[j].ToLower().Contains("dependencies"))
+                        {
+                            Application.Current.Dispatcher.Invoke(new Action(() => { 
+                                Console.Log("Found the folder dependencies"); }));
+                            
+                            string[] depFiles = Directory.GetFiles(subFolders[j], "*.dll");
+                            for (int k = 0; k < depFiles.Length; k++)
                             {
-                                string oldHash = CalculateMD5(Directory.GetParent(Program.root).FullName +
-                                        @"\VTOLVR_Data\Managed\" + fileName);
-                                string newHash = CalculateMD5(depFiles[k]);
-                                if (!oldHash.Equals(newHash))
+                                split = depFiles[k].Split('\\');
+                                fileName = split[split.Length - 1];
+
+                                if (File.Exists(Directory.GetParent(Program.root).FullName +
+                                            @"\VTOLVR_Data\Managed\" + fileName))
                                 {
-                                    File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
-                                        @"\VTOLVR_Data\Managed\" + fileName,
-                                        true);
-                                    movedDep++;
-                                }
-                            }
-                            else
-                            {
-                                Console.Log("Moved file \n" + Directory.GetParent(Program.root).FullName +
-                                        @"\VTOLVR_Data\Managed\" + fileName);
-                                File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
+                                    string oldHash = CalculateMD5(Directory.GetParent(Program.root).FullName +
+                                            @"\VTOLVR_Data\Managed\" + fileName);
+                                    string newHash = CalculateMD5(depFiles[k]);
+                                    if (!oldHash.Equals(newHash))
+                                    {
+                                        File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
                                             @"\VTOLVR_Data\Managed\" + fileName,
                                             true);
-                                movedDep++;
+                                        movedDep++;
+                                        Application.Current.Dispatcher.Invoke(new Action(() => {
+                                            Console.Log($"Updated Dependencie {depFiles[k]}");
+                                        }));
+                                    }
+                                }
+                                else
+                                {                                   
+                                    File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
+                                                @"\VTOLVR_Data\Managed\" + fileName,
+                                                true);
+                                    movedDep++;
+                                    Application.Current.Dispatcher.Invoke(new Action(() => {
+                                        Console.Log($"Moved Dependencie {depFiles[k]}");
+                                    }));
+                                }
                             }
+                            break;
                         }
-                        break;
                     }
                 }
-            }
-
+            }).ContinueWith(delegate {
+                Application.Current.Dispatcher.Invoke(new Action(() => {
+                    MovedDependencies();
+                }));
+            });
+        }
+        private static void MovedDependencies()
+        {
             MainWindow.SetPlayButton(false);
             MainWindow.SetProgress(100, movedDep == 0 ? "Checked Dependencies" : "Moved " + movedDep
                 + (movedDep == 1 ? " dependency" : " dependencies"));

@@ -375,15 +375,17 @@ namespace VTOLVR_ModLoader.Views
         
         private void IsDevToolsEnabled()
         {
-            if (!PilotSelected.Name.Equals("No Selection") && 
-                !ScenarioSelected.Name.Equals("No Selection") ||
-                ModsToLoad.Count > 0)
+            DevToolsEnabled = false;
+            if (PilotSelected != null &&
+                ScenarioSelected != null &&
+                !PilotSelected.Name.Equals("No Selection") &&
+                !ScenarioSelected.Name.Equals("No Selection"))
             {
                 DevToolsEnabled = true;
             }
-            else
+            if (ModsToLoad != null && ModsToLoad.Count > 0)
             {
-                DevToolsEnabled = false;
+                DevToolsEnabled = true;
             }
             MainWindow.DevToolsWarning(DevToolsEnabled);
         }

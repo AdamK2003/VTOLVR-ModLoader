@@ -107,7 +107,7 @@ namespace VTOLVR_ModLoader
         }
         private void OpenGame(object sender, RoutedEventArgs e)
         {
-            Program.LaunchGame();
+            Program.Queue(Program.LaunchGame);
         }
 
         private void OpenSettings(object sender, RoutedEventArgs e)

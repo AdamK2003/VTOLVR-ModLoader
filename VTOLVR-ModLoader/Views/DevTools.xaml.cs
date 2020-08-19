@@ -290,9 +290,9 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log(e.ToString());
                 return;
             }
-            
 
-            PilotSelected = new Pilot(json["pilot"].Value<string>()) ?? null;
+            if (json["pilot"] != null)
+                PilotSelected = new Pilot(json["pilot"].ToString());
 
             if (json["scenario"] != null)
             {

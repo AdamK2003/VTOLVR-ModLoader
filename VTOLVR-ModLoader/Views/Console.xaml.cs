@@ -145,5 +145,12 @@ namespace VTOLVR_ModLoader.Views
 
             }
         }
+
+        private void ClearConsole(object sender, RoutedEventArgs e)
+        {
+            ConsoleFeed = new List<Feed>();
+            console.ItemsSource = ConsoleFeed.ToArray();
+            scrollView.ScrollToBottom();
+        }
     }
 }

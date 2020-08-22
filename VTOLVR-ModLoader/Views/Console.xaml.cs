@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -27,6 +28,9 @@ namespace VTOLVR_ModLoader.Views
     {
         public static Console Instance { private set; get; }
         private static Queue<Feed> _consoleQueue = new Queue<Feed>();
+        private static SolidColorBrush WarningBrush = new SolidColorBrush(Color.FromRgb(255, 255, 0));
+        private static SolidColorBrush ErrorBrush = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+        private static SolidColorBrush LogBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
 
         public List<Feed> ConsoleFeed = new List<Feed>();
         private List<string> _storedMessages = new List<string>();
@@ -37,9 +41,9 @@ namespace VTOLVR_ModLoader.Views
             inputBox.KeyDown += inputBoxKeyDown;
             for (int i = 0; i < _consoleQueue.Count; i++)
             {
-                ConsoleFeed.Add(_consoleQueue.Dequeue());
+                AddToFeed(_consoleQueue.Dequeue());
             }
-            console.ItemsSource = Instance.ConsoleFeed;
+            console.ItemsSource = Instance.ConsoleFeed.ToArray();
             scrollView.ScrollToBottom();
         }
 
@@ -67,9 +71,9 @@ namespace VTOLVR_ModLoader.Views
                 string[] lines = message.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    Instance.ConsoleFeed.Add(new Feed(lines[i]));
+                    Instance.AddToFeed(new Feed(lines[i]));
                 }
-                Instance.console.ItemsSource = Instance.ConsoleFeed;
+                Instance.console.ItemsSource = Instance.ConsoleFeed.ToArray();
                 Instance.scrollView.ScrollToBottom();
             }
 
@@ -109,8 +113,22 @@ namespace VTOLVR_ModLoader.Views
             Instance.sendButton.IsEnabled = true;
             MainWindow.SetPlayButton(true);
         }
+        public void AddToFeed(Feed feed)
+        {
+            if (ConsoleFeed == null)
+                return;
 
-        public struct Feed
+            if (ConsoleFeed.Count > 0 && ConsoleFeed[ConsoleFeed.Count - 1].Colour == feed.Colour)
+            {
+                ConsoleFeed[ConsoleFeed.Count - 1].Message += $"\n{feed.Message}";
+            }
+            else
+            {
+                ConsoleFeed.Add(feed);
+            }
+        }
+
+        public class Feed
         {
             public string Message { get; set; }
             public Brush Colour { get; set; }
@@ -119,11 +137,11 @@ namespace VTOLVR_ModLoader.Views
             {
                 Message = message;
                 if (Message.StartsWith("[Warning]"))
-                    Colour = new SolidColorBrush(Color.FromRgb(255, 255, 0));
+                    Colour = WarningBrush;
                 else if (Message.StartsWith("[Error]"))
-                    Colour = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                    Colour = ErrorBrush;
                 else
-                    Colour = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                    Colour = LogBrush;
 
             }
         }

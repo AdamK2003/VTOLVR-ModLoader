@@ -69,6 +69,7 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
             MainWindow.SetProgress(100, "Ready");
+            LagTest();
         }
 
         public static void SetVariables()
@@ -468,6 +469,14 @@ namespace VTOLVR_ModLoader
         {
             List<string> list = new List<string>(5);
             list[100] = "Crash me now";
+        }
+
+        private static void LagTest()
+        {
+            for (int i = 0; i < 10000; i++)
+            {
+                Console.Log($"{i}");
+            }
         }
     }
 }

@@ -463,11 +463,5 @@ namespace VTOLVR_ModLoader
             MainWindow._instance.news.LoadNews();
             Queue(Updater.CheckForUpdates);
         }
-
-        public static void TestCrash()
-        {
-            List<string> list = new List<string>(5);
-            list[100] = "Crash me now";
-        }
     }
 }

@@ -44,7 +44,7 @@ namespace VTOLVR_ModLoader
 
         private static readonly string[] needFiles = { "SharpMonoInjector.dll", "injector.exe", "Updater.exe", "Gameloop.Vdf.dll", "Valve.Newtonsoft.Json.dll", "SimpleTCP.dll" };
         private static readonly string[] neededDLLFiles = { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll"};
-        public static void RunStartUp()
+        public static bool RunStartUp()
         {
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             bool debug = false;
@@ -55,8 +55,11 @@ namespace VTOLVR_ModLoader
             Views.Console.Log(Program.ProgramName);
             HttpHelper.SetHeader();
             Program.SetVariables();
-            CheckBaseFolder();
-            CheckFolder();
+            if (!CheckBaseFolder())
+                return false;
+            if (!CheckFolder())
+                return false;
+            return true;
         }
         /// <summary>
         /// Returns True if another instance of the mod loader is found.
@@ -86,29 +89,23 @@ namespace VTOLVR_ModLoader
             return false;
         }
 
-        private static void CheckBaseFolder()
+        private static bool CheckBaseFolder()
         {
             //Checking the folder which this is in
             string[] pathSplit = Program.root.Split('\\');
             if (pathSplit[pathSplit.Length - 1] != "VTOLVR_ModLoader")
             {
-                if (pathSplit[pathSplit.Length - 1] == "System32")
+                try
                 {
-                    //The user has ran it from a URI so it's path is System32
-                    try
-                    {
-                        FindSteamFolders();
-                    }
-                    catch (Exception e)
-                    {
-                        Notification.Show(e.ToString());
-                        throw;
-                    }
+                    FindSteamFolders();
                 }
-                else
+                catch (Exception e)
                 {
-                    Notification.Show("It seems I am not in the folder \"VTOLVR_ModLoader\", place make sure I am in there other wise the in game menu won't load", "Wrong Folder");
-                    Program.Quit("Not in correct folder");
+                    Views.Console.Log("Not in correct folder\n" + e);
+                    Notification.Show("It seems I am not in the folder \"VTOLVR_ModLoader\", place make sure I am in there other wise the in game menu won't load",
+                        "Wrong Folder",
+                        closedCallback: delegate { Program.Quit("Not in correct folder"); });
+                    return false;
                 }
                 
             }
@@ -117,14 +114,17 @@ namespace VTOLVR_ModLoader
             string vtolexe = Program.root.Replace("VTOLVR_ModLoader", "VTOLVR.exe");
             if (!File.Exists(vtolexe))
             {
-                Notification.Show("It seems the VTOLVR_ModLoader folder isn't with the other games files\nPlease move me to VTOL VR's game Program.root directory.", "Wrong Folder Location");
-                Program.Quit("VTOLVR_ModLoader isn't in the correct folder");
+                Notification.Show("It seems the VTOLVR_ModLoader folder isn't with the other games files\nPlease move me to VTOL VR's game Program.root directory.",
+                    "Wrong Folder Location",
+                    closedCallback: delegate { Program.Quit("VTOLVR_ModLoader isn't in the correct folder"); });
+                return false;
             }
+            return true;
         }
         /// <summary>
         /// Checks for files which the Mod Loader needs to work such as .dll files
         /// </summary>
-        private static void CheckFolder()
+        private static bool CheckFolder()
         {
             //Checking if the files we need to run are there
             foreach (string file in needFiles)
@@ -132,7 +132,7 @@ namespace VTOLVR_ModLoader
                 if (!File.Exists(Program.root + @"\" + file))
                 {
                     WrongFolder(file);
-                    return;
+                    return false;
                 }
             }
 
@@ -148,8 +148,10 @@ namespace VTOLVR_ModLoader
                 if (!File.Exists(Directory.GetParent(Program.root).FullName + @"\VTOLVR_Data" + file))
                 {
                     MissingManagedFile(file);
+                    return false;
                 }
             }
+            return true;
         }
         private static void WrongFolder(string file)
         {

@@ -227,5 +227,23 @@ public class VTOLAPI : MonoBehaviour
     {
         return ModLoader.ModLoader.instance.ModsLoaded;
     }
+
+    /// <summary>
+    /// Please don't use this, this is for the mod loader only.
+    /// </summary>
+    public void WaitForScenarioReload()
+    {
+        StartCoroutine(Wait());
+    }
+
+    private IEnumerator Wait()
+    {
+        while (!VTMapManager.fetch.scenarioReady)
+        {
+            yield return null;
+        }
+        if (MissionReloaded != null)
+            MissionReloaded.Invoke();
+    }
 }
 

@@ -30,7 +30,10 @@
         </ScrollViewer>
 
         <StackPanel Grid.Row="0" Grid.Column="1">
-            <Button Content="Clear"  Margin="5" Click="ClearConsole"/>
+            <Button Content="Clear"  Margin="5" Click="ClearConsole"
+                    ToolTip="Clears the current console"/>
+            <Button Content="Delete Log"  Margin="5" Click="DeleteLog"
+                    ToolTip="Clears and Deletes the log file located in the VTOLVR_ModLoader folder"/>
         </StackPanel>
 
 

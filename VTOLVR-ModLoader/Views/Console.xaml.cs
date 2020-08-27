@@ -16,7 +16,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using VTOLVR_ModLoader.Classes;
 
 namespace VTOLVR_ModLoader.Views
@@ -83,7 +82,7 @@ namespace VTOLVR_ModLoader.Views
                 {
                     File.AppendAllText(System.IO.Path.Combine(Directory.GetCurrentDirectory(), Program.LogName), $"[{DateTime.Now}]{message}\n");
                 }
-                catch 
+                catch (Exception e)
                 {
 
                 }
@@ -148,6 +147,24 @@ namespace VTOLVR_ModLoader.Views
 
         private void ClearConsole(object sender, RoutedEventArgs e)
         {
+            ConsoleFeed = new List<Feed>();
+            console.ItemsSource = ConsoleFeed.ToArray();
+            scrollView.ScrollToBottom();
+        }
+
+        private void DeleteLog(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (File.Exists(Path.Combine(Program.root, Program.LogName)))
+                    File.Delete(Path.Combine(Program.root, Program.LogName));
+            }
+            catch (Exception error)
+            {
+                Log($"Error when trying to delete ({Path.Combine(Program.root, Program.LogName)})\n{error}");
+                Windows.Notification.Show("Error when deleting log\n" + error, "Error");
+                return;
+            }
             ConsoleFeed = new List<Feed>();
             console.ItemsSource = ConsoleFeed.ToArray();
             scrollView.ScrollToBottom();

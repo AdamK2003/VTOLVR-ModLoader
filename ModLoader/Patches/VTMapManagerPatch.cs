@@ -12,8 +12,7 @@ namespace ModLoader.Patches
     {
         static void Postfix(VTMapManager __instance)
         {
-            if (VTOLAPI.MissionReloaded != null)
-                VTOLAPI.MissionReloaded.Invoke();
+            VTOLAPI.instance.WaitForScenarioReload();
         }
     }
 }

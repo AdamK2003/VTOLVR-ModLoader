@@ -43,7 +43,8 @@ namespace VTOLVR_ModLoader
         public MainWindow()
         {
             _instance = this;
-            Startup.RunStartUp();
+            if (!Startup.RunStartUp())
+                return;
             CommunicationsManager.StartTCP(!Startup.SearchForProcess());
             Program.SetupAfterUI();
             InitializeComponent();

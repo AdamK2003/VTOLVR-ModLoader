@@ -124,6 +124,7 @@ namespace VTOLVR_ModLoader.Classes
                         {
                             MainWindow.SetProgress(0, $"Downloading {split[4]}");
                             SetDownloadFile($"mods/{split[4]}");
+                            Console.Log($"Downloading {currentDownloadFile}");
                             HttpHelper.DownloadFile(
                                 $"{Program.url}/download/{split[2]}/{split[3]}/",
                                 Path.Combine(Program.root, "mods", split[4]),
@@ -136,6 +137,7 @@ namespace VTOLVR_ModLoader.Classes
                         {
                             MainWindow.SetProgress(0, $"Downloading {split[4]}");
                             SetDownloadFile($"skins/{split[4]}");
+                            Console.Log($"Downloading {currentDownloadFile}");
                             HttpHelper.DownloadFile(
                                 $"{Program.url}/download/{split[2]}/{split[3]}/",
                                 Path.Combine(Program.root, "skins", split[4]),
@@ -154,12 +156,14 @@ namespace VTOLVR_ModLoader.Classes
         private static void DownloadProgress(object sender, DownloadProgressChangedEventArgs e)
         {
             MainWindow._instance.progressBar.Value = e.ProgressPercentage;
+            Console.Log($"Download Process = {e.ProgressPercentage}%");
         }
         private static void DownloadDone(object sender, AsyncCompletedEventArgs e)
         {
             if (!e.Cancelled && e.Error == null)
             {
                 MainWindow.SetProgress(100, $"Ready");
+                Console.Log($"Downloaded {currentDownloadFile}");
             }
             else
             {

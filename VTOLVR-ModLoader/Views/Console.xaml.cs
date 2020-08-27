@@ -83,7 +83,7 @@ namespace VTOLVR_ModLoader.Views
                 {
                     File.AppendAllText(System.IO.Path.Combine(Directory.GetCurrentDirectory(), Program.LogName), $"[{DateTime.Now}]{message}\n");
                 }
-                catch 
+                catch (Exception e)
                 {
 
                 }

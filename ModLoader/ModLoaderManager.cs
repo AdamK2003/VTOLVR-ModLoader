@@ -197,6 +197,26 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                     _discordState = "Akutan: " + PilotSaveManager.currentCampaign.campaignName + " " + PilotSaveManager.currentScenario.scenarioName;
                     break;
                 case "CustomMapBase":
+                    if (PilotSaveManager.currentVehicle == null || PilotSaveManager.currentCampaign == null)
+                    {
+                        _discordDetail = "In the editor";
+                        /* I tried to make is better but I failed so here's my attempts...
+                        if (VTMapManager.nextLaunchMode == VTMapManager.MapLaunchModes.Editor)
+                        {
+                            _discordDetail = "In Map Editor";
+                            _discordState = "Editing " + VTMapManager.fetch.map.mapName;
+                            break;
+                        }
+                        _discordDetail = "Loading into Mission Editor";
+                        VTMapManager.fetch.scenarioEditorObject.GetComponent<VTScenarioEditor>().OnScenarioLoaded += () =>
+                        {
+                            _discordDetail = "In Mission Editor";
+                            _discordState = "Editing " + VTScenarioEditor.currentCampaign;
+                            UpdateDiscord();
+                        };
+                        //_discordState = "Editing " + VTScenarioEditor.currentCampaign;*/
+                        break;
+                    }
                     _discordDetail = "Flying the " + PilotSaveManager.currentVehicle.vehicleName;
                     _discordState = "CustomMap: " + PilotSaveManager.currentCampaign.campaignName + " " + PilotSaveManager.currentScenario.scenarioName;
                     break;

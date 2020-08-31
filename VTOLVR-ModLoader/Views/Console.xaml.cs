@@ -27,10 +27,10 @@ namespace VTOLVR_ModLoader.Views
     {
         public static Console Instance { private set; get; }
         private static Queue<Feed> _consoleQueue = new Queue<Feed>();
-        private static SolidColorBrush WarningBrush = new SolidColorBrush(Color.FromRgb(255, 255, 0));
-        private static SolidColorBrush ErrorBrush = new SolidColorBrush(Color.FromRgb(255, 0, 0));
-        private static SolidColorBrush LogBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-
+        private static SolidColorBrush _warningBrush = new SolidColorBrush(Color.FromRgb(255, 255, 0));
+        private static SolidColorBrush _errorBrush = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+        private static SolidColorBrush _logBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        private static DateTime _lastTime;
         public List<Feed> ConsoleFeed = new List<Feed>();
         private List<string> _storedMessages = new List<string>();
         public Console()
@@ -61,6 +61,8 @@ namespace VTOLVR_ModLoader.Views
         public static void Log(string message, bool isApplication = true)
         {
             System.Console.WriteLine(message);
+            _lastTime = DateTime.Now;
+            message = $"[{_lastTime.Hour}:{_lastTime.Minute}:{_lastTime.Second}]{message}";
             if (Instance == null)
             {
                 _consoleQueue.Enqueue(new Feed(message));
@@ -80,7 +82,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 try
                 {
-                    File.AppendAllText(System.IO.Path.Combine(Directory.GetCurrentDirectory(), Program.LogName), $"[{DateTime.Now}]{message}\n");
+                    File.AppendAllText(System.IO.Path.Combine(Directory.GetCurrentDirectory(), Program.LogName), $"{message}\n");
                 }
                 catch (Exception e)
                 {
@@ -135,12 +137,12 @@ namespace VTOLVR_ModLoader.Views
             public Feed(string message)
             {
                 Message = message;
-                if (Message.StartsWith("[Warning]"))
-                    Colour = WarningBrush;
-                else if (Message.StartsWith("[Error]"))
-                    Colour = ErrorBrush;
+                if (Message.Contains("[Warning]"))
+                    Colour = _warningBrush;
+                else if (Message.Contains("[Error]"))
+                    Colour = _errorBrush;
                 else
-                    Colour = LogBrush;
+                    Colour = _logBrush;
 
             }
         }

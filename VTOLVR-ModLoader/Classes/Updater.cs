@@ -43,19 +43,22 @@ namespace VTOLVR_ModLoader.Classes
                 if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(updateFiles[i].Hash))
                 {
                     Console.Log($"Need to update {updateFiles[i].Location}");
-                    AddFile(updateFiles[i]);
                     if (updateFiles[i].Name.Equals("VTOLVR-ModLoader"))
                     {
                         _updateLauncher = true;
                         continue;
                     }
+                    AddFile(updateFiles[i]);
                 }
             }
             if (filesToUpdate.Count > 0)
                 UpdateFiles();
             else
             {
-                Console.Log("All fines are upto date");
+                if (_updateLauncher)
+                    Notification.Show("The launcher needs to be updated.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
+                else
+                    Console.Log("All fines are upto date");
                 MainWindow.SetPlayButton(false);
             }
         }
@@ -68,6 +71,7 @@ namespace VTOLVR_ModLoader.Classes
         private static void UpdateFiles()
         {
             currentFile = filesToUpdate.Dequeue();
+            Console.Log($"Updating {currentFile.Name}");
             HttpHelper.DownloadFile(
                 currentFile.Url,
                 $"{Program.vtolFolder}/{currentFile.Location}.temp",

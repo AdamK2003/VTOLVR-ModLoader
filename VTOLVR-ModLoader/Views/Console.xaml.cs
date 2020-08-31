@@ -62,7 +62,8 @@ namespace VTOLVR_ModLoader.Views
         {
             System.Console.WriteLine(message);
             _lastTime = DateTime.Now;
-            message = $"[{_lastTime.Hour}:{_lastTime.Minute}:{_lastTime.Second}]{message}";
+            if (isApplication)
+                message = $"[{_lastTime.Hour}:{_lastTime.Minute}:{_lastTime.Second}]{message}";
             if (Instance == null)
             {
                 _consoleQueue.Enqueue(new Feed(message));

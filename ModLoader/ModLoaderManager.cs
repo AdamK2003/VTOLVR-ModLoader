@@ -197,6 +197,12 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                     _discordState = "Akutan: " + PilotSaveManager.currentCampaign.campaignName + " " + PilotSaveManager.currentScenario.scenarioName;
                     break;
                 case "CustomMapBase":
+                    if (PilotSaveManager.currentVehicle.vehicleName == null || PilotSaveManager.currentCampaign.campaignName == null)
+                    {
+                        _discordDetail = "Editing a map or making a mission!";
+                        _discordState = "";
+                        break;
+                    }
                     _discordDetail = "Flying the " + PilotSaveManager.currentVehicle.vehicleName;
                     _discordState = "CustomMap: " + PilotSaveManager.currentCampaign.campaignName + " " + PilotSaveManager.currentScenario.scenarioName;
                     break;

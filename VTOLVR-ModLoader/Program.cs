@@ -142,21 +142,9 @@ namespace VTOLVR_ModLoader
                 MainWindow.SetProgress(10 * i, "Searching for process...   (Attempt " + i + ")");
                 await Task.Delay(5000);
 
-                Process[] processes = Process.GetProcesses();
-                Console.Log($"Searching again, there are {processes.Length} we are going to check");
-                for (int p = 0; p < processes.Length; p++)
-                {
-                    if (processes[p].ProcessName.ToLower().Equals("vtolvr"))
-                    {
-                        Console.Log($"{processes[p].ProcessName.ToLower()} did match vtolvr");
-                        i = 0;
-                        break;
-                    }
-                    else
-                    {
-                        Console.Log($"{processes[p].ProcessName.ToLower()} didn't match vtolvr");
-                    }
-                }
+
+                if (Process.GetProcessesByName("vtolvr").Length == 1)
+                    break;
 
                 if (i == maxTries)
                 {

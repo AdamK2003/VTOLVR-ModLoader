@@ -180,6 +180,11 @@ public class VTOLAPI : MonoBehaviour
     /// <param name="newSettings"></param>
     public static void CreateSettingsMenu(Settings newSettings)
     {
+        if (ModLoader.ModLoader.instance == null)
+        {
+            Debug.LogError("The Mod Loaders Instance is null. We haven't reached the Main Room Scene yet");
+            return;
+        }
         ModLoader.ModLoader.instance.CreateSettingsMenu(newSettings);
     }
 

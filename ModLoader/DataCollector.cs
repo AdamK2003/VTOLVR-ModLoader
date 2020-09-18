@@ -23,6 +23,7 @@ namespace ModLoader
         public static void CollectData()
         {
             Debug.Log("Collecting Data");
+            gameData = new JObject();
             CampaignsScenarios();
             FindMaterials();
             SaveGameData();
@@ -51,6 +52,7 @@ namespace ModLoader
                 }
                 catch 
                 {
+                    Debug.Log($"Failed on {mats[i].name}");
                 }
             }
             gameData.Add(new JProperty("Skin Texture Names", JArray.FromObject(names.ToArray())));

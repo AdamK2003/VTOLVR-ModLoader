@@ -142,10 +142,9 @@ namespace VTOLVR_ModLoader
                 MainWindow.SetProgress(10 * i, "Searching for process...   (Attempt " + i + ")");
                 await Task.Delay(5000);
 
+
                 if (Process.GetProcessesByName("vtolvr").Length == 1)
-                {
                     break;
-                }
 
                 if (i == maxTries)
                 {

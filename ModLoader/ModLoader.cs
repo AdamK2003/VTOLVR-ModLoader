@@ -474,15 +474,21 @@ namespace ModLoader
             if (holder == null)
             {
                 //Couldn't find the holder for some reason in the pool.
+                LogWarning("Couldn't find holder for settings, recreating it");
                 holder = new GameObject(currentMods[modIndex].name, typeof(RectTransform)).transform;
                 holder.SetParent(s_Holder.transform, false);
                 currentMods[modIndex].settingsHolerGO = holder.gameObject;
             }
 
-            for (int i = 0; i < settingsScrollBoxView.content.childCount; i++)
+            Transform[] itemsToMove = new Transform[settingsScrollBoxView.content.childCount];
+            for (int i = 0; i < settingsScrollBoxView.content.childCount; i++) 
             {
-                Debug.LogWarning($"Moving {settingsScrollBoxView.content.GetChild(i)} Back to holder");
-                settingsScrollBoxView.content.GetChild(i).SetParent(holder, false);
+                itemsToMove[i] = settingsScrollBoxView.content.GetChild(i);
+            }
+
+            for (int i = 0; i < itemsToMove.Length; i++)
+            {
+                itemsToMove[i].SetParent(holder, false);
             }
         }
         /// <summary>

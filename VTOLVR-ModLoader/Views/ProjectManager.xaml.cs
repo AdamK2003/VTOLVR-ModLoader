@@ -225,7 +225,15 @@ namespace VTOLVR_ModLoader.Views
             FileInfo[] slns = new DirectoryInfo(projectPath).GetFiles("*.sln");
             if (slns.Length == 1)
             {
-                Process.Start(slns[0].FullName);
+                try
+                {
+                    Process.Start(slns[0].FullName);
+                }
+                catch (Exception error)
+                {
+                    Notification.Show($"Error when opening .sln file\n{error.Message}", "Error");
+                    Process.Start(projectPath);
+                }
             }
             else
             {

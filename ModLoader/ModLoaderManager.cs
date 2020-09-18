@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -193,15 +193,33 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                         StartCoroutine(LoadLevel());
                     break;
                 case "Akutan":
+                if (PilotSaveManager.currentVehicle == null || PilotSaveManager.currentCampaign == null)
+                    {
+                        _discordDetail = "In the editor";
+                        _discordState = "Akutan";
+                        break;
+                    }
                     _discordDetail = "Flying the " + PilotSaveManager.currentVehicle.vehicleName;
                     _discordState = "Akutan: " + PilotSaveManager.currentCampaign.campaignName + " " + PilotSaveManager.currentScenario.scenarioName;
                     break;
                 case "CustomMapBase":
+                    if (PilotSaveManager.currentVehicle == null || PilotSaveManager.currentCampaign == null)
+                    {
+                        _discordDetail = "In the editor";
+                        _discordState = "Custom Map";
+                        break;
+                    }
                     _discordDetail = "Flying the " + PilotSaveManager.currentVehicle.vehicleName;
                     _discordState = "CustomMap: " + PilotSaveManager.currentCampaign.campaignName + " " + PilotSaveManager.currentScenario.scenarioName;
                     break;
                 case "LoadingScene":
                     _discordDetail = "Loading into mission";
+                    break;
+                case "VTEditLoadingScene":
+                    _discordDetail = "In the editor";
+                    break;
+                case "VTEditMenu":
+                    _discordDetail = "In the editor";
                     break;
                 case "ReadyRoom":
                     if (LoadedModsCount == 0)
@@ -342,6 +360,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             if (json["previousMods"] != null)
             {
                 JArray mods = JArray.FromObject(json["previousMods"]);
+                Debug.Log($"Devtools: Found {mods.Count} mods to load");
                 for (int i = 0; i < mods.Count; i++)
                 {
                     LoadMod(mods[i].ToString());

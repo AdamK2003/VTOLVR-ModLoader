@@ -74,6 +74,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>Copy $(TargetPath) $(SolutionDir)</PostBuildEvent>
+    <PostBuildEvent>Copy $(TargetPath) $(SolutionDir)$(TargetFileName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

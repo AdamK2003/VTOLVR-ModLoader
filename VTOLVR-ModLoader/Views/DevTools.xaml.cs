@@ -316,11 +316,21 @@ namespace VTOLVR_ModLoader.Views
                 for (int i = 0; i < mods.Count; i++)
                 {
                     if (!ModsToLoad.Contains(mods[i].ToString()))
-                        ModsToLoad.Add(mods[i].ToString());
+                    {
+                        if (File.Exists(mods[i].ToString()))
+                            ModsToLoad.Add(mods[i].ToString());
+                        else
+                            Console.Log($"{mods[i]} isn't there are more");
+                    }
+                        
                 }
             }
 
             IsDevToolsEnabled();
+
+            //Resaving it because of if a enabled mod was deleted,
+            //we need to update that json file
+            SaveSettings(); 
         }
 
         private void LoadScenarios()

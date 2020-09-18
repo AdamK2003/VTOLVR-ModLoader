@@ -152,23 +152,23 @@ namespace VTOLVR_ModLoader.Views
             List<ModItem> mods = new List<ModItem>();
             for (int i = 0; i < files.Length; i++)
             {
-                if (ModsToLoad.Contains(files[i].Name))
-                    mods.Add(new ModItem(files[i].Name, true));
+                if (ModsToLoad.Contains(files[i].FullName))
+                    mods.Add(new ModItem(files[i].FullName, true));
                 else
-                    mods.Add(new ModItem(files[i].Name));
+                    mods.Add(new ModItem(files[i].FullName));
             }
 
             DirectoryInfo[] folders = folder.GetDirectories();
             for (int i = 0; i < folders.Length; i++)
             {
-                if (File.Exists(folders[i].FullName + "/" + folders[i].Name + ".dll"))
+                if (File.Exists(folders[i].FullName + "\\" + folders[i].Name + ".dll"))
                 {
-                    if (ModsToLoad.Contains(folders[i].FullName + "/" + folders[i].Name + ".dll"))
+                    if (ModsToLoad.Contains(folders[i].FullName + "\\" + folders[i].Name + ".dll"))
                     {
-                        mods.Add(new ModItem(folders[i].FullName + "/" + folders[i].Name + ".dll", true));
+                        mods.Add(new ModItem(folders[i].FullName + "\\" + folders[i].Name + ".dll", true));
                     }
                     else
-                        mods.Add(new ModItem(folders[i].FullName + "/" + folders[i].Name + ".dll"));
+                        mods.Add(new ModItem(folders[i].FullName + "\\" + folders[i].Name + ".dll"));
                 }
             }
 

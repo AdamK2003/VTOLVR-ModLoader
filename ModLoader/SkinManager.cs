@@ -52,8 +52,9 @@ namespace ModLoader
             Directory.CreateDirectory(ModLoaderManager.RootPath + @"\skins");           
         }
 
-        private void GetDefaultTextures()
+        private IEnumerator GetDefaultTextures()
         {
+            yield return new WaitForSeconds(0.5f);
             Log("Getting Default Textures");
             Material[] materials = Resources.FindObjectsOfTypeAll(typeof(Material)) as Material[];
             defaultTextures = new Dictionary<string, Texture>(materials.Length);
@@ -67,6 +68,12 @@ namespace ModLoader
 
             Log($"Got {materials.Length} default textures stored");
             FindMaterials(materials);
+            DataCollector.CollectData();
+
+            //The reason for apply a skin is that, incase we are in the game scene
+            //and a material wasn't loaded into the resources in the vehicle config room
+            //This will retry to apply it again after finding the list
+            Apply();
         }
 
         private void SceneLoaded(VTOLScenes scene)
@@ -75,11 +82,22 @@ namespace ModLoader
             {
                 //Vehicle Configuration Room
                 Log("Started Skins Vehicle Config room");
-                if (defaultTextures == null)
-                    GetDefaultTextures();
-                else
+                if (defaultTextures != null)
                     RevertTextures();
+                else
+                    StartCoroutine(GetDefaultTextures());
                 SpawnMenu();
+            }
+
+            switch (scene)
+            {
+                case VTOLScenes.MeshTerrain:
+                case VTOLScenes.OpenWater:
+                case VTOLScenes.Akutan:
+                case VTOLScenes.CustomMapBase:
+                case VTOLScenes.CustomMapBase_OverCloud:
+                    StartCoroutine(GetDefaultTextures());
+                    break;
             }
         }
         private void SpawnMenu()

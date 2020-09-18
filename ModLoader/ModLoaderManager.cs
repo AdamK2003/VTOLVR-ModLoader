@@ -360,6 +360,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             if (json["previousMods"] != null)
             {
                 JArray mods = JArray.FromObject(json["previousMods"]);
+                Debug.Log($"Devtools: Found {mods.Count} mods to load");
                 for (int i = 0; i < mods.Count; i++)
                 {
                     LoadMod(mods[i].ToString());

@@ -124,6 +124,7 @@ namespace VTOLVR_ModLoader.Views
             }
             Console.Log("Zipping up project");
             string zipPath = ZipCurrentProject();
+            Console.Log("Filling out form to submit");
 
             HttpHelper form = new HttpHelper(Program.url + Program.apiURL + (_isMod? Program.modsURL : Program.skinsURL) + @"\");
             form.SetToken(Settings.Token);

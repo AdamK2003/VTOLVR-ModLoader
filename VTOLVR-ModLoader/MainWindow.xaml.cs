@@ -38,6 +38,7 @@ namespace VTOLVR_ModLoader
         public DevTools devTools { get; private set; }
         public Console console { get; private set; }
         public ProjectManager pManager { get; private set; }
+        public Manager ItemManager { get; private set; }
 
 
         public MainWindow()
@@ -56,6 +57,7 @@ namespace VTOLVR_ModLoader
             settings = new Views.Settings();
             devTools = new DevTools();
             pManager = new ProjectManager();
+            ItemManager = new Manager();
             DataContext = news;
         }
         public static void SetProgress(int barValue, string text)
@@ -172,18 +174,12 @@ namespace VTOLVR_ModLoader
         {
             _instance.DevToolsText.Visibility = visable ? Visibility.Visible : Visibility.Hidden;
         }
-    }
-
-    public class Mod
-    {
-        public string name;
-        public string description;
-        public Mod() { }
-
-        public Mod(string name, string description)
+        private void Manager(object sender, RoutedEventArgs e)
         {
-            this.name = name;
-            this.description = description;
+            if (ItemManager == null)
+                ItemManager = new Manager();
+            ItemManager.UpdateUI();
+            _instance.DataContext = ItemManager;
         }
     }
 }

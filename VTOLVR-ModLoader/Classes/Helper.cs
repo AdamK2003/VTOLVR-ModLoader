@@ -6,7 +6,10 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Valve.Newtonsoft.Json.Linq;
+using VTOLVR_ModLoader.Views;
 using Console = VTOLVR_ModLoader.Views.Console;
+using Settings = VTOLVR_ModLoader.Views.Settings;
 
 namespace VTOLVR_ModLoader.Classes
 {
@@ -138,6 +141,87 @@ namespace VTOLVR_ModLoader.Classes
                 return false;
             }
             return true;
+        }
+        /// <summary>
+        /// Finds the mods which teh user has downloaded from the website
+        /// </summary>
+        /// <returns></returns>
+        public static List<BaseItem> FindDownloadMods()
+        {
+            List<BaseItem> foundMods = new List<BaseItem>();
+            DirectoryInfo downloadedMods = new DirectoryInfo(Program.root + Program.modsFolder);
+            DirectoryInfo[] mods = downloadedMods.GetDirectories();
+
+            JObject json;
+            for (int i = 0; i < mods.Length; i++)
+            {
+                if (!File.Exists(Path.Combine(mods[i].FullName,"info.json")))
+                {
+                    Console.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
+                    continue;
+                }
+
+                json = JObject.Parse(File.ReadAllText(Path.Combine(mods[i].FullName, "info.json")));
+                if (json[ProjectManager.jDll] == null)
+                {
+                    Console.Log($"Mod: Couldn't find {ProjectManager.jDll} in {Path.Combine(mods[i].FullName, "info.json")}");
+                    continue;
+                }
+                if (json[ProjectManager.jName] == null)
+                {
+                    Console.Log($"Mod: Couldn't find {ProjectManager.jName} in {Path.Combine(mods[i].FullName, "info.json")}");
+                    continue;
+                }
+                foundMods.Add(new BaseItem(json[ProjectManager.jName].ToString(), mods[i], json));
+            }
+
+            return foundMods;
+        }
+        /// <summary>
+        /// Finds the skins which the user has downloaded from the website
+        /// </summary>
+        /// <returns></returns>
+        public static List<BaseItem> FindDownloadedSkins()
+        {
+            List<BaseItem> foundSkins = new List<BaseItem>();
+            DirectoryInfo downloadedSkins = new DirectoryInfo(Program.root + Program.skinsFolder);
+            DirectoryInfo[] skins = downloadedSkins.GetDirectories();
+
+            JObject json;
+            for (int i = 0; i < skins.Length; i++)
+            {
+                if (!File.Exists(Path.Combine(skins[i].FullName, "info.json")))
+                {
+                    Console.Log($"Skin: {skins[i].Name} doesn't have a info.json file");
+                    continue;
+                }
+
+                json = JObject.Parse(File.ReadAllText(Path.Combine(skins[i].FullName, "info.json")));
+                if (json[ProjectManager.jName] == null)
+                {
+                    Console.Log($"Skin: Couldn't find {ProjectManager.jName} in {Path.Combine(skins[i].FullName, "info.json")}");
+                    continue;
+                }
+                foundSkins.Add(new BaseItem(json[ProjectManager.jName].ToString(), skins[i], json));
+            }
+
+            return foundSkins;
+        }
+        /// <summary>
+        /// Finds the mods which the user has created in the project manager
+        /// </summary>
+        /// <returns></returns>
+        public static List<BaseItem> FindUsersMods()
+        {
+            return null;
+        }
+        /// <summary>
+        /// Finds the skins which the user has created in the project manager
+        /// </summary>
+        /// <returns></returns>
+        public static List<BaseItem> FindUsersSkins()
+        {
+            return null;
         }
     }
 }

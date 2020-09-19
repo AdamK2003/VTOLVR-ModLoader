@@ -15,7 +15,7 @@ namespace Build
         private static List<Process> processes = new List<Process>();
         private static Dictionary<string, string> paths = new Dictionary<string, string>()
         {
-            { "msbuild", @"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"},
+            { "msbuild", @"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"},
             { "unity", @"C:\Program Files\Unity\Hub\Editor\2019.1.8f1\Editor\Unity.exe"},
             { "nuget", @"B:\Gitlab Runner\nuget.exe" }
         };

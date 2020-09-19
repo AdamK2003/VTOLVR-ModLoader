@@ -178,7 +178,7 @@ namespace Build
         {
             Log("Moving Files to desktop");
             string root = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                @"C:\Users\Beny2\Desktop\",
                 "VTOL VR Mod Loader Release");
             Log("Creating Directory");
             Directory.CreateDirectory(root);

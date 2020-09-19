@@ -17,7 +17,7 @@ namespace Build
         {
             { "msbuild", @"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"},
             { "unity", @"C:\Program Files\Unity\Hub\Editor\2019.1.8f1\Editor\Unity.exe"},
-            { "nuget", @"C:\Program Files\nuget.exe" }
+            { "nuget", @"B:\Gitlab Runner\nuget.exe" }
         };
         static void Main(string[] args)
         {

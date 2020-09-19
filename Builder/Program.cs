@@ -194,6 +194,7 @@ namespace Build
                 TryDelete(Path.Combine(root, "Installer.exe"));
             }
 
+            Log($"Moving to {root}");
             Log("Moving Autoupdate.zip");
             TryMove(Path.Combine(dir, "autoupdate.zip"), Path.Combine(root, "autoupdate.zip"));
             Log("Moving Installer.exe");

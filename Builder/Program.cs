@@ -75,8 +75,8 @@ namespace Build
         private static void BuildWPFApp()
         {
             Log("Building VTOLVR-ModLoader.exe\n");
-            Run(paths["nuget"],
-                "restore -SolutionDirectory " + dir,
+            Run($"\"{paths["nuget"]}\"",
+                $"restore -SolutionDirectory \"{dir}\"",
                 @"\VTOLVR-ModLoader");
             Run(paths["msbuild"],
                 "-p:Configuration=Release -nologo Launcher.csproj",

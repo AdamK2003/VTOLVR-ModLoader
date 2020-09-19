@@ -17,7 +17,7 @@ namespace Build
         {
             { "msbuild", @"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"},
             { "unity", @"C:\Program Files\Unity\Hub\Editor\2019.1.8f1\Editor\Unity.exe"},
-            { "nuget", @"C:\Program Files\nuget.exe" }
+            { "nuget", @"B:\Gitlab Runner\nuget.exe" }
         };
         static void Main(string[] args)
         {
@@ -53,6 +53,8 @@ namespace Build
                 BuildInstaller();
             else if (args.Contains("autoupdatezip"))
                 CreateUpdaterZip();
+            else if (args.Contains("move"))
+                MoveToDesktop();
         }
         private static void MoveDeps()
         {
@@ -73,8 +75,8 @@ namespace Build
         private static void BuildWPFApp()
         {
             Log("Building VTOLVR-ModLoader.exe\n");
-            Run(paths["nuget"],
-                "restore -SolutionDirectory " + dir,
+            Run($"\"{paths["nuget"]}\"",
+                $"restore -SolutionDirectory \"{dir}\"",
                 @"\VTOLVR-ModLoader");
             Run(paths["msbuild"],
                 "-p:Configuration=Release -nologo Launcher.csproj",
@@ -171,6 +173,34 @@ namespace Build
             TryMove(dir + @"\Updater\bin\Release\Updater.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\Updater.exe");
 
             ZipFile.CreateFromDirectory(dir + @"\autoupdate\", dir + @"\autoupdate.zip");
+        }
+        private static void MoveToDesktop()
+        {
+            Log("Moving Files to desktop");
+            string root = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                "VTOL VR Mod Loader Release");
+            Log("Creating Directory");
+            Directory.CreateDirectory(root);
+            
+            if (File.Exists(Path.Combine(root,"autoupdate.zip")))
+            {
+                Log("Deleting autoupdate.zip");
+                TryDelete(Path.Combine(root, "autoupdate.zip"));
+            }
+            if (File.Exists(Path.Combine(root, "Installer.exe")))
+            {
+                Log("Deleting Installer.zip");
+                TryDelete(Path.Combine(root, "Installer.exe"));
+            }
+
+            Log("Moving Autoupdate.zip");
+            TryMove(Path.Combine(dir, "autoupdate.zip"), Path.Combine(root, "autoupdate.zip"));
+            Log("Moving Installer.exe");
+            TryMove(
+                Path.Combine(dir, "Installer", "bin", "Release", "Installer.exe"),
+                Path.Combine(root, "Installer.exe"));
+            Log("Finished");
         }
 
         private static bool TryMove(string sourceFileName, string destFileName)

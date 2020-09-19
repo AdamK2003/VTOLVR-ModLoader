@@ -6,6 +6,7 @@ stages:
   - zip
   - build_installer
   - autoupdate_zip
+  - move_files
 
 build_builder:
   stage: build_builder
@@ -87,5 +88,12 @@ autoupdate_zip:
    paths:
    - autoupdate.zip
    expire_in: 1 day
+  only:
+   - release
+
+move_files:
+  stage: move_files
+  script:
+   - .\Builder.exe move
   only:
    - release

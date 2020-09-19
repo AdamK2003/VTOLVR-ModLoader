@@ -6,7 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Valve.Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using VTOLVR_ModLoader.Views;
 using Console = VTOLVR_ModLoader.Views.Console;
 using Settings = VTOLVR_ModLoader.Views.Settings;

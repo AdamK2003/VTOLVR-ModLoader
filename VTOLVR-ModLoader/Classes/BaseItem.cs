@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Valve.Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace VTOLVR_ModLoader.Classes
 {

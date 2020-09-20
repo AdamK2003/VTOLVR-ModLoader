@@ -21,10 +21,25 @@ namespace VTOLVR_ModLoader
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(App_DispatcherUnhandledException);
         }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            SentrySdk.Init("https://3796b92207d5410d93fffdbc359ea279@o411102.ingest.sentry.io/5434499");
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            SentrySdk.Close();
+        }
+
         private void App_DispatcherUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             SentrySdk.CaptureException((Exception)e.ExceptionObject);
-            MessageBox.Show(((Exception)e.ExceptionObject).Message);
+            String ErrorMessage = "Something went wrong! The issue has been logged and the modloader will close now\n\n" + ((Exception)e.ExceptionObject).Message;
+            MessageBox.Show(ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

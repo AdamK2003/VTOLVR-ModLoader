@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading;
 using Console = VTOLVR_ModLoader.Views.Console;
 using System.Windows.Controls;
+using Sentry;
 
 namespace VTOLVR_ModLoader
 {
@@ -43,12 +44,18 @@ namespace VTOLVR_ModLoader
 
         public MainWindow()
         {
-            _instance = this;
-            if (!Startup.RunStartUp())
-                return;
-            CommunicationsManager.StartTCP(!Startup.SearchForProcess());
-            Program.SetupAfterUI();
-            InitializeComponent();
+            using (SentrySdk.Init("https://f010662cc39a43e4bf370253027a17e4@o411102.ingest.sentry.io/5434499"))
+            {
+                int a = 0;
+                int b = 1;
+                int c = b / a;
+                _instance = this;
+                if (!Startup.RunStartUp())
+                    return;
+                CommunicationsManager.StartTCP(!Startup.SearchForProcess());
+                Program.SetupAfterUI();
+                InitializeComponent();
+            }
         }
         public void CreatePages()
         {

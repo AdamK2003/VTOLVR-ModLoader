@@ -19,7 +19,7 @@ namespace VTOLVR_ModLoader
     {
         public App()
         {
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(App_DispatcherUnhandledException);
+            this.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -35,11 +35,26 @@ namespace VTOLVR_ModLoader
             SentrySdk.Close();
         }
 
-        private void App_DispatcherUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            SentrySdk.CaptureException((Exception)e.ExceptionObject);
-            String ErrorMessage = "Something went wrong! The issue has been logged and the modloader will close now\n\n" + ((Exception)e.ExceptionObject).Message;
-            MessageBox.Show(ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            String ErrorMessage = $@"Something went wrong!
+
+{e.Exception.Message}
+
+Would you like to share this crash with us? It'd help us tremendously.
+
+The data that will be sent to us won't contain any identifiable information, only what went wrong and what you were trying to do.";
+
+            MessageBoxResult result =
+                MessageBox.Show(ErrorMessage, "Error", MessageBoxButton.YesNo, MessageBoxImage.Error);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                SentrySdk.CaptureException(e.Exception);
+            }
+
+            e.Handled = true;
+            Environment.Exit(0);
         }
     }
 }

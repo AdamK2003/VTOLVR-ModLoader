@@ -26,7 +26,7 @@ namespace VTOLVR_ModLoader
         {
             base.OnStartup(e);
 
-            SentrySdk.Init("https://3796b92207d5410d93fffdbc359ea279@o411102.ingest.sentry.io/5434499");
+            SentrySdk.Init(VTOLVR_ModLoader.Properties.Resources.Dsn);
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -37,7 +37,7 @@ namespace VTOLVR_ModLoader
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            String ErrorMessage = $@"Something went wrong!
+            string ErrorMessage = $@"Something went wrong!
 
 {e.Exception.Message}
 

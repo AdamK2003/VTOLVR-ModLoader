@@ -53,6 +53,7 @@ namespace VTOLVR_ModLoader
         }
         public void CreatePages()
         {
+            throw new Exception("Planned");
             console = new Console();
             news = new News();
             settings = new Views.Settings();

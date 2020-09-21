@@ -42,8 +42,8 @@ namespace VTOLVR_ModLoader
             Restore = 9, ShowDefault = 10, ForceMinimized = 11
         };
 
-        private static readonly string[] needFiles = { "SharpMonoInjector.dll", "injector.exe", "Updater.exe", "Gameloop.Vdf.dll", "Valve.Newtonsoft.Json.dll", "SimpleTCP.dll" };
-        private static readonly string[] neededDLLFiles = { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll"};
+        private static readonly string[] needFiles = { "SharpMonoInjector.dll", "injector.exe", "Updater.exe", "Gameloop.Vdf.dll", "Newtonsoft.Json.dll", "SimpleTCP.dll" };
+        private static readonly string[] neededDLLFiles = { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll" };
         public static bool RunStartUp()
         {
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
@@ -82,7 +82,7 @@ namespace VTOLVR_ModLoader
 
                     // set user the focus to the window
                     SetForegroundWindow(p[i].MainWindowHandle);
-                    
+
                     return true;
                 }
             }
@@ -107,7 +107,7 @@ namespace VTOLVR_ModLoader
                         closedCallback: delegate { Program.Quit("Not in correct folder"); });
                     return false;
                 }
-                
+
             }
 
             //Now it should be in the correct folder, but just need to check if its in the games folder
@@ -201,7 +201,7 @@ namespace VTOLVR_ModLoader
                 catch
                 {
                     return;
-                }                    
+                }
                 i++;
             }
         }

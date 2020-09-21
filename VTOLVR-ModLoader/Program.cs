@@ -79,7 +79,7 @@ namespace VTOLVR_ModLoader
 
         private async static Task WaitForUI()
         {
-            new DispatcherTimer(TimeSpan.Zero,DispatcherPriority.ApplicationIdle,UILoaded,
+            new DispatcherTimer(TimeSpan.Zero, DispatcherPriority.ApplicationIdle, UILoaded,
                        Application.Current.Dispatcher);
             while (!uiLoaded)
                 await Task.Delay(1);
@@ -90,7 +90,7 @@ namespace VTOLVR_ModLoader
         {
             uiLoaded = true;
             //This stops the timer from running as it would just continue
-            DispatcherTimer timer = sender as DispatcherTimer; 
+            DispatcherTimer timer = sender as DispatcherTimer;
             timer.Stop();
         }
 
@@ -141,7 +141,6 @@ namespace VTOLVR_ModLoader
                 //Doing 5 tries to search for the process
                 MainWindow.SetProgress(10 * i, "Searching for process...   (Attempt " + i + ")");
                 await Task.Delay(5000);
-
 
                 if (Process.GetProcessesByName("vtolvr").Length == 1)
                     break;
@@ -222,7 +221,7 @@ namespace VTOLVR_ModLoader
                 MainWindow.SetPlayButton(false);
                 MainWindow.SetProgress(100, extractedMods == 0 ? "No mods were extracted" : "Extracted " + extractedMods +
                     (extractedMods == 1 ? " new mod" : " new mods"));
-                
+
                 MoveDependencies();
             }
         }
@@ -249,7 +248,6 @@ namespace VTOLVR_ModLoader
                 movedDep = 0;
                 skinsToExtract = 0;
                 modsToExtract = 0;
-
 
                 LaunchProcess();
                 return;
@@ -301,7 +299,7 @@ namespace VTOLVR_ModLoader
         private static void MoveDependencies()
         {
             MainWindow.SetPlayButton(true);
-            Task.Run(delegate 
+            Task.Run(delegate
             {
                 string[] modFolders = Directory.GetDirectories(root + modsFolder);
 
@@ -314,9 +312,11 @@ namespace VTOLVR_ModLoader
                     {
                         if (subFolders[j].ToLower().Contains("dependencies"))
                         {
-                            Application.Current.Dispatcher.Invoke(new Action(() => { 
-                                Console.Log("Found the folder dependencies"); }));
-                            
+                            Application.Current.Dispatcher.Invoke(new Action(() =>
+                            {
+                                Console.Log("Found the folder dependencies");
+                            }));
+
                             string[] depFiles = Directory.GetFiles(subFolders[j], "*.dll");
                             for (int k = 0; k < depFiles.Length; k++)
                             {
@@ -335,18 +335,20 @@ namespace VTOLVR_ModLoader
                                             @"\VTOLVR_Data\Managed\" + fileName,
                                             true);
                                         movedDep++;
-                                        Application.Current.Dispatcher.Invoke(new Action(() => {
+                                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                                        {
                                             Console.Log($"Updated Dependencie {depFiles[k]}");
                                         }));
                                     }
                                 }
                                 else
-                                {                                   
+                                {
                                     File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
                                                 @"\VTOLVR_Data\Managed\" + fileName,
                                                 true);
                                     movedDep++;
-                                    Application.Current.Dispatcher.Invoke(new Action(() => {
+                                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                                    {
                                         Console.Log($"Moved Dependencie {depFiles[k]}");
                                     }));
                                 }
@@ -355,8 +357,10 @@ namespace VTOLVR_ModLoader
                         }
                     }
                 }
-            }).ContinueWith(delegate {
-                Application.Current.Dispatcher.Invoke(new Action(() => {
+            }).ContinueWith(delegate
+            {
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
                     MovedDependencies();
                 }));
             });

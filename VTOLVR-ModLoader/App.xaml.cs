@@ -19,12 +19,42 @@ namespace VTOLVR_ModLoader
     {
         public App()
         {
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(App_DispatcherUnhandledException);
+            this.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
         }
-        private void App_DispatcherUnhandledException(object sender, UnhandledExceptionEventArgs e)
+
+        protected override void OnStartup(StartupEventArgs e)
         {
-            SentrySdk.CaptureException((Exception)e.ExceptionObject);
-            MessageBox.Show(((Exception)e.ExceptionObject).Message);
+            base.OnStartup(e);
+
+            SentrySdk.Init("https://3796b92207d5410d93fffdbc359ea279@o411102.ingest.sentry.io/5434499");
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            SentrySdk.Close();
+        }
+
+        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            String ErrorMessage = $@"Something went wrong!
+
+{e.Exception.Message}
+
+Would you like to share this crash with us? It'd help us tremendously.
+
+The data that will be sent to us won't contain any identifiable information, only what went wrong and what you were trying to do.";
+
+            MessageBoxResult result =
+                MessageBox.Show(ErrorMessage, "Error", MessageBoxButton.YesNo, MessageBoxImage.Error);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                SentrySdk.CaptureException(e.Exception);
+            }
+
+            e.Handled = true;
+            Environment.Exit(0);
         }
     }
 }

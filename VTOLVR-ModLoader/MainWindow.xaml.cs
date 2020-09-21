@@ -41,21 +41,15 @@ namespace VTOLVR_ModLoader
         public ProjectManager pManager { get; private set; }
         public Manager ItemManager { get; private set; }
 
-
         public MainWindow()
         {
-            using (SentrySdk.Init("https://f010662cc39a43e4bf370253027a17e4@o411102.ingest.sentry.io/5434499"))
-            {
-                int a = 0;
-                int b = 1;
-                int c = b / a;
-                _instance = this;
-                if (!Startup.RunStartUp())
-                    return;
-                CommunicationsManager.StartTCP(!Startup.SearchForProcess());
-                Program.SetupAfterUI();
-                InitializeComponent();
-            }
+            _instance = this;
+            if (!Startup.RunStartUp())
+                return;
+            CommunicationsManager.StartTCP(!Startup.SearchForProcess());
+            Program.SetupAfterUI();
+            InitializeComponent();
+
         }
         public void CreatePages()
         {

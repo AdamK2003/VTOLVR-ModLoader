@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ModLoader")]
 [assembly: AssemblyDescription("Injects VTOL VR with mods/skins")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("https://vtolvr-mods.com/")]
+[assembly: AssemblyCompany("vtolvr-mods.com")]
 [assembly: AssemblyProduct("ModLoader")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.2.2.0")]
-[assembly: AssemblyFileVersion("3.2.2.0")]
+[assembly: AssemblyVersion("3.2.3.0")]
+[assembly: AssemblyFileVersion("3.2.3.0")]

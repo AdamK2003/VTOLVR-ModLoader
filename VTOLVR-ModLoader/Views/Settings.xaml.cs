@@ -152,6 +152,12 @@ namespace VTOLVR_ModLoader.Views
                 SaveSettings();
             }
 
+            if (Properties.Settings.Default.UpgradeRequired)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpgradeRequired = false;
+                SaveSettings();
+            }
             tokenBox.Password = Token;
             if (!string.IsNullOrWhiteSpace(projectsFolder))
                 projectsText.Text = $"Projects Folder Set:\n{projectsFolder}";

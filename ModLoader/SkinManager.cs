@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -265,8 +265,7 @@ namespace ModLoader
             }
             else
             {
-                //In update 0.0.15 mat_afighterExt1 changed to mat_afighterExt1_livery
-                path = CheckForOldName(path, material);
+                
                 WWW www = new WWW("file:///" + path);
                 while (!www.isDone)
                     yield return null;
@@ -275,17 +274,7 @@ namespace ModLoader
             }
         }
 
-        private string CheckForOldName(string path, Material material)
-        {
-            if (material.name.Equals("mat_afighterExt1") || material.name.Equals("mat_afighterExt2_livery"))
-            {
-                string newPath = path.Replace(".png", "_livery.png");
-                File.Move(path, newPath);
-                LogWarning($"Detected an old material name {material.name} , it has been renamed to the new format \nOld: ({path})\nNew: ({newPath})");
-                return newPath;
-            }
-            return path;
-        }
+        
 
         private void ClampCount()
         {

@@ -22,5 +22,53 @@ namespace VTOLVR_ModLoader.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ProjectsFolder {
+            get {
+                return ((string)(this["ProjectsFolder"]));
+            }
+            set {
+                this["ProjectsFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoUpdate {
+            get {
+                return ((bool)(this["AutoUpdate"]));
+            }
+            set {
+                this["AutoUpdate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool LaunchSteamVR {
+            get {
+                return ((bool)(this["LaunchSteamVR"]));
+            }
+            set {
+                this["LaunchSteamVR"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Token {
+            get {
+                return ((string)(this["Token"]));
+            }
+            set {
+                this["Token"] = value;
+            }
+        }
     }
 }

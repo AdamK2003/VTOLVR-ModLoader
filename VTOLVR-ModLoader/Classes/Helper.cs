@@ -23,7 +23,7 @@ namespace VTOLVR_ModLoader.Classes
         {
             await Task.Run(() =>
             {
-                using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Read)) 
+                using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Read))
                 {
                     List<ZipArchiveEntry> filesInZip = zip.Entries.ToList();
                     for (int f = 0; f < filesInZip.Count; f++)
@@ -155,7 +155,7 @@ namespace VTOLVR_ModLoader.Classes
             JObject json;
             for (int i = 0; i < mods.Length; i++)
             {
-                if (!File.Exists(Path.Combine(mods[i].FullName,"info.json")))
+                if (!File.Exists(Path.Combine(mods[i].FullName, "info.json")))
                 {
                     Console.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
                     continue;
@@ -222,6 +222,78 @@ namespace VTOLVR_ModLoader.Classes
         public static List<BaseItem> FindUsersSkins()
         {
             return null;
+        }
+        /// <summary>
+        /// As of 3.2.2 and below, settings.json used to be used.
+        /// This checks for that old file and updates it to the new way
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="reason"></param>
+        /// <returns></returns>
+        public static bool ConvertSettings(string filePath, out string reason)
+        {
+            JObject json = null;
+            if (File.Exists(filePath))
+            {
+                try
+                {
+                    json = JObject.Parse(File.ReadAllText(filePath));
+                }
+                catch (Exception e)
+                {
+                    reason = $"Faield Converting Settings: {e.Message}"; ;
+                    return false;
+                }
+            }
+            else
+            {
+                reason = $"{filePath} doesn't exist";
+                return false;
+            }
+
+            if (json["projectsFolder"] != null)
+            {
+                Console.Log("Found the Proejcts Folder");
+                Properties.Settings.Default.ProjectsFolder = json["projectsFolder"].ToString();
+            }
+
+            if (json["AutoUpdate"] != null)
+            {
+                Console.Log("Found Auto Updates");
+                if (bool.TryParse(json["AutoUpdate"].ToString(), out bool result))
+                {
+                    Properties.Settings.Default.AutoUpdate = result;
+                }
+                else
+                {
+                    Console.Log($"Failed to convert {json["AutoUpdate"]} to bool");
+                }
+            }
+
+            if (json["Launch SteamVR"] != null)
+            {
+                Console.Log("Found SteamVR");
+                if (bool.TryParse(json["Launch SteamVR"].ToString(), out bool result))
+                {
+                    Properties.Settings.Default.LaunchSteamVR = result;
+                }
+                else
+                {
+                    Console.Log($"Failed to convert {json["Launch SteamVR"]} to bool");
+                }
+            }
+
+            if (json["token"] != null)
+            {
+                Console.Log("Found the token");
+                Properties.Settings.Default.Token = json["token"].ToString();
+            }
+
+            Console.Log($"Converted and deleteing {filePath}");
+            TryDelete(filePath);
+
+            reason = "Success!";
+            return true;
         }
     }
 }

@@ -26,9 +26,43 @@ namespace ModLoader
     {
         public static void Init()
         {
+            if (!SteamCheck())
+                return;
             PlayerLogText();
             CrashReportHandler.enableCaptureExceptions = false;
             new GameObject("Mod Loader Manager", typeof(ModLoaderManager), typeof(SkinManager));
+        }
+        private static bool SteamCheck()
+        {
+            if (File.Exists(Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "VTOLVR_Data",
+                "Plugins",
+                "steam_appid.txt")))
+            {
+                Debug.Log("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
+                Application.Quit();
+                return false;
+            }
+            if (File.Exists(Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "VTOLVR_Data",
+                "Plugins",
+                "steam_api64.dll")))
+            {
+                FileInfo steamapi = new FileInfo(Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "VTOLVR_Data",
+                    "Plugins",
+                    "steam_api64.dll"));
+                if (steamapi.Length > 300000)
+                {
+                    Debug.Log($"Unexpected Error, please contact vtolvr-mods.com staff\nError code: {steamapi.Length}");
+                    Application.Quit();
+                    return false;
+                }
+            }
+            return true;
         }
         private static void PlayerLogText()
         {
@@ -193,7 +227,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                         StartCoroutine(LoadLevel());
                     break;
                 case "Akutan":
-                if (PilotSaveManager.currentVehicle == null || PilotSaveManager.currentCampaign == null)
+                    if (PilotSaveManager.currentVehicle == null || PilotSaveManager.currentCampaign == null)
                     {
                         _discordDetail = "In the editor";
                         _discordState = "Akutan";
@@ -267,7 +301,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
         }
         public static void VRInteract(string message)
         {
-            message = message.Replace("vrinteract ","");
+            message = message.Replace("vrinteract ", "");
             Debug.Log($"Searching for gameobject :{message}");
             GameObject go = GameObject.Find(message);
             if (go == null)

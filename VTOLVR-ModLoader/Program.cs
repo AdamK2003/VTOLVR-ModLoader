@@ -69,11 +69,6 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
             MainWindow.SetProgress(100, "Ready");
-
-            int a = 0;
-            int b = 1;
-            int c = b / a;
-            Console.Log(c.ToString());
         }
 
         public static void SetVariables()

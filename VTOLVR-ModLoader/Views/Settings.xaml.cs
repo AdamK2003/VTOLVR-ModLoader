@@ -26,31 +26,22 @@ namespace VTOLVR_ModLoader.Views
         private const string userURL = "/get-token";
         private const string savePath = @"\settings.json";
         private const string uriPath = @"HKEY_CLASSES_ROOT\VTOLVRML";
+        private const string jProjectsFolder = "projectsFolder";
+        private const string jAutoUpdate = "AutoUpdate";
+        private const string jSteamVR = "Launch SteamVR";
+        private const string jToken = "token";
+
+
+
         public static bool tokenValid = false;
         private bool hideResult;
         private Action<bool, string> callBack;
 
         //Settings
-        public static string Token
-        {
-            get { return Properties.Settings.Default.Token; }
-            private set { Properties.Settings.Default.Token = value; }
-        }
-        public static string projectsFolder
-        {
-            get { return Properties.Settings.Default.ProjectsFolder; }
-            private set { Properties.Settings.Default.ProjectsFolder = value; }
-        }
-        public static bool AutoUpdate
-        {
-            get { return Properties.Settings.Default.AutoUpdate; }
-            private set { Properties.Settings.Default.AutoUpdate = value; }
-        }
-        public static bool SteamVR
-        {
-            get { return Properties.Settings.Default.LaunchSteamVR; }
-            private set { Properties.Settings.Default.LaunchSteamVR = value; }
-        }
+        public static string Token;
+        public static string ProjectsFolder;
+        public static bool AutoUpdate = true;
+        public static bool SteamVR = true;
 
         public Settings()
         {
@@ -135,40 +126,136 @@ namespace VTOLVR_ModLoader.Views
         }
         private static void SaveSettings()
         {
-            Properties.Settings.Default.Save();
+            JObject jObject;
+
+            if (File.Exists(Program.root + savePath))
+            {
+                try
+                {
+                    jObject = JObject.Parse(File.ReadAllText(Program.root + savePath));
+                }
+                catch
+                {
+                    Console.Log("Failed to read settings, overiding it.");
+                    jObject = new JObject();
+                }
+            }
+            else
+            {
+                jObject = new JObject();
+            }
+
+            if (!string.IsNullOrEmpty(Token))
+            {
+                if (jObject[jToken] == null)
+                    jObject.Add(jToken, Token);
+                else
+                    jObject[jToken] = Token;
+            }
+
+            if (!string.IsNullOrWhiteSpace(ProjectsFolder))
+            {
+                if (jObject[jProjectsFolder] == null)
+                    jObject.Add(jProjectsFolder, ProjectsFolder);
+                else
+                    jObject[jProjectsFolder] = ProjectsFolder;
+            }
+
+            if (jObject[jAutoUpdate] == null)
+                jObject.Add(jAutoUpdate, AutoUpdate);
+            else
+                jObject[jAutoUpdate] = AutoUpdate;
+
+            if (jObject[jSteamVR] == null)
+                jObject.Add(jSteamVR, SteamVR);
+            else
+                jObject[jSteamVR] = SteamVR;
+
+            try
+            {
+                File.WriteAllText(Program.root + savePath, jObject.ToString());
+                Console.Log("Saved Settings");
+            }
+            catch (Exception e)
+            {
+                Console.Log($"Failed to save {savePath}");
+                Console.Log(e.Message);
+            }
+
             Console.Log("Saved Settings");
         }
 
         private void LoadSettings()
         {
-            if (File.Exists(Program.root + savePath))
+            JObject json = null;
+            if (!File.Exists(Program.root + savePath))
             {
-                if (!Helper.ConvertSettings(Program.root + savePath, out string reason))
-                {
-                    Console.Log($"Failed to convert settings: {reason}");
-                    return;
-                }
-                Console.Log("Converted Settings");
                 SaveSettings();
+                return;
             }
 
-            if (Properties.Settings.Default.UpgradeRequired)
+            try
             {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.UpgradeRequired = false;
-                SaveSettings();
+                json = JObject.Parse(File.ReadAllText(Program.root + savePath));
             }
+            catch (Exception e)
+            {
+                Console.Log($"Faield Reading Settings: {e.Message}");
+                return;
+            }
+
+            if (json["projectsFolder"] != null)
+            {
+                Console.Log("Found the Proejcts Folder");
+                ProjectsFolder = json["projectsFolder"].ToString();
+            }
+
+            if (json["AutoUpdate"] != null)
+            {
+                Console.Log("Found Auto Updates");
+                if (bool.TryParse(json["AutoUpdate"].ToString(), out bool result))
+                {
+                    Console.Log($"Auto Updates is {result}");
+                    AutoUpdate = result;
+                }
+                else
+                {
+                    Console.Log($"Failed to convert {json["AutoUpdate"]} to bool");
+                }
+            }
+
+            if (json["Launch SteamVR"] != null)
+            {
+                Console.Log("Found SteamVR");
+                if (bool.TryParse(json["Launch SteamVR"].ToString(), out bool result))
+                {
+                    Console.Log($"Launch Steam VR is {result}");
+                    SteamVR = result;
+                }
+                else
+                {
+                    Console.Log($"Failed to convert {json["Launch SteamVR"]} to bool");
+                }
+            }
+
+            if (json["token"] != null)
+            {
+                Console.Log("Found the token");
+                Token = json["token"].ToString();
+            }
+
             tokenBox.Password = Token;
-            if (!string.IsNullOrWhiteSpace(projectsFolder))
-                projectsText.Text = $"Projects Folder Set:\n{projectsFolder}";
+            if (!string.IsNullOrWhiteSpace(ProjectsFolder))
+                projectsText.Text = $"Projects Folder Set:\n{ProjectsFolder}";
             autoUpdateCheckbox.IsChecked = AutoUpdate;
             steamvrCheckbox.IsChecked = SteamVR;
+            SaveSettings();
         }
 
         private void SetMyProjectsFolder(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(projectsFolder))
-                FolderDialog.Dialog(projectsFolder, callBack);
+            if (!string.IsNullOrEmpty(ProjectsFolder))
+                FolderDialog.Dialog(ProjectsFolder, callBack);
             else
                 FolderDialog.Dialog(Program.root, callBack);
         }
@@ -180,12 +267,12 @@ namespace VTOLVR_ModLoader.Views
 
         private void SetProjectsFolder(string folder, bool dontSave = false)
         {
-            projectsFolder = folder;
-            projectsText.Text = "My Projects folder:\n" + projectsFolder;
+            ProjectsFolder = folder;
+            projectsText.Text = "My Projects folder:\n" + ProjectsFolder;
             projectsButton.Content = "Change";
             MainWindow._instance.uploadModButton.IsEnabled = true;
-            Directory.CreateDirectory(projectsFolder + ProjectManager.modsFolder);
-            Directory.CreateDirectory(projectsFolder + ProjectManager.skinsFolder);
+            Directory.CreateDirectory(ProjectsFolder + ProjectManager.modsFolder);
+            Directory.CreateDirectory(ProjectsFolder + ProjectManager.skinsFolder);
             if (!dontSave)
                 SaveSettings();
         }

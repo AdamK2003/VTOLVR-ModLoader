@@ -69,7 +69,7 @@ namespace VTOLVR_ModLoader.Views
 
         private bool CheckProjectPath()
         {
-            if (string.IsNullOrEmpty(Settings.projectsFolder))
+            if (string.IsNullOrEmpty(Settings.ProjectsFolder))
                 return false;
             settingsText.Visibility = Visibility.Hidden;
             newProjectButton.IsEnabled = true;
@@ -83,7 +83,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void FindMods(ref List<MyProject> localProjects)
         {
-            DirectoryInfo myMods = new DirectoryInfo(Settings.projectsFolder + modsFolder);
+            DirectoryInfo myMods = new DirectoryInfo(Settings.ProjectsFolder + modsFolder);
             DirectoryInfo[] mods = myMods.GetDirectories();
 
             for (int i = 0; i < mods.Length; i++)
@@ -135,7 +135,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void FindSkins(ref List<MyProject> localProjects)
         {
-            DirectoryInfo mySkins = new DirectoryInfo(Settings.projectsFolder + skinsFolder);
+            DirectoryInfo mySkins = new DirectoryInfo(Settings.ProjectsFolder + skinsFolder);
             DirectoryInfo[] skins = mySkins.GetDirectories();
 
             for (int i = 0; i < skins.Length; i++)

@@ -104,10 +104,10 @@ namespace VTOLVR_ModLoader.Classes
 
                 //Checking if we need to update dependiences in users mods
                 string[] split = currentFile.Location.Split('/');
-                if (!string.IsNullOrEmpty(Views.Settings.projectsFolder) &&
-                    Directory.Exists(Views.Settings.projectsFolder + ProjectManager.modsFolder))
+                if (!string.IsNullOrEmpty(Views.Settings.ProjectsFolder) &&
+                    Directory.Exists(Views.Settings.ProjectsFolder + ProjectManager.modsFolder))
                 {
-                    DirectoryInfo folder = new DirectoryInfo(Views.Settings.projectsFolder + ProjectManager.modsFolder);
+                    DirectoryInfo folder = new DirectoryInfo(Views.Settings.ProjectsFolder + ProjectManager.modsFolder);
                     DirectoryInfo[] subFolders = folder.GetDirectories();
                     for (int i = 0; i < subFolders.Length; i++)
                     {

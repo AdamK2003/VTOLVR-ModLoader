@@ -173,9 +173,9 @@ namespace VTOLVR_ModLoader.Views
             }
 
             //Finding users my projects mods
-            if (!string.IsNullOrEmpty(Settings.projectsFolder))
+            if (!string.IsNullOrEmpty(Settings.ProjectsFolder))
             {
-                DirectoryInfo projectsFolder = new DirectoryInfo(Settings.projectsFolder + ProjectManager.modsFolder);
+                DirectoryInfo projectsFolder = new DirectoryInfo(Settings.ProjectsFolder + ProjectManager.modsFolder);
                 folders = projectsFolder.GetDirectories();
                 for (int i = 0; i < folders.Length; i++)
                 {

@@ -67,7 +67,7 @@ namespace VTOLVR_ModLoader.Views
 
         private bool CheckIfProjectExists()
         {
-            if (!Directory.Exists(Settings.projectsFolder + (dropdown.SelectedIndex == 0 ? ProjectManager.modsFolder : ProjectManager.skinsFolder) + @"\" + nameBox.Text))
+            if (!Directory.Exists(Settings.ProjectsFolder + (dropdown.SelectedIndex == 0 ? ProjectManager.modsFolder : ProjectManager.skinsFolder) + @"\" + nameBox.Text))
             {
                 return false;
             }
@@ -96,15 +96,15 @@ namespace VTOLVR_ModLoader.Views
 
         private bool CheckProjectFolder()
         {
-            return Directory.Exists(Settings.projectsFolder);
+            return Directory.Exists(Settings.ProjectsFolder);
         }
 
         private bool CreateDefaultFolders()
         {
             try
             {
-                Directory.CreateDirectory(Settings.projectsFolder + ProjectManager.modsFolder);
-                Directory.CreateDirectory(Settings.projectsFolder + ProjectManager.skinsFolder);
+                Directory.CreateDirectory(Settings.ProjectsFolder + ProjectManager.modsFolder);
+                Directory.CreateDirectory(Settings.ProjectsFolder + ProjectManager.skinsFolder);
             }
             catch (Exception e)
             {
@@ -118,7 +118,7 @@ namespace VTOLVR_ModLoader.Views
 
         private async void CreateModProject(string name)
         {
-            currentFolder = Directory.CreateDirectory(Settings.projectsFolder + ProjectManager.modsFolder + @"\" + name);
+            currentFolder = Directory.CreateDirectory(Settings.ProjectsFolder + ProjectManager.modsFolder + @"\" + name);
             if (await HttpHelper.CheckForInternet())
             {
                 DownloadModBoilerplate();
@@ -249,7 +249,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void CreateSkinProject(string name)
         {
-            currentFolder = Directory.CreateDirectory(Settings.projectsFolder + ProjectManager.skinsFolder + @"\" + name);
+            currentFolder = Directory.CreateDirectory(Settings.ProjectsFolder + ProjectManager.skinsFolder + @"\" + name);
             CreateJson(false);
             Finished();
         }

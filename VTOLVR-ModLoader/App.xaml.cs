@@ -39,7 +39,7 @@ namespace VTOLVR_ModLoader
         {
             string ErrorMessage = $@"Something went wrong!
 
-{e.Exception}
+{e.Exception.Message}
 
 Would you like to share this crash with us? It'd help us tremendously.
 

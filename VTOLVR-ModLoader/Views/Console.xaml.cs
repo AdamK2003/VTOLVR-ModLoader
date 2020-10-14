@@ -44,6 +44,7 @@ namespace VTOLVR_ModLoader.Views
             }
             console.ItemsSource = Instance.ConsoleFeed.ToArray();
             scrollView.ScrollToBottom();
+            Helper.SentryLog("Created Console", Helper.SentryLogCategory.Console);
         }
 
         private void inputBoxKeyDown(object sender, KeyEventArgs e)
@@ -89,7 +90,7 @@ namespace VTOLVR_ModLoader.Views
                 {
 
                 }
-                
+
             }
         }
         private void SendCommand(object sender, RoutedEventArgs e)
@@ -103,6 +104,7 @@ namespace VTOLVR_ModLoader.Views
         public static void GameClosed()
         {
             Log("Game Closed");
+            Helper.SentryLog("VTOL VR has closed", Helper.SentryLogCategory.Console);
             Instance.inputBox.IsEnabled = false;
             Instance.sendButton.IsEnabled = false;
             MainWindow.SetPlayButton(false);
@@ -110,6 +112,7 @@ namespace VTOLVR_ModLoader.Views
 
         public static void GameOpened()
         {
+            Helper.SentryLog("VTOL VR has opened", Helper.SentryLogCategory.Console);
             Instance.inputBox.Text = string.Empty;
             Instance.inputBox.IsEnabled = true;
             Instance.sendButton.IsEnabled = true;
@@ -150,6 +153,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void ClearConsole(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Clearing the console", Helper.SentryLogCategory.Console);
             ConsoleFeed = new List<Feed>();
             console.ItemsSource = ConsoleFeed.ToArray();
             scrollView.ScrollToBottom();
@@ -157,6 +161,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void DeleteLog(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Deleting Console Log File", Helper.SentryLogCategory.Console);
             try
             {
                 if (File.Exists(Path.Combine(Program.root, Program.LogName)))

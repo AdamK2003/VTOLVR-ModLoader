@@ -7,6 +7,8 @@ using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Sentry;
+using Sentry.Protocol;
 using VTOLVR_ModLoader.Views;
 using Console = VTOLVR_ModLoader.Views.Console;
 using Settings = VTOLVR_ModLoader.Views.Settings;
@@ -222,6 +224,14 @@ namespace VTOLVR_ModLoader.Classes
         public static List<BaseItem> FindUsersSkins()
         {
             return null;
+        }
+        public enum SentryLogCategory { Console, DevToos, EditProject, Manager, NewProject, News, NewVersion, ProjectManager, Settings, MainWindow, Program, Startup }
+        public static void SentryLog(string message, SentryLogCategory category)
+        {
+            SentrySdk.AddBreadcrumb(
+                message: message,
+                category: category.ToString(),
+                level: BreadcrumbLevel.Info);
         }
     }
 }

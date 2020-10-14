@@ -43,7 +43,7 @@ namespace VTOLVR_ModLoader.Views
 
             if (!File.Exists(_currentPath + (_isMod ? @"\Builds\info.json" : @"\info.json")))
             {
-                Notification.Show("Missing info.json","Error");
+                Notification.Show("Missing info.json", "Error");
                 MainWindow._instance.Creator(null, null);
                 return;
             }
@@ -108,9 +108,11 @@ namespace VTOLVR_ModLoader.Views
             previewImageCallBack += PreviewImageCallBack;
             webImageCallBack += WebImageCallBack;
             CheckForInternet();
+            Helper.SentryLog("Created Edit Page", Helper.SentryLogCategory.EditProject);
         }
         public async void CheckForInternet()
         {
+            Helper.SentryLog("Checking for internet", Helper.SentryLogCategory.EditProject);
             if (!await HttpHelper.CheckForInternet())
             {
                 saveButton.Content = "Save Locally (Can't connect to server)";
@@ -119,6 +121,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void LoadMod()
         {
+            Helper.SentryLog("Loading Mod", Helper.SentryLogCategory.EditProject);
             sourceText.Visibility = Visibility.Visible;
             modSource.Visibility = Visibility.Visible;
 
@@ -130,6 +133,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void LoadSkin()
         {
+            Helper.SentryLog("Loading Skin", Helper.SentryLogCategory.EditProject);
             grid.RowDefinitions[6].Height = new GridLength(0);
             grid.RowDefinitions[7].Height = new GridLength(0);
         }
@@ -142,9 +146,10 @@ namespace VTOLVR_ModLoader.Views
 
         private void Save(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Saving", Helper.SentryLogCategory.EditProject);
             UpdateDependencies();
             SaveProject();
-        }        
+        }
 
         private void UploadDataComplete(object sender, UploadValuesCompletedEventArgs e)
         {
@@ -161,6 +166,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void SaveProject()
         {
+            Helper.SentryLog("Saving Project", Helper.SentryLogCategory.EditProject);
             saveButton.IsEnabled = false;
             saveButton.Content = "Saving...";
             _currentJson[ProjectManager.jName] = projectName.Text;
@@ -185,7 +191,7 @@ namespace VTOLVR_ModLoader.Views
                 return;
             }
             Console.Log("Saved Project!");
-            
+
             if (_currentJson[ProjectManager.jID] != null)
             {
                 Console.Log("Submitting changes to website");
@@ -212,7 +218,7 @@ namespace VTOLVR_ModLoader.Views
             saveButton.IsEnabled = true;
             if (!response.IsSuccessStatusCode)
             {
-                Notification.Show($"Failed to update your {(_isMod? "mod": "skin")} on the website.\nError Code: {response.StatusCode}\nChanges have been saved locally, please try again later.",
+                Notification.Show($"Failed to update your {(_isMod ? "mod" : "skin")} on the website.\nError Code: {response.StatusCode}\nChanges have been saved locally, please try again later.",
                     "Failed to update on website");
                 Console.Log("There was an error when trying to submit the saved data to the website.\n" +
                     $"Error Code: {response.StatusCode}\n" +
@@ -226,11 +232,13 @@ namespace VTOLVR_ModLoader.Views
 
         private void PreviewImageButton(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Preview Image Button Pressed", Helper.SentryLogCategory.EditProject);
             FileDialog.Dialog(Directory.GetCurrentDirectory(), previewImageCallBack, new string[] { "png" });
         }
 
         private void WebPageImageButton(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Web Preview Image Button Pressed", Helper.SentryLogCategory.EditProject);
             FileDialog.Dialog(Directory.GetCurrentDirectory(), webImageCallBack, new string[] { "png" });
         }
 
@@ -244,7 +252,7 @@ namespace VTOLVR_ModLoader.Views
 
             if (File.Exists(_currentPath + (_isMod ? @"\Builds" : string.Empty) + @"\preview.png"))
                 File.Delete(_currentPath + (_isMod ? @"\Builds" : string.Empty) + @"\preview.png");
-            File.Copy(filePath, _currentPath + (_isMod? @"\Builds" : string.Empty) + @"\preview.png");
+            File.Copy(filePath, _currentPath + (_isMod ? @"\Builds" : string.Empty) + @"\preview.png");
             filePath = _currentPath + (_isMod ? @"\Builds" : string.Empty) + @"\preview.png";
 
             if (_currentJson[ProjectManager.jPImage] != null)
@@ -282,6 +290,7 @@ namespace VTOLVR_ModLoader.Views
 
         private bool PreviewImageChecks(string path)
         {
+            Helper.SentryLog("Preview Image Checks", Helper.SentryLogCategory.EditProject);
             Bitmap image = new Bitmap(path);
             FileInfo info = new FileInfo(path);
 
@@ -302,6 +311,7 @@ namespace VTOLVR_ModLoader.Views
 
         private bool WebImageChecks(string path)
         {
+            Helper.SentryLog("Web Image Checks", Helper.SentryLogCategory.EditProject);
             FileInfo info = new FileInfo(path);
 
             if (info.Length > 2000000)
@@ -320,12 +330,13 @@ namespace VTOLVR_ModLoader.Views
 
         private void PublicChanged(object sender, RoutedEventArgs e)
         {
-            if(_currentJson != null)
+            if (_currentJson != null)
                 _currentJson[ProjectManager.jPublic] = isPublic.IsChecked.ToString();
         }
 
         private void UpdateDependencies()
         {
+            Helper.SentryLog("Updating Dependencies", Helper.SentryLogCategory.EditProject);
             if (!_isMod)
             {
                 return;

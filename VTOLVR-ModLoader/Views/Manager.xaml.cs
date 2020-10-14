@@ -26,9 +26,11 @@ namespace VTOLVR_ModLoader.Views
         public Manager()
         {
             InitializeComponent();
+            Helper.SentryLog("Created Manager", Helper.SentryLogCategory.Manager);
         }
         public void UpdateUI()
         {
+            Helper.SentryLog("Updating UI", Helper.SentryLogCategory.Manager);
             FindMods(ref _mods);
             FindSkins(ref _skins);
 
@@ -36,6 +38,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private void FindMods(ref List<Item> items)
         {
+            Helper.SentryLog("Finding Mods", Helper.SentryLogCategory.Manager);
             if (items == null)
                 items = new List<Item>();
 
@@ -54,6 +57,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private void FindSkins(ref List<Item> items)
         {
+            Helper.SentryLog("Finding Skins", Helper.SentryLogCategory.Manager);
             if (items == null)
                 items = new List<Item>();
 

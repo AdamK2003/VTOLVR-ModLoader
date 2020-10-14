@@ -46,6 +46,7 @@ namespace VTOLVR_ModLoader
         private static readonly string[] neededDLLFiles = { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll" };
         public static bool RunStartUp()
         {
+            Helper.SentryLog("Running Startup", Helper.SentryLogCategory.Startup);
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             bool debug = false;
 #if DEBUG
@@ -67,6 +68,7 @@ namespace VTOLVR_ModLoader
         /// <returns></returns>
         public static bool SearchForProcess()
         {
+            Helper.SentryLog("Searching for existing process", Helper.SentryLogCategory.Startup);
             Process[] p = Process.GetProcessesByName("VTOLVR-ModLoader");
             for (int i = 0; i < p.Length; i++)
             {
@@ -91,6 +93,7 @@ namespace VTOLVR_ModLoader
 
         private static bool CheckBaseFolder()
         {
+            Helper.SentryLog("Checking base folder", Helper.SentryLogCategory.Startup);
             //Checking the folder which this is in
             string[] pathSplit = Program.root.Split('\\');
             if (pathSplit[pathSplit.Length - 1] != "VTOLVR_ModLoader")
@@ -126,6 +129,7 @@ namespace VTOLVR_ModLoader
         /// </summary>
         private static bool CheckFolder()
         {
+            Helper.SentryLog("Checking folder", Helper.SentryLogCategory.Startup);
             //Checking if the files we need to run are there
             foreach (string file in needFiles)
             {
@@ -169,6 +173,7 @@ namespace VTOLVR_ModLoader
 
         private static void FindSteamFolders()
         {
+            Helper.SentryLog("Finding Steam Folders", Helper.SentryLogCategory.Startup);
             string regPath = (string)Registry.GetValue(
                 @"HKEY_CURRENT_USER\Software\Valve\Steam",
                 @"SteamPath",
@@ -212,6 +217,7 @@ namespace VTOLVR_ModLoader
         }
         private static void SetWorkingDirectory(string folder)
         {
+            Helper.SentryLog("Setting working directory", Helper.SentryLogCategory.Startup);
             Environment.CurrentDirectory = folder + @"\steamapps\common\VTOL VR\VTOLVR_ModLoader";
             Program.SetVariables();
         }

@@ -35,6 +35,7 @@ namespace VTOLVR_ModLoader.Views
         public NewProject()
         {
             InitializeComponent();
+            Helper.SentryLog("Created New Project Page", Helper.SentryLogCategory.NewProject);
         }
 
 
@@ -62,7 +63,7 @@ namespace VTOLVR_ModLoader.Views
                     createButton.IsEnabled = false;
                 }
             }
-                
+
         }
 
         private bool CheckIfProjectExists()
@@ -79,6 +80,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void CreateProject(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Creating New Project", Helper.SentryLogCategory.NewProject);
             if (!CheckProjectFolder())
             {
                 Notification.Show("Project Folder seems to not exist", "Missing Project Folder");
@@ -96,11 +98,13 @@ namespace VTOLVR_ModLoader.Views
 
         private bool CheckProjectFolder()
         {
+            Helper.SentryLog("Checking Projects Folder", Helper.SentryLogCategory.NewProject);
             return Directory.Exists(Settings.ProjectsFolder);
         }
 
         private bool CreateDefaultFolders()
         {
+            Helper.SentryLog("Creating Default Folder", Helper.SentryLogCategory.NewProject);
             try
             {
                 Directory.CreateDirectory(Settings.ProjectsFolder + ProjectManager.modsFolder);
@@ -118,6 +122,7 @@ namespace VTOLVR_ModLoader.Views
 
         private async void CreateModProject(string name)
         {
+            Helper.SentryLog("Creating Mod", Helper.SentryLogCategory.NewProject);
             currentFolder = Directory.CreateDirectory(Settings.ProjectsFolder + ProjectManager.modsFolder + @"\" + name);
             if (await HttpHelper.CheckForInternet())
             {
@@ -130,6 +135,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void DownloadModBoilerplate()
         {
+            Helper.SentryLog("Downloading Mod Boilerplate", Helper.SentryLogCategory.NewProject);
             progressBar.Visibility = Visibility.Visible;
             HttpHelper.DownloadFile(modBoilerplateURL,
                 currentFolder.FullName + @"\boilerplate.zip",
@@ -143,6 +149,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private void DownloadDone(object sender, AsyncCompletedEventArgs e)
         {
+            Helper.SentryLog("Finished downloading boilerplate", Helper.SentryLogCategory.NewProject);
             if (!e.Cancelled && e.Error == null)
             {
                 ExtractModBoilerplate();
@@ -157,6 +164,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void ExtractModBoilerplate(bool offline = false)
         {
+            Helper.SentryLog($"Exporting Mod Boiler plate offline={offline}", Helper.SentryLogCategory.NewProject);
             if (offline)
             {
                 File.WriteAllBytes(currentFolder.FullName + @"\boilerplate.zip", Properties.Resources.vtolvr_mod_boilerplate_master);
@@ -201,6 +209,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void MoveDlls(string path)
         {
+            Helper.SentryLog("Moving Dlls", Helper.SentryLogCategory.NewProject);
             Helper.TryCopy(Program.root + @"\ModLoader.dll", path + @"\ModLoader.dll");
             Helper.TryCopy(Program.root + @"\ModLoader.xml", path + @"\ModLoader.xml");
             Helper.TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\Assembly-CSharp.dll", path + @"\Assembly-CSharp.dll");
@@ -210,6 +219,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void ChangeFilesText()
         {
+            Helper.SentryLog("Changing Text in files", Helper.SentryLogCategory.NewProject);
             string projectName = nameBox.Text.RemoveSpaces();
 
             string solutionFile = File.ReadAllText(currentFolder.FullName + @"\VTOLVR_MOD_Boilerplate.sln");
@@ -238,17 +248,19 @@ namespace VTOLVR_ModLoader.Views
 
         private void CreateJson(bool isMod = true)
         {
+            Helper.SentryLog("Creating Json", Helper.SentryLogCategory.NewProject);
             JObject jObject = new JObject();
             jObject.Add("Name", nameBox.Text);
             jObject.Add("Description", descriptionBox.Text);
             if (isMod)
                 jObject.Add("Dll File", nameBox.Text.RemoveSpaces() + ".dll");
             jObject.Add("Last Edit", DateTime.Now.Ticks);
-            File.WriteAllText(currentFolder.FullName + (isMod? @"\Builds\" : @"\") + @"info.json", jObject.ToString());
+            File.WriteAllText(currentFolder.FullName + (isMod ? @"\Builds\" : @"\") + @"info.json", jObject.ToString());
         }
 
         private void CreateSkinProject(string name)
         {
+            Helper.SentryLog("Creating Skin Project", Helper.SentryLogCategory.NewProject);
             currentFolder = Directory.CreateDirectory(Settings.ProjectsFolder + ProjectManager.skinsFolder + @"\" + name);
             CreateJson(false);
             Finished();
@@ -256,6 +268,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void Finished()
         {
+            Helper.SentryLog("Finished", Helper.SentryLogCategory.NewProject);
             MainWindow._instance.Creator(null, null);
         }
     }

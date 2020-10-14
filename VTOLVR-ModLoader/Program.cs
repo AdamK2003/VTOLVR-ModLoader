@@ -56,6 +56,7 @@ namespace VTOLVR_ModLoader
         public async static void SetupAfterUI()
         {
             await WaitForUI();
+            Helper.SentryLog("Setup after UI", Helper.SentryLogCategory.Program);
             MainWindow._instance.CreatePages();
             CommunicationsManager.CheckNoInternet();
             CommunicationsManager.CheckCustomURL();
@@ -68,10 +69,16 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
             MainWindow.SetProgress(100, "Ready");
+
+            int a = 0;
+            int b = 1;
+            int c = b / a;
+            Console.Log(c.ToString());
         }
 
         public static void SetVariables()
         {
+            Helper.SentryLog("Setting Variables", Helper.SentryLogCategory.Program);
             root = Directory.GetCurrentDirectory();
             vtolFolder = root.Replace("VTOLVR_ModLoader", "");
         }
@@ -95,6 +102,7 @@ namespace VTOLVR_ModLoader
 
         private static void CheckForSteamVR()
         {
+            Helper.SentryLog("Checking for steam vr", Helper.SentryLogCategory.Program);
             Process[] processes = Process.GetProcessesByName("vrmonitor");
             if (processes.Length > 0)
             {
@@ -107,6 +115,7 @@ namespace VTOLVR_ModLoader
 
         private static void AutoStart()
         {
+            Helper.SentryLog("Checking for auto start", Helper.SentryLogCategory.Program);
             if (CommunicationsManager.CheckArgs("autostart", out string line))
             {
                 if (line == "autostart")
@@ -117,10 +126,12 @@ namespace VTOLVR_ModLoader
         }
         public static void LaunchGame()
         {
+            Helper.SentryLog("Launching game", Helper.SentryLogCategory.Program);
             ExtractMods();
         }
         private static void LaunchProcess()
         {
+            Helper.SentryLog("Starting process", Helper.SentryLogCategory.Program);
             Console.Log("Launching VTOL VR");
             Process.Start("steam://run/667970");
 
@@ -133,6 +144,7 @@ namespace VTOLVR_ModLoader
 
         private static async void WaitForProcess()
         {
+            Helper.SentryLog("Waiting for process", Helper.SentryLogCategory.Program);
             Console.Log("Waiting for VTOL VR Process");
             int maxTries = 5;
             for (int i = 1; i <= maxTries; i++)
@@ -166,6 +178,7 @@ namespace VTOLVR_ModLoader
         }
         private static void InjectDefaultMod()
         {
+            Helper.SentryLog("Injecting Mod", Helper.SentryLogCategory.Program);
             //Injecting the default mod
             string defaultStart = string.Format("inject -p {0} -a {1} -n {2} -c {3} -m {4}", "vtolvr", "ModLoader.dll", "ModLoader", "Load", "Init");
             Console.Log("Injecting the ModLoader.dll");
@@ -174,6 +187,7 @@ namespace VTOLVR_ModLoader
 
         public static void Quit(string reason)
         {
+            Helper.SentryLog("Quitting " + reason, Helper.SentryLogCategory.Program);
             Console.Log($"Closing Application\nReason:{reason}");
             Process.GetCurrentProcess().Kill();
         }
@@ -181,6 +195,7 @@ namespace VTOLVR_ModLoader
         #region Mod/Skin Handeling
         public static void ExtractMods()
         {
+            Helper.SentryLog("Extracting Mods", Helper.SentryLogCategory.Program);
             MainWindow.SetPlayButton(true);
             MainWindow.SetProgress(0, "Extracting  mods...");
             DirectoryInfo folder = new DirectoryInfo(root + modsFolder);
@@ -227,6 +242,7 @@ namespace VTOLVR_ModLoader
 
         private static void ExtractSkins()
         {
+            Helper.SentryLog("Extracting Skins", Helper.SentryLogCategory.Program);
             MainWindow.SetPlayButton(true);
             MainWindow.SetProgress(0, "Extracting skins...");
             DirectoryInfo folder = new DirectoryInfo(Program.root + Program.skinsFolder);
@@ -297,6 +313,7 @@ namespace VTOLVR_ModLoader
 
         private static void MoveDependencies()
         {
+            Helper.SentryLog("Moving Dependencies", Helper.SentryLogCategory.Program);
             MainWindow.SetPlayButton(true);
             Task.Run(delegate
             {
@@ -411,7 +428,7 @@ namespace VTOLVR_ModLoader
         {
             if (!await HttpHelper.CheckForInternet())
                 return;
-
+            Helper.SentryLog("Getting Releases", Helper.SentryLogCategory.Program);
             Console.Log($"Connecting to API for latest releases");
             HttpHelper.DownloadStringAsync(
                 url + apiURL + releasesURL + "/" + (branch == string.Empty ? string.Empty : $"?branch={branch}"),
@@ -420,6 +437,7 @@ namespace VTOLVR_ModLoader
 
         private static async void NewsDone(HttpResponseMessage response)
         {
+            Helper.SentryLog("Got releases", Helper.SentryLogCategory.Program);
             if (response.IsSuccessStatusCode)
             {
                 Releases = new List<Release>();
@@ -436,6 +454,7 @@ namespace VTOLVR_ModLoader
 
         private static void ConvertUpdates(string jsonString)
         {
+            Helper.SentryLog("Converting Update", Helper.SentryLogCategory.Program);
             JArray results = JArray.Parse(jsonString);
             Release lastUpdate;
             JArray lastFilesJson;

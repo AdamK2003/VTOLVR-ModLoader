@@ -60,9 +60,11 @@ namespace VTOLVR_ModLoader.Views
                 oneclickInstallButton.Content = "(Admin Needed)";
                 oneclickInstallButton.IsEnabled = false;
             }
+            Helper.SentryLog("Created Settings Page", Helper.SentryLogCategory.Settings);
         }
         public async void UpdateButtons()
         {
+            Helper.SentryLog("UpdateButtons", Helper.SentryLogCategory.Settings);
             if (!await HttpHelper.CheckForInternet())
             {
                 updateButton.Content = "Disabled";
@@ -71,6 +73,7 @@ namespace VTOLVR_ModLoader.Views
         }
         public void SetUserToken(string token)
         {
+            Helper.SentryLog("Setting User Token", Helper.SentryLogCategory.Settings);
             Console.Log("Changed Token");
             Token = token;
             tokenBox.Password = token;
@@ -85,6 +88,7 @@ namespace VTOLVR_ModLoader.Views
 
         public async void TestToken(bool hideResult = false)
         {
+            Helper.SentryLog("Testing user token", Helper.SentryLogCategory.Settings);
             this.hideResult = hideResult;
             if (await HttpHelper.CheckForInternet())
             {
@@ -103,6 +107,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private void TestTokenDone(HttpResponseMessage response)
         {
+            Helper.SentryLog("Finished testing token", Helper.SentryLogCategory.Settings);
             if (response.IsSuccessStatusCode)
             {
                 if (!hideResult)
@@ -121,11 +126,13 @@ namespace VTOLVR_ModLoader.Views
         }
         private void NoInternet()
         {
+            Helper.SentryLog("No Internet", Helper.SentryLogCategory.Settings);
             updateButton.Content = "Disabled";
             updateButton.IsEnabled = false;
         }
         private static void SaveSettings()
         {
+            Helper.SentryLog("Saving Settings", Helper.SentryLogCategory.Settings);
             JObject jObject;
 
             if (File.Exists(Program.root + savePath))
@@ -187,6 +194,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void LoadSettings()
         {
+            Helper.SentryLog("Loading Settings", Helper.SentryLogCategory.Settings);
             JObject json = null;
             if (!File.Exists(Program.root + savePath))
             {
@@ -254,6 +262,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void SetMyProjectsFolder(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opening folder dialog", Helper.SentryLogCategory.Settings);
             if (!string.IsNullOrEmpty(ProjectsFolder))
                 FolderDialog.Dialog(ProjectsFolder, callBack);
             else
@@ -267,6 +276,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void SetProjectsFolder(string folder, bool dontSave = false)
         {
+            Helper.SentryLog("Setting my projects folder", Helper.SentryLogCategory.Settings);
             ProjectsFolder = folder;
             projectsText.Text = "My Projects folder:\n" + ProjectsFolder;
             projectsButton.Content = "Change";
@@ -278,6 +288,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private void AutoUpdateChanged(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Changed auto updates", Helper.SentryLogCategory.Settings);
             if (autoUpdateCheckbox.IsChecked != null && autoUpdateCheckbox.IsChecked == true)
                 SetAutoUpdate(true);
             else if (autoUpdateCheckbox.IsChecked != null)
@@ -299,6 +310,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void SteamVRChanged(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Changed Steamvr state", Helper.SentryLogCategory.Settings);
             if (steamvrCheckbox.IsChecked != null && steamvrCheckbox.IsChecked == true)
                 SetSteamVR(true);
             else if (steamvrCheckbox.IsChecked != null)
@@ -320,6 +332,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void SetOneClickInstall(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Setting one click install", Helper.SentryLogCategory.Settings);
             CreateURI(Program.root);
         }
 
@@ -329,12 +342,14 @@ namespace VTOLVR_ModLoader.Views
         /// <returns></returns>
         private bool CheckForAdmin()
         {
+            Helper.SentryLog("Checking for admin", Helper.SentryLogCategory.Settings);
             return new WindowsPrincipal(WindowsIdentity.GetCurrent())
              .IsInRole(WindowsBuiltInRole.Administrator);
         }
 
         private void CreateURI(string root)
         {
+            Helper.SentryLog("Creating URL", Helper.SentryLogCategory.Settings);
             Console.Log("Creating Registry entry for one click installing");
             string value = (string)Registry.GetValue(
                 uriPath,

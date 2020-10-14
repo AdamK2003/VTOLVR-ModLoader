@@ -43,6 +43,7 @@ namespace VTOLVR_ModLoader
 
         public MainWindow()
         {
+            Helper.SentryLog("Program Opened", Helper.SentryLogCategory.MainWindow);
             _instance = this;
             if (!Startup.RunStartUp())
                 return;
@@ -53,6 +54,7 @@ namespace VTOLVR_ModLoader
         }
         public void CreatePages()
         {
+            Helper.SentryLog("Creating Pages", Helper.SentryLogCategory.MainWindow);
             console = new Console();
             news = new News();
             settings = new Views.Settings();
@@ -91,31 +93,37 @@ namespace VTOLVR_ModLoader
 
         private void Website(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opened Website", Helper.SentryLogCategory.MainWindow);
             Process.Start("https://vtolvr-mods.com");
             Console.Log("Website Opened!");
         }
         private void Discord(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opened Discord", Helper.SentryLogCategory.MainWindow);
             Process.Start("https://discord.gg/49HDD7m");
             Console.Log("Discord Opened!");
         }
         private void Patreon(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opened Patreon", Helper.SentryLogCategory.MainWindow);
             Process.Start("https://www.patreon.com/vtolvrmods");
             Console.Log("Patreon Opened!");
         }
         private void OpenFolder(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opened Folder", Helper.SentryLogCategory.MainWindow);
             Process.Start(Program.root);
             Console.Log("Mod Loader Folder Opened!");
         }
         private void OpenGame(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opened Game", Helper.SentryLogCategory.MainWindow);
             Program.Queue(Program.LaunchGame);
         }
 
         private void OpenSettings(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opened Settings", Helper.SentryLogCategory.MainWindow);
             if (settings == null)
                 settings = new Views.Settings();
             settings.UpdateButtons();
@@ -124,6 +132,7 @@ namespace VTOLVR_ModLoader
 
         public void Creator(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opened Creator", Helper.SentryLogCategory.MainWindow);
             if (pManager == null)
                 pManager = new ProjectManager();
             pManager.SetUI();
@@ -136,6 +145,7 @@ namespace VTOLVR_ModLoader
         }
         public static void News()
         {
+            Helper.SentryLog("Opened News", Helper.SentryLogCategory.MainWindow);
             if (_instance.news == null)
                 _instance.news = new News();
             _instance.DataContext = _instance.news;
@@ -143,6 +153,7 @@ namespace VTOLVR_ModLoader
 
         private void OpenTools(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opened Dev Tools", Helper.SentryLogCategory.MainWindow);
             if (devTools == null)
                 devTools = new DevTools();
             devTools.SetUI();
@@ -151,6 +162,7 @@ namespace VTOLVR_ModLoader
 
         private void OpenConsole(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opened Console", Helper.SentryLogCategory.MainWindow);
             if (console == null)
                 console = new Views.Console();
             console.UpdateFeed();
@@ -177,6 +189,7 @@ namespace VTOLVR_ModLoader
         }
         private void Manager(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opened Manager", Helper.SentryLogCategory.MainWindow);
             if (ItemManager == null)
                 ItemManager = new Manager();
             ItemManager.UpdateUI();

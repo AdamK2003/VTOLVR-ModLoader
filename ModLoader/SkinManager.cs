@@ -49,7 +49,7 @@ namespace ModLoader
             mod.name = "Skin Manger";
             SetModInfo(mod);
             VTOLAPI.SceneLoaded += SceneLoaded;
-            Directory.CreateDirectory(ModLoaderManager.RootPath + @"\skins");           
+            Directory.CreateDirectory(ModLoaderManager.RootPath + @"\skins");
         }
 
         private IEnumerator GetDefaultTextures()
@@ -59,7 +59,7 @@ namespace ModLoader
             Material[] materials = Resources.FindObjectsOfTypeAll(typeof(Material)) as Material[];
             defaultTextures = new Dictionary<string, Texture>(materials.Length);
 
-            
+
             for (int i = 0; i < materials.Length; i++)
             {
                 if (!matsNotToTouch.Contains(materials[i].name) && !defaultTextures.ContainsKey(materials[i].name))
@@ -82,10 +82,7 @@ namespace ModLoader
             {
                 //Vehicle Configuration Room
                 Log("Started Skins Vehicle Config room");
-                if (defaultTextures != null)
-                    RevertTextures();
-                else
-                    StartCoroutine(GetDefaultTextures());
+                StartCoroutine(GetDefaultTextures());
                 SpawnMenu();
             }
 
@@ -104,7 +101,7 @@ namespace ModLoader
         {
             if (prefab == null)
                 prefab = ModLoader.assetBundle.LoadAsset<GameObject>("SkinLoaderMenu");
-            
+
             //Setting Position
             GameObject pannel = Instantiate(prefab);
             pannel.transform.position = new Vector3(-83.822f, -15.68818f, 5.774f);
@@ -196,7 +193,7 @@ namespace ModLoader
             currentSkin -= 1;
             ClampCount();
             UpdateUI();
-            
+
         }
         public void SelectSkin()
         {
@@ -204,7 +201,7 @@ namespace ModLoader
             selectedSkin = currentSkin;
         }
 
-        
+
 
         private void FindMaterials(Material[] mats)
         {
@@ -249,7 +246,7 @@ namespace ModLoader
                     StartCoroutine(UpdateTexture(selected.folderPath + @"\" + materials[i].name + ".png", materials[i].material));
                     continue;
                 }
-                
+
                 if (materials[i].name.Equals("mat_afighterExt2_livery") && File.Exists(selected.folderPath + @"\mat_aFighterExt2.png"))
                 {
                     StartCoroutine(UpdateTexture(selected.folderPath + @"\mat_aFighterExt2.png", materials[i].material));
@@ -265,7 +262,7 @@ namespace ModLoader
             }
             else
             {
-                
+
                 WWW www = new WWW("file:///" + path);
                 while (!www.isDone)
                     yield return null;
@@ -274,7 +271,7 @@ namespace ModLoader
             }
         }
 
-        
+
 
         private void ClampCount()
         {
@@ -321,7 +318,7 @@ namespace ModLoader
         {
             VTOLAPI.SceneLoaded -= SceneLoaded;
         }
-        
+
         private class Skin
         {
             public string name;

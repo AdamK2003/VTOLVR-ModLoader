@@ -19,7 +19,9 @@ namespace VTOLVR_ModLoader
     {
         public App()
         {
+#if !DEBUG
             this.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
+#endif
         }
 
         protected override void OnStartup(StartupEventArgs e)

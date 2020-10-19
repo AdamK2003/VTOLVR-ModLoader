@@ -194,6 +194,11 @@ namespace VTOLVR_ModLoader
             Helper.SentryLog("Extracting Mods", Helper.SentryLogCategory.Program);
             MainWindow.SetPlayButton(true);
             MainWindow.SetProgress(0, "Extracting  mods...");
+
+            //If the mods folder is missing
+            if (!Directory.Exists(root + modsFolder))
+                Directory.CreateDirectory(root + modsFolder);
+
             DirectoryInfo folder = new DirectoryInfo(root + modsFolder);
             FileInfo[] files = folder.GetFiles("*.zip");
             if (files.Length == 0)
@@ -241,6 +246,11 @@ namespace VTOLVR_ModLoader
             Helper.SentryLog("Extracting Skins", Helper.SentryLogCategory.Program);
             MainWindow.SetPlayButton(true);
             MainWindow.SetProgress(0, "Extracting skins...");
+
+            //If the skins folder is missing
+            if (!Directory.Exists(root + skinsFolder))
+                Directory.CreateDirectory(root + skinsFolder);
+
             DirectoryInfo folder = new DirectoryInfo(Program.root + Program.skinsFolder);
             FileInfo[] files = folder.GetFiles("*.zip");
             if (files.Length == 0)

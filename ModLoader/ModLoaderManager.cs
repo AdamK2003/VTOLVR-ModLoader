@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using Valve.Newtonsoft.Json.Linq;
 using SimpleTCP;
 using Harmony;
+using ModLoader.Classes;
 
 namespace ModLoader
 {
@@ -26,43 +27,18 @@ namespace ModLoader
     {
         public static void Init()
         {
-            if (!SteamCheck())
-                return;
-            PlayerLogText();
             CrashReportHandler.enableCaptureExceptions = false;
-            new GameObject("Mod Loader Manager", typeof(ModLoaderManager), typeof(SkinManager));
-        }
-        private static bool SteamCheck()
-        {
-            if (File.Exists(Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "VTOLVR_Data",
-                "Plugins",
-                "steam_appid.txt")))
-            {
-                Debug.Log("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
-                Application.Quit();
-                return false;
-            }
-            if (File.Exists(Path.Combine(
+            if (!SteamAuthentication.IsTrusted(Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "VTOLVR_Data",
                 "Plugins",
                 "steam_api64.dll")))
             {
-                FileInfo steamapi = new FileInfo(Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "VTOLVR_Data",
-                    "Plugins",
-                    "steam_api64.dll"));
-                if (steamapi.Length > 300000)
-                {
-                    Debug.Log($"Unexpected Error, please contact vtolvr-mods.com staff\nError code: {steamapi.Length}");
-                    Application.Quit();
-                    return false;
-                }
+                Debug.Log("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
+                return;
             }
-            return true;
+            PlayerLogText();
+            new GameObject("Mod Loader Manager", typeof(ModLoaderManager), typeof(SkinManager));
         }
         private static void PlayerLogText()
         {
@@ -128,6 +104,8 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
         private void Awake()
         {
+            if (!Check())
+                return;
             if (Instance)
                 Destroy(this.gameObject);
 
@@ -491,6 +469,42 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                 builder.AppendLine($"{interactables[i].name}");
             }
             Debug.Log(builder.ToString());
+        }
+        /*
+         * This check should always return true but I've left it in as a backup
+         * incase people get passed the first check
+         */
+        private static bool Check()
+        {
+            if (File.Exists(Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "VTOLVR_Data",
+                "Plugins",
+                "steam_appid.txt")))
+            {
+                Debug.Log("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
+                Application.Quit();
+                return false;
+            }
+            if (File.Exists(Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "VTOLVR_Data",
+                "Plugins",
+                "steam_api64.dll")))
+            {
+                FileInfo steamapi = new FileInfo(Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "VTOLVR_Data",
+                    "Plugins",
+                    "steam_api64.dll"));
+                if (steamapi.Length > 300000)
+                {
+                    Debug.Log($"Unexpected Error, please contact vtolvr-mods.com staff\nError code: {steamapi.Length}");
+                    Application.Quit();
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

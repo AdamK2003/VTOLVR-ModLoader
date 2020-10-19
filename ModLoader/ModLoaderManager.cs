@@ -34,7 +34,8 @@ namespace ModLoader
                 "Plugins",
                 "steam_api64.dll")))
             {
-                Debug.Log("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
+                Debug.LogError("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
+                Application.Quit();
                 return;
             }
             PlayerLogText();

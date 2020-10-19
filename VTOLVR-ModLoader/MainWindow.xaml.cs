@@ -24,6 +24,8 @@ using System.Threading;
 using Console = VTOLVR_ModLoader.Views.Console;
 using System.Windows.Controls;
 using Sentry;
+using System.Windows.Media.Imaging;
+using System.Drawing;
 
 namespace VTOLVR_ModLoader
 {
@@ -194,6 +196,23 @@ namespace VTOLVR_ModLoader
                 ItemManager = new Manager();
             ItemManager.UpdateUI();
             _instance.DataContext = ItemManager;
+        }
+
+        public void CheckForEvent()
+        {
+            Helper.SentryLog("Checking for event", Helper.SentryLogCategory.MainWindow);
+            DateTime now = DateTime.Now;
+            if (now.Month.Equals(10))
+            {
+                Helper.SentryLog("Setting halloween logo", Helper.SentryLogCategory.MainWindow);
+
+                BitmapImage image = new BitmapImage();
+                image.BeginInit();
+                image.UriSource = new Uri("/VTOLVR-ModLoader;component/Resources/LogoHalloweenSpinning.gif", UriKind.Relative);
+                image.EndInit();
+                ImageBehavior.SetAnimatedSource(LogoGif, image);
+                Console.Log("Set Halloween Logo");
+            }
         }
     }
 }

@@ -68,6 +68,7 @@ namespace VTOLVR_ModLoader
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
+            MainWindow._instance.CheckForEvent();
             MainWindow.SetProgress(100, "Ready");
         }
 
@@ -122,17 +123,17 @@ namespace VTOLVR_ModLoader
         public static void LaunchGame()
         {
             Helper.SentryLog("Launching game", Helper.SentryLogCategory.Program);
+            MainWindow.GifState(MainWindow.gifStates.Play);
             ExtractMods();
         }
         private static void LaunchProcess()
         {
             Helper.SentryLog("Starting process", Helper.SentryLogCategory.Program);
             Console.Log("Launching VTOL VR");
-            Process.Start("steam://run/667970");
+            //Process.Start("steam://run/667970");
 
             MainWindow.SetPlayButton(false);
             MainWindow.SetProgress(0, "Launching Game");
-            MainWindow.GifState(MainWindow.gifStates.Play);
 
             WaitForProcess();
         }

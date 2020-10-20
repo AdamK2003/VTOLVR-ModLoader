@@ -127,7 +127,8 @@ namespace ModLoader
             ApplyButton.OnInteract.AddListener(delegate { SelectSkin(); Apply(); });
 
             FindSkins(Path.Combine(ModLoaderManager.RootPath, "skins"));
-            FindSkins(Path.Combine(ModLoaderManager.MyProjectsPath, "My Skins"));
+            if (!string.IsNullOrEmpty(ModLoaderManager.MyProjectsPath))
+                FindSkins(Path.Combine(ModLoaderManager.MyProjectsPath, "My Skins"));
             UpdateUI();
 
         }

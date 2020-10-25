@@ -52,10 +52,10 @@
                 <Button Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
                             Content="Home" Foreground="White" BorderBrush="{x:Null}" Click="News" 
                             Style="{StaticResource darkButton}" x:Name="homeButton" Margin="11,8"/>
-                <Button Grid.Row="2" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                <Button Grid.Row="7" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
                             Content="Manager" Foreground="White" BorderBrush="{x:Null}" Click="Manager" 
                             Style="{StaticResource darkButton}" x:Name="managerButton" Margin="11,8" 
-                        Visibility="Hidden"/>
+                        Visibility="Visible"/>
                 <Button Grid.Row="2" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
                             Content="Open Folder" Foreground="White" BorderBrush="{x:Null}" 
                             Click="OpenFolder" Style="{StaticResource darkButton}" x:Name="openFButton"

@@ -99,14 +99,14 @@ namespace VTOLVR_ModLoader.Views
             Helper.SentryLog("Request Mods Callback", Helper.SentryLogCategory.Manager);
             if (!response.IsSuccessStatusCode)
             {
-                Notification.Show(response.StatusCode.ToString(), "Error");
+                Console.Log("Failed to received info on mod\nError Code from website:" + response.StatusCode.ToString());
                 return;
             }
-
-            JObject json = Helper.JObjectTryParse(await response.Content.ReadAsStringAsync(), out Exception exception);
+            string jsonText = await response.Content.ReadAsStringAsync();
+            JObject json = Helper.JObjectTryParse(jsonText, out Exception exception);
             if (exception != null)
             {
-                MessageBox.Show("There was an error");
+                Console.Log($"Failed to read json response from website ({exception.Message}). Raw response is:\n{jsonText}");
                 return;
             }
 
@@ -139,14 +139,15 @@ namespace VTOLVR_ModLoader.Views
             Helper.SentryLog("Update Mod Received Info", Helper.SentryLogCategory.Manager);
             if (!response.IsSuccessStatusCode)
             {
-                Notification.Show(response.StatusCode.ToString(), "Error");
+                Notification.Show($"Error from website, please try again later\n{response.StatusCode}", "Error");
                 return;
             }
-
-            JObject json = Helper.JObjectTryParse(await response.Content.ReadAsStringAsync(), out Exception exception);
+            string jsonText = await response.Content.ReadAsStringAsync();
+            JObject json = Helper.JObjectTryParse(jsonText, out Exception exception);
             if (exception != null)
             {
-                MessageBox.Show("There was an error");
+                Notification.Show($"Error reading response from website, if this continues, please report to vtolvr-mods.com staff", "Error");
+                Console.Log($"Error reading response from website ({exception.Message}). Raw response:\n{jsonText}");
                 return;
             }
 
@@ -182,8 +183,6 @@ namespace VTOLVR_ModLoader.Views
         {
             Helper.SentryLog("Fininshed downloading mod update", Helper.SentryLogCategory.Manager);
             MainWindow.SetBusy(false);
-
-            MessageBox.Show(sender.GetType().Name);
             if (!e.Cancelled && e.Error == null)
             {
                 MainWindow.SetProgress(100, $"Ready");
@@ -191,9 +190,9 @@ namespace VTOLVR_ModLoader.Views
             }
             else
             {
-                //MainWindow.SetProgress(100, $"Ready");
-                //Notification.Show($"{e.Error.Message}", "Error when downloading file");
-                //Console.Log("Error:\n" + e.Error.ToString());
+                MainWindow.SetProgress(100, $"Ready");
+                Notification.Show($"{e.Error.Message}", "Error when downloading file");
+                Console.Log("Error when downloading mod update:\n" + e.Error.ToString());
                 //if (File.Exists(Path.Combine(Program.root, currentDownloadFile)))
                 //    File.Delete(Path.Combine(Program.root, currentDownloadFile));
             }

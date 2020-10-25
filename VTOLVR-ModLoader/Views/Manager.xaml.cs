@@ -31,6 +31,8 @@ namespace VTOLVR_ModLoader.Views
         public void UpdateUI()
         {
             Helper.SentryLog("Updating UI", Helper.SentryLogCategory.Manager);
+            _mods = new List<Item>();
+            _skins = new List<Item>();
             FindMods(ref _mods);
             FindSkins(ref _skins);
 
@@ -125,9 +127,9 @@ namespace VTOLVR_ModLoader.Views
         private void UpdateMod(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            Helper.SentryLog($"Update button pressed for {button.ToolTip}", Helper.SentryLogCategory.Manager);
+            Helper.SentryLog($"Update button pressed for {button.Tag}", Helper.SentryLogCategory.Manager);
             HttpHelper.DownloadStringAsync(
-                $"{Program.url}{Program.apiURL}{Program.modsURL}/{button.ToolTip}",
+                $"{Program.url}{Program.apiURL}{Program.modsURL}/{button.Tag}",
                 UpdateModReceivedInfo);
         }
         // Getting the json string to find the download link of the mod which the user
@@ -195,6 +197,22 @@ namespace VTOLVR_ModLoader.Views
                 //if (File.Exists(Path.Combine(Program.root, currentDownloadFile)))
                 //    File.Delete(Path.Combine(Program.root, currentDownloadFile));
             }
+        }
+
+        private void DeleteMod(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            Helper.SentryLog($"Delete button pressed for {button.Tag}", Helper.SentryLogCategory.Manager);
+            Console.Log($"Deleting {button.Tag}");
+            Helper.DeleteDirectory(button.Tag.ToString(), out Exception exception);
+
+            if (exception != null)
+            {
+                Notification.Show($"{exception.Message}", "Error when deleteing mod");
+                return;
+            }
+            _mods.Remove(_mods.Find(x => x.FolderDirectory == button.Tag.ToString()));
+            modsList.ItemsSource = _mods.ToArray();
         }
 
         public class Item

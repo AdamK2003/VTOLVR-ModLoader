@@ -260,5 +260,17 @@ namespace VTOLVR_ModLoader.Classes
                 return null;
             }
         }
+        public static void DeleteDirectory(string path, out Exception exception)
+        {
+            try
+            {
+                Directory.Delete(path, true);
+                exception = null;
+            }
+            catch (Exception e)
+            {
+                exception = e;
+            }
+        }
     }
 }

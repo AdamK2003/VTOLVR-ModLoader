@@ -233,5 +233,32 @@ namespace VTOLVR_ModLoader.Classes
                 category: category.ToString(),
                 level: BreadcrumbLevel.Info);
         }
+
+        public static JArray JArrayTryParse(string content, out Exception exception)
+        {
+            try
+            {
+                exception = null;
+                return JArray.Parse(content);
+            }
+            catch (Exception e)
+            {
+                exception = e;
+                return null;
+            }
+        }
+        public static JObject JObjectTryParse(string content, out Exception exception)
+        {
+            try
+            {
+                exception = null;
+                return JObject.Parse(content);
+            }
+            catch (Exception e)
+            {
+                exception = e;
+                return null;
+            }
+        }
     }
 }

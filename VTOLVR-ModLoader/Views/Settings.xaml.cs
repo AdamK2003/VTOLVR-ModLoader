@@ -1,4 +1,4 @@
-﻿using Valve.Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,15 +7,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Xml.Serialization;
 using UserControl = System.Windows.Controls.UserControl;
 using VTOLVR_ModLoader.Windows;
 using VTOLVR_ModLoader.Classes;
@@ -32,22 +23,26 @@ namespace VTOLVR_ModLoader.Views
     {
         public static Settings Instance;
 
+        private const string userURL = "/get-token";
+        private const string savePath = @"\settings.json";
+        private const string uriPath = @"HKEY_CLASSES_ROOT\VTOLVRML";
         private const string jProjectsFolder = "projectsFolder";
         private const string jAutoUpdate = "AutoUpdate";
         private const string jSteamVR = "Launch SteamVR";
         private const string jToken = "token";
-        private const string userURL = "/get-token";
-        private const string savePath = @"\settings.json";
-        private const string uriPath = @"HKEY_CLASSES_ROOT\VTOLVRML";
+
+
+
         public static bool tokenValid = false;
         private bool hideResult;
         private Action<bool, string> callBack;
 
         //Settings
-        public static string Token { get; private set; }
-        public static string projectsFolder { get; private set; }
-        public static bool AutoUpdate { get; private set; } = true;
-        public static bool SteamVR { get; private set; } = true;
+        public static string Token;
+        public static string ProjectsFolder;
+        public static bool AutoUpdate = true;
+        public static bool SteamVR = true;
+
         public Settings()
         {
             Instance = this;
@@ -65,9 +60,11 @@ namespace VTOLVR_ModLoader.Views
                 oneclickInstallButton.Content = "(Admin Needed)";
                 oneclickInstallButton.IsEnabled = false;
             }
+            Helper.SentryLog("Created Settings Page", Helper.SentryLogCategory.Settings);
         }
         public async void UpdateButtons()
         {
+            Helper.SentryLog("UpdateButtons", Helper.SentryLogCategory.Settings);
             if (!await HttpHelper.CheckForInternet())
             {
                 updateButton.Content = "Disabled";
@@ -76,6 +73,7 @@ namespace VTOLVR_ModLoader.Views
         }
         public void SetUserToken(string token)
         {
+            Helper.SentryLog("Setting User Token", Helper.SentryLogCategory.Settings);
             Console.Log("Changed Token");
             Token = token;
             tokenBox.Password = token;
@@ -90,6 +88,7 @@ namespace VTOLVR_ModLoader.Views
 
         public async void TestToken(bool hideResult = false)
         {
+            Helper.SentryLog("Testing user token", Helper.SentryLogCategory.Settings);
             this.hideResult = hideResult;
             if (await HttpHelper.CheckForInternet())
             {
@@ -99,7 +98,7 @@ namespace VTOLVR_ModLoader.Views
                 HttpHelper.DownloadStringAsync(
                     Program.url + Program.apiURL + userURL + Program.jsonFormat,
                     TestTokenDone,
-                    Token);         
+                    Token);
             }
             else
             {
@@ -108,6 +107,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private void TestTokenDone(HttpResponseMessage response)
         {
+            Helper.SentryLog("Finished testing token", Helper.SentryLogCategory.Settings);
             if (response.IsSuccessStatusCode)
             {
                 if (!hideResult)
@@ -126,11 +126,13 @@ namespace VTOLVR_ModLoader.Views
         }
         private void NoInternet()
         {
+            Helper.SentryLog("No Internet", Helper.SentryLogCategory.Settings);
             updateButton.Content = "Disabled";
             updateButton.IsEnabled = false;
         }
         private static void SaveSettings()
         {
+            Helper.SentryLog("Saving Settings", Helper.SentryLogCategory.Settings);
             JObject jObject;
 
             if (File.Exists(Program.root + savePath))
@@ -149,6 +151,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 jObject = new JObject();
             }
+
             if (!string.IsNullOrEmpty(Token))
             {
                 if (jObject[jToken] == null)
@@ -157,12 +160,12 @@ namespace VTOLVR_ModLoader.Views
                     jObject[jToken] = Token;
             }
 
-            if (!string.IsNullOrWhiteSpace(projectsFolder))
+            if (!string.IsNullOrWhiteSpace(ProjectsFolder))
             {
                 if (jObject[jProjectsFolder] == null)
-                    jObject.Add(jProjectsFolder, projectsFolder);
+                    jObject.Add(jProjectsFolder, ProjectsFolder);
                 else
-                    jObject[jProjectsFolder] = projectsFolder;
+                    jObject[jProjectsFolder] = ProjectsFolder;
             }
 
             if (jObject[jAutoUpdate] == null)
@@ -185,72 +188,83 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log($"Failed to save {savePath}");
                 Console.Log(e.Message);
             }
+
+            Console.Log("Saved Settings");
         }
 
         private void LoadSettings()
         {
+            Helper.SentryLog("Loading Settings", Helper.SentryLogCategory.Settings);
+            JObject json = null;
             if (!File.Exists(Program.root + savePath))
+            {
+                SaveSettings();
                 return;
+            }
 
-            JObject json;
             try
             {
                 json = JObject.Parse(File.ReadAllText(Program.root + savePath));
             }
             catch (Exception e)
             {
-                Console.Log($"Failed to read {savePath}");
-                Console.Log(e.Message);
+                Console.Log($"Faield Reading Settings: {e.Message}");
                 return;
             }
 
-            if (json[jToken] != null)
+            if (json["projectsFolder"] != null)
             {
-                Token = json[jToken].ToString();
-                tokenBox.Password = Token;
+                Console.Log("Found the Proejcts Folder");
+                ProjectsFolder = json["projectsFolder"].ToString();
             }
 
-            if (json[jProjectsFolder] != null)
+            if (json["AutoUpdate"] != null)
             {
-                string path = json[jProjectsFolder].ToString();
-                if (Directory.Exists(path))
-                    SetProjectsFolder(path, true);
-                else
-                    Notification.Show($"Projects Folder in settings.json is not valid\n({path})", "Invalid Folder");
-            }
-            else
-            {
-                projectsText.Text = "My Projects folder not set.";
-                projectsButton.Content = "Set";
-            }
-
-            if (json[jAutoUpdate] != null)
-            {
-                if (bool.TryParse(json[jAutoUpdate].ToString(), out bool result))
+                Console.Log("Found Auto Updates");
+                if (bool.TryParse(json["AutoUpdate"].ToString(), out bool result))
                 {
-                    autoUpdateCheckbox.IsChecked = result;
+                    Console.Log($"Auto Updates is {result}");
                     AutoUpdate = result;
                 }
                 else
-                    Console.Log($"Failed to convert \"{jAutoUpdate}\" setting to bool");
+                {
+                    Console.Log($"Failed to convert {json["AutoUpdate"]} to bool");
+                }
             }
 
-            if (json[jSteamVR] != null)
+            if (json["Launch SteamVR"] != null)
             {
-                if (bool.TryParse(json[jSteamVR].ToString(), out bool result))
+                Console.Log("Found SteamVR");
+                if (bool.TryParse(json["Launch SteamVR"].ToString(), out bool result))
                 {
-                    steamvrCheckbox.IsChecked = result;
+                    Console.Log($"Launch Steam VR is {result}");
                     SteamVR = result;
                 }
                 else
-                    Console.Log($"Failed to convert \"{jSteamVR}\" setting to bool");
+                {
+                    Console.Log($"Failed to convert {json["Launch SteamVR"]} to bool");
+                }
             }
+
+            if (json["token"] != null)
+            {
+                Console.Log("Found the token");
+                Token = json["token"].ToString();
+            }
+
+            tokenBox.Password = Token;
+            if (!string.IsNullOrWhiteSpace(ProjectsFolder))
+                projectsText.Text = $"Projects Folder Set:\n{ProjectsFolder}";
+            autoUpdateCheckbox.IsChecked = AutoUpdate;
+            steamvrCheckbox.IsChecked = SteamVR;
+            SaveSettings();
         }
 
         private void SetMyProjectsFolder(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(projectsFolder))
-                FolderDialog.Dialog(projectsFolder, callBack);
+            Helper.SentryLog("Opening folder dialog", Helper.SentryLogCategory.Settings);
+            if (!string.IsNullOrEmpty(ProjectsFolder))
+                FolderDialog.Dialog(ProjectsFolder, callBack);
             else
                 FolderDialog.Dialog(Program.root, callBack);
         }
@@ -262,17 +276,19 @@ namespace VTOLVR_ModLoader.Views
 
         private void SetProjectsFolder(string folder, bool dontSave = false)
         {
-            projectsFolder = folder;
-            projectsText.Text = "My Projects folder:\n" + projectsFolder;
+            Helper.SentryLog("Setting my projects folder", Helper.SentryLogCategory.Settings);
+            ProjectsFolder = folder;
+            projectsText.Text = "My Projects folder:\n" + ProjectsFolder;
             projectsButton.Content = "Change";
             MainWindow._instance.uploadModButton.IsEnabled = true;
-            Directory.CreateDirectory(projectsFolder + ProjectManager.modsFolder);
-            Directory.CreateDirectory(projectsFolder + ProjectManager.skinsFolder);
+            Directory.CreateDirectory(ProjectsFolder + ProjectManager.modsFolder);
+            Directory.CreateDirectory(ProjectsFolder + ProjectManager.skinsFolder);
             if (!dontSave)
                 SaveSettings();
         }
         private void AutoUpdateChanged(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Changed auto updates", Helper.SentryLogCategory.Settings);
             if (autoUpdateCheckbox.IsChecked != null && autoUpdateCheckbox.IsChecked == true)
                 SetAutoUpdate(true);
             else if (autoUpdateCheckbox.IsChecked != null)
@@ -294,6 +310,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void SteamVRChanged(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Changed Steamvr state", Helper.SentryLogCategory.Settings);
             if (steamvrCheckbox.IsChecked != null && steamvrCheckbox.IsChecked == true)
                 SetSteamVR(true);
             else if (steamvrCheckbox.IsChecked != null)
@@ -315,6 +332,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void SetOneClickInstall(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Setting one click install", Helper.SentryLogCategory.Settings);
             CreateURI(Program.root);
         }
 
@@ -324,12 +342,14 @@ namespace VTOLVR_ModLoader.Views
         /// <returns></returns>
         private bool CheckForAdmin()
         {
+            Helper.SentryLog("Checking for admin", Helper.SentryLogCategory.Settings);
             return new WindowsPrincipal(WindowsIdentity.GetCurrent())
              .IsInRole(WindowsBuiltInRole.Administrator);
         }
 
         private void CreateURI(string root)
         {
+            Helper.SentryLog("Creating URL", Helper.SentryLogCategory.Settings);
             Console.Log("Creating Registry entry for one click installing");
             string value = (string)Registry.GetValue(
                 uriPath,

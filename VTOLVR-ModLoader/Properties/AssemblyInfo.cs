@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("VTOL VR Mod Launcher")]
 [assembly: AssemblyDescription("Launches the game with mods and skins")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("https://vtolvr-mods.com/")]
+[assembly: AssemblyCompany("vtolvr-mods.com")]
 [assembly: AssemblyProduct("VTOLVR-ModLoader")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
@@ -51,5 +51,6 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.2.2.0")]
-[assembly: AssemblyFileVersion("3.2.2.0")]
+[assembly: AssemblyVersion("3.2.3.0")]
+[assembly: AssemblyFileVersion("3.2.3.0")]
+[assembly: NeutralResourcesLanguage("en")]

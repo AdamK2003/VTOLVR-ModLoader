@@ -1,6 +1,6 @@
 # VTOL VR Mod Loader 
 
-[![Discord](https://img.shields.io/discord/597153468834119710?label=VTOL%20VR%20Modding&logo=discord&style=flat-square)](https://discord.gg/XZeeafp "Discord Invite") [![GitHub release (latest by date)](https://img.shields.io/badge/dynamic/json?color=blue&label=Current%20Release&query=%24.results%5B0%5D.tag_name&url=https%3A%2F%2Fvtolvr-mods.com%2Fapi%2Fmodloader%2F&style=flat-square)](https://vtolvr-mods.com/ "Mod Loader's Website") ![Website](https://img.shields.io/website?down_message=Offline&label=Website%20Status&up_message=Online&style=flat-square&url=https%3A%2F%2Fvtolvr-mods.com%2F)
+[![Discord](https://img.shields.io/discord/597153468834119710?label=VTOL%20VR%20Modding&logo=discord&style=flat-square)](https://discord.gg/XZeeafp "Discord Invite") [![Releases (latest by date)](https://img.shields.io/badge/dynamic/json?color=blue&label=Current%20Release&query=$[0].tag_name&url=https://vtolvr-mods.com/api/releases/&style=flat-square)](https://vtolvr-mods.com/ "Mod Loader's Website") ![Website](https://img.shields.io/website?down_message=Offline&label=Website%20Status&up_message=Online&style=flat-square&url=https%3A%2F%2Fvtolvr-mods.com%2F)
 
 ![Mod Loader Program](https://vtolvr-mods.com/static/files/modloader2.gif)
 
@@ -29,9 +29,9 @@ Then following the ``instructions.txt`` inside the dll folder, drag the required
  
 To set up the unity project for use. You need to extract VTOL VR into a unity project using [UTinyRipper](https://sourceforge.net/projects/utinyripper/files/ "UTinyRipper Download") then place it in the VTOL VR Unity Project then you can open up the unity project and see the mod loaders assets.
 
-## [Creating a mod](https://vtolvr-mods.com/creating-a-mod.php "Guide on creating a mod")
+## [Creating a mod](https://vtolvr-mods.com/modloader/creating-a-mod "Guide on creating a mod")
 
-If you just want to create a mod for the mod loader. You can follow the guide at [vtolvr-mods.com](https://vtolvr-mods.com/creating-a-mod.php "Guide on how to create a mod") to get started with creating mods. To create a mod it requires some basic knowledge how [Unity](https://unity.com/ "Unity Game Engine") game engine works and C# but people have still managed to learn it on the go.
+If you just want to create a mod for the mod loader. You can follow the guide at [vtolvr-mods.com](https://vtolvr-mods.com/modloader/creating-a-mod "Guide on how to create a mod") to get started with creating mods. To create a mod it requires some basic knowledge how [Unity](https://unity.com/ "Unity Game Engine") game engine works and C# but people have still managed to learn it on the go.
 
 ## Contributors
 

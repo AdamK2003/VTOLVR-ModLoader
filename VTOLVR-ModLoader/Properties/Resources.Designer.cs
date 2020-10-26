@@ -22,7 +22,7 @@ namespace VTOLVR_ModLoader.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace VTOLVR_ModLoader.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("VTOLVR_ModLoader.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace VTOLVR_ModLoader.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -84,7 +84,7 @@ namespace VTOLVR_ModLoader.Properties {
         ///  &quot;SteamVR_Actions.dll&quot;,
         ///  &quot;System.ComponentModel.Composition.dll [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string BaseDLLS {
+        internal static string BaseDLLS {
             get {
                 return ResourceManager.GetString("BaseDLLS", resourceCulture);
             }
@@ -109,16 +109,25 @@ namespace VTOLVR_ModLoader.Properties {
         ///          &quot;Id&quot;: &quot;02_minesweeper&quot;,
         ///          &quot;Name&quot;: &quot;Mines [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string CampaignsJsonString {
+        internal static string CampaignsJsonString {
             get {
                 return ResourceManager.GetString("CampaignsJsonString", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://20fc2038e3e34ef99e7cfb790618cc00@o411102.ingest.sentry.io/5434499.
+        /// </summary>
+        internal static string Dsn {
+            get {
+                return ResourceManager.GetString("Dsn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] vtolvr_mod_boilerplate_master {
+        internal static byte[] vtolvr_mod_boilerplate_master {
             get {
                 object obj = ResourceManager.GetObject("vtolvr_mod_boilerplate_master", resourceCulture);
                 return ((byte[])(obj));

@@ -6,7 +6,9 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Valve.Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
+using Sentry;
+using Sentry.Protocol;
 using VTOLVR_ModLoader.Views;
 using Console = VTOLVR_ModLoader.Views.Console;
 using Settings = VTOLVR_ModLoader.Views.Settings;
@@ -23,7 +25,7 @@ namespace VTOLVR_ModLoader.Classes
         {
             await Task.Run(() =>
             {
-                using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Read)) 
+                using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Read))
                 {
                     List<ZipArchiveEntry> filesInZip = zip.Entries.ToList();
                     for (int f = 0; f < filesInZip.Count; f++)
@@ -155,7 +157,7 @@ namespace VTOLVR_ModLoader.Classes
             JObject json;
             for (int i = 0; i < mods.Length; i++)
             {
-                if (!File.Exists(Path.Combine(mods[i].FullName,"info.json")))
+                if (!File.Exists(Path.Combine(mods[i].FullName, "info.json")))
                 {
                     Console.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
                     continue;
@@ -222,6 +224,53 @@ namespace VTOLVR_ModLoader.Classes
         public static List<BaseItem> FindUsersSkins()
         {
             return null;
+        }
+        public enum SentryLogCategory { Console, DevToos, EditProject, Manager, NewProject, News, NewVersion, ProjectManager, Settings, MainWindow, Program, Startup }
+        public static void SentryLog(string message, SentryLogCategory category)
+        {
+            SentrySdk.AddBreadcrumb(
+                message: message,
+                category: category.ToString(),
+                level: BreadcrumbLevel.Info);
+        }
+
+        public static JArray JArrayTryParse(string content, out Exception exception)
+        {
+            try
+            {
+                exception = null;
+                return JArray.Parse(content);
+            }
+            catch (Exception e)
+            {
+                exception = e;
+                return null;
+            }
+        }
+        public static JObject JObjectTryParse(string content, out Exception exception)
+        {
+            try
+            {
+                exception = null;
+                return JObject.Parse(content);
+            }
+            catch (Exception e)
+            {
+                exception = e;
+                return null;
+            }
+        }
+        public static void DeleteDirectory(string path, out Exception exception)
+        {
+            try
+            {
+                Directory.Delete(path, true);
+                exception = null;
+            }
+            catch (Exception e)
+            {
+                exception = e;
+            }
         }
     }
 }

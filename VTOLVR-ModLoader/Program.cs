@@ -1,7 +1,7 @@
 ﻿/* This is the main class which stores and runs the core background things.
 
 */
-using Valve.Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -56,30 +56,32 @@ namespace VTOLVR_ModLoader
         public async static void SetupAfterUI()
         {
             await WaitForUI();
+            Helper.SentryLog("Setup after UI", Helper.SentryLogCategory.Program);
             MainWindow._instance.CreatePages();
             CommunicationsManager.CheckNoInternet();
             CommunicationsManager.CheckCustomURL();
             CommunicationsManager.CheckCustomBranch();
             CommunicationsManager.CheckAutoUpdate();
-            Console.Log(Views.Settings.SteamVR.ToString());
             if (CommunicationsManager.CheckSteamVR() && Views.Settings.SteamVR)
                 CheckForSteamVR();
             GetReleases();
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
+            MainWindow._instance.CheckForEvent();
             MainWindow.SetProgress(100, "Ready");
         }
 
         public static void SetVariables()
         {
+            Helper.SentryLog("Setting Variables", Helper.SentryLogCategory.Program);
             root = Directory.GetCurrentDirectory();
             vtolFolder = root.Replace("VTOLVR_ModLoader", "");
         }
 
         private async static Task WaitForUI()
         {
-            new DispatcherTimer(TimeSpan.Zero,DispatcherPriority.ApplicationIdle,UILoaded,
+            new DispatcherTimer(TimeSpan.Zero, DispatcherPriority.ApplicationIdle, UILoaded,
                        Application.Current.Dispatcher);
             while (!uiLoaded)
                 await Task.Delay(1);
@@ -90,12 +92,13 @@ namespace VTOLVR_ModLoader
         {
             uiLoaded = true;
             //This stops the timer from running as it would just continue
-            DispatcherTimer timer = sender as DispatcherTimer; 
+            DispatcherTimer timer = sender as DispatcherTimer;
             timer.Stop();
         }
 
         private static void CheckForSteamVR()
         {
+            Helper.SentryLog("Checking for steam vr", Helper.SentryLogCategory.Program);
             Process[] processes = Process.GetProcessesByName("vrmonitor");
             if (processes.Length > 0)
             {
@@ -108,6 +111,7 @@ namespace VTOLVR_ModLoader
 
         private static void AutoStart()
         {
+            Helper.SentryLog("Checking for auto start", Helper.SentryLogCategory.Program);
             if (CommunicationsManager.CheckArgs("autostart", out string line))
             {
                 if (line == "autostart")
@@ -118,22 +122,25 @@ namespace VTOLVR_ModLoader
         }
         public static void LaunchGame()
         {
+            Helper.SentryLog("Launching game", Helper.SentryLogCategory.Program);
+            MainWindow.GifState(MainWindow.gifStates.Play);
             ExtractMods();
         }
         private static void LaunchProcess()
         {
+            Helper.SentryLog("Starting process", Helper.SentryLogCategory.Program);
             Console.Log("Launching VTOL VR");
             Process.Start("steam://run/667970");
 
             MainWindow.SetPlayButton(false);
             MainWindow.SetProgress(0, "Launching Game");
-            MainWindow.GifState(MainWindow.gifStates.Play);
 
             WaitForProcess();
         }
 
         private static async void WaitForProcess()
         {
+            Helper.SentryLog("Waiting for process", Helper.SentryLogCategory.Program);
             Console.Log("Waiting for VTOL VR Process");
             int maxTries = 5;
             for (int i = 1; i <= maxTries; i++)
@@ -141,7 +148,6 @@ namespace VTOLVR_ModLoader
                 //Doing 5 tries to search for the process
                 MainWindow.SetProgress(10 * i, "Searching for process...   (Attempt " + i + ")");
                 await Task.Delay(5000);
-
 
                 if (Process.GetProcessesByName("vtolvr").Length == 1)
                     break;
@@ -168,6 +174,7 @@ namespace VTOLVR_ModLoader
         }
         private static void InjectDefaultMod()
         {
+            Helper.SentryLog("Injecting Mod", Helper.SentryLogCategory.Program);
             //Injecting the default mod
             string defaultStart = string.Format("inject -p {0} -a {1} -n {2} -c {3} -m {4}", "vtolvr", "ModLoader.dll", "ModLoader", "Load", "Init");
             Console.Log("Injecting the ModLoader.dll");
@@ -176,6 +183,7 @@ namespace VTOLVR_ModLoader
 
         public static void Quit(string reason)
         {
+            Helper.SentryLog("Quitting " + reason, Helper.SentryLogCategory.Program);
             Console.Log($"Closing Application\nReason:{reason}");
             Process.GetCurrentProcess().Kill();
         }
@@ -183,8 +191,14 @@ namespace VTOLVR_ModLoader
         #region Mod/Skin Handeling
         public static void ExtractMods()
         {
+            Helper.SentryLog("Extracting Mods", Helper.SentryLogCategory.Program);
             MainWindow.SetPlayButton(true);
             MainWindow.SetProgress(0, "Extracting  mods...");
+
+            //If the mods folder is missing
+            if (!Directory.Exists(root + modsFolder))
+                Directory.CreateDirectory(root + modsFolder);
+
             DirectoryInfo folder = new DirectoryInfo(root + modsFolder);
             FileInfo[] files = folder.GetFiles("*.zip");
             if (files.Length == 0)
@@ -222,15 +236,21 @@ namespace VTOLVR_ModLoader
                 MainWindow.SetPlayButton(false);
                 MainWindow.SetProgress(100, extractedMods == 0 ? "No mods were extracted" : "Extracted " + extractedMods +
                     (extractedMods == 1 ? " new mod" : " new mods"));
-                
+
                 MoveDependencies();
             }
         }
 
         private static void ExtractSkins()
         {
+            Helper.SentryLog("Extracting Skins", Helper.SentryLogCategory.Program);
             MainWindow.SetPlayButton(true);
             MainWindow.SetProgress(0, "Extracting skins...");
+
+            //If the skins folder is missing
+            if (!Directory.Exists(root + skinsFolder))
+                Directory.CreateDirectory(root + skinsFolder);
+
             DirectoryInfo folder = new DirectoryInfo(Program.root + Program.skinsFolder);
             FileInfo[] files = folder.GetFiles("*.zip");
             if (files.Length == 0)
@@ -249,7 +269,6 @@ namespace VTOLVR_ModLoader
                 movedDep = 0;
                 skinsToExtract = 0;
                 modsToExtract = 0;
-
 
                 LaunchProcess();
                 return;
@@ -300,8 +319,9 @@ namespace VTOLVR_ModLoader
 
         private static void MoveDependencies()
         {
+            Helper.SentryLog("Moving Dependencies", Helper.SentryLogCategory.Program);
             MainWindow.SetPlayButton(true);
-            Task.Run(delegate 
+            Task.Run(delegate
             {
                 string[] modFolders = Directory.GetDirectories(root + modsFolder);
 
@@ -314,9 +334,11 @@ namespace VTOLVR_ModLoader
                     {
                         if (subFolders[j].ToLower().Contains("dependencies"))
                         {
-                            Application.Current.Dispatcher.Invoke(new Action(() => { 
-                                Console.Log("Found the folder dependencies"); }));
-                            
+                            Application.Current.Dispatcher.Invoke(new Action(() =>
+                            {
+                                Console.Log("Found the folder dependencies");
+                            }));
+
                             string[] depFiles = Directory.GetFiles(subFolders[j], "*.dll");
                             for (int k = 0; k < depFiles.Length; k++)
                             {
@@ -335,18 +357,20 @@ namespace VTOLVR_ModLoader
                                             @"\VTOLVR_Data\Managed\" + fileName,
                                             true);
                                         movedDep++;
-                                        Application.Current.Dispatcher.Invoke(new Action(() => {
+                                        Application.Current.Dispatcher.Invoke(new Action(() =>
+                                        {
                                             Console.Log($"Updated Dependencie {depFiles[k]}");
                                         }));
                                     }
                                 }
                                 else
-                                {                                   
+                                {
                                     File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
                                                 @"\VTOLVR_Data\Managed\" + fileName,
                                                 true);
                                     movedDep++;
-                                    Application.Current.Dispatcher.Invoke(new Action(() => {
+                                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                                    {
                                         Console.Log($"Moved Dependencie {depFiles[k]}");
                                     }));
                                 }
@@ -355,8 +379,10 @@ namespace VTOLVR_ModLoader
                         }
                     }
                 }
-            }).ContinueWith(delegate {
-                Application.Current.Dispatcher.Invoke(new Action(() => {
+            }).ContinueWith(delegate
+            {
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
                     MovedDependencies();
                 }));
             });
@@ -408,7 +434,7 @@ namespace VTOLVR_ModLoader
         {
             if (!await HttpHelper.CheckForInternet())
                 return;
-
+            Helper.SentryLog("Getting Releases", Helper.SentryLogCategory.Program);
             Console.Log($"Connecting to API for latest releases");
             HttpHelper.DownloadStringAsync(
                 url + apiURL + releasesURL + "/" + (branch == string.Empty ? string.Empty : $"?branch={branch}"),
@@ -417,6 +443,7 @@ namespace VTOLVR_ModLoader
 
         private static async void NewsDone(HttpResponseMessage response)
         {
+            Helper.SentryLog("Got releases", Helper.SentryLogCategory.Program);
             if (response.IsSuccessStatusCode)
             {
                 Releases = new List<Release>();
@@ -433,6 +460,7 @@ namespace VTOLVR_ModLoader
 
         private static void ConvertUpdates(string jsonString)
         {
+            Helper.SentryLog("Converting Update", Helper.SentryLogCategory.Program);
             JArray results = JArray.Parse(jsonString);
             Release lastUpdate;
             JArray lastFilesJson;

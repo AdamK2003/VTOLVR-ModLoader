@@ -1,5 +1,5 @@
-﻿using Valve.Newtonsoft.Json;
-using Valve.Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -89,9 +89,11 @@ namespace VTOLVR_ModLoader.Views
                 uploadButton.Content = "Please fill out all the sections before uploading";
             }
             CheckForInternet();
+            Helper.SentryLog("Created New Version page", Helper.SentryLogCategory.NewVersion);
         }
         public async void CheckForInternet()
         {
+            Helper.SentryLog("Checking for internet", Helper.SentryLogCategory.NewVersion);
             if (!await HttpHelper.CheckForInternet())
             {
                 uploadButton.IsEnabled = false;
@@ -106,6 +108,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private async void Upload(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Uploading", Helper.SentryLogCategory.NewVersion);
             uploadButton.IsEnabled = false;
             MainWindow.SetBusy(true);
             SaveProject();
@@ -116,6 +119,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private async Task UploadNewProject()
         {
+            Helper.SentryLog("Uploading new Project", Helper.SentryLogCategory.NewVersion);
             uploadButton.Content = "Uploading...";
             if (_isMod && !AssemblyChecks())
             {
@@ -126,7 +130,7 @@ namespace VTOLVR_ModLoader.Views
             string zipPath = ZipCurrentProject();
             Console.Log("Filling out form to submit");
 
-            HttpHelper form = new HttpHelper(Program.url + Program.apiURL + (_isMod? Program.modsURL : Program.skinsURL) + @"\");
+            HttpHelper form = new HttpHelper(Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + @"\");
             form.SetToken(Settings.Token);
             form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
             form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
@@ -139,7 +143,7 @@ namespace VTOLVR_ModLoader.Views
 
             form.AttachFile("header_image", _currentJson[ProjectManager.jWImage].ToString(), _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
             form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
-            form.AttachFile("user_uploaded_file","test.zip", zipPath);
+            form.AttachFile("user_uploaded_file", "test.zip", zipPath);
 
             Console.Log("Sending Data");
             HttpResponseMessage result = await form.SendDataAsync(HttpHelper.HttpMethod.POST);
@@ -149,6 +153,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private async Task UpdateProject()
         {
+            Helper.SentryLog("Updating existing project", Helper.SentryLogCategory.NewVersion);
             uploadButton.Content = "Updating...";
             if (_isMod && !AssemblyChecks())
             {
@@ -198,7 +203,7 @@ namespace VTOLVR_ModLoader.Views
             HttpResponseMessage changelogResult = await form2.SendDataAsync(HttpHelper.HttpMethod.PUT);
             response = await changelogResult.Content.ReadAsStringAsync();
             Console.Log($"Raw Response from {Program.url + Program.apiURL + (_isMod ? Program.modsChangelogsURL : Program.skinsChangelogsURL) + "/" + _currentJson[ProjectManager.jID] + "/"}\n{response}");
-            
+
             if (changelogResult.IsSuccessStatusCode)
             {
                 Notification.Show("Success!");
@@ -255,7 +260,7 @@ namespace VTOLVR_ModLoader.Views
                 Notification.Show("Uploaded!", "Success");
                 Console.Log($"Uploaded new project at {Program.url}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
                 MainWindow._instance.Creator(null, null);
-                
+
                 if (_currentJson[ProjectManager.jID] == null)
                 {
                     _currentJson[ProjectManager.jID] = json["pub_id"].ToString();
@@ -278,6 +283,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private bool AssemblyChecks()
         {
+            Helper.SentryLog("Assembly Checks", Helper.SentryLogCategory.NewVersion);
             if (!_isMod)
             {
                 Console.Log("Somehow Assemblychecks ran in a skin project");
@@ -324,6 +330,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private string ZipCurrentProject()
         {
+            Helper.SentryLog("Zipping project", Helper.SentryLogCategory.NewVersion);
             if (File.Exists($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip"))
                 File.Delete($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip");
             ZipArchive zip = ZipFile.Open($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip", ZipArchiveMode.Update);
@@ -363,6 +370,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private void SaveProject()
         {
+            Helper.SentryLog("Saving Project", Helper.SentryLogCategory.NewVersion);
             try
             {
                 File.WriteAllText(_currentPath + (_isMod ? @"\Builds\info.json" : @"\info.json"), _currentJson.ToString());

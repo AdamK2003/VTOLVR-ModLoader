@@ -35,7 +35,7 @@
                 <Label Grid.Column="3" Foreground="White" FontSize="15" Content="Load on start" HorizontalAlignment="Center"/>
                 <Label Grid.Column="4" Foreground="White" FontSize="15" Content="Autoupdate" HorizontalAlignment="Center"/>
             </Grid>
-            
+
 
             <Grid Grid.Row="4" Visibility="Hidden">
                 <Grid.ColumnDefinitions>
@@ -83,9 +83,9 @@
                             <CheckBox Grid.Row="0" Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center"
                                       IsChecked="{Binding AutoUpdateCheck}"/>
                             <Button Grid.Row="0" Grid.Column="6" Content="Delete?" Style="{StaticResource darkButton}" Margin="5"
-                                    Tag="{Binding FolderDirectory}"/>
+                                    Tag="{Binding FolderDirectory}" Click="DeleteMod"/>
                             <Button Grid.Row="1" Grid.Column="6" Content="Update" Style="{StaticResource darkButton}" Margin="5"
-                        Visibility="{Binding UpdateVisibility}"/>
+                        Visibility="{Binding UpdateVisibility}" Tag="{Binding PublicID}" Click="UpdateMod"/>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -104,8 +104,9 @@
                 <Label Grid.Column="0" Foreground="White" FontSize="25" Content="Skins" FontWeight="Bold"/>
                 <Label Grid.Column="1" Foreground="White" FontSize="15" Content="Autoupdate" HorizontalAlignment="Center"/>
             </Grid>
-            
-            <Label Grid.Row="5" Foreground="White" FontSize="15" Content="No skins downloaded"/>
+
+            <Label Grid.Row="5" Foreground="White" FontSize="15" Content="No skins downloaded" x:Name="NoSkinsText"/>
+            <Label Grid.Row="3" Foreground="White" FontSize="15" Content="No mods downloaded" x:Name="NoModsText"/>
         </Grid>
     </ScrollViewer>
 </UserControl>

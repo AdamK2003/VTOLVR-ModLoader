@@ -42,10 +42,11 @@ namespace VTOLVR_ModLoader
             Restore = 9, ShowDefault = 10, ForceMinimized = 11
         };
 
-        private static readonly string[] needFiles = { "SharpMonoInjector.dll", "injector.exe", "Updater.exe", "Gameloop.Vdf.dll", "Valve.Newtonsoft.Json.dll", "SimpleTCP.dll" };
-        private static readonly string[] neededDLLFiles = { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll"};
+        private static readonly string[] needFiles = { "injector.exe", "Updater.exe" };
+        private static readonly string[] neededDLLFiles = { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll" };
         public static bool RunStartUp()
         {
+            Helper.SentryLog("Running Startup", Helper.SentryLogCategory.Startup);
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             bool debug = false;
 #if DEBUG
@@ -67,6 +68,7 @@ namespace VTOLVR_ModLoader
         /// <returns></returns>
         public static bool SearchForProcess()
         {
+            Helper.SentryLog("Searching for existing process", Helper.SentryLogCategory.Startup);
             Process[] p = Process.GetProcessesByName("VTOLVR-ModLoader");
             for (int i = 0; i < p.Length; i++)
             {
@@ -82,7 +84,7 @@ namespace VTOLVR_ModLoader
 
                     // set user the focus to the window
                     SetForegroundWindow(p[i].MainWindowHandle);
-                    
+
                     return true;
                 }
             }
@@ -91,6 +93,7 @@ namespace VTOLVR_ModLoader
 
         private static bool CheckBaseFolder()
         {
+            Helper.SentryLog("Checking base folder", Helper.SentryLogCategory.Startup);
             //Checking the folder which this is in
             string[] pathSplit = Program.root.Split('\\');
             if (pathSplit[pathSplit.Length - 1] != "VTOLVR_ModLoader")
@@ -107,7 +110,7 @@ namespace VTOLVR_ModLoader
                         closedCallback: delegate { Program.Quit("Not in correct folder"); });
                     return false;
                 }
-                
+
             }
 
             //Now it should be in the correct folder, but just need to check if its in the games folder
@@ -126,6 +129,7 @@ namespace VTOLVR_ModLoader
         /// </summary>
         private static bool CheckFolder()
         {
+            Helper.SentryLog("Checking folder", Helper.SentryLogCategory.Startup);
             //Checking if the files we need to run are there
             foreach (string file in needFiles)
             {
@@ -169,6 +173,7 @@ namespace VTOLVR_ModLoader
 
         private static void FindSteamFolders()
         {
+            Helper.SentryLog("Finding Steam Folders", Helper.SentryLogCategory.Startup);
             string regPath = (string)Registry.GetValue(
                 @"HKEY_CURRENT_USER\Software\Valve\Steam",
                 @"SteamPath",
@@ -201,7 +206,7 @@ namespace VTOLVR_ModLoader
                 catch
                 {
                     return;
-                }                    
+                }
                 i++;
             }
         }
@@ -212,6 +217,7 @@ namespace VTOLVR_ModLoader
         }
         private static void SetWorkingDirectory(string folder)
         {
+            Helper.SentryLog("Setting working directory", Helper.SentryLogCategory.Startup);
             Environment.CurrentDirectory = folder + @"\steamapps\common\VTOL VR\VTOLVR_ModLoader";
             Program.SetVariables();
         }

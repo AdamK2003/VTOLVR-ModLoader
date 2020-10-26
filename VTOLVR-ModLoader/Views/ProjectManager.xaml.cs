@@ -1,4 +1,4 @@
-﻿using Valve.Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Windows;
 
 namespace VTOLVR_ModLoader.Views
@@ -48,10 +49,12 @@ namespace VTOLVR_ModLoader.Views
         public ProjectManager()
         {
             InitializeComponent();
+            Helper.SentryLog("Created Project Manager Page", Helper.SentryLogCategory.ProjectManager);
         }
 
         public void SetUI()
         {
+            Helper.SentryLog("Setting up UI", Helper.SentryLogCategory.ProjectManager);
             settingsText.Visibility = Visibility.Visible;
             newProjectButton.IsEnabled = false;
 
@@ -69,7 +72,7 @@ namespace VTOLVR_ModLoader.Views
 
         private bool CheckProjectPath()
         {
-            if (string.IsNullOrEmpty(Settings.projectsFolder))
+            if (string.IsNullOrEmpty(Settings.ProjectsFolder))
                 return false;
             settingsText.Visibility = Visibility.Hidden;
             newProjectButton.IsEnabled = true;
@@ -78,12 +81,14 @@ namespace VTOLVR_ModLoader.Views
 
         private void NewProject(object sender, RoutedEventArgs e)
         {
+            Helper.SentryLog("Opening new project page", Helper.SentryLogCategory.ProjectManager);
             MainWindow.OpenPage(new NewProject());
         }
 
         private void FindMods(ref List<MyProject> localProjects)
         {
-            DirectoryInfo myMods = new DirectoryInfo(Settings.projectsFolder + modsFolder);
+            Helper.SentryLog("Finding Mods", Helper.SentryLogCategory.ProjectManager);
+            DirectoryInfo myMods = new DirectoryInfo(Settings.ProjectsFolder + modsFolder);
             DirectoryInfo[] mods = myMods.GetDirectories();
 
             for (int i = 0; i < mods.Length; i++)
@@ -124,7 +129,7 @@ namespace VTOLVR_ModLoader.Views
                     else
                     {
                         Console.Log($"{mods[i].Name} is missing something in it's info.json file");
-                    }                    
+                    }
                 }
                 else
                 {
@@ -135,7 +140,8 @@ namespace VTOLVR_ModLoader.Views
 
         private void FindSkins(ref List<MyProject> localProjects)
         {
-            DirectoryInfo mySkins = new DirectoryInfo(Settings.projectsFolder + skinsFolder);
+            Helper.SentryLog("Finding Skins", Helper.SentryLogCategory.ProjectManager);
+            DirectoryInfo mySkins = new DirectoryInfo(Settings.ProjectsFolder + skinsFolder);
             DirectoryInfo[] skins = mySkins.GetDirectories();
 
             for (int i = 0; i < skins.Length; i++)
@@ -169,7 +175,7 @@ namespace VTOLVR_ModLoader.Views
                         skins[i].FullName,
                         lastedit,
                         openFolderText,
-                        jObject[jID] == null? releaseText : newReleaseText,
+                        jObject[jID] == null ? releaseText : newReleaseText,
                         new DateTime(result)));
                     }
                     else

@@ -11,11 +11,11 @@ namespace Build
 {
     class Program
     {
-        private static string dir, templateFolder,dlls;
+        private static string dir, templateFolder, dlls;
         private static List<Process> processes = new List<Process>();
         private static Dictionary<string, string> paths = new Dictionary<string, string>()
         {
-            { "msbuild", @"C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe"},
+            { "msbuild", @"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"},
             { "unity", @"C:\Program Files\Unity\Hub\Editor\2019.1.8f1\Editor\Unity.exe"},
             { "nuget", @"B:\Gitlab Runner\nuget.exe" }
         };
@@ -182,8 +182,8 @@ namespace Build
                 "VTOL VR Mod Loader Release");
             Log("Creating Directory");
             Directory.CreateDirectory(root);
-            
-            if (File.Exists(Path.Combine(root,"autoupdate.zip")))
+
+            if (File.Exists(Path.Combine(root, "autoupdate.zip")))
             {
                 Log("Deleting autoupdate.zip");
                 TryDelete(Path.Combine(root, "autoupdate.zip"));
@@ -228,8 +228,8 @@ namespace Build
             catch { }
         }
 
-        
-        private static void Run(string file,string args, string workingDirectory)
+
+        private static void Run(string file, string args, string workingDirectory)
         {
             Process process = new Process();
             processes.Add(process);

@@ -181,6 +181,11 @@ namespace VTOLVR_ModLoader.Views
         //The zip from the website has finished downloading and is now in their mods folder
         private void ModDownloadComplete(object sender, AsyncCompletedEventArgs e)
         {
+            /*
+             * The problem with webclient is that it doesn't store what it just did
+             * So I have no clue how to display what mod just finished updating so I can
+             * update it on the list
+             */
             Helper.SentryLog("Fininshed downloading mod update", Helper.SentryLogCategory.Manager);
             MainWindow.SetBusy(false);
             if (!e.Cancelled && e.Error == null)

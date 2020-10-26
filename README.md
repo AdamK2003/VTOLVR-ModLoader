@@ -29,9 +29,9 @@ Then following the ``instructions.txt`` inside the dll folder, drag the required
  
 To set up the unity project for use. You need to extract VTOL VR into a unity project using [UTinyRipper](https://sourceforge.net/projects/utinyripper/files/ "UTinyRipper Download") then place it in the VTOL VR Unity Project then you can open up the unity project and see the mod loaders assets.
 
-## [Creating a mod](https://vtolvr-mods.com/creating-a-mod.php "Guide on creating a mod")
+## [Creating a mod](https://vtolvr-mods.com/modloader/creating-a-mod "Guide on creating a mod")
 
-If you just want to create a mod for the mod loader. You can follow the guide at [vtolvr-mods.com](https://vtolvr-mods.com/creating-a-mod.php "Guide on how to create a mod") to get started with creating mods. To create a mod it requires some basic knowledge how [Unity](https://unity.com/ "Unity Game Engine") game engine works and C# but people have still managed to learn it on the go.
+If you just want to create a mod for the mod loader. You can follow the guide at [vtolvr-mods.com](https://vtolvr-mods.com/modloader/creating-a-mod "Guide on how to create a mod") to get started with creating mods. To create a mod it requires some basic knowledge how [Unity](https://unity.com/ "Unity Game Engine") game engine works and C# but people have still managed to learn it on the go.
 
 ## Contributors
 

@@ -156,22 +156,33 @@ namespace Build
             //Copy all folders
             foreach (string dirPath in Directory.GetDirectories(templateFolder, "*",
                 SearchOption.AllDirectories))
-                Directory.CreateDirectory(dirPath.Replace(templateFolder, dir + @"\autoupdate\template"));
+            {
+                string directory = dirPath.Replace(templateFolder, dir + @"\autoupdate\template");
+                Log($"Creating folder: {directory}");
+                Directory.CreateDirectory(directory);
+            }
             //Copy all files
             foreach (string newPath in Directory.GetFiles(templateFolder, "*.*",
                 SearchOption.AllDirectories))
-                File.Copy(newPath, newPath.Replace(templateFolder, dir + @"\autoupdate\template"), true);
+            {
+                string filePath = newPath.Replace(templateFolder, dir + @"\autoupdate\template");
+                Log($"Copying file from {newPath} to {filePath}");
+                File.Copy(newPath, filePath, true);
+            }
 
+            Log("Creating Default folders");
             Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_Data\Managed");
             Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_Data\Plugins");
             Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_ModLoader\mods");
             Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_ModLoader\skins");
 
+            Log("Moving Applications");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.xml");
             TryMove(dir + @"\VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
             TryMove(dir + @"\Updater\bin\Release\Updater.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\Updater.exe");
 
+            Log("Creating zip");
             ZipFile.CreateFromDirectory(dir + @"\autoupdate\", dir + @"\autoupdate.zip");
         }
         private static void MoveToDesktop()

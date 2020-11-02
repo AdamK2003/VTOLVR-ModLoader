@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ namespace VTOLVR_ModLoader.Classes
 {
     static class CommunicationsManager
     {
+        private const int TCPPORT = 12000;
         public static SimpleTcpServer TcpServer { get; private set; }
         public static SimpleTcpClient TcpClient { get; private set; }
         public static TcpClient GameTcpClient { get; private set; }
@@ -202,7 +204,7 @@ namespace VTOLVR_ModLoader.Classes
                 try
                 {
                     TcpServer = new SimpleTcpServer();
-                    TcpServer.Start(IPAddress.Parse("127.0.0.1"), 9999);
+                    TcpServer.Start(IPAddress.Parse("127.0.0.1"), TCPPORT);
                     TcpServer.DataReceived += TcpDataReceived;
                     TcpServer.ClientDisconnected += TcpClientDisconnected;
                 }
@@ -218,7 +220,7 @@ namespace VTOLVR_ModLoader.Classes
                     try
                     {
                         TcpClient = new SimpleTcpClient();
-                        TcpClient.Connect("127.0.0.1", 9999);
+                        TcpClient.Connect("127.0.0.1", TCPPORT);
                         Console.Log($"Passing \"{line}\" to other instance");
                         TcpClient.WriteLine($"Command:{line}");
                         TcpClient.Disconnect();

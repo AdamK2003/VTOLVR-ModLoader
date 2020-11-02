@@ -194,7 +194,7 @@ namespace VTOLVR_ModLoader.Classes
             }
             return false;
         }
-        
+
         public static void StartTCP(bool isServer)
         {
             if (isServer)
@@ -213,21 +213,29 @@ namespace VTOLVR_ModLoader.Classes
             }
             else
             {
-                TcpClient = new SimpleTcpClient();
-                TcpClient.Connect("127.0.0.1", 9999);
                 if (CheckArgs("vtolvrml://", out string line))
                 {
-                    Views.Console.Log($"Passing \"{line}\" to other instance");
-                    TcpClient.WriteLine($"Command:{line}");
+                    try
+                    {
+                        TcpClient = new SimpleTcpClient();
+                        TcpClient.Connect("127.0.0.1", 9999);
+                        Console.Log($"Passing \"{line}\" to other instance");
+                        TcpClient.WriteLine($"Command:{line}");
+                        TcpClient.Disconnect();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.Log($"Failed to connect to other instance. Reason: {e.Message}");
+                    }
                 }
-                TcpClient.Disconnect();
                 Program.Quit("Another Instance Found");
             }
         }
 
         private static void TcpClientDisconnected(object sender, TcpClient e)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() => {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
                 if (GameTcpClient != null && e == GameTcpClient)
                 {
                     Console.GameClosed();
@@ -235,7 +243,7 @@ namespace VTOLVR_ModLoader.Classes
                     MainWindow.SetProgress(100, "Ready");
                 }
             }));
-            
+
         }
 
         private static void TcpDataReceived(object sender, Message e)
@@ -248,13 +256,14 @@ namespace VTOLVR_ModLoader.Classes
                 lines[i] = lines[i].Replace("", string.Empty);
                 if (string.IsNullOrWhiteSpace(lines[i]))
                     continue;
-                Application.Current.Dispatcher.Invoke(new Action(() => {
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
                     Console.Log(lines[i].Remove(lines[i].Length - 1), false);
                     if (lines[i].StartsWith("Command:"))
                         ProcessCommand(lines[i], e.TcpClient);
                 }));
             }
-             
+
         }
 
         private static void ProcessCommand(string message, TcpClient client)

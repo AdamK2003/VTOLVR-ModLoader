@@ -166,9 +166,11 @@ namespace VTOLVR_ModLoader.Classes
             {
                 MainWindow.SetProgress(100, $"Ready");
                 Console.Log($"Downloaded {currentDownloadFile}");
+                Helper.SentryLog($"Finished downloading {currentDownloadFile}", Helper.SentryLogCategory.CommunicationsManager);
             }
             else
             {
+                Helper.SentryLog($"Error when downloading {currentDownloadFile}\n{e.Error.Message}", Helper.SentryLogCategory.CommunicationsManager);
                 MainWindow.SetProgress(100, $"Ready");
                 Notification.Show($"{e.Error.Message}", "Error when downloading file");
                 Console.Log("Error:\n" + e.Error.ToString());

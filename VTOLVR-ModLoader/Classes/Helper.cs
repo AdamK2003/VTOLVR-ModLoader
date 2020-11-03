@@ -198,7 +198,7 @@ namespace VTOLVR_ModLoader.Classes
         {
             return null;
         }
-        public enum SentryLogCategory { Console, DevToos, EditProject, Manager, NewProject, News, NewVersion, ProjectManager, Settings, MainWindow, Program, Startup }
+        public enum SentryLogCategory { Console, DevToos, EditProject, Manager, NewProject, News, NewVersion, ProjectManager, Settings, MainWindow, Program, Startup, CommunicationsManager }
         public static void SentryLog(string message, SentryLogCategory category)
         {
             SentrySdk.AddBreadcrumb(

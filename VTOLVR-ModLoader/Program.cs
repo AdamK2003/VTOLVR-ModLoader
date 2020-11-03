@@ -20,6 +20,7 @@ using System.Windows;
 using System.Windows.Threading;
 using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Views;
+using VTOLVR_ModLoader.Windows;
 using Console = VTOLVR_ModLoader.Views.Console;
 
 namespace VTOLVR_ModLoader
@@ -223,8 +224,13 @@ namespace VTOLVR_ModLoader
             }
         }
 
-        private static void ExtractedMod(string zipPath, string extractedPath)
+        private static void ExtractedMod(string zipPath, string extractedPath, string result)
         {
+            if (!result.Equals("Success"))
+            {
+                Notification.Show($"Error Extracting {zipPath}\nError:{result}");
+                Console.Log($"Error Extracting {zipPath}\nError:{result}");
+            }
             extractedMods++;
             Console.Log($"({extractedMods}/{modsToExtract})Finished Extracting {zipPath}");
             MainWindow.SetProgress(extractedMods / modsToExtract * 100, $"({extractedMods}/{modsToExtract})Extracting mods...");
@@ -286,8 +292,13 @@ namespace VTOLVR_ModLoader
             }
         }
 
-        private static void SkinExtracted(string zipPath, string extractedPath)
+        private static void SkinExtracted(string zipPath, string extractedPath, string result)
         {
+            if (!result.Equals("Success"))
+            {
+                Notification.Show($"Error Extracting {zipPath}\nError:{result}");
+                Console.Log($"Error Extracting {zipPath}\nError:{result}");
+            }
             extractedSkins++;
             Console.Log($"({extractedSkins}/{skinsToExtract})Finished Extracting {zipPath}");
             MainWindow.SetProgress(extractedSkins / skinsToExtract * 100, $"({extractedSkins}/{skinsToExtract})Extracting skins...");

@@ -235,7 +235,7 @@ namespace VTOLVR_ModLoader
             Console.Log($"({extractedMods}/{modsToExtract})Finished Extracting {zipPath}");
             MainWindow.SetProgress(extractedMods / modsToExtract * 100, $"({extractedMods}/{modsToExtract})Extracting mods...");
             //Deleting the zip
-            File.Delete(zipPath);
+            Helper.TryDelete(zipPath);
 
             if (extractedMods == modsToExtract)
             {
@@ -303,7 +303,7 @@ namespace VTOLVR_ModLoader
             Console.Log($"({extractedSkins}/{skinsToExtract})Finished Extracting {zipPath}");
             MainWindow.SetProgress(extractedSkins / skinsToExtract * 100, $"({extractedSkins}/{skinsToExtract})Extracting skins...");
             //Deleting the zip
-            File.Delete(zipPath);
+            Helper.TryDelete(zipPath);
 
             if (extractedSkins == skinsToExtract)
             {

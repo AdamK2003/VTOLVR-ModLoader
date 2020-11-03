@@ -22,42 +22,50 @@ namespace VTOLVR_ModLoader.Classes
         {
             return Regex.Replace(input, @"\s+", "");
         }
-        public static async void ExtractZipToDirectory(string zipPath, string extractPath, Action<string, string> completed)
+        public static async void ExtractZipToDirectory(string zipPath, string extractPath, Action<string, string, string> completed)
         {
-            await Task.Run(() =>
+            string result = await Task.Run(() =>
             {
-                // This is mostly just the example code from here:
-                // https://github.com/icsharpcode/SharpZipLib/wiki/Unpack-a-Zip-with-full-control-over-the-operation#c
-                using (ZipFile zip = new ZipFile(zipPath))
+                try
                 {
-                    foreach (ZipEntry zipEntry in zip)
+                    // This is mostly just the example code from here:
+                    // https://github.com/icsharpcode/SharpZipLib/wiki/Unpack-a-Zip-with-full-control-over-the-operation#c
+                    using (ZipFile zip = new ZipFile(zipPath))
                     {
-                        if (!zipEntry.IsFile)
-                            continue;
-                        string entryFileName = zipEntry.Name;
-
-                        string fullZipToPath = Path.Combine(extractPath, entryFileName);
-                        string directoryName = Path.GetDirectoryName(fullZipToPath);
-                        if (directoryName.Length > 0)
+                        foreach (ZipEntry zipEntry in zip)
                         {
-                            Directory.CreateDirectory(directoryName);
-                        }
+                            if (!zipEntry.IsFile)
+                                continue;
+                            string entryFileName = zipEntry.Name;
 
-                        // 4K is optimum
-                        var buffer = new byte[4096];
+                            string fullZipToPath = Path.Combine(extractPath, entryFileName);
+                            string directoryName = Path.GetDirectoryName(fullZipToPath);
+                            if (directoryName.Length > 0)
+                            {
+                                Directory.CreateDirectory(directoryName);
+                            }
 
-                        // Unzip file in buffered chunks. This is just as fast as unpacking
-                        // to a buffer the full size of the file, but does not waste memory.
-                        // The "using" will close the stream even if an exception occurs.
-                        using (var zipStream = zip.GetInputStream(zipEntry))
-                        using (Stream fsOutput = File.Create(fullZipToPath))
-                        {
-                            StreamUtils.Copy(zipStream, fsOutput, buffer);
+                            // 4K is optimum
+                            var buffer = new byte[4096];
+
+                            // Unzip file in buffered chunks. This is just as fast as unpacking
+                            // to a buffer the full size of the file, but does not waste memory.
+                            // The "using" will close the stream even if an exception occurs.
+                            using (var zipStream = zip.GetInputStream(zipEntry))
+                            using (Stream fsOutput = File.Create(fullZipToPath))
+                            {
+                                StreamUtils.Copy(zipStream, fsOutput, buffer);
+                            }
                         }
                     }
+                    return "Success";
+                }
+                catch (Exception e)
+                {
+                    return e.Message;
                 }
             });
-            completed?.Invoke(zipPath, extractPath);
+            completed?.Invoke(zipPath, extractPath, result);
         }
         public static string CalculateMD5(string filename)
         {

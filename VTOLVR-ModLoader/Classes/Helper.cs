@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json.Linq;
 using Sentry;
 using Sentry.Protocol;
@@ -25,74 +26,38 @@ namespace VTOLVR_ModLoader.Classes
         {
             await Task.Run(() =>
             {
-                using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Read))
+                // This is mostly just the example code from here:
+                // https://github.com/icsharpcode/SharpZipLib/wiki/Unpack-a-Zip-with-full-control-over-the-operation#c
+                using (ZipFile zip = new ZipFile(zipPath))
                 {
-                    List<ZipArchiveEntry> filesInZip = zip.Entries.ToList();
-                    for (int f = 0; f < filesInZip.Count; f++)
+                    foreach (ZipEntry zipEntry in zip)
                     {
-                        if (!filesInZip[f].FullName.EndsWith("\\"))
+                        if (!zipEntry.IsFile)
+                            continue;
+                        string entryFileName = zipEntry.Name;
+
+                        string fullZipToPath = Path.Combine(extractPath, entryFileName);
+                        string directoryName = Path.GetDirectoryName(fullZipToPath);
+                        if (directoryName.Length > 0)
                         {
-                            if (filesInZip[f].Name.Length == 0)
-                            {
-                                //This is just a folder
-                                Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
-                                continue;
-                            }
-                            //This is a file
-                            Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName.Replace(filesInZip[f].Name, string.Empty)));
-                            filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName), File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
+                            Directory.CreateDirectory(directoryName);
                         }
-                        else if (!Directory.Exists(Path.Combine(extractPath, filesInZip[f].FullName)))
-                            Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
+
+                        // 4K is optimum
+                        var buffer = new byte[4096];
+
+                        // Unzip file in buffered chunks. This is just as fast as unpacking
+                        // to a buffer the full size of the file, but does not waste memory.
+                        // The "using" will close the stream even if an exception occurs.
+                        using (var zipStream = zip.GetInputStream(zipEntry))
+                        using (Stream fsOutput = File.Create(fullZipToPath))
+                        {
+                            StreamUtils.Copy(zipStream, fsOutput, buffer);
+                        }
                     }
                 }
             });
             completed?.Invoke(zipPath, extractPath);
-            //using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Read))
-            //{
-            //    zip.
-            //    await Task.WhenAll(zip.Entries.Select(file => Task.Run(() =>
-            //    {
-            //        if (!file.FullName.EndsWith("\\"))
-            //        {
-            //            if (file.Name.Length == 0)
-            //            {
-            //                //This is just a folder
-            //                Directory.CreateDirectory(Path.Combine(extractPath, file.FullName));
-            //            }
-            //            else
-            //            {
-            //                //This is a file
-            //                Directory.CreateDirectory(Path.Combine(extractPath, file.FullName.Replace(file.Name, string.Empty)));
-            //                System.Console.WriteLine(file.Name);
-            //                file.ExtractToFile(Path.Combine(extractPath, file.FullName), File.Exists(Path.Combine(extractPath, file.FullName)));
-            //            }
-
-            //        }
-            //        else if (!Directory.Exists(Path.Combine(extractPath, file.FullName)))
-            //            Directory.CreateDirectory(Path.Combine(extractPath, file.FullName));
-            //    })));
-
-            //    
-            //    //List<ZipArchiveEntry> filesInZip = zip.Entries.ToList();
-            //    //for (int f = 0; f < filesInZip.Count; f++)
-            //    //{
-            //    //    if (!filesInZip[f].FullName.EndsWith("\\"))
-            //    //    {
-            //    //        if (filesInZip[f].Name.Length == 0)
-            //    //        {
-            //    //            //This is just a folder
-            //    //            Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
-            //    //            continue;
-            //    //        }
-            //    //        //This is a file
-            //    //        Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName.Replace(filesInZip[f].Name, string.Empty)));
-            //    //        filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName), File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
-            //    //    }
-            //    //    else if (!Directory.Exists(Path.Combine(extractPath, filesInZip[f].FullName)))
-            //    //        Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
-            //    //}
-            //}
         }
         public static string CalculateMD5(string filename)
         {

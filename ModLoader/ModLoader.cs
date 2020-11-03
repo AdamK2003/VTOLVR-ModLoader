@@ -421,10 +421,10 @@ namespace ModLoader
                 _modSettings.Add(settings);
             }
             Debug.Log("Done spawning " + settings.subSettings.Count + " settings");
-            RefreashSettings();
+            RefreshSettings();
         }
 
-        private void RefreashSettings()
+        private void RefreshSettings()
         {
             settingsScrollView.content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (2f + settingsScrollView.content.childCount) * buttonHeight);
             settingsScrollView.ClampVertical();
@@ -451,7 +451,7 @@ namespace ModLoader
                 MoveBackToPool(currentSelectedSetting);
             }
             MoveToSettingsView(selectedMod.settingsHolerGO.transform);
-            RefreashSettings();
+            RefreshSettings();
         }
         private void MoveToSettingsView(Transform parent)
         {

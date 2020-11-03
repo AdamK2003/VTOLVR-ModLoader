@@ -27,19 +27,19 @@ namespace VTOLVR_ModLoader.Views
     {
         public const string modsFolder = @"\My Mods";
         public const string skinsFolder = @"\My Skins";
-        public const string jName = "Name";
-        public const string jDescription = "Description";
-        public const string jTagline = "Tagline";
-        public const string jVersion = "Version";
-        public const string jDll = "Dll File";
-        public const string jEdit = "Last Edit";
-        public const string jSource = "Source";
-        public const string jPImage = "Preview Image";
-        public const string jWImage = "Web Preview Image";
-        public const string jDeps = "Dependencies";
-        public const string jID = "Public ID";
-        public const string jPublic = "Is Public";
-        public const string jUnlisted = "Unlisted";
+        public const string jName = "name";
+        public const string jDescription = "description";
+        public const string jTagline = "tagline";
+        public const string jVersion = "version";
+        public const string jDll = "dll file";
+        public const string jEdit = "last edit";
+        public const string jSource = "source";
+        public const string jPImage = "preview image";
+        public const string jWImage = "web preview image";
+        public const string jDeps = "dependencies";
+        public const string jID = "public id";
+        public const string jPublic = "is public";
+        public const string jUnlisted = "unlisted";
 
         private const string openFolderText = "Open Folder";
         private const string openProjectText = "Open Project";

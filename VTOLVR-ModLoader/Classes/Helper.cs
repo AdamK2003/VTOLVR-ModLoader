@@ -361,7 +361,7 @@ namespace VTOLVR_ModLoader.Classes
             FileInfo[] files = new DirectoryInfo(Program.root).GetFiles();
             for (int i = 0; i < files.Length; i++)
             {
-                builder.AppendLine($"/{files[i].Name}");
+                builder.AppendLine($"/{files[i].Name} (MD5: {CalculateMD5(files[i].Name)})");
             }
         }
     }

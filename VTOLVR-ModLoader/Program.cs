@@ -516,8 +516,7 @@ namespace VTOLVR_ModLoader
             JObject lastJson;
             for (int i = 0; i < folders.Length; i++)
             {
-                if (File.Exists(folders[i].FullName + "\\" + folders[i].Name + ".dll") &&
-                    File.Exists(folders[i].FullName + "\\info.json"))
+                if (File.Exists(folders[i].FullName + "\\info.json"))
                 {
                     lastJson = Helper.JObjectTryParse(
                         File.ReadAllText(folders[i].FullName + "\\info.json"),

@@ -153,7 +153,6 @@ namespace VTOLVR_ModLoader.Classes
                 }
                 foundMods.Add(new BaseItem(json[ProjectManager.jName].ToString(), mods[i], json));
             }
-
             return foundMods;
         }
         /// <summary>
@@ -335,19 +334,19 @@ namespace VTOLVR_ModLoader.Classes
         {
 
             builder.AppendLine();
-            List<BaseItem> mods = FindDownloadMods();
-            builder.AppendLine($"## Downloaded Mods ({mods.Count})");
-            for (int i = 0; i < mods.Count; i++)
+            DirectoryInfo[] modFolders = new DirectoryInfo(Program.root + Program.modsFolder).GetDirectories();
+            builder.AppendLine($"## Downloaded Mods ({modFolders.Length})");
+            for (int i = 0; i < modFolders.Length; i++)
             {
-                builder.AppendLine($"- {mods[i].Name}");
+                builder.AppendLine($"- {modFolders[i].Name}");
             }
 
             builder.AppendLine();
-            List<BaseItem> skins = FindDownloadedSkins();
-            builder.AppendLine($"## Downloaded Skins ({skins.Count})");
-            for (int i = 0; i < skins.Count; i++)
+            DirectoryInfo[] skinFolders = new DirectoryInfo(Program.root + Program.skinsFolder).GetDirectories();
+            builder.AppendLine($"## Downloaded Skins ({skinFolders.Length})");
+            for (int i = 0; i < skinFolders.Length; i++)
             {
-                builder.AppendLine($"- {skins[i].Name}");
+                builder.AppendLine($"- {skinFolders[i].Name}");
             }
 
             builder.AppendLine();

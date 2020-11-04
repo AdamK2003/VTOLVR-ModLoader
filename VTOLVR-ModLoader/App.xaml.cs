@@ -27,12 +27,8 @@ namespace VTOLVR_ModLoader
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
+#if !DEBUG
             SentrySdk.Init(VTOLVR_ModLoader.Properties.Resources.Dsn);
-#if DEBUG
-            SentrySdk.ConfigureScope(scope => { scope.Environment = "Debug"; });
-#else
-            SentrySdk.ConfigureScope(scope => { scope.Environment = "Release"; });
 #endif
         }
 

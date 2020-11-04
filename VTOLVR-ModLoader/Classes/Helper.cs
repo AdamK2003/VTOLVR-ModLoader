@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json.Linq;
 using Sentry;
 using Sentry.Protocol;
 using VTOLVR_ModLoader.Views;
+using VTOLVR_ModLoader.Windows;
 using Console = VTOLVR_ModLoader.Views.Console;
 using Settings = VTOLVR_ModLoader.Views.Settings;
 
@@ -198,7 +202,7 @@ namespace VTOLVR_ModLoader.Classes
         {
             return null;
         }
-        public enum SentryLogCategory { Console, DevToos, EditProject, Manager, NewProject, News, NewVersion, ProjectManager, Settings, MainWindow, Program, Startup, CommunicationsManager }
+        public enum SentryLogCategory { Console, DevToos, EditProject, Manager, NewProject, News, NewVersion, ProjectManager, Settings, MainWindow, Program, Startup, CommunicationsManager, Helper }
         public static void SentryLog(string message, SentryLogCategory category)
         {
             SentrySdk.AddBreadcrumb(
@@ -243,6 +247,122 @@ namespace VTOLVR_ModLoader.Classes
             catch (Exception e)
             {
                 exception = e;
+            }
+        }
+        public static void CreateDiagnosticsZip()
+        {
+            SentryLog("Creating Diagnostics Zip", SentryLogCategory.Helper);
+
+            string datetime = DateTime.Now.ToString().Replace('/', '-').Replace(':', '-');
+            Directory.CreateDirectory(Path.Combine(Program.root, datetime));
+
+            Console.Log("Copying Game Log");
+            string[] lines = File.ReadAllLines(PlayerLogPath());
+            string[] shortLines = ShortenPlayerLog(lines);
+            File.WriteAllLines(Path.Combine(Program.root, datetime, "Player.log"), shortLines);
+
+            Console.Log("Copying Mod Loader Log");
+            File.Copy(
+                Path.Combine(Program.root, Program.LogName),
+                Path.Combine(Program.root, datetime, Program.LogName));
+
+            Console.Log("Gathering Extra Info");
+            StringBuilder infoBuilder = new StringBuilder("# Created: " + DateTime.Now.ToString());
+            infoBuilder.AppendLine();
+            infoBuilder.AppendLine($"# Version: {Program.ProgramName}");
+            GatherExtraInfo(ref infoBuilder);
+            File.WriteAllText(Path.Combine(Program.root, datetime, "Info.txt"), infoBuilder.ToString());
+
+            Console.Log("Zipping up content");
+            string zipName = $"DiagnosticsZip [{datetime}].zip";
+            FastZip zip = new FastZip();
+            zip.CreateZip(zipName, Path.Combine(Program.root, datetime), false, null);
+
+            Directory.Delete(Path.Combine(Program.root, datetime), true);
+            Process.Start("explorer.exe", string.Format("/select,\"{0}\\{1}\"", Program.root, zipName));
+        }
+        private static string PlayerLogPath()
+        {
+            // This is a massive pain because it's stored in LocalLow but tere is no special folder
+            // for LocalLow
+
+            DirectoryInfo roaming = new DirectoryInfo(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+
+            DirectoryInfo appData = roaming.Parent;
+            DirectoryInfo[] folders = appData.GetDirectories();
+            DirectoryInfo localLow = null;
+            for (int i = 0; i < folders.Length; i++)
+            {
+                if (folders[i].Name == "LocalLow")
+                {
+                    localLow = folders[i];
+                    break;
+                }
+            }
+
+            if (localLow == null)
+            {
+                Console.Log("For some reason the locallow path wasn't found");
+                return string.Empty;
+            }
+
+            DirectoryInfo vtolvr = new DirectoryInfo(Path.Combine(
+                localLow.FullName, "Boundless Dynamics, LLC", "VTOLVR"));
+            if (!vtolvr.Exists)
+            {
+                Console.Log("VTOL VR folder is missing in LocalLow. Have you launched the game up before?");
+                return string.Empty;
+            }
+
+            FileInfo playerLog = new FileInfo(Path.Combine(vtolvr.FullName, "Player.log"));
+            if (!playerLog.Exists)
+            {
+                Console.Log("Player log is missing from folder");
+                return string.Empty;
+            }
+
+            return playerLog.FullName;
+
+        }
+        public static string[] ShortenPlayerLog(string[] linesArray)
+        {
+            List<string> lines = linesArray.ToList();
+            lines.RemoveAll(line => string.IsNullOrWhiteSpace(line) | line.StartsWith("(Filename:"));
+            return lines.ToArray();
+        }
+        private static void GatherExtraInfo(ref StringBuilder builder)
+        {
+
+            builder.AppendLine();
+            List<BaseItem> mods = FindDownloadMods();
+            builder.AppendLine($"## Downloaded Mods ({mods.Count})");
+            for (int i = 0; i < mods.Count; i++)
+            {
+                builder.AppendLine($"- {mods[i].Name}");
+            }
+
+            builder.AppendLine();
+            List<BaseItem> skins = FindDownloadedSkins();
+            builder.AppendLine($"## Downloaded Skins ({skins.Count})");
+            for (int i = 0; i < skins.Count; i++)
+            {
+                builder.AppendLine($"- {skins[i].Name}");
+            }
+
+            builder.AppendLine();
+            builder.AppendLine("## User Settings");
+            builder.AppendLine($"Launch SteamVR: {Views.Settings.SteamVR}");
+            builder.AppendLine($"Auto Update: {Views.Settings.AutoUpdate}");
+            builder.AppendLine($"Projects Folder: {Views.Settings.ProjectsFolder}");
+            builder.AppendLine($"Token Valid: {Views.Settings.tokenValid}");
+
+            builder.AppendLine();
+            builder.AppendLine("## Mod Loader Folder Files");
+            FileInfo[] files = new DirectoryInfo(Program.root).GetFiles();
+            for (int i = 0; i < files.Length; i++)
+            {
+                builder.AppendLine($"/{files[i].Name}");
             }
         }
     }

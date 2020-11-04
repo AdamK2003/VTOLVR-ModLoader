@@ -380,5 +380,10 @@ namespace VTOLVR_ModLoader.Views
             Console.Log("Finished!");
             Notification.Show("Finished setting registry values for one click install", "Finished", Notification.Buttons.Ok);
         }
+
+        private void CreateDiagnosticsZip(object sender, RoutedEventArgs e)
+        {
+            Helper.CreateDiagnosticsZip();
+        }
     }
 }

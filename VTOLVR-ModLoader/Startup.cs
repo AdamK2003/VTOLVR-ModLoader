@@ -60,6 +60,7 @@ namespace VTOLVR_ModLoader
                 return false;
             if (!CheckFolder())
                 return false;
+            ClearOldFiles();
             return true;
         }
         /// <summary>
@@ -220,6 +221,23 @@ namespace VTOLVR_ModLoader
             Helper.SentryLog("Setting working directory", Helper.SentryLogCategory.Startup);
             Environment.CurrentDirectory = folder + @"\steamapps\common\VTOL VR\VTOLVR_ModLoader";
             Program.SetVariables();
+        }
+        private static void ClearOldFiles()
+        {
+            // When Costura got added, these dlls were merged into 
+            // the launcher.exe, so this function deletes them as 
+            // they're just a waste of space.
+            if (File.Exists(Path.Combine(Program.root, "WpfAnimatedGif.dll")))
+                Helper.TryDelete(Path.Combine(Program.root, "WpfAnimatedGif.dll"));
+
+            if (File.Exists(Path.Combine(Program.root, "Valve.Newtonsoft.Json.dll")))
+                Helper.TryDelete(Path.Combine(Program.root, "Valve.Newtonsoft.Json.dll"));
+
+            if (File.Exists(Path.Combine(Program.root, "SimpleTCP.dll")))
+                Helper.TryDelete(Path.Combine(Program.root, "SimpleTCP.dll"));
+
+            if (File.Exists(Path.Combine(Program.root, "Gameloop.Vdf.dll")))
+                Helper.TryDelete(Path.Combine(Program.root, "Gameloop.Vdf.dll"));
         }
     }
 }

@@ -209,6 +209,7 @@ namespace VTOLVR_ModLoader.Classes
                     TcpServer.Start(IPAddress.Parse("127.0.0.1"), TCPPORT);
                     TcpServer.DataReceived += TcpDataReceived;
                     TcpServer.ClientDisconnected += TcpClientDisconnected;
+                    Console.Log("TCP Server started!");
                 }
                 catch (Exception e)
                 {

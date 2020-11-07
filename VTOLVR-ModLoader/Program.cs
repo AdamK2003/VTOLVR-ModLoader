@@ -99,11 +99,11 @@ namespace VTOLVR_ModLoader
 
         private static void CheckForSteamVR()
         {
-            Helper.SentryLog("Checking for steam vr", Helper.SentryLogCategory.Program);
+            Helper.SentryLog("Checking for Steam VR", Helper.SentryLogCategory.Program);
             Process[] processes = Process.GetProcessesByName("vrmonitor");
             if (processes.Length > 0)
             {
-                Views.Console.Log("Found a steam vr process");
+                Views.Console.Log("Found a Steam VR process");
                 return;
             }
             Process.Start("steam://run/250820");
@@ -191,7 +191,7 @@ namespace VTOLVR_ModLoader
             Process.GetCurrentProcess().Kill();
         }
 
-        #region Mod/Skin Handeling
+        #region Mod/Skin Handling
         public static void ExtractMods()
         {
             Helper.SentryLog("Extracting Mods", Helper.SentryLogCategory.Program);
@@ -372,7 +372,7 @@ namespace VTOLVR_ModLoader
                                         movedDep++;
                                         Application.Current.Dispatcher.Invoke(new Action(() =>
                                         {
-                                            Console.Log($"Updated Dependencie {depFiles[k]}");
+                                            Console.Log($"Updated Dependence {depFiles[k]}");
                                         }));
                                     }
                                 }
@@ -384,7 +384,7 @@ namespace VTOLVR_ModLoader
                                     movedDep++;
                                     Application.Current.Dispatcher.Invoke(new Action(() =>
                                     {
-                                        Console.Log($"Moved Dependencie {depFiles[k]}");
+                                        Console.Log($"Moved Dependencies {depFiles[k]}");
                                     }));
                                 }
                             }
@@ -505,8 +505,8 @@ namespace VTOLVR_ModLoader
         }
         private static void LowerCaseJsons()
         {
-            // We had to make all the keys in the mods info.json lowercase
-            // So this function just converts the old info.json to lowercase
+            // We had to make all the keys in the mods info.json lower case
+            // So this function just converts the old info.json to lower case
 
             Helper.SentryLog("Finding Mods", Helper.SentryLogCategory.Program);
             Console.Log("Checking if we need to update any mods info.json");

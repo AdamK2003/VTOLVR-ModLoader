@@ -1,15 +1,15 @@
 ﻿/* 
-CommunicationsManager is meant to be the main class which recives the outside messages and converts them
+CommunicationsManager is meant to be the main class which receives the outside messages and converts them
 It handles the command line arguments and other instances of the mod loader talking to it.
 
 Some other classes though may talk to others such as the console page.
 
-Possiable URI's
+Possible URI's
 - token/ndkahjsbdjahbfsdf
 - mod/pub_id/filename.extention
 - skin/pub_id/filename.extention
 
-Possiable Args
+Possible Arguments
 - nointernet
 - branch=branchname
 - url=https://url.com
@@ -255,7 +255,7 @@ namespace VTOLVR_ModLoader.Classes
             string[] lines = e.MessageString.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < lines.Length; i++)
             {
-                //I have no clue what '' is but it keeps showing up on the tcp message.
+                //I have no clue what '' is but it keeps showing up on the TCP message.
                 //I'm just trying to remove it here
                 lines[i] = lines[i].Replace("", string.Empty);
                 if (string.IsNullOrWhiteSpace(lines[i]))
@@ -273,7 +273,7 @@ namespace VTOLVR_ModLoader.Classes
         private static void ProcessCommand(string message, TcpClient client)
         {
             message = message.Replace("Command:", string.Empty);
-            Console.Log($"Recevied command:{message}");
+            Console.Log($"Received command:{message}");
             if (message.StartsWith("vtolvrml://"))
             {
                 CheckURI(message);

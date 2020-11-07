@@ -282,7 +282,7 @@ namespace VTOLVR_ModLoader.Classes
         }
         private static string PlayerLogPath()
         {
-            // This is a massive pain because it's stored in LocalLow but tere is no special folder
+            // This is a massive pain because it's stored in LocalLow but there is no special folder
             // for LocalLow
 
             DirectoryInfo roaming = new DirectoryInfo(

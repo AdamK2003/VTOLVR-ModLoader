@@ -32,13 +32,13 @@ namespace VTOLVR_ModLoader.Classes
             }
             MainWindow.SetPlayButton(true);
             UpdateFile[] updateFiles = Program.Releases[0].files;
-            
+
             if (updateFiles == null)
                 return;
             string lastPath;
             for (int i = 0; i < updateFiles.Length; i++)
             {
-                
+
                 lastPath = Program.vtolFolder + "/" + updateFiles[i].Location;
                 if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(updateFiles[i].Hash))
                 {
@@ -58,7 +58,7 @@ namespace VTOLVR_ModLoader.Classes
                 if (_updateLauncher)
                     Notification.Show("The launcher needs to be updated.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
                 else
-                    Console.Log("All fines are upto date");
+                    Console.Log("All fines are up to date");
                 MainWindow.SetPlayButton(false);
             }
         }
@@ -97,12 +97,12 @@ namespace VTOLVR_ModLoader.Classes
                     ClearUp();
                     return;
                 }
-                
+
 
                 Helper.TryMove($"{Program.vtolFolder}/{currentFile.Location}.temp",
                     $"{Program.vtolFolder}/{currentFile.Location}");
 
-                //Checking if we need to update dependiences in users mods
+                //Checking if we need to update dependencies in users mods
                 string[] split = currentFile.Location.Split('/');
                 if (!string.IsNullOrEmpty(Views.Settings.ProjectsFolder) &&
                     Directory.Exists(Views.Settings.ProjectsFolder + ProjectManager.modsFolder))

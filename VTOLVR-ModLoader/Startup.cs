@@ -1,4 +1,4 @@
-﻿/* Startup is a static class for handeling actions which need to be ran before the UI shows.
+﻿/* Start up is a static class for handling actions which need to be ran before the UI shows.
  
 The current start up process for the mod loader 
 1. Check that there isn't any other mod loaders running
@@ -46,7 +46,7 @@ namespace VTOLVR_ModLoader
         private static readonly string[] neededDLLFiles = { @"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll" };
         public static bool RunStartUp()
         {
-            Helper.SentryLog("Running Startup", Helper.SentryLogCategory.Startup);
+            Helper.SentryLog("Running Start up", Helper.SentryLogCategory.Startup);
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             bool debug = false;
 #if DEBUG
@@ -224,7 +224,7 @@ namespace VTOLVR_ModLoader
         }
         private static void ClearOldFiles()
         {
-            // When Costura got added, these dlls were merged into 
+            // When Costura got added, these DLLs were merged into 
             // the launcher.exe, so this function deletes them as 
             // they're just a waste of space.
             if (File.Exists(Path.Combine(Program.root, "WpfAnimatedGif.dll")))

@@ -82,7 +82,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Foreground="White" FontSize="15" TextWrapping="Wrap">
-                    You can create a diagnostics zip to help us find the root of your issue. This will zip up your game log, modloader log and some information of what mods and skins you have installed.
+                    You can create a diagnostics zip to help us find the root of your issue. This will zip up your game log, mod loader log and some information of what mods and skins you have installed.
                 </TextBlock>
 
                 <Button Grid.Column="1" Style="{StaticResource darkButton}" Margin="5,10,5,10"

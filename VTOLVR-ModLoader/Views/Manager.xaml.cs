@@ -171,8 +171,8 @@ namespace VTOLVR_ModLoader.Views
             //so that ModDownloadComplete gets the last call.
             if (e.ProgressPercentage != 100)
             {
-                //If the user downloads multiple updates at once, this progrress bar is going
-                //too look glitchy, jumping back and fouth.
+                //If the user downloads multiple updates at once, this progress bar is going
+                //too look glitchy, jumping back and fourth.
                 MainWindow.SetProgress(e.ProgressPercentage, "Downloading Mod Updates");
                 MainWindow.SetBusy(true);
             }
@@ -182,11 +182,11 @@ namespace VTOLVR_ModLoader.Views
         private void ModDownloadComplete(object sender, AsyncCompletedEventArgs e)
         {
             /*
-             * The problem with webclient is that it doesn't store what it just did
+             * The problem with web client is that it doesn't store what it just did
              * So I have no clue how to display what mod just finished updating so I can
              * update it on the list
              */
-            Helper.SentryLog("Fininshed downloading mod update", Helper.SentryLogCategory.Manager);
+            Helper.SentryLog("Finished downloading mod update", Helper.SentryLogCategory.Manager);
             MainWindow.SetBusy(false);
             if (!e.Cancelled && e.Error == null)
             {
@@ -212,7 +212,7 @@ namespace VTOLVR_ModLoader.Views
 
             if (exception != null)
             {
-                Notification.Show($"{exception.Message}", "Error when deleteing mod");
+                Notification.Show($"{exception.Message}", "Error when deleting mod");
                 return;
             }
             _mods.Remove(_mods.Find(x => x.FolderDirectory == button.Tag.ToString()));

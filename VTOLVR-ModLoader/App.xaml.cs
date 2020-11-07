@@ -27,8 +27,9 @@ namespace VTOLVR_ModLoader
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
+#if !DEBUG
             SentrySdk.Init(VTOLVR_ModLoader.Properties.Resources.Dsn);
+#endif
         }
 
         protected override void OnExit(ExitEventArgs e)

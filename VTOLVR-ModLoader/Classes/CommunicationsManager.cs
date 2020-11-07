@@ -1,15 +1,15 @@
 ﻿/* 
-CommunicationsManager is meant to be the main class which recives the outside messages and converts them
+CommunicationsManager is meant to be the main class which receives the outside messages and converts them
 It handles the command line arguments and other instances of the mod loader talking to it.
 
 Some other classes though may talk to others such as the console page.
 
-Possiable URI's
+Possible URI's
 - token/ndkahjsbdjahbfsdf
 - mod/pub_id/filename.extention
 - skin/pub_id/filename.extention
 
-Possiable Args
+Possible Arguments
 - nointernet
 - branch=branchname
 - url=https://url.com
@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ namespace VTOLVR_ModLoader.Classes
 {
     static class CommunicationsManager
     {
+        private const int TCPPORT = 12000;
         public static SimpleTcpServer TcpServer { get; private set; }
         public static SimpleTcpClient TcpClient { get; private set; }
         public static TcpClient GameTcpClient { get; private set; }
@@ -164,9 +166,11 @@ namespace VTOLVR_ModLoader.Classes
             {
                 MainWindow.SetProgress(100, $"Ready");
                 Console.Log($"Downloaded {currentDownloadFile}");
+                Helper.SentryLog($"Finished downloading {currentDownloadFile}", Helper.SentryLogCategory.CommunicationsManager);
             }
             else
             {
+                Helper.SentryLog($"Error when downloading {currentDownloadFile}\n{e.Error.Message}", Helper.SentryLogCategory.CommunicationsManager);
                 MainWindow.SetProgress(100, $"Ready");
                 Notification.Show($"{e.Error.Message}", "Error when downloading file");
                 Console.Log("Error:\n" + e.Error.ToString());
@@ -194,7 +198,7 @@ namespace VTOLVR_ModLoader.Classes
             }
             return false;
         }
-        
+
         public static void StartTCP(bool isServer)
         {
             if (isServer)
@@ -202,9 +206,10 @@ namespace VTOLVR_ModLoader.Classes
                 try
                 {
                     TcpServer = new SimpleTcpServer();
-                    TcpServer.Start(IPAddress.Parse("127.0.0.1"), 9999);
+                    TcpServer.Start(IPAddress.Parse("127.0.0.1"), TCPPORT);
                     TcpServer.DataReceived += TcpDataReceived;
                     TcpServer.ClientDisconnected += TcpClientDisconnected;
+                    Console.Log("TCP Server started!");
                 }
                 catch (Exception e)
                 {
@@ -213,21 +218,29 @@ namespace VTOLVR_ModLoader.Classes
             }
             else
             {
-                TcpClient = new SimpleTcpClient();
-                TcpClient.Connect("127.0.0.1", 9999);
                 if (CheckArgs("vtolvrml://", out string line))
                 {
-                    Views.Console.Log($"Passing \"{line}\" to other instance");
-                    TcpClient.WriteLine($"Command:{line}");
+                    try
+                    {
+                        TcpClient = new SimpleTcpClient();
+                        TcpClient.Connect("127.0.0.1", TCPPORT);
+                        Console.Log($"Passing \"{line}\" to other instance");
+                        TcpClient.WriteLine($"Command:{line}");
+                        TcpClient.Disconnect();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.Log($"Failed to connect to other instance. Reason: {e.Message}");
+                    }
                 }
-                TcpClient.Disconnect();
                 Program.Quit("Another Instance Found");
             }
         }
 
         private static void TcpClientDisconnected(object sender, TcpClient e)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() => {
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
                 if (GameTcpClient != null && e == GameTcpClient)
                 {
                     Console.GameClosed();
@@ -235,7 +248,7 @@ namespace VTOLVR_ModLoader.Classes
                     MainWindow.SetProgress(100, "Ready");
                 }
             }));
-            
+
         }
 
         private static void TcpDataReceived(object sender, Message e)
@@ -243,24 +256,25 @@ namespace VTOLVR_ModLoader.Classes
             string[] lines = e.MessageString.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < lines.Length; i++)
             {
-                //I have no clue what '' is but it keeps showing up on the tcp message.
+                //I have no clue what '' is but it keeps showing up on the TCP message.
                 //I'm just trying to remove it here
                 lines[i] = lines[i].Replace("", string.Empty);
                 if (string.IsNullOrWhiteSpace(lines[i]))
                     continue;
-                Application.Current.Dispatcher.Invoke(new Action(() => {
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
                     Console.Log(lines[i].Remove(lines[i].Length - 1), false);
                     if (lines[i].StartsWith("Command:"))
                         ProcessCommand(lines[i], e.TcpClient);
                 }));
             }
-             
+
         }
 
         private static void ProcessCommand(string message, TcpClient client)
         {
             message = message.Replace("Command:", string.Empty);
-            Console.Log($"Recevied command:{message}");
+            Console.Log($"Received command:{message}");
             if (message.StartsWith("vtolvrml://"))
             {
                 CheckURI(message);

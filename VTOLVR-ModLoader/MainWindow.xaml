@@ -89,7 +89,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="1">
-                <!-- Progress Bar & Progess Text -->
+                <!-- Progress Bar & Progress Text -->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="0.1*"/>
                     <RowDefinition Height="*"/>

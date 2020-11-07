@@ -20,6 +20,7 @@ using System.Windows;
 using System.Windows.Threading;
 using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Views;
+using VTOLVR_ModLoader.Windows;
 using Console = VTOLVR_ModLoader.Views.Console;
 
 namespace VTOLVR_ModLoader
@@ -98,11 +99,11 @@ namespace VTOLVR_ModLoader
 
         private static void CheckForSteamVR()
         {
-            Helper.SentryLog("Checking for steam vr", Helper.SentryLogCategory.Program);
+            Helper.SentryLog("Checking for Steam VR", Helper.SentryLogCategory.Program);
             Process[] processes = Process.GetProcessesByName("vrmonitor");
             if (processes.Length > 0)
             {
-                Views.Console.Log("Found a steam vr process");
+                Views.Console.Log("Found a Steam VR process");
                 return;
             }
             Process.Start("steam://run/250820");
@@ -128,6 +129,8 @@ namespace VTOLVR_ModLoader
         }
         private static void LaunchProcess()
         {
+            LowerCaseJsons();
+
             Helper.SentryLog("Starting process", Helper.SentryLogCategory.Program);
             Console.Log("Launching VTOL VR");
             Process.Start("steam://run/667970");
@@ -188,7 +191,7 @@ namespace VTOLVR_ModLoader
             Process.GetCurrentProcess().Kill();
         }
 
-        #region Mod/Skin Handeling
+        #region Mod/Skin Handling
         public static void ExtractMods()
         {
             Helper.SentryLog("Extracting Mods", Helper.SentryLogCategory.Program);
@@ -223,13 +226,18 @@ namespace VTOLVR_ModLoader
             }
         }
 
-        private static void ExtractedMod(string zipPath, string extractedPath)
+        private static void ExtractedMod(string zipPath, string extractedPath, string result)
         {
+            if (!result.Equals("Success"))
+            {
+                Notification.Show($"Error Extracting {zipPath}\nError:{result}");
+                Console.Log($"Error Extracting {zipPath}\nError:{result}");
+            }
             extractedMods++;
             Console.Log($"({extractedMods}/{modsToExtract})Finished Extracting {zipPath}");
             MainWindow.SetProgress(extractedMods / modsToExtract * 100, $"({extractedMods}/{modsToExtract})Extracting mods...");
             //Deleting the zip
-            File.Delete(zipPath);
+            Helper.TryDelete(zipPath);
 
             if (extractedMods == modsToExtract)
             {
@@ -286,13 +294,18 @@ namespace VTOLVR_ModLoader
             }
         }
 
-        private static void SkinExtracted(string zipPath, string extractedPath)
+        private static void SkinExtracted(string zipPath, string extractedPath, string result)
         {
+            if (!result.Equals("Success"))
+            {
+                Notification.Show($"Error Extracting {zipPath}\nError:{result}");
+                Console.Log($"Error Extracting {zipPath}\nError:{result}");
+            }
             extractedSkins++;
             Console.Log($"({extractedSkins}/{skinsToExtract})Finished Extracting {zipPath}");
             MainWindow.SetProgress(extractedSkins / skinsToExtract * 100, $"({extractedSkins}/{skinsToExtract})Extracting skins...");
             //Deleting the zip
-            File.Delete(zipPath);
+            Helper.TryDelete(zipPath);
 
             if (extractedSkins == skinsToExtract)
             {
@@ -359,7 +372,7 @@ namespace VTOLVR_ModLoader
                                         movedDep++;
                                         Application.Current.Dispatcher.Invoke(new Action(() =>
                                         {
-                                            Console.Log($"Updated Dependencie {depFiles[k]}");
+                                            Console.Log($"Updated Dependence {depFiles[k]}");
                                         }));
                                     }
                                 }
@@ -371,7 +384,7 @@ namespace VTOLVR_ModLoader
                                     movedDep++;
                                     Application.Current.Dispatcher.Invoke(new Action(() =>
                                     {
-                                        Console.Log($"Moved Dependencie {depFiles[k]}");
+                                        Console.Log($"Moved Dependencies {depFiles[k]}");
                                     }));
                                 }
                             }
@@ -489,6 +502,139 @@ namespace VTOLVR_ModLoader
 
             MainWindow._instance.news.LoadNews();
             Queue(Updater.CheckForUpdates);
+        }
+        private static void LowerCaseJsons()
+        {
+            // We had to make all the keys in the mods info.json lower case
+            // So this function just converts the old info.json to lower case
+
+            Helper.SentryLog("Finding Mods", Helper.SentryLogCategory.Program);
+            Console.Log("Checking if we need to update any mods info.json");
+            DirectoryInfo folder = new DirectoryInfo(root + modsFolder);
+
+            DirectoryInfo[] folders = folder.GetDirectories();
+            JObject lastJson;
+            for (int i = 0; i < folders.Length; i++)
+            {
+                if (File.Exists(folders[i].FullName + "\\info.json"))
+                {
+                    lastJson = Helper.JObjectTryParse(
+                        File.ReadAllText(folders[i].FullName + "\\info.json"),
+                        out Exception exception);
+                    if (lastJson != null)
+                    {
+                        ConvertJson(lastJson, folders[i].FullName + "\\info.json");
+                    }
+                    else
+                    {
+                        Console.Log(exception.Message);
+                    }
+                }
+            }
+
+            //Finding users my projects mods
+            if (!string.IsNullOrEmpty(Views.Settings.ProjectsFolder))
+            {
+                DirectoryInfo projectsFolder = new DirectoryInfo(Views.Settings.ProjectsFolder + ProjectManager.modsFolder);
+                folders = projectsFolder.GetDirectories();
+                for (int i = 0; i < folders.Length; i++)
+                {
+                    if (!File.Exists(Path.Combine(folders[i].FullName, "Builds", "info.json")))
+                    {
+                        Console.Log("Missing info.json in " +
+                            Path.Combine(folders[i].FullName, "Builds", "info.json"));
+                        continue;
+                    }
+                    JObject json = Helper.JObjectTryParse(
+                        File.ReadAllText(Path.Combine(folders[i].FullName, "Builds", "info.json")),
+                        out Exception exception);
+
+                    if (json != null)
+                    {
+                        ConvertJson(json, Path.Combine(folders[i].FullName, "Builds", "info.json"));
+                    }
+                }
+            }
+        }
+        private static void ConvertJson(JObject json, string path)
+        {
+            Helper.SentryLog("Converting Json", Helper.SentryLogCategory.Program);
+            Console.Log("Converting json at: " + path);
+            bool hasChanged = false;
+            JObject newJson = new JObject();
+            if (json["Name"] != null)
+            {
+                newJson[ProjectManager.jName] = json["Name"];
+                hasChanged = true;
+            }
+            if (json["Description"] != null)
+            {
+                newJson[ProjectManager.jDescription] = json["Description"];
+                hasChanged = true;
+            }
+            if (json["Tagline"] != null)
+            {
+                newJson[ProjectManager.jTagline] = json["Tagline"];
+                hasChanged = true;
+            }
+            if (json["Version"] != null)
+            {
+                newJson[ProjectManager.jVersion] = json["Version"];
+                hasChanged = true;
+            }
+            if (json["Dll File"] != null)
+            {
+                newJson[ProjectManager.jDll] = json["Dll File"];
+                hasChanged = true;
+            }
+            if (json["Last Edit"] != null)
+            {
+                newJson[ProjectManager.jEdit] = json["Last Edit"];
+                hasChanged = true;
+            }
+            if (json["Source"] != null)
+            {
+                newJson[ProjectManager.jSource] = json["Source"];
+                hasChanged = true;
+            }
+            if (json["Preview Image"] != null)
+            {
+                newJson[ProjectManager.jPImage] = json["Preview Image"];
+                hasChanged = true;
+            }
+            if (json["Web Preview Image"] != null)
+            {
+                newJson[ProjectManager.jWImage] = json["Web Preview Image"];
+                hasChanged = true;
+            }
+            if (json["Dependencies"] != null)
+            {
+                newJson[ProjectManager.jDeps] = json["Dependencies"];
+                hasChanged = true;
+            }
+            if (json["Public ID"] != null)
+            {
+                newJson[ProjectManager.jID] = json["Public ID"];
+                hasChanged = true;
+            }
+            if (json["Is Public"] != null)
+            {
+                newJson[ProjectManager.jPublic] = json["Is Public"];
+                hasChanged = true;
+            }
+            if (json["Unlisted"] != null)
+            {
+                newJson[ProjectManager.jUnlisted] = json["Unlisted"];
+                hasChanged = true;
+            }
+
+            if (hasChanged)
+            {
+                Helper.SentryLog("Saving new json", Helper.SentryLogCategory.Program);
+                Console.Log($"{path} has been changed, saving");
+                File.WriteAllText(path, newJson.ToString());
+                Console.Log("Saved");
+            }
         }
     }
 }

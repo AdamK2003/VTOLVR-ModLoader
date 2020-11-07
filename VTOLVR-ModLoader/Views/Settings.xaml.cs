@@ -143,7 +143,7 @@ namespace VTOLVR_ModLoader.Views
                 }
                 catch
                 {
-                    Console.Log("Failed to read settings, overiding it.");
+                    Console.Log("Failed to read settings, overriding it.");
                     jObject = new JObject();
                 }
             }
@@ -208,13 +208,13 @@ namespace VTOLVR_ModLoader.Views
             }
             catch (Exception e)
             {
-                Console.Log($"Faield Reading Settings: {e.Message}");
+                Console.Log($"Failed Reading Settings: {e.Message}");
                 return;
             }
 
             if (json["projectsFolder"] != null)
             {
-                Console.Log("Found the Proejcts Folder");
+                Console.Log("Found the Projects Folder");
                 ProjectsFolder = json["projectsFolder"].ToString();
             }
 
@@ -262,7 +262,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void SetMyProjectsFolder(object sender, RoutedEventArgs e)
         {
-            Helper.SentryLog("Opening folder dialog", Helper.SentryLogCategory.Settings);
+            Helper.SentryLog("Opening folder dialogue", Helper.SentryLogCategory.Settings);
             if (!string.IsNullOrEmpty(ProjectsFolder))
                 FolderDialog.Dialog(ProjectsFolder, callBack);
             else
@@ -310,7 +310,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void SteamVRChanged(object sender, RoutedEventArgs e)
         {
-            Helper.SentryLog("Changed Steamvr state", Helper.SentryLogCategory.Settings);
+            Helper.SentryLog("Changed Steam VR state", Helper.SentryLogCategory.Settings);
             if (steamvrCheckbox.IsChecked != null && steamvrCheckbox.IsChecked == true)
                 SetSteamVR(true);
             else if (steamvrCheckbox.IsChecked != null)
@@ -379,6 +379,11 @@ namespace VTOLVR_ModLoader.Views
                 "\"" + root + @"\VTOLVR-ModLoader.exe" + "\" \"" + @"%1" + "\"");
             Console.Log("Finished!");
             Notification.Show("Finished setting registry values for one click install", "Finished", Notification.Buttons.Ok);
+        }
+
+        private void CreateDiagnosticsZip(object sender, RoutedEventArgs e)
+        {
+            Helper.CreateDiagnosticsZip();
         }
     }
 }

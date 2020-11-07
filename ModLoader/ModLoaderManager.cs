@@ -83,6 +83,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
     /// </summary>
     class ModLoaderManager : MonoBehaviour
     {
+        private const int TCPPORT = 12000;
         public static ModLoaderManager Instance { get; private set; }
         public static string RootPath, MyProjectsPath;
         public static int LoadedModsCount;
@@ -122,7 +123,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             try
             {
                 _tcpClient = new SimpleTcpClient();
-                _tcpClient.Connect("127.0.0.1", 9999);
+                _tcpClient.Connect("127.0.0.1", TCPPORT);
                 _tcpClient.WriteLine("Command:isgame");
                 _tcpClient.DataReceived += TcpDataReceived;
                 Application.logMessageReceived += LogMessageReceived;

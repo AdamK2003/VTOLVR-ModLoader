@@ -148,7 +148,7 @@ namespace VTOLVR_ModLoader.Views
             Console.Log("Sending Data");
             HttpResponseMessage result = await form.SendDataAsync(HttpHelper.HttpMethod.POST);
             string content = await result.Content.ReadAsStringAsync();
-            Console.Log("Raw Responce\n" + content);
+            Console.Log("Raw Response\n" + content);
             APIResult(JObject.Parse(content));
         }
         private async Task UpdateProject()
@@ -182,7 +182,7 @@ namespace VTOLVR_ModLoader.Views
 
             HttpResponseMessage result = await form.SendDataAsync(HttpHelper.HttpMethod.PUT);
             string response = await result.Content.ReadAsStringAsync();
-            Console.Log($"Raw Responce from {Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _currentJson[ProjectManager.jID].ToString() + "/"}\n{response}");
+            Console.Log($"Raw Response from {Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _currentJson[ProjectManager.jID].ToString() + "/"}\n{response}");
             JObject json = JObject.Parse(response);
 
             if (json["detail"] != null)
@@ -199,7 +199,7 @@ namespace VTOLVR_ModLoader.Views
             form2.SetValue("change_version", versionNumber.Text);
             form2.SetValue("version_increase", "true");
 
-            Console.Log("Sending Changelog");
+            Console.Log("Sending Change log");
             HttpResponseMessage changelogResult = await form2.SendDataAsync(HttpHelper.HttpMethod.PUT);
             response = await changelogResult.Content.ReadAsStringAsync();
             Console.Log($"Raw Response from {Program.url + Program.apiURL + (_isMod ? Program.modsChangelogsURL : Program.skinsChangelogsURL) + "/" + _currentJson[ProjectManager.jID] + "/"}\n{response}");
@@ -207,7 +207,7 @@ namespace VTOLVR_ModLoader.Views
             if (changelogResult.IsSuccessStatusCode)
             {
                 Notification.Show("Success!");
-                Console.Log("Successfuly updated!");
+                Console.Log("Successfully updated!");
             }
             else
             {
@@ -286,7 +286,7 @@ namespace VTOLVR_ModLoader.Views
             Helper.SentryLog("Assembly Checks", Helper.SentryLogCategory.NewVersion);
             if (!_isMod)
             {
-                Console.Log("Somehow Assemblychecks ran in a skin project");
+                Console.Log("Somehow Assembly checks ran in a skin project");
                 return false;
             }
 

@@ -214,7 +214,7 @@ namespace VTOLVR_ModLoader.Views
 
             if (json["projectsFolder"] != null)
             {
-                Console.Log("Found the Proejcts Folder");
+                Console.Log("Found the Projects Folder");
                 ProjectsFolder = json["projectsFolder"].ToString();
             }
 

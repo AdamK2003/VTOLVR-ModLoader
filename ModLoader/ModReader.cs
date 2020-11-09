@@ -77,9 +77,9 @@ namespace ModLoader
                     {
                         Debug.LogError($"Dll is missing in json");
                     }
-                    else if (File.Exists(Path.Combine(folders[i], json["dll File"].ToString())))
+                    else if (File.Exists(Path.Combine(folders[i], json["dll file"].ToString())))
                     {
-                        currentMod.dllPath = Path.Combine(folders[i], json["dll File"].ToString());
+                        currentMod.dllPath = Path.Combine(folders[i], json["dll file"].ToString());
                         hasDLL = true;
                     }
                     if (json["preview image"] != null)

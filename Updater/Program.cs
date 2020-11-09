@@ -8,10 +8,12 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using Updater.Classes;
-using Valve.Newtonsoft.Json.Linq;
+using AutoUpdater.Classes;
+using Newtonsoft.Json.Linq;
+using Sentry;
+using Sentry.Protocol;
 
-namespace Updater
+namespace AutoUpdater
 {
     static class Program
     {
@@ -37,6 +39,7 @@ namespace Updater
         }
         public static void Start()
         {
+            SentryLog("Program start", SentryLogCategory.Program);
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             bool debug = false;
 #if DEBUG
@@ -60,6 +63,7 @@ namespace Updater
         private async static void GetReleases()
         {
             Console.Log("Getting Releases");
+            SentryLog($"Getting Releases", Program.SentryLogCategory.Program);
             if (!await HttpHelper.CheckForInternet())
                 return;
 
@@ -79,10 +83,12 @@ namespace Updater
             {
                 //Failed
                 Console.Log("Error:\n" + response.StatusCode);
+                SentryLog($"Failed Getting releases {response.StatusCode}", Program.SentryLogCategory.Program);
             }
         }
         private static void ConvertUpdates(string jsonString)
         {
+            SentryLog($"Converting Updates", Program.SentryLogCategory.Program);
             JArray results = JArray.Parse(jsonString);
             Release lastUpdate;
             JArray lastFilesJson;
@@ -131,6 +137,14 @@ namespace Updater
         public static void Quit()
         {
             Application.Current.Shutdown();
+        }
+        public enum SentryLogCategory { Program, Updater, Release, HttpHelper, CommunicationsManager };
+        public static void SentryLog(string message, SentryLogCategory category)
+        {
+            SentrySdk.AddBreadcrumb(
+                message: message,
+                category: category.ToString(),
+                level: BreadcrumbLevel.Info);
         }
     }
 

@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Updater.Classes
+namespace AutoUpdater.Classes
 {
     static class CommunicationsManager
     {
@@ -18,6 +18,7 @@ namespace Updater.Classes
 
         private static void Setup()
         {
+            Program.SentryLog($"Setup", Program.SentryLogCategory.CommunicationsManager);
             args = Environment.GetCommandLineArgs();
             StringBuilder builder = new StringBuilder("Started with \"");
             for (int i = 0; i < args.Length; i++)
@@ -31,6 +32,7 @@ namespace Updater.Classes
         {
             if (CheckArgs("nointernet", out string line))
             {
+                Program.SentryLog($"No internet command ran", Program.SentryLogCategory.CommunicationsManager);
                 Console.Log("Internet has been disabled");
                 Program.disableInternet = true;
             }
@@ -39,6 +41,7 @@ namespace Updater.Classes
         {
             if (CheckArgs("branch", out string line))
             {
+                Program.SentryLog($"Custom Branch Found", Program.SentryLogCategory.CommunicationsManager);
                 line = line.Replace("branch=", string.Empty);
                 Program.branch = line;
                 Program.ProgramName += $" [{Program.branch} Branch]";
@@ -48,6 +51,7 @@ namespace Updater.Classes
         {
             if (CheckArgs("url", out string line))
             {
+                Program.SentryLog($"Custom url set", Program.SentryLogCategory.CommunicationsManager);
                 line = line.Replace("url=", string.Empty);
                 Program.url = line;
             }

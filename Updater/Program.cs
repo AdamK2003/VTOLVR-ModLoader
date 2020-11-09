@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Updater.Classes;
-using Valve.Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Updater
 {

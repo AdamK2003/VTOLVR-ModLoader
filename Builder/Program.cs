@@ -96,7 +96,7 @@ namespace Build
             Log("Building Updater");
             Run($"\"{paths["nuget"]}\"",
                 $"restore -SolutionDirectory \"{dir}\"",
-                @"\VTOLVR-ModLoader");
+                @"\Updater");
             Run(paths["msbuild"],
                 "-p:Configuration=Release -nologo Updater.csproj",
                 @"\Updater");

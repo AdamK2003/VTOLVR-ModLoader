@@ -9,9 +9,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using Updater.Classes;
+using AutoUpdater.Classes;
 
-namespace Updater
+namespace AutoUpdater
 {
     static class Updater
     {

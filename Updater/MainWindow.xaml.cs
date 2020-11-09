@@ -13,7 +13,7 @@ using System.Xml;
 using System.Security.Cryptography;
 using System.Windows.Input;
 
-namespace Updater
+namespace AutoUpdater
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

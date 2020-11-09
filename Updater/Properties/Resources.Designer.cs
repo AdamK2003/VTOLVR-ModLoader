@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Updater.Properties {
+namespace AutoUpdater.Properties {
     using System;
     
     
@@ -57,6 +57,15 @@ namespace Updater.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://d8a9028c612a46ca88c7937f1180d353@o411102.ingest.sentry.io/5509511.
+        /// </summary>
+        internal static string Dsn {
+            get {
+                return ResourceManager.GetString("Dsn", resourceCulture);
             }
         }
     }

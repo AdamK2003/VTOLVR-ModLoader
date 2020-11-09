@@ -18,7 +18,7 @@ namespace ModLoader
     public class ModReader : MonoBehaviour
     {
         /// <summary>
-        /// Gets all of the mods info localed in the path into memory
+        /// Gets all of the mods info located in the path into memory
         /// </summary>
         /// <param name="path">The folder to check for mods</param>
         /// <param name="isDevFolder">If we are checking through the users My Projects Folder</param>
@@ -26,7 +26,7 @@ namespace ModLoader
         {
             List<Mod> mods = new List<Mod>();
             string[] folders = Directory.GetDirectories(path);
-            
+
             //Files used in loop
             Assembly lastAssembly;
             IEnumerable<Type> source;
@@ -42,7 +42,7 @@ namespace ModLoader
                 {
                     ConvertOldMod(folders[i]);
                 }
-                
+
                 if (File.Exists($"{folders[i]}/info.json"))
                 {
                     JObject json;
@@ -56,35 +56,35 @@ namespace ModLoader
                         Debug.LogError($"Failed to read json file {folders[i]}/info.json\n{e}");
                         continue;
                     }
-                    
-                    if (json["Name"] == null)
+
+                    if (json["name"] == null)
                     {
                         Debug.LogError($"Name is missing in json");
                     }
                     else
                     {
-                        currentMod.name = json["Name"].ToString();
+                        currentMod.name = json["name"].ToString();
                     }
-                    if (json["Description"] == null)
+                    if (json["description"] == null)
                     {
                         Debug.LogError($"Description is missing in json");
                     }
                     else
                     {
-                        currentMod.description = json["Description"].ToString();
+                        currentMod.description = json["description"].ToString();
                     }
-                    if (json["Dll File"] == null)
+                    if (json["dll file"] == null)
                     {
                         Debug.LogError($"Dll is missing in json");
                     }
-                    else if (File.Exists(Path.Combine(folders[i], json["Dll File"].ToString())))
+                    else if (File.Exists(Path.Combine(folders[i], json["dll file"].ToString())))
                     {
-                        currentMod.dllPath = Path.Combine(folders[i], json["Dll File"].ToString());
+                        currentMod.dllPath = Path.Combine(folders[i], json["dll file"].ToString());
                         hasDLL = true;
                     }
-                    if (json["Preview Image"] != null)
+                    if (json["preview image"] != null)
                     {
-                        currentMod.imagePath = folders[i] + @"\" + json["Preview Image"].ToString();
+                        currentMod.imagePath = folders[i] + @"\" + json["preview image"].ToString();
                     }
                 }
                 currentMod.ModFolder = folders[i];
@@ -109,7 +109,7 @@ namespace ModLoader
                     source = from t in lastAssembly.GetTypes()
                              where t.IsSubclassOf(typeof(VTOLMOD))
                              select t;
-                    
+
                     if (source.Count() != 1)
                     {
                         Debug.LogError("The mod " + currentName + " doesn't specify a mod class or specifies more than one");
@@ -146,7 +146,7 @@ namespace ModLoader
         public static bool GetNewMods(string path, ref List<Mod> currentMods)
         {
             List<Mod> mods = GetMods(path);
-            Dictionary<string,Mod> currentModsDictionary = currentMods.ToDictionary(x => x.name);
+            Dictionary<string, Mod> currentModsDictionary = currentMods.ToDictionary(x => x.name);
             bool newMods = false;
             foreach (Mod mod in mods)
             {
@@ -168,7 +168,7 @@ namespace ModLoader
             bool hasInfo = false;
             bool hasDLL = false;
             bool hasPreview = false;
-            
+
 
             using (FileStream stream = new FileStream(folder + @"\info.xml", FileMode.Open))
             {
@@ -206,16 +206,16 @@ namespace ModLoader
             if (hasInfo && hasDLL)
             {
                 JObject json = new JObject();
-                json.Add("Name", currentMod.name);
-                json.Add("Description", currentMod.description);
+                json.Add("name", currentMod.name);
+                json.Add("description", currentMod.description);
                 string[] pathSpit = currentMod.dllPath.Split('\\');
-                json.Add("Dll File", pathSpit[pathSpit.Length - 1]);
+                json.Add("dll file", pathSpit[pathSpit.Length - 1]);
                 if (hasPreview)
                 {
                     pathSpit = currentMod.imagePath.Split('\\');
-                    json.Add("Preview Image", pathSpit[pathSpit.Length - 1]);
+                    json.Add("preview image", pathSpit[pathSpit.Length - 1]);
                 }
-                    
+
                 File.WriteAllText(folder + @"\info.json", json.ToString());
                 File.Delete(folder + @"\info.xml");
             }

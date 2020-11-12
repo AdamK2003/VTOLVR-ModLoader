@@ -250,11 +250,11 @@ namespace VTOLVR_ModLoader.Views
         {
             Helper.SentryLog("Creating Json", Helper.SentryLogCategory.NewProject);
             JObject jObject = new JObject();
-            jObject.Add("Name", nameBox.Text);
-            jObject.Add("Description", descriptionBox.Text);
+            jObject.Add(ProjectManager.jName, nameBox.Text);
+            jObject.Add(ProjectManager.jDescription, descriptionBox.Text);
             if (isMod)
-                jObject.Add("Dll File", nameBox.Text.RemoveSpaces() + ".dll");
-            jObject.Add("Last Edit", DateTime.Now.Ticks);
+                jObject.Add(ProjectManager.jDll, nameBox.Text.RemoveSpaces() + ".dll");
+            jObject.Add("last edit", DateTime.Now.Ticks);
             File.WriteAllText(currentFolder.FullName + (isMod ? @"\Builds\" : @"\") + @"info.json", jObject.ToString());
         }
 

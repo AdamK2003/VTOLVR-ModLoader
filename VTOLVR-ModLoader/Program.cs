@@ -133,7 +133,7 @@ namespace VTOLVR_ModLoader
 
             Helper.SentryLog("Starting process", Helper.SentryLogCategory.Program);
             Console.Log("Launching VTOL VR");
-            Process.Start("steam://run/667970");
+            //Process.Start("steam://run/667970");
 
             MainWindow.SetPlayButton(false);
             MainWindow.SetProgress(0, "Launching Game");
@@ -562,71 +562,20 @@ namespace VTOLVR_ModLoader
             Console.Log("Converting json at: " + path);
             bool hasChanged = false;
             JObject newJson = new JObject();
-            if (json["Name"] != null)
-            {
-                newJson[ProjectManager.jName] = json["Name"];
-                hasChanged = true;
-            }
-            if (json["Description"] != null)
-            {
-                newJson[ProjectManager.jDescription] = json["Description"];
-                hasChanged = true;
-            }
-            if (json["Tagline"] != null)
-            {
-                newJson[ProjectManager.jTagline] = json["Tagline"];
-                hasChanged = true;
-            }
-            if (json["Version"] != null)
-            {
-                newJson[ProjectManager.jVersion] = json["Version"];
-                hasChanged = true;
-            }
-            if (json["Dll File"] != null)
-            {
-                newJson[ProjectManager.jDll] = json["Dll File"];
-                hasChanged = true;
-            }
-            if (json["Last Edit"] != null)
-            {
-                newJson[ProjectManager.jEdit] = json["Last Edit"];
-                hasChanged = true;
-            }
-            if (json["Source"] != null)
-            {
-                newJson[ProjectManager.jSource] = json["Source"];
-                hasChanged = true;
-            }
-            if (json["Preview Image"] != null)
-            {
-                newJson[ProjectManager.jPImage] = json["Preview Image"];
-                hasChanged = true;
-            }
-            if (json["Web Preview Image"] != null)
-            {
-                newJson[ProjectManager.jWImage] = json["Web Preview Image"];
-                hasChanged = true;
-            }
-            if (json["Dependencies"] != null)
-            {
-                newJson[ProjectManager.jDeps] = json["Dependencies"];
-                hasChanged = true;
-            }
-            if (json["Public ID"] != null)
-            {
-                newJson[ProjectManager.jID] = json["Public ID"];
-                hasChanged = true;
-            }
-            if (json["Is Public"] != null)
-            {
-                newJson[ProjectManager.jPublic] = json["Is Public"];
-                hasChanged = true;
-            }
-            if (json["Unlisted"] != null)
-            {
-                newJson[ProjectManager.jUnlisted] = json["Unlisted"];
-                hasChanged = true;
-            }
+
+            ChangeJsonName("Name", ProjectManager.jName, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Description", ProjectManager.jDescription, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Tagline", ProjectManager.jTagline, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Version", ProjectManager.jVersion, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Dll File", ProjectManager.jDll, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Last Edit", ProjectManager.jEdit, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Source", ProjectManager.jSource, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Preview Image", ProjectManager.jPImage, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Web Preview Image", ProjectManager.jWImage, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Dependencies", ProjectManager.jDeps, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Public ID", ProjectManager.jID, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Is Public", ProjectManager.jPublic, ref json, ref newJson, ref hasChanged);
+            ChangeJsonName("Unlisted", ProjectManager.jUnlisted, ref json, ref newJson, ref hasChanged);
 
             if (hasChanged)
             {
@@ -634,6 +583,18 @@ namespace VTOLVR_ModLoader
                 Console.Log($"{path} has been changed, saving");
                 File.WriteAllText(path, newJson.ToString());
                 Console.Log("Saved");
+            }
+        }
+        private static void ChangeJsonName(string oldName, string newName, ref JObject oldJson, ref JObject newJson, ref bool hasChanged)
+        {
+            if (oldJson[oldName] != null)
+            {
+                newJson[newName] = oldJson[oldName];
+                hasChanged = true;
+            }
+            else if (oldJson[newName] != null)
+            {
+                newJson[newName] = oldJson[newName];
             }
         }
     }

@@ -311,6 +311,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Montserrat-ExtraBold.ttf" />
     <None Include="Resources\vtolvr-mod-boilerplate-master.zip" />
     <Resource Include="Resources\Montserrat-Medium.ttf" />
     <Resource Include="Resources\Squares Bold Free.otf" />

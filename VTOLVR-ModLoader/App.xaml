@@ -8,6 +8,11 @@
             <Setter Property="FontFamily"
                 Value="/VTOLVR-ModLoader;component/Resources/#Montserrat Medium" />
         </Style>
+        <Style x:Key="BoldText" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily"
+                    Value="/VTOLVR-ModLoader;component/Resources/#Montserrat ExtraBold"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+        </Style>
 
         <Style TargetType="Button" x:Key="darkButton">
             <Setter Property="Background" Value="#FF3D3D3D"/>

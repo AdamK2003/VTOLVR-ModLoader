@@ -92,11 +92,11 @@ namespace VTOLVR_ModLoader.Views
             }
             if (_currentJson[ProjectManager.jPublic] != null)
             {
-                isPublic.IsChecked = _currentJson[ProjectManager.jPublic].ToString().Equals("true") ? true : false;
+                isPublic.IsChecked = _currentJson[ProjectManager.jPublic].ToString().ToLower().Equals("true") ? true : false;
             }
             if (_currentJson[ProjectManager.jUnlisted] != null)
             {
-                unlisted.IsChecked = _currentJson[ProjectManager.jUnlisted].ToString().Equals("true") ? true : false;
+                unlisted.IsChecked = _currentJson[ProjectManager.jUnlisted].ToString().ToLower().Equals("true") ? true : false;
             }
 
 

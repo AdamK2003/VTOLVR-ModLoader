@@ -38,5 +38,13 @@ namespace VTOLVR_ModLoader.Classes
             }
             return sb.ToString();
         }
+        public static BitmapImage LoadImage(this BitmapImage image, string path)
+        {
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.UriSource = new Uri(path);
+            image.EndInit();
+            return image;
+        }
     }
 }

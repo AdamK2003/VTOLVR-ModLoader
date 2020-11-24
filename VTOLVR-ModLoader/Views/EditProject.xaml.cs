@@ -77,8 +77,8 @@ namespace VTOLVR_ModLoader.Views
             {
                 if (File.Exists(_currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString()))
                 {
-                    previewImage.Source = new BitmapImage(
-                    new Uri(_currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString()));
+                    previewImage.Source = new BitmapImage().LoadImage(
+                        _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
                     previewImageText.Visibility = Visibility.Hidden;
                 }
             }
@@ -86,8 +86,8 @@ namespace VTOLVR_ModLoader.Views
             {
                 if (File.Exists(_currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString()))
                 {
-                    webPageImage.Source = new BitmapImage(
-                    new Uri(_currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString()));
+                    webPageImage.Source = new BitmapImage().LoadImage(
+                        _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
                     webPageImageText.Visibility = Visibility.Hidden;
                 }
             }
@@ -272,7 +272,7 @@ namespace VTOLVR_ModLoader.Views
 
             previewImageText.Visibility = Visibility.Hidden;
 
-            previewImage.Source = new BitmapImage(new Uri(filePath));
+            previewImage.Source = new BitmapImage().LoadImage(filePath);
             SaveProject();
         }
         public void WebImageCallBack(bool selected, string filePath)
@@ -282,6 +282,7 @@ namespace VTOLVR_ModLoader.Views
 
             if (!WebImageChecks(filePath))
                 return;
+
             if (File.Exists(_currentPath + @"\web_preview.png"))
                 File.Delete(_currentPath + @"\web_preview.png");
             File.Copy(filePath, _currentPath + @"\web_preview.png");
@@ -294,7 +295,7 @@ namespace VTOLVR_ModLoader.Views
 
             webPageImageText.Visibility = Visibility.Hidden;
 
-            webPageImage.Source = new BitmapImage(new Uri(filePath));
+            webPageImage.Source = new BitmapImage().LoadImage(filePath);
             SaveProject();
         }
 

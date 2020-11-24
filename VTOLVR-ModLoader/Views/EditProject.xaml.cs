@@ -19,6 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Windows;
 
@@ -191,6 +192,15 @@ namespace VTOLVR_ModLoader.Views
                 return;
             }
             Console.Log("Saved Project!");
+            saveButton.Content = "Saved";
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+            timer.Start();
+            timer.Tick += (sender, args) =>
+            {
+                saveButton.Content = "Save";
+                saveButton.IsEnabled = true;
+            };
+
 
             if (_currentJson[ProjectManager.jID] != null)
             {

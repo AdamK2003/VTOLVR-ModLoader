@@ -514,6 +514,7 @@ namespace VTOLVR_ModLoader
 
             DirectoryInfo[] folders = folder.GetDirectories();
             JObject lastJson;
+            Console.Log($"We have {folders.Length} to check");
             for (int i = 0; i < folders.Length; i++)
             {
                 if (File.Exists(folders[i].FullName + "\\info.json"))
@@ -535,8 +536,10 @@ namespace VTOLVR_ModLoader
             //Finding users my projects mods
             if (!string.IsNullOrEmpty(Views.Settings.ProjectsFolder))
             {
+                Console.Log("Checking the users projects folder");
                 DirectoryInfo projectsFolder = new DirectoryInfo(Views.Settings.ProjectsFolder + ProjectManager.modsFolder);
                 folders = projectsFolder.GetDirectories();
+                Console.Log($"There are {folders.Length} to check");
                 for (int i = 0; i < folders.Length; i++)
                 {
                     if (!File.Exists(Path.Combine(folders[i].FullName, "Builds", "info.json")))
@@ -554,12 +557,14 @@ namespace VTOLVR_ModLoader
                         ConvertJson(json, Path.Combine(folders[i].FullName, "Builds", "info.json"));
                     }
                 }
+                Console.Log("End of for loop");
             }
+            Console.Log("Finished checking JSONs");
         }
         private static void ConvertJson(JObject json, string path)
         {
-            Helper.SentryLog("Converting Json", Helper.SentryLogCategory.Program);
-            Console.Log("Converting json at: " + path);
+            Helper.SentryLog("Checking Json", Helper.SentryLogCategory.Program);
+            Console.Log("Checking json at: " + path);
             bool hasChanged = false;
             JObject newJson = new JObject();
 
@@ -583,6 +588,10 @@ namespace VTOLVR_ModLoader
                 Console.Log($"{path} has been changed, saving");
                 File.WriteAllText(path, newJson.ToString());
                 Console.Log("Saved");
+            }
+            else
+            {
+                Console.Log("All JSONs are up to date");
             }
         }
         private static void ChangeJsonName(string oldName, string newName, ref JObject oldJson, ref JObject newJson, ref bool hasChanged)

@@ -36,16 +36,17 @@
 
             <TextBlock Grid.Row="4" Text="Project Description:" Foreground="LightGray" FontSize="20"/>
             <TextBox Grid.Row="5" x:Name="projectDescription" Text="Your Projects Description" FontSize="20" 
-                     Background="Transparent" Foreground="White" TextWrapping="Wrap"/>
+                     Background="Transparent" Foreground="White" TextWrapping="Wrap" 
+                     AcceptsReturn="True" AcceptsTab="True" AllowDrop="True"/>
 
             <TextBlock Grid.Row="6" Text="Product Version:" Foreground="LightGray" FontSize="20"/>
             <TextBox Grid.Row="7" x:Name="projectVersion" Text="1.0.0" FontSize="20" 
                      Background="Transparent" Foreground="White" TextWrapping="Wrap"/>
-            
+
             <TextBlock Grid.Row="8" Text="Source Code:" Foreground="LightGray" FontSize="20" Visibility="Hidden"
                        x:Name="sourceText" Grid.RowSpan="2"/>
             <TextBox Grid.Row="9" x:Name="modSource" Foreground="White" Background="Transparent" Visibility="Hidden"/>
-            
+
             <TextBlock Grid.Row="10" Text="Images:" Foreground="LightGray" FontSize="20"/>
             <Grid Grid.Row="11">
                 <Grid.ColumnDefinitions>
@@ -70,7 +71,7 @@
 
                 <Image Grid.Row="1" Grid.Column="0" x:Name="previewImage"/>
                 <Image Grid.Row="1" Grid.Column="1" x:Name="webPageImage"/>
-                
+
                 <TextBlock Grid.Row="1" Grid.Column="0" Foreground="LightGray" FontSize="20" TextAlignment="Center"
                            VerticalAlignment="Center" x:Name="previewImageText">
                     Select an image
@@ -79,7 +80,7 @@
                            VerticalAlignment="Center" x:Name="webPageImageText">
                     Select an image
                 </TextBlock>
-                
+
                 <Button Grid.Column="0" Grid.Row="2" Click="PreviewImageButton" Style="{StaticResource darkButton}" 
                         Content="Select"/>
                 <Button Grid.Column="1" Grid.Row="2" Click="WebPageImageButton" Style="{StaticResource darkButton}"
@@ -101,7 +102,7 @@
             </Grid>
             <Button Grid.Row="99" x:Name="saveButton" Click="Save" Style="{StaticResource darkButton}" 
                         Content="Save"/>
-            
+
         </Grid>
     </ScrollViewer>
 </UserControl>

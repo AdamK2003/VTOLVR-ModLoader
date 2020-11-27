@@ -5,10 +5,6 @@ VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "VTOLVR-ModLoader\Launcher.csproj", "{4D9D2F10-E1AE-4980-AAAF-37B78DF081E7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example Mods", "Example Mods", "{F0B75EBE-57E6-44F2-B89C-96F7ED56AD8C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoGravity", "Example Mods\NoGravity\NoGravity.csproj", "{5471978C-53E1-45FE-AE70-9861A71CCB77}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mod Loader", "ModLoader\Mod Loader.csproj", "{6954C277-7D91-4274-B54B-FDDAD7738790}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{1EE40772-7545-473D-A2C9-DBE790F36BF3}"
@@ -32,10 +28,6 @@ Global
 		{4D9D2F10-E1AE-4980-AAAF-37B78DF081E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D9D2F10-E1AE-4980-AAAF-37B78DF081E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D9D2F10-E1AE-4980-AAAF-37B78DF081E7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5471978C-53E1-45FE-AE70-9861A71CCB77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5471978C-53E1-45FE-AE70-9861A71CCB77}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5471978C-53E1-45FE-AE70-9861A71CCB77}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5471978C-53E1-45FE-AE70-9861A71CCB77}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6954C277-7D91-4274-B54B-FDDAD7738790}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6954C277-7D91-4274-B54B-FDDAD7738790}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6954C277-7D91-4274-B54B-FDDAD7738790}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -55,9 +47,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{5471978C-53E1-45FE-AE70-9861A71CCB77} = {F0B75EBE-57E6-44F2-B89C-96F7ED56AD8C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C8C92F2A-8D42-4CD3-8DF9-49B06621ABC6}

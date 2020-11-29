@@ -256,7 +256,18 @@ namespace VTOLVR_ModLoader.Classes
             Directory.CreateDirectory(Path.Combine(Program.root, datetime));
 
             Console.Log("Copying Game Log");
-            string[] lines = File.ReadAllLines(PlayerLogPath());
+            string[] lines = null;
+            try
+            {
+                lines = File.ReadAllLines(PlayerLogPath());
+            }
+            catch (Exception e)
+            {
+                Console.Log("Can't read player log because the game is open");
+                Notification.Show("Please close the game before creating a diagnostics zip.", "Error");
+                Directory.Delete(Path.Combine(Program.root, datetime));
+                return;
+            }
             string[] shortLines = ShortenPlayerLog(lines);
             File.WriteAllLines(Path.Combine(Program.root, datetime, "Player.log"), shortLines);
 

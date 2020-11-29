@@ -191,8 +191,41 @@ namespace VTOLVR_ModLoader.Views
                 saveButton.Content = "Save";
                 return;
             }
+            if (_currentJson[ProjectManager.jID] != null)
+            {
+                if (_currentJson[ProjectManager.jWImage] == null)
+                {
+                    Console.Log($"Not submitting changes to website because missing website \"{ProjectManager.jWImage}\"");
+                }
+                else if (_currentJson[ProjectManager.jPImage] == null)
+                {
+                    Console.Log($"Not submitting changes to website because missing website \"{ProjectManager.jPImage}\"");
+                }
+                else
+                {
+                    Helper.SentryLog("Submitting changes to website", Helper.SentryLogCategory.EditProject);
+                    Console.Log("Submitting changes to website");
+                    HttpHelper form = new HttpHelper($"{Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL)}/{_currentJson[ProjectManager.jID]}/");
+                    form.SetToken(Settings.Token);
+                    form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
+                    form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
+                    form.SetValue("tagline", _currentJson[ProjectManager.jTagline].ToString());
+                    form.SetValue("description", _currentJson[ProjectManager.jDescription].ToString());
+                    form.SetValue("unlisted", _currentJson[ProjectManager.jUnlisted].ToString());
+                    form.SetValue("is_public", _currentJson[ProjectManager.jPublic].ToString());
+                    if (_isMod)
+                        form.SetValue("repository", _currentJson[ProjectManager.jSource].ToString());
+
+                    form.AttachFile("header_image", _currentJson[ProjectManager.jWImage].ToString(), _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
+                    form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
+                    form.SetValue("user_uploaded_file", string.Empty);
+                    form.SendDataAsync(HttpHelper.HttpMethod.PUT, UpdateSent);
+                    return;
+                }
+            }
+
             Console.Log("Saved Project!");
-            saveButton.Content = "Saved";
+            saveButton.Content = "Saved (Locally)";
             var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
             timer.Start();
             timer.Tick += (sender, args) =>
@@ -200,32 +233,10 @@ namespace VTOLVR_ModLoader.Views
                 saveButton.Content = "Save";
                 saveButton.IsEnabled = true;
             };
-
-
-            if (_currentJson[ProjectManager.jID] != null)
-            {
-                Console.Log("Submitting changes to website");
-                HttpHelper form = new HttpHelper($"{Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL)}/{_currentJson[ProjectManager.jID]}/");
-                form.SetToken(Settings.Token);
-                form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
-                form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
-                form.SetValue("tagline", _currentJson[ProjectManager.jTagline].ToString());
-                form.SetValue("description", _currentJson[ProjectManager.jDescription].ToString());
-                form.SetValue("unlisted", _currentJson[ProjectManager.jUnlisted].ToString());
-                form.SetValue("is_public", _currentJson[ProjectManager.jPublic].ToString());
-                if (_isMod)
-                    form.SetValue("repository", _currentJson[ProjectManager.jSource].ToString());
-
-                form.AttachFile("header_image", _currentJson[ProjectManager.jWImage].ToString(), _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
-                form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
-                form.SetValue("user_uploaded_file", string.Empty);
-                form.SendDataAsync(HttpHelper.HttpMethod.PUT, UpdateSent);
-            }
         }
 
         private async void UpdateSent(HttpResponseMessage response)
         {
-            saveButton.IsEnabled = true;
             if (!response.IsSuccessStatusCode)
             {
                 Notification.Show($"Failed to update your {(_isMod ? "mod" : "skin")} on the website.\nError Code: {response.StatusCode}\nChanges have been saved locally, please try again later.",
@@ -237,7 +248,15 @@ namespace VTOLVR_ModLoader.Views
                 saveButton.Content = "Save";
                 return;
             }
-            saveButton.Content = "Saved";
+            Console.Log("Project has been synced with vtolvr-mods.com");
+            saveButton.Content = "Saved and Updated on vtolvr-mods.com";
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+            timer.Start();
+            timer.Tick += (sender, args) =>
+            {
+                saveButton.Content = "Save";
+                saveButton.IsEnabled = true;
+            };
         }
 
         private void PreviewImageButton(object sender, RoutedEventArgs e)

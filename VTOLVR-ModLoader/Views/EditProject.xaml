@@ -43,7 +43,7 @@
             <TextBox Grid.Row="7" x:Name="projectVersion" Text="1.0.0" FontSize="20" 
                      Background="Transparent" Foreground="White" TextWrapping="Wrap"/>
 
-            <TextBlock Grid.Row="8" Text="Source Code:" Foreground="LightGray" FontSize="20" Visibility="Hidden"
+            <TextBlock Grid.Row="8" Text="Source Code (Optional) :" Foreground="LightGray" FontSize="20" Visibility="Hidden"
                        x:Name="sourceText" Grid.RowSpan="2"/>
             <TextBox Grid.Row="9" x:Name="modSource" Foreground="White" Background="Transparent" Visibility="Hidden"/>
 

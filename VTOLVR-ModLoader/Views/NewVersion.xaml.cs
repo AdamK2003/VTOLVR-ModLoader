@@ -80,8 +80,19 @@ namespace VTOLVR_ModLoader.Views
                 }
                 approvalWarning.SetValue(Grid.RowProperty, 2);
                 contentGuidelines.SetValue(Grid.RowProperty, 3);
-                uploadButton.Content = "Release";
-                uploadButton.IsEnabled = true;
+
+                if (_currentJson[ProjectManager.jPImage] != null ||
+                    _currentJson[ProjectManager.jWImage] != null)
+                {
+                    uploadButton.Content = "Release";
+                    uploadButton.IsEnabled = true;
+                }
+                else
+                {
+                    uploadButton.Content = "Please fill out all sections in \"Edit Info\" before releasing";
+                    uploadButton.IsEnabled = false;
+                }
+
             }
             else
             {

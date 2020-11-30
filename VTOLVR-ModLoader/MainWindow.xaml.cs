@@ -213,6 +213,17 @@ namespace VTOLVR_ModLoader
                 ImageBehavior.SetAnimatedSource(LogoGif, image);
                 Console.Log("Set Halloween Logo");
             }
+            else if (now.Month.Equals(12))
+            {
+                Helper.SentryLog("Setting Christmas Logo", Helper.SentryLogCategory.MainWindow);
+
+                BitmapImage image = new BitmapImage();
+                image.BeginInit();
+                image.UriSource = new Uri("/VTOLVR-ModLoader;component/Resources/LogoChristmasSpinning.gif", UriKind.Relative);
+                image.EndInit();
+                ImageBehavior.SetAnimatedSource(LogoGif, image);
+                Console.Log("Set Christmas Logo");
+            }
         }
     }
 }

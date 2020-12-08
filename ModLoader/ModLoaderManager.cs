@@ -352,23 +352,26 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                 return;
             }
 
+            Debug.Log("DevTools: Checking for any mods or scenarios");
+
 
             if (json["scenario"] != null && json["pilot"] != null)
             {
                 _pilotName = json["pilot"].Value<string>() ?? null;
-                if (_pilotName == "No Selection" || string.IsNullOrEmpty(_pilotName))
-                    return;
+                if (_pilotName != "No Selection" && !string.IsNullOrEmpty(_pilotName))
+                {
+                    JObject scenario = json["scenario"] as JObject;
+                    string scenarioName = scenario["name"].ToString();
+                    _sID = scenario["id"].ToString();
+                    _cID = scenario["cid"].ToString();
 
-                JObject scenario = json["scenario"] as JObject;
-                string scenarioName = scenario["name"].ToString();
-                _sID = scenario["id"].ToString();
-                _cID = scenario["cid"].ToString();
-
-                if (scenarioName == "No Selection" || string.IsNullOrEmpty(_sID))
-                    return;
-                _loadMission = true;
-                Debug.Log($"Devtools - Pilot={_pilotName} ScenarioName={scenarioName}" +
-                    $"sID={_sID} cID={_cID}");
+                    if (scenarioName != "No Selection" && !string.IsNullOrEmpty(_sID))
+                    {
+                        _loadMission = true;
+                        Debug.Log($"Devtools - Pilot={_pilotName} ScenarioName={scenarioName}" +
+                            $"sID={_sID} cID={_cID}");
+                    }
+                }
             }
 
             if (json["previousMods"] != null)

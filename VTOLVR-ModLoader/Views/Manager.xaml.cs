@@ -13,6 +13,7 @@ using VTOLVR_ModLoader.Windows;
 using System.Net;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows.Media;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -52,9 +53,10 @@ namespace VTOLVR_ModLoader.Views
             {
                 items.Add(new Item(
                     downloadedMods[i].Name,
-                    Visibility.Visible,
+                    Visibility.Hidden,
+                    new SolidColorBrush(Color.FromRgb(255, 255, 255)),
                     downloadedMods[i].Json[ProjectManager.jVersion] == null ? "N/A" : downloadedMods[i].Json[ProjectManager.jVersion].ToString(),
-                    "a",
+                    downloadedMods[i].Json[ProjectManager.jID] == null ? "N/A" : "Requesting",
                     false,
                     false,
                     downloadedMods[i].Directory.FullName));
@@ -78,8 +80,9 @@ namespace VTOLVR_ModLoader.Views
                 items.Add(new Item(
                     downloadSkins[i].Name,
                     Visibility.Hidden,
+                    new SolidColorBrush(Color.FromRgb(255, 255, 255)),
                     downloadSkins[i].Json[ProjectManager.jVersion] == null ? "N/A" : downloadSkins[i].Json[ProjectManager.jVersion].ToString(),
-                    "a",
+                    downloadSkins[i].Json[ProjectManager.jID] == null ? "N/A" : "Requesting",
                     false,
                     false,
                     downloadSkins[i].Directory.FullName));
@@ -117,6 +120,10 @@ namespace VTOLVR_ModLoader.Views
                 {
                     _mods[i].WebsiteVersion = json["version"].ToString();
                     _mods[i].UpdateVisibility = _mods[i].IsUptodate() == true ? Visibility.Hidden : Visibility.Visible;
+                    if (_mods[i].UpdateVisibility == Visibility.Visible)
+                    {
+                        _mods[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(127, 0, 0));
+                    }
                     modsList.ItemsSource = _mods.ToArray();
                     return;
                 }
@@ -128,6 +135,7 @@ namespace VTOLVR_ModLoader.Views
         {
             Button button = (Button)sender;
             Helper.SentryLog($"Update button pressed for {button.Tag}", Helper.SentryLogCategory.Manager);
+            Console.Log($"Update button pressed for {button.Tag}");
             HttpHelper.DownloadStringAsync(
                 $"{Program.url}{Program.apiURL}{Program.modsURL}/{button.Tag}",
                 UpdateModReceivedInfo);
@@ -151,6 +159,7 @@ namespace VTOLVR_ModLoader.Views
                 return;
             }
 
+            Console.Log("Received Mod Info from server");
             if (json["user_uploaded_file"] != null)
             {
                 string fileName = GetFileName(json["user_uploaded_file"].ToString());
@@ -202,27 +211,39 @@ namespace VTOLVR_ModLoader.Views
                 //    File.Delete(Path.Combine(Program.root, currentDownloadFile));
             }
         }
-
         private void DeleteMod(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            Helper.SentryLog($"Delete button pressed for {button.Tag}", Helper.SentryLogCategory.Manager);
-            Console.Log($"Deleting {button.Tag}");
-            Helper.DeleteDirectory(button.Tag.ToString(), out Exception exception);
 
-            if (exception != null)
+            Notification.Show("Are you sure you want to delete this mod?", $"Deleting {button.Tag}",
+                Notification.Buttons.NoYes,
+                callbackData: new string[] { button.Tag.ToString() },
+                yesNoResultCallbackWithData: DeleteConfirmation);
+        }
+        private void DeleteConfirmation(bool yesNoResult, object[] data)
+        {
+            if (yesNoResult)
             {
-                Notification.Show($"{exception.Message}", "Error when deleting mod");
-                return;
+                string[] info = data as string[];
+                Helper.SentryLog($"Delete button pressed for {info[0]}", Helper.SentryLogCategory.Manager);
+                Console.Log($"Deleting {info[0]}");
+                Helper.DeleteDirectory(info[0], out Exception exception);
+
+                if (exception != null)
+                {
+                    Notification.Show($"{exception.Message}", "Error when deleting mod");
+                    return;
+                }
+                _mods.Remove(_mods.Find(x => x.FolderDirectory == info[0].ToString()));
+                modsList.ItemsSource = _mods.ToArray();
             }
-            _mods.Remove(_mods.Find(x => x.FolderDirectory == button.Tag.ToString()));
-            modsList.ItemsSource = _mods.ToArray();
         }
 
         public class Item
         {
             public string Name { get; set; }
             public Visibility UpdateVisibility { get; set; }
+            public Brush CurrentVersionColour { get; set; }
             public string CurrentVersion { get; set; }
             public string WebsiteVersion { get; set; }
             public bool LoadOnStartCheck { get; set; }
@@ -230,16 +251,18 @@ namespace VTOLVR_ModLoader.Views
             public string FolderDirectory { get; set; }
             public string PublicID { get; set; }
 
-            public Item(string name, Visibility updateVisibility, string currentVersion, string websiteVersion, bool loadOnStartCheck, bool autoUpdateCheck, string folderDirectory)
+            public Item(string name, Visibility updateVisibility, Brush currentVersionColour, string currentVersion, string websiteVersion, bool loadOnStartCheck, bool autoUpdateCheck, string folderDirectory)
             {
                 Name = name;
                 UpdateVisibility = updateVisibility;
+                CurrentVersionColour = currentVersionColour;
                 CurrentVersion = currentVersion;
                 WebsiteVersion = websiteVersion;
                 LoadOnStartCheck = loadOnStartCheck;
                 AutoUpdateCheck = autoUpdateCheck;
                 FolderDirectory = folderDirectory;
             }
+
             public bool IsUptodate()
             {
                 return CurrentVersion.Equals(WebsiteVersion);

@@ -75,7 +75,7 @@
                             <TextBlock Grid.Row="0" Grid.Column="0"  Text="{Binding Name}" 
                                                 Foreground="White" FontSize="20"/>
                             <Label Grid.Row="0" Grid.Column="2" Content="{Binding CurrentVersion}"
-                                   Foreground="White" FontSize="20" HorizontalAlignment="Center"/>
+                                   Foreground="{Binding CurrentVersionColour}" FontSize="20" HorizontalAlignment="Center"/>
                             <Label Grid.Row="0" Grid.Column="3" Content="{Binding WebsiteVersion}"
                                    Foreground="White" FontSize="20" HorizontalAlignment="Center"/>
                             <CheckBox Grid.Row="0" Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center"

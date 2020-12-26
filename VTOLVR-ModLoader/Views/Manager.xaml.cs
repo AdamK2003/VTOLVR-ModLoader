@@ -195,27 +195,63 @@ namespace VTOLVR_ModLoader.Views
         //The zip from the website has finished downloading and is now in their mods folder
         private void ModDownloadComplete(CustomWebClient.RequestData requestData)
         {
-            /*
-             * The problem with web client is that it doesn't store what it just did
-             * So I have no clue how to display what mod just finished updating so I can
-             * update it on the list
-             */
-            Helper.SentryLog("Finished downloading mod update", Helper.SentryLogCategory.Manager);
+            string publicID = requestData.ExtraData[0] as string;
+            string name = requestData.ExtraData[1] as string;
+            Helper.SentryLog($"Finished downloading {name}", Helper.SentryLogCategory.Manager);
             MainWindow.SetBusy(false);
             if (!requestData.EventHandler.Cancelled && requestData.EventHandler.Error == null)
             {
-                MainWindow.SetProgress(100, $"Ready");
-                string publicID = requestData.ExtraData[0] as string;
+                MainWindow.SetProgress(100, $"Downloaded {name}");
+
+                string currentFolder = requestData.FilePath.Split('.')[0];
+
+                Directory.CreateDirectory(currentFolder);
+                Console.Log("Extracting " + requestData.FilePath);
+                MainWindow.SetBusy(true);
+                MainWindow.SetProgress(0, $"Extracting {name}");
+                Helper.ExtractZipToDirectory(requestData.FilePath, currentFolder, ExtractedMod);
+                UpdateModUI(requestData.ExtraData);
             }
             else
             {
                 MainWindow.SetProgress(100, $"Ready");
-                Notification.Show($"{requestData.EventHandler.Error.Message}", "Error when downloading file");
-                Console.Log("Error when downloading mod update:\n" + requestData.EventHandler.Error.ToString());
+                Notification.Show($"{requestData.EventHandler.Error.Message}", $"Error when downloading {name}");
+                Console.Log($"Error when downloading {name}:\n" + requestData.EventHandler.Error.ToString());
                 //if (File.Exists(Path.Combine(Program.root, currentDownloadFile)))
                 //    File.Delete(Path.Combine(Program.root, currentDownloadFile));
             }
         }
+
+        private void ExtractedMod(string zipPath, string extractedPath, string result)
+        {
+            Helper.SentryLog($"Finished Extracting Mod Update", Helper.SentryLogCategory.Manager);
+            if (!result.Equals("Success"))
+            {
+                Notification.Show($"Error Extracting {zipPath}\nError:{result}");
+                Console.Log($"Error Extracting {zipPath}\nError:{result}");
+                MainWindow.SetProgress(100, $"Error Extracting");
+            }
+            else
+            {
+                Console.Log($"Finished Extracting {zipPath}");
+                Helper.TryDelete(zipPath);
+                MainWindow.SetProgress(100, $"Extracted {extractedPath}");
+            }
+            MainWindow.SetBusy(false);
+        }
+        private void UpdateModUI(object[] data)
+        {
+            string publicID = data[0] as string;
+            for (int i = 0; i < _mods.Count; i++)
+            {
+                if (_mods[i].PublicID != publicID)
+                    continue;
+
+                _mods[i].Updated();
+                break;
+            }
+        }
+
         private void DeleteMod(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
@@ -273,6 +309,12 @@ namespace VTOLVR_ModLoader.Views
             public bool IsUptodate()
             {
                 return CurrentVersion.Equals(WebsiteVersion);
+            }
+            public void Updated()
+            {
+                CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                CurrentVersion = WebsiteVersion;
+                UpdateVisibility = Visibility.Hidden;
             }
         }
 

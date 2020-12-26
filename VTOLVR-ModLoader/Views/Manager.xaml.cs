@@ -37,7 +37,9 @@ namespace VTOLVR_ModLoader.Views
             FindMods(ref _mods);
             FindSkins(ref _skins);
 
-            modsList.ItemsSource = _mods.ToArray();
+            _modsList.ItemsSource = _mods;
+            RefreshColumns();
+            this.DataContext = this;
         }
         private void FindMods(ref List<Item> items)
         {
@@ -53,8 +55,8 @@ namespace VTOLVR_ModLoader.Views
             {
                 items.Add(new Item(
                     downloadedMods[i].Name,
+                    downloadedMods[i].Description,
                     Visibility.Hidden,
-                    new SolidColorBrush(Color.FromRgb(255, 255, 255)),
                     downloadedMods[i].Json[ProjectManager.jVersion] == null ? "N/A" : downloadedMods[i].Json[ProjectManager.jVersion].ToString(),
                     downloadedMods[i].Json[ProjectManager.jID] == null ? "N/A" : "Requesting",
                     false,
@@ -79,8 +81,8 @@ namespace VTOLVR_ModLoader.Views
             {
                 items.Add(new Item(
                     downloadSkins[i].Name,
+                    downloadSkins[i].Description,
                     Visibility.Hidden,
-                    new SolidColorBrush(Color.FromRgb(255, 255, 255)),
                     downloadSkins[i].Json[ProjectManager.jVersion] == null ? "N/A" : downloadSkins[i].Json[ProjectManager.jVersion].ToString(),
                     downloadSkins[i].Json[ProjectManager.jID] == null ? "N/A" : "Requesting",
                     false,
@@ -122,9 +124,9 @@ namespace VTOLVR_ModLoader.Views
                     _mods[i].UpdateVisibility = _mods[i].IsUptodate() == true ? Visibility.Hidden : Visibility.Visible;
                     if (_mods[i].UpdateVisibility == Visibility.Visible)
                     {
-                        _mods[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(127, 0, 0));
+                        _mods[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(150, 0, 0));
                     }
-                    modsList.ItemsSource = _mods.ToArray();
+                    _modsList.ItemsSource = _mods.ToArray();
                     return;
                 }
             }
@@ -235,13 +237,14 @@ namespace VTOLVR_ModLoader.Views
                     return;
                 }
                 _mods.Remove(_mods.Find(x => x.FolderDirectory == info[0].ToString()));
-                modsList.ItemsSource = _mods.ToArray();
+                _modsList.ItemsSource = _mods.ToArray();
             }
         }
 
         public class Item
         {
             public string Name { get; set; }
+            public string Description { get; set; }
             public Visibility UpdateVisibility { get; set; }
             public Brush CurrentVersionColour { get; set; }
             public string CurrentVersion { get; set; }
@@ -251,11 +254,12 @@ namespace VTOLVR_ModLoader.Views
             public string FolderDirectory { get; set; }
             public string PublicID { get; set; }
 
-            public Item(string name, Visibility updateVisibility, Brush currentVersionColour, string currentVersion, string websiteVersion, bool loadOnStartCheck, bool autoUpdateCheck, string folderDirectory)
+            public Item(string name, string description, Visibility updateVisibility, string currentVersion, string websiteVersion, bool loadOnStartCheck, bool autoUpdateCheck, string folderDirectory)
             {
                 Name = name;
+                Description = description;
                 UpdateVisibility = updateVisibility;
-                CurrentVersionColour = currentVersionColour;
+                CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                 CurrentVersion = currentVersion;
                 WebsiteVersion = websiteVersion;
                 LoadOnStartCheck = loadOnStartCheck;
@@ -278,6 +282,38 @@ namespace VTOLVR_ModLoader.Views
         {
             string[] split = url.Split('/');
             return split[split.Length - 1];
+        }
+
+        private void WindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RefreshColumns();
+        }
+        public void RefreshColumns()
+        {
+            // Thank you Assistant for this snippet
+            double totalSize = 0;
+            GridViewColumn description = null;
+            if (_modsList.View is GridView grid)
+            {
+                foreach (var column in grid.Columns)
+                {
+                    if (column.Header?.ToString() == "Description")
+                    {
+                        description = column;
+                    }
+                    else
+                    {
+                        totalSize += column.ActualWidth;
+                    }
+                    if (double.IsNaN(column.Width))
+                    {
+                        column.Width = column.ActualWidth;
+                        column.Width = double.NaN;
+                    }
+                }
+                double descriptionNewWidth = _grid.ActualWidth - totalSize - 10;
+                description.Width = descriptionNewWidth > 10 ? descriptionNewWidth : 10;
+            }
         }
     }
 }

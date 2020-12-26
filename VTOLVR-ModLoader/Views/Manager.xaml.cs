@@ -162,35 +162,38 @@ namespace VTOLVR_ModLoader.Views
             }
 
             Console.Log("Received Mod Info from server");
-            if (json["user_uploaded_file"] != null)
+            if (json["user_uploaded_file"] != null && json["pub_id"] != null)
             {
                 string fileName = GetFileName(json["user_uploaded_file"].ToString());
                 Console.Log("Downloading " + fileName);
                 HttpHelper.DownloadFile(
                     json["user_uploaded_file"].ToString(),
                     $"{Program.root}{Program.modsFolder}\\{fileName}",
-                    ModDownloadProgress, ModDownloadComplete); ;
+                    ModDownloadProgress, ModDownloadComplete, new object[] { json["pub_id"].ToString(), json["name"].ToString() });
                 return;
             }
+            Console.Log($"Couldn't seem to find a file on the website");
+            Console.Log($"user_uploaded_file = {json["user_uploaded_file"]} | {"pub_id"} = {json["pub_id"]} | Raw : {json}");
             Notification.Show("There seems to be no file for this mod on the website. Please contact vtolvr-mods.com staff saying which mod it is.", "Strange Error");
         }
 
-        private void ModDownloadProgress(object sender, DownloadProgressChangedEventArgs e)
+        private void ModDownloadProgress(CustomWebClient.RequestData requestData)
         {
-            Console.Log($"[{e.ProgressPercentage}%] Downloading Mod Update");
+            string name = requestData.ExtraData[1] as string;
+            Console.Log($"[{requestData.Progress}%] Downloading {name}");
             //The download progress still does get called at 100%, so just added this check
             //so that ModDownloadComplete gets the last call.
-            if (e.ProgressPercentage != 100)
+            if (requestData.Progress != 100)
             {
                 //If the user downloads multiple updates at once, this progress bar is going
                 //too look glitchy, jumping back and fourth.
-                MainWindow.SetProgress(e.ProgressPercentage, "Downloading Mod Updates");
+                MainWindow.SetProgress(requestData.Progress, $"Downloading {name}");
                 MainWindow.SetBusy(true);
             }
 
         }
         //The zip from the website has finished downloading and is now in their mods folder
-        private void ModDownloadComplete(object sender, AsyncCompletedEventArgs e)
+        private void ModDownloadComplete(CustomWebClient.RequestData requestData)
         {
             /*
              * The problem with web client is that it doesn't store what it just did
@@ -199,16 +202,16 @@ namespace VTOLVR_ModLoader.Views
              */
             Helper.SentryLog("Finished downloading mod update", Helper.SentryLogCategory.Manager);
             MainWindow.SetBusy(false);
-            if (!e.Cancelled && e.Error == null)
+            if (!requestData.EventHandler.Cancelled && requestData.EventHandler.Error == null)
             {
                 MainWindow.SetProgress(100, $"Ready");
-                Console.Log("Finished downloading mod update");
+                string publicID = requestData.ExtraData[0] as string;
             }
             else
             {
                 MainWindow.SetProgress(100, $"Ready");
-                Notification.Show($"{e.Error.Message}", "Error when downloading file");
-                Console.Log("Error when downloading mod update:\n" + e.Error.ToString());
+                Notification.Show($"{requestData.EventHandler.Error.Message}", "Error when downloading file");
+                Console.Log("Error when downloading mod update:\n" + requestData.EventHandler.Error.ToString());
                 //if (File.Exists(Path.Combine(Program.root, currentDownloadFile)))
                 //    File.Delete(Path.Combine(Program.root, currentDownloadFile));
             }

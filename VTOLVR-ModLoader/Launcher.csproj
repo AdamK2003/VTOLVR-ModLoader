@@ -170,6 +170,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\BaseItem.cs" />
+    <Compile Include="Classes\CustomWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Classes\ExtensionMethods.cs" />
     <Compile Include="Classes\HttpHelper.cs" />
     <Compile Include="Classes\Pilot.cs" />

@@ -113,7 +113,8 @@
                                         <StackPanel Orientation="Horizontal">
                                             <Button Content="Update" Foreground="White" Click="UpdateMod"
                                                     Style="{StaticResource transparentButton}" Margin="5,0"
-                                                    Visibility="{Binding UpdateVisibility}"/>
+                                                    Visibility="{Binding UpdateVisibility}"
+                                                    Tag="{Binding PublicID}"/>
                                             <Button Content="Delete" Foreground="White" Click="DeleteMod"
                                                     Style="{StaticResource transparentButton}"  Margin="5,0"
                                                     Tag="{Binding FolderDirectory}"/>
@@ -139,11 +140,6 @@
                         </GridView.ColumnHeaderContainerStyle>
                     </GridView>
                 </ListView.View>
-                <ListView.Template>
-                    <ControlTemplate>
-                        <ItemsPresenter></ItemsPresenter>
-                    </ControlTemplate>
-                </ListView.Template>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Style.Triggers>

@@ -16,16 +16,16 @@ namespace VTOLVR_ModLoader.Classes
 {
     class HttpHelper
     {
-        public enum HttpMethod { GET, HEAD, PUT, POST, OPTIONS}
+        public enum HttpMethod { GET, HEAD, PUT, POST, OPTIONS }
         private static readonly HttpClient _client = new HttpClient();
 
         private readonly MultipartFormDataContent _form;
         private readonly string _url;
         private Dictionary<string, string> _files = new Dictionary<string, string>();
-        
+
         public static void SetHeader()
         {
-            if  (!_client.DefaultRequestHeaders.Contains("user-agent"))
+            if (!_client.DefaultRequestHeaders.Contains("user-agent"))
                 _client.DefaultRequestHeaders.Add("user-agent", Program.ProgramName.RemoveSpecialCharacters());
         }
         public static async Task<bool> CheckForInternet()
@@ -38,7 +38,7 @@ namespace VTOLVR_ModLoader.Classes
                 if (response.IsSuccessStatusCode)
                     return true;
             }
-            catch 
+            catch
             {
 
             }
@@ -67,6 +67,14 @@ namespace VTOLVR_ModLoader.Classes
             client.DownloadFileCompleted += downloadComplete;
             client.DownloadFileAsync(new Uri(url), path);
         }
+        public static void DownloadFile(string url, string path, Action<CustomWebClient.RequestData> downloadProgress, Action<CustomWebClient.RequestData> downloadComplete, object[] extraData = null)
+        {
+            CustomWebClient client = new CustomWebClient();
+            client.Headers.Add("user-agent", Program.ProgramName.RemoveSpecialCharacters());
+            client.DownloadProgress += downloadProgress;
+            client.DownloadComplete += downloadComplete;
+            client.DownloadFileAsync(new Uri(url), path, extraData);
+        }
 
         public HttpHelper(string url)
         {
@@ -82,7 +90,7 @@ namespace VTOLVR_ModLoader.Classes
         public void AttachFile(string field, string fileName, string filePath)
         {
             Stream stream = File.OpenRead(filePath);
-            _form.Add(new StreamContent(stream),field,fileName);
+            _form.Add(new StreamContent(stream), field, fileName);
         }
         public void SetValue(string field, string value)
         {

@@ -1,16 +1,17 @@
 Add the following dll's to this folder:
 
+	- 0Harmony.dll
 	- Assembly-CSharp.dll
 	- Assembly-CSharp-firstpass.dll
-	- netstandard.dll
-	- UnityEngine.dll
-	- UnityEngine.UI.dll
-	- UnityEngine.CoreModule.dll
-	- UnityEngine.AssetBundle.dll
-	- UnityEngine.CrashReportingModule.dll
-	- UnityEngine.UnityWebRequestWWWModule.dll
-	- UnityEngine.PhysicsModule.dll
-	- 0Harmony.dll
 	- ModLoader.dll
-	- Valve.Newtonsoft.Json.dll
+	- netstandard.dll
 	- SimpleTCP.dll
+	- Unity.TextMeshPro.dll
+	- UnityEngine.AssetBundleModule.dll
+	- UnityEngine.CoreModule.dll
+	- UnityEngine.CrashReportingModule.dll
+	- UnityEngine.dll
+	- UnityEngine.PhysicsModule.dll
+	- UnityEngine.UI.dll
+	- UnityEngine.UnityWebRequestWWWModule.dll
+	- Valve.Newtonsoft.Json.dll

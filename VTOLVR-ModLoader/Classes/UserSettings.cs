@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,9 +24,9 @@ namespace VTOLVR_ModLoader.Classes
         public bool LaunchSteamVR = true;
 
         [JsonProperty]
-        public List<Manager.Item> Mods = new List<Manager.Item>();
+        public ObservableCollection<Manager.Item> Mods = new ObservableCollection<Manager.Item>();
         [JsonProperty]
-        public List<Manager.Item> Skins = new List<Manager.Item>();
+        public ObservableCollection<Manager.Item> Skins = new ObservableCollection<Manager.Item>();
 
         private static UserSettings _settings;
         public static UserSettings Settings

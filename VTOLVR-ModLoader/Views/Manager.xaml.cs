@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
+using System.Windows.Threading;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -42,7 +43,10 @@ namespace VTOLVR_ModLoader.Views
 
             this.DataContext = this;
             _modsList.ItemsSource = _mods;
+
             RefreshColumns();
+            LoadValues();
+
         }
         private void FindMods(ref ObservableCollection<Item> items)
         {
@@ -294,7 +298,6 @@ namespace VTOLVR_ModLoader.Views
         [JsonObject(MemberSerialization.OptIn)]
         public class Item : INotifyPropertyChanged
         {
-            [JsonProperty]
             public string Name { get; set; }
             public string Description { get; set; }
             public Visibility UpdateVisibility { get; set; }
@@ -305,6 +308,7 @@ namespace VTOLVR_ModLoader.Views
             public bool LoadOnStartCheck { get; set; }
             [JsonProperty("Auto Update Check")]
             public bool AutoUpdateCheck { get; set; }
+            [JsonProperty("Folder Directory")]
             public string FolderDirectory { get; set; }
             public string PublicID { get; set; }
 
@@ -336,6 +340,11 @@ namespace VTOLVR_ModLoader.Views
                 PropertyChanged(this, new PropertyChangedEventArgs("UpdateVisibility"));
                 PropertyChanged(this, new PropertyChangedEventArgs("CurrentVersionColour"));
                 Console.Log($"Updated {Name} to {CurrentVersion}");
+            }
+            public void LoadValue(Item savedValues)
+            {
+                LoadOnStartCheck = savedValues.LoadOnStartCheck;
+                AutoUpdateCheck = savedValues.AutoUpdateCheck;
             }
         }
 
@@ -379,6 +388,79 @@ namespace VTOLVR_ModLoader.Views
                 }
                 double descriptionNewWidth = _grid.ActualWidth - totalSize - 10;
                 description.Width = descriptionNewWidth > 10 ? descriptionNewWidth : 10;
+            }
+        }
+
+        private void LoadOnStartChanged(object sender, RoutedEventArgs e)
+        {
+            SaveValues();
+        }
+
+        private void AutoUpdateChanged(object sender, RoutedEventArgs e)
+        {
+            SaveValues();
+        }
+
+        private bool GetItem(bool isMod, string folderDir, out int position)
+        {
+            if (isMod)
+            {
+                for (int i = 0; i < _mods.Count; i++)
+                {
+                    if (_mods[i].FolderDirectory == folderDir)
+                    {
+                        position = i;
+                        return true;
+                    }
+                }
+                position = -1;
+                return false;
+            }
+
+            for (int i = 0; i < _skins.Count; i++)
+            {
+                if (_skins[i].FolderDirectory == folderDir)
+                {
+                    position = i;
+                    return true;
+                }
+            }
+            position = -1;
+            return false;
+        }
+
+        private void SaveValues()
+        {
+            UserSettings.Settings.Mods = _mods;
+            UserSettings.Settings.Skins = _skins;
+            UserSettings.SaveSettings(Program.root + Settings.SavePath);
+        }
+        private void LoadValues()
+        {
+            ObservableCollection<Item> savedValues = UserSettings.Settings.Mods;
+            for (int i = 0; i < _mods.Count; i++)
+            {
+                for (int j = 0; j < savedValues.Count; j++)
+                {
+                    if (_mods[i].FolderDirectory == savedValues[j].FolderDirectory)
+                    {
+                        _mods[i].LoadValue(savedValues[j]);
+                        break;
+                    }
+                }
+            }
+
+            savedValues = UserSettings.Settings.Skins;
+            for (int i = 0; i < _skins.Count; i++)
+            {
+                for (int j = 0; j < savedValues.Count; j++)
+                {
+                    if (_skins[i].FolderDirectory == savedValues[j].FolderDirectory)
+                    {
+                        _skins[i].LoadValue(savedValues[j]);
+                        break;
+                    }
+                }
             }
         }
     }

@@ -87,7 +87,11 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox 
-                                                IsChecked="{Binding Path=LoadOnStartCheck, Mode=TwoWay}"/>
+                                            IsChecked="{Binding Path=LoadOnStartCheck, Mode=TwoWay}"
+                                            Tag="Mod"
+                                            ToolTip="{Binding FolderDirectory}"
+                                            Unchecked="LoadOnStartChanged"
+                                            Checked="LoadOnStartChanged"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
@@ -99,7 +103,11 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox
-                                            IsChecked="{Binding Path=AutoUpdateCheck, Mode=TwoWay}"/>
+                                            IsChecked="{Binding Path=AutoUpdateCheck, Mode=TwoWay}"
+                                            Tag="Mod"
+                                            ToolTip="{Binding FolderDirectory}"
+                                            Unchecked="AutoUpdateChanged"
+                                            Checked="AutoUpdateChanged"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

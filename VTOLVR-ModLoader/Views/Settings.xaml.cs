@@ -23,8 +23,8 @@ namespace VTOLVR_ModLoader.Views
     {
         public static Settings Instance;
 
+        public const string SavePath = @"\settings.json";
         private const string userURL = "/get-token";
-        private const string savePath = @"\settings.json";
         private const string uriPath = @"HKEY_CLASSES_ROOT\VTOLVRML";
 
         public static bool tokenValid = false;
@@ -135,14 +135,14 @@ namespace VTOLVR_ModLoader.Views
             USettings.AutoUpdate = AutoUpdate;
             USettings.LaunchSteamVR = SteamVR;
 
-            UserSettings.SaveSettings(Program.root + savePath);
+            UserSettings.SaveSettings(Program.root + SavePath);
             Console.Log("Saved Settings");
         }
 
         private void LoadSettings()
         {
             Helper.SentryLog("Loading Settings", Helper.SentryLogCategory.Settings);
-            UserSettings.LoadSettings(Program.root + savePath);
+            UserSettings.LoadSettings(Program.root + SavePath);
 
             USettings = UserSettings.Settings;
             ProjectsFolder = USettings.ProjectsFolder;

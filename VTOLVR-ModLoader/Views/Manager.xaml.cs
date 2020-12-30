@@ -34,26 +34,26 @@ namespace VTOLVR_ModLoader.Views
         }
         public void UpdateUI(bool isMods)
         {
+            this.DataContext = this;
             Helper.SentryLog("Updating UI", Helper.SentryLogCategory.Manager);
             Console.Log("Updating UI for Manager");
             if (isMods)
             {
                 _mods = new ObservableCollection<Item>();
-                FindMods(ref _mods);
                 _listView.ItemsSource = _mods;
+                FindMods(ref _mods);
                 _titleText.Text = "Mods";
                 _noItemsText.Content = "No Mods Downloaded";
             }
             else
             {
                 _skins = new ObservableCollection<Item>();
-                FindSkins(ref _skins);
                 _listView.ItemsSource = _skins;
+                FindSkins(ref _skins);
                 _titleText.Text = "Skins";
                 _noItemsText.Content = "No Skins Downloaded";
             }
 
-            this.DataContext = this;
             RefreshColumns();
             LoadValues();
 
@@ -139,13 +139,11 @@ namespace VTOLVR_ModLoader.Views
                 if (!string.IsNullOrEmpty(_mods[i].PublicID) &&
                     _mods[i].PublicID.Equals(json["pub_id"].ToString()))
                 {
-                    _mods[i].WebsiteVersion = json["version"].ToString();
-                    _mods[i].PopertyChanged("WebsiteVersion");
-                    _mods[i].UpdateVisibility = _mods[i].IsUptodate() == true ? Visibility.Hidden : Visibility.Visible;
-                    _mods[i].PopertyChanged("UpdateVisibility");
+                    Console.Log($"Checking {_mods[i].Name}");
+                    _mods[i].SetWebsiteVersion(json["version"].ToString());
                     if (_mods[i].UpdateVisibility == Visibility.Visible)
                     {
-                        _mods[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(150, 0, 0));
+                        _mods[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(241, 241, 39));
                         _mods[i].PopertyChanged("CurrentVersionColour");
 
                         if (_mods[i].AutoUpdateCheck)
@@ -350,7 +348,7 @@ namespace VTOLVR_ModLoader.Views
                 FolderDirectory = folderDirectory;
             }
 
-            public event PropertyChangedEventHandler PropertyChanged;
+            public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
             public bool IsUptodate()
             {
@@ -374,6 +372,14 @@ namespace VTOLVR_ModLoader.Views
             public void PopertyChanged(string poperty)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(poperty));
+            }
+            public void SetWebsiteVersion(string websiteVersion)
+            {
+                WebsiteVersion = websiteVersion;
+                UpdateVisibility = IsUptodate() == true ? Visibility.Hidden : Visibility.Visible;
+
+
+                PropertyChanged(this, new PropertyChangedEventArgs("WebsiteVersion"));
             }
         }
 

@@ -6,169 +6,164 @@
              xmlns:local="clr-namespace:VTOLVR_ModLoader.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" SizeChanged="WindowSizeChanged">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid x:Name="_grid">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="5"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+    <Grid x:Name="_grid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <Label Grid.Row="1" Foreground="White" FontSize="30" Content="Manager"/>
-            <TextBlock Grid.Row="2" Foreground="White" Background="#FF2E2E2E" FontSize="20" 
+        <Label Grid.Row="1" Foreground="White" FontSize="30" Content="Manager"/>
+        <TextBlock Grid.Row="2" Foreground="White" Background="#FF2E2E2E" FontSize="20" 
                    Text="Mods" Style="{StaticResource BoldText}" x:Name="_titleText"/>
 
-            <Label Grid.Row="3" Foreground="White" FontSize="15" Content="" x:Name="_noItemsText"/>
-            <ListView
-                Grid.Row="3"
-                x:Name="_listView" 
-                Background="{x:Null}" 
-                SelectionMode="Single">
-                <ListView.View>
-                    <GridView AllowsColumnReorder="False">
-                        <GridView.Columns>
-                            <GridViewColumn Width="200">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock 
+        <Label Grid.Row="3" Foreground="White" FontSize="15" Content="" x:Name="_noItemsText"/>
+        <ListView
+            Grid.Row="3"
+            x:Name="_listView" 
+            Background="{x:Null}" 
+            SelectionMode="Single">
+            <ListView.View>
+                <GridView AllowsColumnReorder="False">
+                    <GridView.Columns>
+                        <GridViewColumn Width="200">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock 
                                             Text="{Binding Name, NotifyOnTargetUpdated=True}"
                                             Foreground="{Binding CurrentVersionColour}"
                                             />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                                <GridViewColumn.Header>Name</GridViewColumn.Header>
-                            </GridViewColumn>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                            <GridViewColumn.Header>Name</GridViewColumn.Header>
+                        </GridViewColumn>
 
-                            <GridViewColumn x:Name="_descriptionModColoum">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock 
+                        <GridViewColumn x:Name="_descriptionModColoum">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock 
                                             Text="{Binding Description}"
                                             Foreground="{Binding CurrentVersionColour}"
                                             />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                                <GridViewColumn.Header>Description</GridViewColumn.Header>
-                            </GridViewColumn>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                            <GridViewColumn.Header>Description</GridViewColumn.Header>
+                        </GridViewColumn>
 
-                            <GridViewColumn Width="Auto">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock 
+                        <GridViewColumn Width="Auto">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock 
                                             Text="{Binding CurrentVersion}"
                                             Foreground="{Binding CurrentVersionColour}"
                                             />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                                <GridViewColumn.Header>Current Version</GridViewColumn.Header>
-                            </GridViewColumn>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                            <GridViewColumn.Header>Current Version</GridViewColumn.Header>
+                        </GridViewColumn>
 
-                            <GridViewColumn Width="Auto">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock 
+                        <GridViewColumn Width="Auto">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock 
                                             Text="{Binding WebsiteVersion}"
                                             Foreground="{Binding CurrentVersionColour}"
                                             />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                                <GridViewColumn.Header>Website Version</GridViewColumn.Header>
-                            </GridViewColumn>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                            <GridViewColumn.Header>Website Version</GridViewColumn.Header>
+                        </GridViewColumn>
 
-                            <GridViewColumn Width="Auto">
-                                <GridViewColumn.Header>
-                                    Load On Start
-                                </GridViewColumn.Header>
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox 
+                        <GridViewColumn Width="Auto">
+                            <GridViewColumn.Header>
+                                Load On Start
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox 
                                             IsChecked="{Binding Path=LoadOnStartCheck, Mode=TwoWay}"
                                             Tag="Mod"
                                             ToolTip="{Binding FolderDirectory}"
                                             Unchecked="LoadOnStartChanged"
                                             Checked="LoadOnStartChanged"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                            <GridViewColumn Width="Auto">
-                                <GridViewColumn.Header>
-                                    Auto Update
-                                </GridViewColumn.Header>
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox
+                        <GridViewColumn Width="Auto">
+                            <GridViewColumn.Header>
+                                Auto Update
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox
                                             IsChecked="{Binding Path=AutoUpdateCheck, Mode=TwoWay}"
                                             Tag="Mod"
                                             ToolTip="{Binding FolderDirectory}"
                                             Unchecked="AutoUpdateChanged"
                                             Checked="AutoUpdateChanged"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                            <GridViewColumn Width="Auto">
-                                <GridViewColumn.Header>
-                                    Edit
-                                </GridViewColumn.Header>
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Button Content="Update" Foreground="White" Click="UpdateMod"
+                        <GridViewColumn Width="Auto">
+                            <GridViewColumn.Header>
+                                Edit
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Update" Foreground="White" Click="UpdateMod"
                                                     Style="{StaticResource transparentButton}" Margin="5,0"
                                                     Visibility="{Binding UpdateVisibility}"
                                                     Tag="{Binding PublicID}"/>
-                                            <Button Content="Delete" Foreground="White" Click="DeleteMod"
+                                        <Button Content="Delete" Foreground="White" Click="DeleteMod"
                                                     Style="{StaticResource transparentButton}"  Margin="5,0"
                                                     Tag="{Binding FolderDirectory}"/>
-                                        </StackPanel>
+                                    </StackPanel>
 
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView.Columns>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView.Columns>
 
-                        <GridView.ColumnHeaderContainerStyle>
-                            <Style TargetType="{x:Type GridViewColumnHeader}">
-                                <Setter Property="IsEnabled" Value="False"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="TextElement.Foreground" Value="White"/>
-                                        <Setter Property="Background" Value="#FF2E2E2E"/>
-                                        <Setter Property="TextElement.FontFamily" Value="/VTOLVR-ModLoader;component/Resources/#Montserrat Medium"/>
-                                        <Setter Property="TextElement.FontSize" Value="15"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </GridView.ColumnHeaderContainerStyle>
-                    </GridView>
-                </ListView.View>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.Setters>
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="BorderBrush" Value="Transparent"/>
-                                    <Setter Property="Foreground" Value="Transparent"/>
-                                </Trigger.Setters>
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Trigger.Setters>
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="BorderBrush" Value="#FF2E2E2E"/>
-                                </Trigger.Setters>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView>
-        </Grid>
-    </ScrollViewer>
+                    <GridView.ColumnHeaderContainerStyle>
+                        <Style TargetType="{x:Type GridViewColumnHeader}">
+                            <Setter Property="IsEnabled" Value="False"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="TextElement.Foreground" Value="White"/>
+                                    <Setter Property="Background" Value="#FF2E2E2E"/>
+                                    <Setter Property="TextElement.FontFamily" Value="/VTOLVR-ModLoader;component/Resources/#Montserrat Medium"/>
+                                    <Setter Property="TextElement.FontSize" Value="15"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </GridView.ColumnHeaderContainerStyle>
+                </GridView>
+            </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.Setters>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="Transparent"/>
+                            </Trigger.Setters>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Trigger.Setters>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderBrush" Value="#FF2E2E2E"/>
+                            </Trigger.Setters>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </Grid>
 </UserControl>

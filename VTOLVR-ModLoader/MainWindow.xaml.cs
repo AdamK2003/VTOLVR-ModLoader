@@ -63,7 +63,7 @@ namespace VTOLVR_ModLoader
             devTools = new DevTools();
             pManager = new ProjectManager();
             ItemManager = new Manager();
-            DataContext = news;
+            DataContext = ItemManager;
         }
         public static void SetProgress(int barValue, string text)
         {

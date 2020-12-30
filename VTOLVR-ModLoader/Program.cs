@@ -70,6 +70,7 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
             MainWindow._instance.CheckForEvent();
+            MainWindow._instance.ItemManager.UpdateUI();
             MainWindow.SetProgress(100, "Ready");
         }
 

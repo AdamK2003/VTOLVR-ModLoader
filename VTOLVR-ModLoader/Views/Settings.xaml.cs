@@ -26,12 +26,6 @@ namespace VTOLVR_ModLoader.Views
         private const string userURL = "/get-token";
         private const string savePath = @"\settings.json";
         private const string uriPath = @"HKEY_CLASSES_ROOT\VTOLVRML";
-        private const string jProjectsFolder = "projectsFolder";
-        private const string jAutoUpdate = "AutoUpdate";
-        private const string jSteamVR = "Launch SteamVR";
-        private const string jToken = "token";
-
-
 
         public static bool tokenValid = false;
         private bool hideResult;

@@ -50,7 +50,7 @@
                        gif:ImageBehavior.AnimatedSource="Resources/LogoSpinning.gif" x:Name="LogoGif" 
                        gif:ImageBehavior.AutoStart="False" Margin="11,8"/>
                 <Button Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Manager" Foreground="White" BorderBrush="{x:Null}" Click="Manager" 
+                            Content="Home" Foreground="White" BorderBrush="{x:Null}" Click="Manager" 
                             Style="{StaticResource darkButton}" x:Name="managerButton" Margin="11,8"/>
                 <Button Grid.Row="2" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
                             Content="ChangeLog" Foreground="White" BorderBrush="{x:Null}" Click="News" 

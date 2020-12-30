@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:VTOLVR_ModLoader"
         xmlns:views="clr-namespace:VTOLVR_ModLoader.Views"
         mc:Ignorable="d"
-        Title="VTOL VR Modloader" Height="600" Width="1200" Icon="Resources/Logo.ico" MinWidth="800" MinHeight="535" 
+        Title="VTOL VR Modloader" Height="600" Width="1200" Icon="Resources/Logo.ico" MinWidth="970" MinHeight="584" 
         Background="#FF4B4B4B" WindowStartupLocation="CenterScreen" WindowState="Maximized"
         Style="{StaticResource FontStyle}">
     <Window.Resources>
@@ -43,6 +43,7 @@
                     <RowDefinition Height="45"/>
                     <RowDefinition Height="45"/>
                     <RowDefinition Height="45"/>
+                    <RowDefinition Height="45"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
@@ -50,28 +51,33 @@
                        gif:ImageBehavior.AnimatedSource="Resources/LogoSpinning.gif" x:Name="LogoGif" 
                        gif:ImageBehavior.AutoStart="False" Margin="11,8"/>
                 <Button Grid.Row="1" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
-                            Content="Home" Foreground="White" BorderBrush="{x:Null}" Click="Manager" 
-                            Style="{StaticResource darkButton}" x:Name="managerButton" Margin="11,8"/>
+                        Content="Mods" Foreground="White" BorderBrush="{x:Null}" Click="Manager" 
+                        Style="{StaticResource darkButton}" x:Name="modsButton" Margin="11,8" 
+                        Tag="Mods"/>
                 <Button Grid.Row="2" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                        Content="Skins" Foreground="White" BorderBrush="{x:Null}" Click="Manager" 
+                        Style="{StaticResource darkButton}" x:Name="skinsButton" Margin="11,8"
+                        Tag="Skins"/>
+                <Button Grid.Row="3" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
                             Content="ChangeLog" Foreground="White" BorderBrush="{x:Null}" Click="News" 
                             Style="{StaticResource darkButton}" x:Name="homeButton" Margin="11,8"/>
-                <Button Grid.Row="3" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                <Button Grid.Row="4" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
                             Content="Open Folder" Foreground="White" BorderBrush="{x:Null}" 
                             Click="OpenFolder" Style="{StaticResource darkButton}" x:Name="openFButton"
                         Margin="11,8"/>
-                <Button Grid.Row="4" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                <Button Grid.Row="5" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
                             Content="Console" Foreground="White" BorderBrush="{x:Null}" 
                             Click="OpenConsole" Style="{StaticResource darkButton}" x:Name="consoleButton"
                         Margin="11,8"/>
-                <Button Grid.Row="5" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                <Button Grid.Row="6" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
                             Content="Mod Creator" Foreground="White" BorderBrush="{x:Null}" 
                             Click="Creator" x:Name="uploadModButton" Style="{StaticResource darkButton}"
                         Margin="11,8"/>
-                <Button Grid.Row="6" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                <Button Grid.Row="7" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
                             Content="Dev Tools" Foreground="White" BorderBrush="{x:Null}" 
                             Click="OpenTools" Style="{StaticResource darkButton}" x:Name="devTButton"
                         Margin="11,8"/>
-                <Button Grid.Row="7" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
+                <Button Grid.Row="8" FontFamily="/VTOLVR-ModLoader;component/Resources/#Squares Bold"
                             Content="Settings" Foreground="White" BorderBrush="{x:Null}" 
                             Click="OpenSettings" Style="{StaticResource darkButton}" x:Name="settingsButton"
                         Margin="11,8"/>

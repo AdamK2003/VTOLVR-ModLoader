@@ -20,11 +20,12 @@
 
             <Label Grid.Row="1" Foreground="White" FontSize="30" Content="Manager"/>
             <TextBlock Grid.Row="2" Foreground="White" Background="#FF2E2E2E" FontSize="20" 
-                   Text="Mods" Style="{StaticResource BoldText}"/>
+                   Text="Mods" Style="{StaticResource BoldText}" x:Name="_titleText"/>
 
+            <Label Grid.Row="3" Foreground="White" FontSize="15" Content="" x:Name="_noItemsText"/>
             <ListView
                 Grid.Row="3"
-                x:Name="_modsList" 
+                x:Name="_listView" 
                 Background="{x:Null}" 
                 SelectionMode="Single">
                 <ListView.View>
@@ -168,23 +169,6 @@
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
-
-            <Grid Grid.Row="4" Background="#FF2E2E2E">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="150"/>
-                </Grid.ColumnDefinitions>
-
-                <Label Grid.Column="0" Foreground="White" FontSize="25" Content="Skins" FontWeight="Bold"/>
-                <Label Grid.Column="1" Foreground="White" FontSize="15" Content="Autoupdate" HorizontalAlignment="Center"/>
-            </Grid>
-
-            <Label Grid.Row="5" Foreground="White" FontSize="15" Content="No skins downloaded" x:Name="NoSkinsText"/>
-            <Label Grid.Row="3" Foreground="White" FontSize="15" Content="No mods downloaded" x:Name="NoModsText"/>
         </Grid>
     </ScrollViewer>
 </UserControl>

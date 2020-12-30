@@ -32,18 +32,28 @@ namespace VTOLVR_ModLoader.Views
             InitializeComponent();
             Helper.SentryLog("Created Manager", Helper.SentryLogCategory.Manager);
         }
-        public void UpdateUI()
+        public void UpdateUI(bool isMods)
         {
             Helper.SentryLog("Updating UI", Helper.SentryLogCategory.Manager);
             Console.Log("Updating UI for Manager");
-            _mods = new ObservableCollection<Item>();
-            _skins = new ObservableCollection<Item>();
-            FindMods(ref _mods);
-            FindSkins(ref _skins);
+            if (isMods)
+            {
+                _mods = new ObservableCollection<Item>();
+                FindMods(ref _mods);
+                _listView.ItemsSource = _mods;
+                _titleText.Text = "Mods";
+                _noItemsText.Content = "No Mods Downloaded";
+            }
+            else
+            {
+                _skins = new ObservableCollection<Item>();
+                FindSkins(ref _skins);
+                _listView.ItemsSource = _skins;
+                _titleText.Text = "Skins";
+                _noItemsText.Content = "No Skins Downloaded";
+            }
 
             this.DataContext = this;
-            _modsList.ItemsSource = _mods;
-
             RefreshColumns();
             LoadValues();
 
@@ -56,7 +66,7 @@ namespace VTOLVR_ModLoader.Views
 
             List<BaseItem> downloadedMods = Helper.FindDownloadMods();
             if (downloadedMods.Count > 0)
-                NoModsText.Visibility = Visibility.Hidden;
+                _noItemsText.Visibility = Visibility.Hidden;
 
             for (int i = 0; i < downloadedMods.Count; i++)
             {
@@ -84,6 +94,8 @@ namespace VTOLVR_ModLoader.Views
                 items = new ObservableCollection<Item>();
 
             List<BaseItem> downloadSkins = Helper.FindDownloadedSkins();
+            if (downloadSkins.Count > 0)
+                _noItemsText.Visibility = Visibility.Hidden;
             for (int i = 0; i < downloadSkins.Count; i++)
             {
                 items.Add(new Item(
@@ -302,7 +314,7 @@ namespace VTOLVR_ModLoader.Views
                         continue;
 
                     _mods.Remove(_mods[i]);
-                    _modsList.ItemsSource = _mods.ToArray();
+                    _listView.ItemsSource = _mods.ToArray();
                     break;
                 }
             }
@@ -385,7 +397,7 @@ namespace VTOLVR_ModLoader.Views
             // Thank you Assistant for this snippet
             double totalSize = 0;
             GridViewColumn description = null;
-            if (_modsList.View is GridView grid)
+            if (_listView.View is GridView grid)
             {
                 foreach (var column in grid.Columns)
                 {

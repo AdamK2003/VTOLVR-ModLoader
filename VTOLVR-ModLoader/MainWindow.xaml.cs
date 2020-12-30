@@ -192,9 +192,13 @@ namespace VTOLVR_ModLoader
         private void Manager(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Opened Manager", Helper.SentryLogCategory.MainWindow);
+            Button button = (Button)sender;
+            bool isMods = true;
+            if (button.Tag.ToString() == "Skins")
+                isMods = false;
             if (ItemManager == null)
                 ItemManager = new Manager();
-            ItemManager.UpdateUI();
+            ItemManager.UpdateUI(isMods);
             _instance.DataContext = ItemManager;
         }
 

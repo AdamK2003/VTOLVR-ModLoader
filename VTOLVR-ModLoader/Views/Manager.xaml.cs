@@ -128,12 +128,25 @@ namespace VTOLVR_ModLoader.Views
                     _mods[i].PublicID.Equals(json["pub_id"].ToString()))
                 {
                     _mods[i].WebsiteVersion = json["version"].ToString();
+                    _mods[i].PopertyChanged("WebsiteVersion");
                     _mods[i].UpdateVisibility = _mods[i].IsUptodate() == true ? Visibility.Hidden : Visibility.Visible;
+                    _mods[i].PopertyChanged("UpdateVisibility");
                     if (_mods[i].UpdateVisibility == Visibility.Visible)
                     {
                         _mods[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(150, 0, 0));
+                        _mods[i].PopertyChanged("CurrentVersionColour");
+
+                        if (_mods[i].AutoUpdateCheck)
+                        {
+                            Console.Log($"Auto Updating {_mods[i].Name}");
+                            MainWindow.SetPlayButton(true);
+                            string fileName = GetFileName(json["user_uploaded_file"].ToString());
+                            HttpHelper.DownloadFile(
+                                json["user_uploaded_file"].ToString(),
+                                $"{Program.root}{Program.modsFolder}\\{fileName}",
+                                ModDownloadProgress, ModDownloadComplete, new object[] { _mods[i].PublicID, _mods[i].Name });
+                        }
                     }
-                    _modsList.ItemsSource = _mods.ToArray();
                     return;
                 }
             }
@@ -241,7 +254,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 Console.Log($"Finished Extracting {zipPath}");
                 Helper.TryDelete(zipPath);
-                MainWindow.SetProgress(100, $"Extracted {extractedPath}");
+                MainWindow.SetProgress(100, $"Updated {extraData[1] as string}");
                 UpdateModUI(extraData);
             }
             MainWindow.SetBusy(false);
@@ -345,6 +358,10 @@ namespace VTOLVR_ModLoader.Views
             {
                 LoadOnStartCheck = savedValues.LoadOnStartCheck;
                 AutoUpdateCheck = savedValues.AutoUpdateCheck;
+            }
+            public void PopertyChanged(string poperty)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(poperty));
             }
         }
 

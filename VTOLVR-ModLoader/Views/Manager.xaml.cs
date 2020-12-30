@@ -14,6 +14,7 @@ using System.Net;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Media;
+using System.Collections.ObjectModel;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -22,8 +23,8 @@ namespace VTOLVR_ModLoader.Views
     /// </summary>
     public partial class Manager : UserControl
     {
-        private List<Item> _mods = new List<Item>();
-        private List<Item> _skins = new List<Item>();
+        private ObservableCollection<Item> _mods = new ObservableCollection<Item>();
+        private ObservableCollection<Item> _skins = new ObservableCollection<Item>();
         public Manager()
         {
             InitializeComponent();
@@ -32,20 +33,22 @@ namespace VTOLVR_ModLoader.Views
         public void UpdateUI()
         {
             Helper.SentryLog("Updating UI", Helper.SentryLogCategory.Manager);
-            _mods = new List<Item>();
-            _skins = new List<Item>();
+            Console.Log("Updating UI for Manager");
+            _mods = new ObservableCollection<Item>();
+            _skins = new ObservableCollection<Item>();
             FindMods(ref _mods);
             FindSkins(ref _skins);
 
+            this.DataContext = this;
             _modsList.ItemsSource = _mods;
             RefreshColumns();
-            this.DataContext = this;
+
         }
-        private void FindMods(ref List<Item> items)
+        private void FindMods(ref ObservableCollection<Item> items)
         {
             Helper.SentryLog("Finding Mods", Helper.SentryLogCategory.Manager);
             if (items == null)
-                items = new List<Item>();
+                items = new ObservableCollection<Item>();
 
             List<BaseItem> downloadedMods = Helper.FindDownloadMods();
             if (downloadedMods.Count > 0)
@@ -70,11 +73,11 @@ namespace VTOLVR_ModLoader.Views
                 }
             }
         }
-        private void FindSkins(ref List<Item> items)
+        private void FindSkins(ref ObservableCollection<Item> items)
         {
             Helper.SentryLog("Finding Skins", Helper.SentryLogCategory.Manager);
             if (items == null)
-                items = new List<Item>();
+                items = new ObservableCollection<Item>();
 
             List<BaseItem> downloadSkins = Helper.FindDownloadedSkins();
             for (int i = 0; i < downloadSkins.Count; i++)
@@ -209,8 +212,7 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log("Extracting " + requestData.FilePath);
                 MainWindow.SetBusy(true);
                 MainWindow.SetProgress(0, $"Extracting {name}");
-                Helper.ExtractZipToDirectory(requestData.FilePath, currentFolder, ExtractedMod);
-                UpdateModUI(requestData.ExtraData);
+                Helper.ExtractZipToDirectory(requestData.FilePath, currentFolder, completedWithArgs: ExtractedMod, extraData: requestData.ExtraData);
             }
             else
             {
@@ -222,7 +224,7 @@ namespace VTOLVR_ModLoader.Views
             }
         }
 
-        private void ExtractedMod(string zipPath, string extractedPath, string result)
+        private void ExtractedMod(string zipPath, string extractedPath, string result, object[] extraData)
         {
             Helper.SentryLog($"Finished Extracting Mod Update", Helper.SentryLogCategory.Manager);
             if (!result.Equals("Success"))
@@ -236,6 +238,7 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log($"Finished Extracting {zipPath}");
                 Helper.TryDelete(zipPath);
                 MainWindow.SetProgress(100, $"Extracted {extractedPath}");
+                UpdateModUI(extraData);
             }
             MainWindow.SetBusy(false);
         }
@@ -275,12 +278,20 @@ namespace VTOLVR_ModLoader.Views
                     Notification.Show($"{exception.Message}", "Error when deleting mod");
                     return;
                 }
-                _mods.Remove(_mods.Find(x => x.FolderDirectory == info[0].ToString()));
-                _modsList.ItemsSource = _mods.ToArray();
+                string folderDir = info[0].ToString();
+                for (int i = 0; i < _mods.Count; i++)
+                {
+                    if (_mods[i].FolderDirectory != folderDir)
+                        continue;
+
+                    _mods.Remove(_mods[i]);
+                    _modsList.ItemsSource = _mods.ToArray();
+                    break;
+                }
             }
         }
 
-        public class Item
+        public class Item : INotifyPropertyChanged
         {
             public string Name { get; set; }
             public string Description { get; set; }
@@ -306,6 +317,8 @@ namespace VTOLVR_ModLoader.Views
                 FolderDirectory = folderDirectory;
             }
 
+            public event PropertyChangedEventHandler PropertyChanged;
+
             public bool IsUptodate()
             {
                 return CurrentVersion.Equals(WebsiteVersion);
@@ -315,6 +328,10 @@ namespace VTOLVR_ModLoader.Views
                 CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                 CurrentVersion = WebsiteVersion;
                 UpdateVisibility = Visibility.Hidden;
+                PropertyChanged(this, new PropertyChangedEventArgs("CurrentVersion"));
+                PropertyChanged(this, new PropertyChangedEventArgs("UpdateVisibility"));
+                PropertyChanged(this, new PropertyChangedEventArgs("CurrentVersionColour"));
+                Console.Log($"Updated {Name} to {CurrentVersion}");
             }
         }
 

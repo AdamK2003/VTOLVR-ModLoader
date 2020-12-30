@@ -26,7 +26,7 @@ namespace VTOLVR_ModLoader.Classes
         {
             return Regex.Replace(input, @"\s+", "");
         }
-        public static async void ExtractZipToDirectory(string zipPath, string extractPath, Action<string, string, string> completed)
+        public static async void ExtractZipToDirectory(string zipPath, string extractPath, Action<string, string, string> completed = null, Action<string, string, string, object[]> completedWithArgs = null, object[] extraData = null)
         {
             string result = await Task.Run(() =>
             {
@@ -70,6 +70,7 @@ namespace VTOLVR_ModLoader.Classes
                 }
             });
             completed?.Invoke(zipPath, extractPath, result);
+            completedWithArgs?.Invoke(zipPath, extractPath, result, extraData);
         }
         public static string CalculateMD5(string filename)
         {

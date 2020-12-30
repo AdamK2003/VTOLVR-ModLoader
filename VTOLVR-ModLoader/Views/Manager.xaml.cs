@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -42,7 +43,6 @@ namespace VTOLVR_ModLoader.Views
             this.DataContext = this;
             _modsList.ItemsSource = _mods;
             RefreshColumns();
-
         }
         private void FindMods(ref ObservableCollection<Item> items)
         {
@@ -291,15 +291,19 @@ namespace VTOLVR_ModLoader.Views
             }
         }
 
+        [JsonObject(MemberSerialization.OptIn)]
         public class Item : INotifyPropertyChanged
         {
+            [JsonProperty]
             public string Name { get; set; }
             public string Description { get; set; }
             public Visibility UpdateVisibility { get; set; }
             public Brush CurrentVersionColour { get; set; }
             public string CurrentVersion { get; set; }
             public string WebsiteVersion { get; set; }
+            [JsonProperty("Load On Start Check")]
             public bool LoadOnStartCheck { get; set; }
+            [JsonProperty("Auto Update Check")]
             public bool AutoUpdateCheck { get; set; }
             public string FolderDirectory { get; set; }
             public string PublicID { get; set; }

@@ -38,6 +38,7 @@ namespace VTOLVR_ModLoader.Views
         private Action<bool, string> callBack;
 
         //Settings
+        public static UserSettings USettings { get; private set; }
         public static string Token;
         public static string ProjectsFolder;
         public static bool AutoUpdate = true;
@@ -47,6 +48,7 @@ namespace VTOLVR_ModLoader.Views
         {
             Instance = this;
             callBack += SetProjectsFolder;
+            USettings = UserSettings.Settings;
             InitializeComponent();
             LoadSettings();
             if (CommunicationsManager.CheckArgs("vtolvrml", out string line))
@@ -133,124 +135,26 @@ namespace VTOLVR_ModLoader.Views
         private static void SaveSettings()
         {
             Helper.SentryLog("Saving Settings", Helper.SentryLogCategory.Settings);
-            JObject jObject;
 
-            if (File.Exists(Program.root + savePath))
-            {
-                try
-                {
-                    jObject = JObject.Parse(File.ReadAllText(Program.root + savePath));
-                }
-                catch
-                {
-                    Console.Log("Failed to read settings, overriding it.");
-                    jObject = new JObject();
-                }
-            }
-            else
-            {
-                jObject = new JObject();
-            }
+            USettings.Token = Token;
+            USettings.ProjectsFolder = ProjectsFolder;
+            USettings.AutoUpdate = AutoUpdate;
+            USettings.LaunchSteamVR = SteamVR;
 
-            if (!string.IsNullOrEmpty(Token))
-            {
-                if (jObject[jToken] == null)
-                    jObject.Add(jToken, Token);
-                else
-                    jObject[jToken] = Token;
-            }
-
-            if (!string.IsNullOrWhiteSpace(ProjectsFolder))
-            {
-                if (jObject[jProjectsFolder] == null)
-                    jObject.Add(jProjectsFolder, ProjectsFolder);
-                else
-                    jObject[jProjectsFolder] = ProjectsFolder;
-            }
-
-            if (jObject[jAutoUpdate] == null)
-                jObject.Add(jAutoUpdate, AutoUpdate);
-            else
-                jObject[jAutoUpdate] = AutoUpdate;
-
-            if (jObject[jSteamVR] == null)
-                jObject.Add(jSteamVR, SteamVR);
-            else
-                jObject[jSteamVR] = SteamVR;
-
-            try
-            {
-                File.WriteAllText(Program.root + savePath, jObject.ToString());
-                Console.Log("Saved Settings");
-            }
-            catch (Exception e)
-            {
-                Console.Log($"Failed to save {savePath}");
-                Console.Log(e.Message);
-            }
-
+            UserSettings.SaveSettings(Program.root + savePath);
             Console.Log("Saved Settings");
         }
 
         private void LoadSettings()
         {
             Helper.SentryLog("Loading Settings", Helper.SentryLogCategory.Settings);
-            JObject json = null;
-            if (!File.Exists(Program.root + savePath))
-            {
-                SaveSettings();
-                return;
-            }
+            UserSettings.LoadSettings(Program.root + savePath);
 
-            try
-            {
-                json = JObject.Parse(File.ReadAllText(Program.root + savePath));
-            }
-            catch (Exception e)
-            {
-                Console.Log($"Failed Reading Settings: {e.Message}");
-                return;
-            }
-
-            if (json["projectsFolder"] != null)
-            {
-                Console.Log("Found the Projects Folder");
-                ProjectsFolder = json["projectsFolder"].ToString();
-            }
-
-            if (json["AutoUpdate"] != null)
-            {
-                Console.Log("Found Auto Updates");
-                if (bool.TryParse(json["AutoUpdate"].ToString(), out bool result))
-                {
-                    Console.Log($"Auto Updates is {result}");
-                    AutoUpdate = result;
-                }
-                else
-                {
-                    Console.Log($"Failed to convert {json["AutoUpdate"]} to bool");
-                }
-            }
-
-            if (json["Launch SteamVR"] != null)
-            {
-                Console.Log("Found SteamVR");
-                if (bool.TryParse(json["Launch SteamVR"].ToString(), out bool result))
-                {
-                    Console.Log($"Launch Steam VR is {result}");
-                    SteamVR = result;
-                }
-                else
-                {
-                    Console.Log($"Failed to convert {json["Launch SteamVR"]} to bool");
-                }
-            }
-
-            if (json["token"] != null)
-            {
-                Console.Log("Found the token");
-                Token = json["token"].ToString();
-            }
+            USettings = UserSettings.Settings;
+            ProjectsFolder = USettings.ProjectsFolder;
+            AutoUpdate = USettings.AutoUpdate;
+            SteamVR = USettings.LaunchSteamVR;
+            Token = USettings.Token;
 
             tokenBox.Password = Token;
             if (!string.IsNullOrWhiteSpace(ProjectsFolder))

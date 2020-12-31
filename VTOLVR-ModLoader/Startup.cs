@@ -52,7 +52,10 @@ namespace VTOLVR_ModLoader
 #if DEBUG
             debug = true;
 #endif
-            Program.ProgramName = $"{Program.ProgramNameBase} {version.Major}.{version.Minor}.{version.Build} {(debug ? "[Development Mode]" : string.Empty)}";
+            string devText = string.Empty;
+            if (version.Revision != 0)
+                devText = $"d{version.Revision}";
+            Program.ProgramName = $"{Program.ProgramNameBase} {version.Major}.{version.Minor}.{version.Build}{devText} {(debug ? "[Development Mode]" : string.Empty)}";
             Views.Console.Log(Program.ProgramName);
             HttpHelper.SetHeader();
             Program.SetVariables();

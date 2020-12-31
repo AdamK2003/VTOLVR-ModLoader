@@ -109,7 +109,7 @@ namespace VTOLVR_ModLoader
                 catch (Exception e)
                 {
                     Views.Console.Log("Not in correct folder\n" + e);
-                    Notification.Show("It seems I am not in the folder \"VTOLVR_ModLoader\", place make sure I am in there other wise the in game menu won't load",
+                    Notification.Show("It seems I am not in the \"VTOLVR_ModLoader\" folder, please make sure I am in there otherwise the in-game menu won't load",
                         "Wrong Folder",
                         closedCallback: delegate { Program.Quit("Not in correct folder"); });
                     return false;

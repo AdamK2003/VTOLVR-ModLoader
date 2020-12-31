@@ -31,8 +31,9 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock 
-                                            Text="{Binding Name, NotifyOnTargetUpdated=True}"
-                                            Foreground="{Binding CurrentVersionColour}"
+                                        Text="{Binding Name, NotifyOnTargetUpdated=True}"
+                                        Foreground="{Binding CurrentVersionColour}"
+                                        FontFamily="{Binding Font}"
                                             />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -46,6 +47,7 @@
                                         <TextBlock 
                                             Text="{Binding Description}"
                                             Foreground="{Binding CurrentVersionColour}"
+                                            FontFamily="{Binding Font}"
                                             />
                                     </StackPanel>
                                 </DataTemplate>
@@ -57,8 +59,9 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock 
-                                            Text="{Binding CurrentVersion}"
-                                            Foreground="{Binding CurrentVersionColour}"
+                                        Text="{Binding CurrentVersion}"
+                                        Foreground="{Binding CurrentVersionColour}"
+                                        FontFamily="{Binding Font}"
                                             />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -69,8 +72,9 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock 
-                                            Text="{Binding WebsiteVersion}"
-                                            Foreground="{Binding CurrentVersionColour}"
+                                        Text="{Binding WebsiteVersion}"
+                                        Foreground="{Binding CurrentVersionColour}"
+                                        FontFamily="{Binding Font}"
                                             />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -84,11 +88,11 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox 
-                                            IsChecked="{Binding Path=LoadOnStartCheck, Mode=TwoWay}"
-                                            Tag="Mod"
-                                            ToolTip="{Binding FolderDirectory}"
-                                            Unchecked="LoadOnStartChanged"
-                                            Checked="LoadOnStartChanged"/>
+                                        IsChecked="{Binding Path=LoadOnStartCheck, Mode=TwoWay}"
+                                        Tag="Mod"
+                                        ToolTip="{Binding FolderDirectory}"
+                                        Unchecked="LoadOnStartChanged"
+                                        Checked="LoadOnStartChanged"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -100,11 +104,11 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox
-                                            IsChecked="{Binding Path=AutoUpdateCheck, Mode=TwoWay}"
-                                            Tag="Mod"
-                                            ToolTip="{Binding FolderDirectory}"
-                                            Unchecked="AutoUpdateChanged"
-                                            Checked="AutoUpdateChanged"/>
+                                        IsChecked="{Binding Path=AutoUpdateCheck, Mode=TwoWay}"
+                                        Tag="Mod"
+                                        ToolTip="{Binding FolderDirectory}"
+                                        Unchecked="AutoUpdateChanged"
+                                        Checked="AutoUpdateChanged"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -116,13 +120,17 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="Update" Foreground="White" Click="UpdateMod"
-                                                    Style="{StaticResource transparentButton}" Margin="5,0"
-                                                    Visibility="{Binding UpdateVisibility}"
-                                                    Tag="{Binding PublicID}"/>
+                                        <Button Foreground="White" Click="UpdateMod"
+                                                Style="{StaticResource darkButton}" 
+                                                Visibility="{Binding UpdateVisibility}"
+                                                Tag="{Binding PublicID}" Margin="5,1">
+                                            <Button.Content>
+                                                <TextBlock Foreground="#f1f227" Margin="5,1" FontFamily="{Binding Font}">Update</TextBlock>
+                                            </Button.Content>
+                                        </Button>
                                         <Button Content="Delete" Foreground="White" Click="DeleteMod"
-                                                    Style="{StaticResource transparentButton}"  Margin="5,0"
-                                                    Tag="{Binding FolderDirectory}"/>
+                                                    Style="{StaticResource darkButton}"  
+                                                    Tag="{Binding FolderDirectory}" Padding="10,1,1,1"/>
                                     </StackPanel>
 
                                 </DataTemplate>

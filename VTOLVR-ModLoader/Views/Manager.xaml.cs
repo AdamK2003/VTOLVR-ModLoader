@@ -25,12 +25,21 @@ namespace VTOLVR_ModLoader.Views
     /// </summary>
     public partial class Manager : UserControl
     {
+        public static FontFamily DefaultFont;
+        public static FontFamily BoldFont;
         private ObservableCollection<Item> _mods = new ObservableCollection<Item>();
         private ObservableCollection<Item> _skins = new ObservableCollection<Item>();
         public Manager()
         {
             InitializeComponent();
             Helper.SentryLog("Created Manager", Helper.SentryLogCategory.Manager);
+
+            DefaultFont = new FontFamily(
+                new Uri("pack://application:,,,/VTOLVR-ModLoader;component/Resources/"),
+                "./#Montserrat Medium");
+            BoldFont = new FontFamily(
+                new Uri("pack://application:,,,/VTOLVR-ModLoader;component/Resources/"),
+                "./#Montserrat ExtraBold");
         }
         public void UpdateUI(bool isMods)
         {
@@ -144,6 +153,9 @@ namespace VTOLVR_ModLoader.Views
                     if (_mods[i].UpdateVisibility == Visibility.Visible)
                     {
                         _mods[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(241, 241, 39));
+                        _mods[i].Font = BoldFont;
+
+                        _mods[i].PopertyChanged("Font");
                         _mods[i].PopertyChanged("CurrentVersionColour");
 
                         if (_mods[i].AutoUpdateCheck)
@@ -334,6 +346,7 @@ namespace VTOLVR_ModLoader.Views
             [JsonProperty("Folder Directory")]
             public string FolderDirectory { get; set; }
             public string PublicID { get; set; }
+            public FontFamily Font { get; set; }
 
             public Item(string name, string description, Visibility updateVisibility, string currentVersion, string websiteVersion, bool loadOnStartCheck, bool autoUpdateCheck, string folderDirectory)
             {
@@ -346,6 +359,7 @@ namespace VTOLVR_ModLoader.Views
                 LoadOnStartCheck = loadOnStartCheck;
                 AutoUpdateCheck = autoUpdateCheck;
                 FolderDirectory = folderDirectory;
+                Font = DefaultFont;
             }
 
             public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -380,6 +394,7 @@ namespace VTOLVR_ModLoader.Views
 
 
                 PropertyChanged(this, new PropertyChangedEventArgs("WebsiteVersion"));
+                PropertyChanged(this, new PropertyChangedEventArgs("UpdateVisibility"));
             }
         }
 

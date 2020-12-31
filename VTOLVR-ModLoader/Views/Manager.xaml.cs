@@ -373,9 +373,11 @@ namespace VTOLVR_ModLoader.Views
                 CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                 CurrentVersion = WebsiteVersion;
                 UpdateVisibility = Visibility.Hidden;
+                Font = DefaultFont;
                 PropertyChanged(this, new PropertyChangedEventArgs("CurrentVersion"));
                 PropertyChanged(this, new PropertyChangedEventArgs("UpdateVisibility"));
                 PropertyChanged(this, new PropertyChangedEventArgs("CurrentVersionColour"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Font"));
                 Console.Log($"Updated {Name} to {CurrentVersion}");
             }
             public void LoadValue(Item savedValues)
@@ -436,7 +438,7 @@ namespace VTOLVR_ModLoader.Views
                         column.Width = double.NaN;
                     }
                 }
-                double descriptionNewWidth = _grid.ActualWidth - totalSize - 10;
+                double descriptionNewWidth = _grid.ActualWidth - totalSize - 35;
                 description.Width = descriptionNewWidth > 10 ? descriptionNewWidth : 10;
             }
         }

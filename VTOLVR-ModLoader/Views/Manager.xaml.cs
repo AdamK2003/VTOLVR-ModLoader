@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using System.Windows.Threading;
+using VTOLVR_ModLoader.Classes.Json;
 
 namespace VTOLVR_ModLoader.Views
 {

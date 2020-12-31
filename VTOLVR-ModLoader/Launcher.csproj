@@ -182,7 +182,7 @@
     <Compile Include="Classes\Helper.cs" />
     <Compile Include="Classes\SettingSave.cs" />
     <Compile Include="Classes\Updater.cs" />
-    <Compile Include="Classes\UserSettings.cs" />
+    <Compile Include="Classes\Json\UserSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="NotificationWindow.xaml.cs">

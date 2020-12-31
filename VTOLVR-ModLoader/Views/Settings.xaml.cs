@@ -13,6 +13,7 @@ using VTOLVR_ModLoader.Classes;
 using System.Net.Http;
 using System.Security.Principal;
 using Microsoft.Win32;
+using VTOLVR_ModLoader.Classes.Json;
 
 namespace VTOLVR_ModLoader.Views
 {

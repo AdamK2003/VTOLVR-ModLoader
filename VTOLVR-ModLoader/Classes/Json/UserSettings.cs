@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using VTOLVR_ModLoader.Views;
 using Console = VTOLVR_ModLoader.Views.Console;
 
-namespace VTOLVR_ModLoader.Classes
+namespace VTOLVR_ModLoader.Classes.Json
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class UserSettings

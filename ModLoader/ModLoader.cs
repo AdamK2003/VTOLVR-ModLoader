@@ -16,7 +16,7 @@ namespace ModLoader
 {
     public class ModLoader : VTOLMOD
     {
-        public enum Pages { MainMenu,Mods,Settings}
+        public enum Pages { MainMenu, Mods, Settings }
         public enum KeyboardType { DisableAll, Int, Float, String }
         public static ModLoader instance { get; private set; }
         public static AssetBundle assetBundle;
@@ -24,10 +24,10 @@ namespace ModLoader
         public List<Mod> ModsLoaded { get; private set; } = new List<Mod>();
         private ModLoaderManager manager;
         private VTOLAPI api;
-        
-        private GameObject modsPage, settingsPage, CampaignListTemplate, settingsCampaignListTemplate,settingsScrollBox;
-        private GameObject s_StringTemplate, s_BoolTemplate, s_FloatTemplate, s_IntTemplate,s_CustomLabel,s_Holder;
-        private ScrollRect Scroll_View,settingsScrollView,settingsScrollBoxView;
+
+        private GameObject modsPage, settingsPage, CampaignListTemplate, settingsCampaignListTemplate, settingsScrollBox;
+        private GameObject s_StringTemplate, s_BoolTemplate, s_FloatTemplate, s_IntTemplate, s_CustomLabel, s_Holder;
+        private ScrollRect Scroll_View, settingsScrollView, settingsScrollBoxView;
         private Text SelectButton;
         private RectTransform selectionTF, settingsSelection;
         private Mod selectedMod;
@@ -43,6 +43,7 @@ namespace ModLoader
         private CampaignInfoUI modInfoUI;
         private TextMeshProUGUI modName, modDescription, loadButton;
         private RawImage modImage;
+
         private void Awake()
         {
             if (instance)
@@ -61,7 +62,6 @@ namespace ModLoader
 
             SceneManager.sceneLoaded += SceneLoaded;
         }
-
         private void SceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
             switch (scene.name)
@@ -124,7 +124,7 @@ namespace ModLoader
             stringKeyboard.gameObject.SetActive(false);
             floatKeyboard.gameObject.SetActive(false);
             intKeyboard.gameObject.SetActive(false);
-            
+
             Log("Creating Mods Button");//Mods Button
             GameObject SettingsButton = MainScreen.transform.GetChild(0).GetChild(0).GetChild(8).gameObject;
             GameObject ModsButton = Instantiate(assetBundle.LoadAsset<GameObject>("ModsButton"), SettingsButton.transform.parent);
@@ -134,7 +134,7 @@ namespace ModLoader
 
             Log("Creating Mods Page");//Mods Page
             modsPage = Instantiate(assetBundle.LoadAsset<GameObject>("ModLoaderDisplay"), CampaignDisplay.transform.parent);
-            
+
             CampaignListTemplate = modsPage.transform.GetChild(3).GetChild(0).GetChild(0).GetChild(1).gameObject;
             Scroll_View = modsPage.transform.GetChild(3).GetComponent<ScrollRect>();
             buttonHeight = ((RectTransform)CampaignListTemplate.transform).rect.height;
@@ -191,8 +191,8 @@ namespace ModLoader
             Log("Mod Settings");//Mod Setttings
             settingsPage = Instantiate(assetBundle.LoadAsset<GameObject>("ModSettings"), CampaignDisplay.transform.parent);
             settingsSelection = (RectTransform)settingsPage.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).transform;
-            
-            
+
+
             s_BoolTemplate = assetBundle.LoadAsset<GameObject>("BoolTemplate");
             s_StringTemplate = assetBundle.LoadAsset<GameObject>("StringTemplate");
             s_IntTemplate = assetBundle.LoadAsset<GameObject>("NumberTemplate");
@@ -233,7 +233,7 @@ namespace ModLoader
                 return;
             }
 
-            IEnumerable<Type> source = 
+            IEnumerable<Type> source =
                 from t in Assembly.Load(File.ReadAllBytes(selectedMod.dllPath)).GetTypes()
                 where t.IsSubclassOf(typeof(VTOLMOD))
                 select t;
@@ -313,7 +313,6 @@ namespace ModLoader
                     break;
             }
         }
-
         private IEnumerator SetModPreviewImage(RawImage raw, string path)
         {
             if (raw == null)
@@ -357,7 +356,7 @@ namespace ModLoader
                     currentBool.text.text = currentBool.defaultValue.ToString();
                     boolGO.transform.GetChild(2).GetComponent<VRInteractable>().OnInteract.AddListener(delegate { currentBool.Invoke(); });
                     boolGO.SetActive(true);
-                    
+
                     Log($"Spawned Bool Setting. Name:{currentBool.settingName} at {boolGO.transform.position}");
                 }
                 else if (settings.subSettings[i] is Settings.FloatSetting)
@@ -368,8 +367,9 @@ namespace ModLoader
                     floatGO.transform.GetChild(1).GetComponent<Text>().text = currentFloat.settingName;
                     currentFloat.text = floatGO.transform.GetChild(2).GetComponent<Text>();
                     currentFloat.text.text = currentFloat.value.ToString();
-                    floatGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate {
-                        OpenKeyboard(KeyboardType.Float, currentFloat.value.ToString(), 32, new UnityAction<string>(currentFloat.SetValue)); 
+                    floatGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate
+                    {
+                        OpenKeyboard(KeyboardType.Float, currentFloat.value.ToString(), 32, new UnityAction<string>(currentFloat.SetValue));
                     });
                     floatGO.SetActive(true);
                     Log($"Spawned Float setting called {currentFloat.settingName} at {floatGO.transform.position}");
@@ -382,7 +382,8 @@ namespace ModLoader
                     intGO.transform.GetChild(1).GetComponent<Text>().text = currentInt.settingName;
                     currentInt.text = intGO.transform.GetChild(2).GetComponent<Text>();
                     currentInt.text.text = currentInt.value.ToString();
-                    intGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate {
+                    intGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate
+                    {
                         OpenKeyboard(KeyboardType.Int, currentInt.value.ToString(), 32, new UnityAction<string>(currentInt.SetValue));
                     });
                     intGO.SetActive(true);
@@ -397,8 +398,9 @@ namespace ModLoader
                     stringGO.transform.GetChild(1).GetComponent<Text>().text = currentString.settingName;
                     currentString.text = stringGO.transform.GetChild(2).GetComponentInChildren<Text>();
                     currentString.text.text = currentString.value;
-                    stringGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate { 
-                        OpenKeyboard(KeyboardType.String, currentString.value, 32, new UnityAction<string>(currentString.SetValue)); 
+                    stringGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate
+                    {
+                        OpenKeyboard(KeyboardType.String, currentString.value, 32, new UnityAction<string>(currentString.SetValue));
                     });
                     stringGO.SetActive(true);
                     Log($"Spawned String setting called {currentString.settingName} at {stringGO.transform.position}");
@@ -423,7 +425,6 @@ namespace ModLoader
             Debug.Log("Done spawning " + settings.subSettings.Count + " settings");
             RefreshSettings();
         }
-
         private void RefreshSettings()
         {
             settingsScrollView.content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (2f + settingsScrollView.content.childCount) * buttonHeight);
@@ -445,7 +446,7 @@ namespace ModLoader
             settingsSelection.position = selectedMod.settingsGO.transform.position;
             settingsSelection.GetComponent<Image>().color = new Color(0.3529411764705882f, 0.196078431372549f, 0);
 
-            if(currentSelectedSetting != string.Empty) 
+            if (currentSelectedSetting != string.Empty)
             {
                 //There already is something on the content of the settings scroll box.
                 MoveBackToPool(currentSelectedSetting);
@@ -481,7 +482,7 @@ namespace ModLoader
             }
 
             Transform[] itemsToMove = new Transform[settingsScrollBoxView.content.childCount];
-            for (int i = 0; i < settingsScrollBoxView.content.childCount; i++) 
+            for (int i = 0; i < settingsScrollBoxView.content.childCount; i++)
             {
                 itemsToMove[i] = settingsScrollBoxView.content.GetChild(i);
             }
@@ -509,7 +510,7 @@ namespace ModLoader
             }
             return returnValue;
         }
-        public void OpenKeyboard(KeyboardType keyboardType,string startingText, int maxChars, UnityAction<string> onEntered, UnityAction onCancelled = null)
+        public void OpenKeyboard(KeyboardType keyboardType, string startingText, int maxChars, UnityAction<string> onEntered, UnityAction onCancelled = null)
         {
             OpenKeyboard(KeyboardType.DisableAll); //Closing them all first incase one is opened
             if (keyboardType == KeyboardType.DisableAll)

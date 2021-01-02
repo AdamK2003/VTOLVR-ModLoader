@@ -98,6 +98,8 @@
     <Compile Include="API\VTOLScenes.cs" />
     <Compile Include="API\VTOLVehicles.cs" />
     <Compile Include="Classes\Campaigns.cs" />
+    <Compile Include="Classes\Item.cs" />
+    <Compile Include="Classes\Json\LauncherSettings.cs" />
     <Compile Include="Classes\SteamAuthentication.cs" />
     <Compile Include="DataCollector.cs" />
     <Compile Include="DiscordController.cs" />

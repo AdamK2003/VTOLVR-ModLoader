@@ -20,6 +20,7 @@ using Valve.Newtonsoft.Json.Linq;
 using SimpleTCP;
 using Harmony;
 using ModLoader.Classes;
+using ModLoader.Classes.Json;
 
 namespace ModLoader
 {
@@ -152,6 +153,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
             HarmonyInstance harmony = HarmonyInstance.Create("vtolvrmodding.modloader");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+            LoadLauncherSettings();
         }
         private void TcpDataReceived(object sender, Message e)
         {
@@ -510,6 +512,22 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                 }
             }
             return true;
+        }
+        private static void LoadLauncherSettings()
+        {
+            string path = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "VTOLVR_ModLoader",
+                "settings.json");
+
+            Debug.Log($"Checking {path} for launcher settings file");
+            if (!File.Exists(path))
+            {
+                Debug.LogWarning($"Couldn't find Mod Loaders Settings.json file");
+                return;
+            }
+
+            LauncherSettings.LoadSettings(path);
         }
     }
 }

@@ -11,6 +11,7 @@ using UnityEngine.UI;
 using System.Net;
 using System.Reflection;
 using TMPro;
+using ModLoader.Classes.Json;
 
 namespace ModLoader
 {
@@ -68,6 +69,7 @@ namespace ModLoader
             {
                 case "ReadyRoom":
                     CreateUI();
+                    CheckForLOSMods();
                     break;
                 case "Akutan":
                     break;
@@ -535,6 +537,26 @@ namespace ModLoader
             stringKeyboard.gameObject.SetActive(false);
             intKeyboard.gameObject.SetActive(false);
             floatKeyboard.gameObject.SetActive(false);
+        }
+        private void CheckForLOSMods()
+        {
+            Log("Checking for Load On Start Mods");
+            for (int i = 0; i < currentMods.Count; i++)
+            {
+                for (int j = 0; j < LauncherSettings.Settings.Mods.Count; j++)
+                {
+
+                    if (LauncherSettings.Settings.Mods[j].LoadOnStartCheck &&
+                        currentMods[i].ModFolder.ToLower() == LauncherSettings.Settings.Mods[j].FolderDirectory.ToLower())
+                    {
+                        Log($"Found {currentMods[i].name} with LOS");
+                        selectedMod = currentMods[i];
+                        LoadMod();
+                        break;
+                    }
+                }
+            }
+            selectedMod = null;
         }
     }
 }

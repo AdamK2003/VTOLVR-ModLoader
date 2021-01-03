@@ -292,7 +292,7 @@ namespace VTOLVR_ModLoader.Classes
             Directory.Delete(Path.Combine(Program.root, datetime), true);
             Process.Start("explorer.exe", string.Format("/select,\"{0}\\{1}\"", Program.root, zipName));
         }
-        private static string PlayerLogPath()
+        public static string PlayerLogPath()
         {
             // This is a massive pain because it's stored in LocalLow but there is no special folder
             // for LocalLow

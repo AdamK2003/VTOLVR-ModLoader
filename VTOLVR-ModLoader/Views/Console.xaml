@@ -34,6 +34,10 @@
                     ToolTip="Clears the current console"/>
             <Button Content="Delete Log"  Margin="5" Click="DeleteLog"
                     ToolTip="Clears and Deletes the log file located in the VTOLVR_ModLoader folder"/>
+            <Button Content="Game Log"  Margin="5" Click="OpenGameLog"
+                    ToolTip="Opens the games log file"/>
+            <Button Content="Launcher Log"  Margin="5" Click="OpenLauncherLog"
+                    ToolTip="Opens the games log file"/>
         </StackPanel>
 
 

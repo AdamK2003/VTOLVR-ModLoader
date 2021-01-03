@@ -177,5 +177,44 @@ namespace VTOLVR_ModLoader.Views
             console.ItemsSource = ConsoleFeed.ToArray();
             scrollView.ScrollToBottom();
         }
+
+        private void OpenGameLog(object sender, RoutedEventArgs e)
+        {
+            string path = Helper.PlayerLogPath();
+            if (!File.Exists(path))
+            {
+                Log($"Couldn't find {path}");
+                return;
+            }
+
+            try
+            {
+                Process.Start(path);
+                Log($"Opened {Program.LogName}");
+            }
+            catch (Exception error)
+            {
+                Log("Failed to open Launcher Log. " + error.Message);
+            }
+        }
+
+        private void OpenLauncherLog(object sender, RoutedEventArgs e)
+        {
+            string path = Path.Combine(Program.root, Program.LogName);
+            if (!File.Exists(path))
+            {
+                Log($"Couldn't find {path}");
+                return;
+            }
+            try
+            {
+                Process.Start(path);
+                Log($"Opened {Program.LogName}");
+            }
+            catch (Exception error)
+            {
+                Log("Failed to open Launcher Log. " + error.Message);
+            }
+        }
     }
 }

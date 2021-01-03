@@ -320,7 +320,10 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log($"Active branch {USettings.ActiveBranch} was outside the count of branches {USettings.Branches.Count}");
             }
             else
+            {
                 _branchesBox.SelectedIndex = USettings.ActiveBranch;
+                Program.branch = USettings.Branches[USettings.ActiveBranch];
+            }
 
         }
         private void AddBranch(string branch)

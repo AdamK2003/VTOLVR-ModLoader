@@ -235,6 +235,8 @@ namespace ModLoader
                 return;
             }
 
+            CheckForDependencies();
+
             IEnumerable<Type> source =
                 from t in Assembly.Load(File.ReadAllBytes(selectedMod.dllPath)).GetTypes()
                 where t.IsSubclassOf(typeof(VTOLMOD))
@@ -257,6 +259,54 @@ namespace ModLoader
             {
                 LogError("Source is null");
             }
+        }
+        private void CheckForDependencies()
+        {
+            string path = string.Empty;
+            if (selectedMod.IsDevProject)
+            {
+                DirectoryInfo folder = new DirectoryInfo(selectedMod.ModFolder);
+
+
+            }
+            else
+                path = Path.Combine(selectedMod.ModFolder, "dependencies");
+
+            if (!Directory.Exists(path))
+            {
+                Log($"{selectedMod.name} doesn't have a dependencies folder");
+                return;
+            }
+
+            FileInfo[] dlls = new DirectoryInfo(path).GetFiles("*.dll");
+            for (int i = 0; i < dlls.Length; i++)
+            {
+                LoadDependency(dlls[i]);
+            }
+        }
+        private void LoadDependency(FileInfo fileInfo)
+        {
+            Assembly assembly = Assembly.Load(File.ReadAllBytes(fileInfo.FullName));
+            Log("Loaded Dependency");
+
+            IEnumerable<Type> source =
+                from t in assembly.GetTypes()
+                where t.IsSubclassOf(typeof(VTOLMOD))
+                select t;
+            // This Dependency is a VTOL Mod
+            if (source != null && source.Count() == 1)
+            {
+                GameObject newModGo = new GameObject(fileInfo.Name, source.First());
+                VTOLMOD mod = newModGo.GetComponent<VTOLMOD>();
+                mod.SetModInfo(selectedMod);
+                newModGo.name = fileInfo.Name;
+                DontDestroyOnLoad(newModGo);
+                mod.ModLoaded();
+                ModLoaderManager.LoadedModsCount++;
+                Log("The Dependency was also a vtol mod and has been spawned");
+                return;
+            }
+
         }
         public void OpenMod(int id)
         {

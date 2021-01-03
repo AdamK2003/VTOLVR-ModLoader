@@ -336,6 +336,8 @@ namespace VTOLVR_ModLoader
         {
             Helper.SentryLog("Moving Dependencies", Helper.SentryLogCategory.Program);
             MainWindow.SetPlayButton(true);
+            MovedDependencies();
+            return;
             Task.Run(delegate
             {
                 string[] modFolders = Directory.GetDirectories(root + modsFolder);

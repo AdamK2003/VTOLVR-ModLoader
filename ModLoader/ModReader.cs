@@ -12,129 +12,56 @@ using UnityEngine.UI;
 using System.Collections;
 using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
+using ModLoader.Classes.Json;
 
 namespace ModLoader
 {
-    public class ModReader : MonoBehaviour
+    class ModReader : MonoBehaviour
     {
         /// <summary>
         /// Gets all of the mods info located in the path into memory
         /// </summary>
         /// <param name="path">The folder to check for mods</param>
         /// <param name="isDevFolder">If we are checking through the users My Projects Folder</param>
-        public static List<Mod> GetMods(string path, bool isDevFolder = false)
+        public static List<BaseItem> GetMods(string path, bool isDevFolder = false)
         {
-            List<Mod> mods = new List<Mod>();
-            string[] folders = Directory.GetDirectories(path);
+            List<BaseItem> foundMods = new List<BaseItem>();
+            DirectoryInfo folders = new DirectoryInfo(path);
+            DirectoryInfo[] mods = folders.GetDirectories();
 
-            //Files used in loop
-            Assembly lastAssembly;
-            IEnumerable<Type> source;
-            for (int i = 0; i < folders.Length; i++)
+            BaseItem lastMod;
+            string pathToCheck;
+            for (int i = 0; i < mods.Length; i++)
             {
                 if (isDevFolder)
-                    folders[i] = Path.Combine(folders[i], "Builds");
-                Mod currentMod = new Mod();
-                bool hasDLL = false;
-                bool hasInfo = false;
+                    pathToCheck = Path.Combine(mods[i].FullName, "Builds", "info.json");
+                else
+                    pathToCheck = Path.Combine(mods[i].FullName, "info.json");
 
-                if (File.Exists($"{folders[i]}/info.xml"))
+                if (!File.Exists(pathToCheck))
                 {
-                    ConvertOldMod(folders[i]);
+                    Debug.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
+                    continue;
                 }
-
-                if (File.Exists($"{folders[i]}/info.json"))
+                if (TryGetBaseItem(mods[i].FullName, out BaseItem item))
                 {
-                    JObject json;
-                    try
-                    {
-                        json = JObject.Parse(File.ReadAllText($"{folders[i]}/info.json"));
-                        hasInfo = true;
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError($"Failed to read json file {folders[i]}/info.json\n{e}");
-                        continue;
-                    }
-
-                    if (json["name"] == null)
-                    {
-                        Debug.LogError($"Name is missing in json");
-                    }
-                    else
-                    {
-                        currentMod.name = json["name"].ToString();
-                    }
-                    if (json["description"] == null)
-                    {
-                        Debug.LogError($"Description is missing in json");
-                    }
-                    else
-                    {
-                        currentMod.description = json["description"].ToString();
-                    }
-                    if (json["dll file"] == null)
-                    {
-                        Debug.LogError($"Dll is missing in json");
-                    }
-                    else if (File.Exists(Path.Combine(folders[i], json["dll file"].ToString())))
-                    {
-                        currentMod.dllPath = Path.Combine(folders[i], json["dll file"].ToString());
-                        hasDLL = true;
-                    }
-                    if (json["preview image"] != null)
-                    {
-                        currentMod.imagePath = folders[i] + @"\" + json["preview image"].ToString();
-                    }
+                    lastMod = item;
+                    foundMods.Add(lastMod);
                 }
-                currentMod.ModFolder = folders[i];
-                if (hasInfo && hasDLL)
-                    mods.Add(currentMod);
-
-
             }
 
             //Searching for just .dll mods
-
-            string[] dllFiles = Directory.GetFiles(path, "*.dll");
-            string currentName;
+            FileInfo[] dllFiles = folders.GetFiles("*.dll");
             for (int i = 0; i < dllFiles.Length; i++)
             {
-                Mod currentMod = new Mod();
-                bool hasDLL = false;
-                currentName = dllFiles[i].Split('\\').Last();
-                try
-                {
-                    lastAssembly = Assembly.Load(File.ReadAllBytes(dllFiles[i]));
-                    source = from t in lastAssembly.GetTypes()
-                             where t.IsSubclassOf(typeof(VTOLMOD))
-                             select t;
-
-                    if (source.Count() != 1)
-                    {
-                        Debug.LogError("The mod " + currentName + " doesn't specify a mod class or specifies more than one");
-                        continue;
-                    }
-                    else
-                    {
-                        currentMod.name = currentName;
-                        currentMod.description = "This only a .dll file, please make mods into .zip with a xml file when releasing the mod.";
-                        currentMod.dllPath = dllFiles[i];
-                        hasDLL = true;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.Log("There was an error when trying to load a .dll mod.\n" +
-                        currentName + " doesn't seem to derive from VTOLMOD");
-                    continue;
-                }
-
-                currentMod.ModFolder = path;
-                if (hasDLL)
-                    mods.Add(currentMod);
+                lastMod = new BaseItem();
+                lastMod.Name = dllFiles[i].Name;
+                lastMod.Description = BaseItem.DllOnlyDescription;
+                lastMod.Directory = folders;
+                lastMod.CreateMod();
+                foundMods.Add(lastMod);
             }
-            return mods;
+            return foundMods;
         }
 
         /// <summary>
@@ -143,17 +70,17 @@ namespace ModLoader
         /// <param name="path">Folder where the mods are located</param>
         /// <param name="currentMods">The current list of mods</param>
         /// <returns>True if there where new mods</returns>
-        public static bool GetNewMods(string path, ref List<Mod> currentMods)
+        public static bool GetNewMods(string path, ref List<BaseItem> currentMods)
         {
-            List<Mod> mods = GetMods(path);
-            Dictionary<string, Mod> currentModsDictionary = currentMods.ToDictionary(x => x.name);
+            List<BaseItem> mods = GetMods(path);
+            Dictionary<string, BaseItem> currentModsDictionary = currentMods.ToDictionary(x => x.Name);
             bool newMods = false;
-            foreach (Mod mod in mods)
+            foreach (BaseItem mod in mods)
             {
-                if (!currentModsDictionary.ContainsKey(mod.name))
+                if (!currentModsDictionary.ContainsKey(mod.Name))
                 {
                     newMods = true;
-                    currentModsDictionary.Add(mod.name, mod);
+                    currentModsDictionary.Add(mod.Name, mod);
                 }
             }
             currentMods = currentModsDictionary.Values.ToList();
@@ -220,56 +147,20 @@ namespace ModLoader
                 File.Delete(folder + @"\info.xml");
             }
         }
+        private static bool TryGetBaseItem(string folder, out BaseItem item)
+        {
+            try
+            {
+                item = JsonConvert.DeserializeObject<BaseItem>(File.ReadAllText(Path.Combine(folder, "info.json")));
+                item.Directory = new DirectoryInfo(folder);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("[Mod Reader] Failed to read base item. Exception:\n" + e);
+                item = null;
+                return false;
+            }
+            return true;
+        }
     }
 }
-/// <summary>
-/// The information stored about a mod which is used by the mod loader
-/// and can be used by mods with the API command GetUsersMods
-/// </summary>
-public class Mod
-{
-    /// <summary>
-    /// The name of the mod which displays on the mods page.
-    /// </summary>
-    public string name;
-    /// <summary>
-    /// The description of the mod which displays when the mod is selected. 
-    /// </summary>
-    public string description;
-    /// <summary>
-    /// The location of the .dll file of this mod.
-    /// </summary>
-    [XmlIgnore]
-    public string dllPath;
-    /// <summary>
-    /// GameObjects used by the mod loader.
-    /// </summary>
-    [XmlIgnore]
-    public GameObject listGO, settingsGO, settingsHolerGO;
-    /// <summary>
-    /// If the mod is currently loaded.
-    /// </summary>
-    [XmlIgnore]
-    public bool isLoaded;
-    /// <summary>
-    /// The path to the preview image if one exists.
-    /// </summary>
-    [XmlIgnore]
-    public string imagePath;
-    /// <summary>
-    /// The folder which the mods dll and other files are stored.
-    /// </summary>
-    [XmlIgnore]
-    public string ModFolder;
-
-    public Mod() { }
-
-    public Mod(string name, string description, string dllPath, string modFolder)
-    {
-        this.name = name;
-        this.description = description;
-        this.dllPath = dllPath;
-        ModFolder = modFolder;
-    }
-}
-

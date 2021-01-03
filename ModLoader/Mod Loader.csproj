@@ -99,11 +99,13 @@
     <Compile Include="API\VTOLVehicles.cs" />
     <Compile Include="Classes\Campaigns.cs" />
     <Compile Include="Classes\Item.cs" />
+    <Compile Include="Classes\Json\Item.cs" />
     <Compile Include="Classes\Json\LauncherSettings.cs" />
     <Compile Include="Classes\SteamAuthentication.cs" />
     <Compile Include="DataCollector.cs" />
     <Compile Include="DiscordController.cs" />
     <Compile Include="DiscordRpc.cs" />
+    <Compile Include="Mod.cs" />
     <Compile Include="ModLoader.cs" />
     <Compile Include="ModLoaderManager.cs" />
     <Compile Include="Patches\VTMapManagerPatch.cs" />

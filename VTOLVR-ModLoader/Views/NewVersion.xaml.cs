@@ -247,7 +247,7 @@ namespace VTOLVR_ModLoader.Views
             }
             if (json["user_uploaded_file"] != null)
             {
-                if (json["user_uploaded_file"].ToString().Equals("Incorrect extension (zip)"))
+                if (!json["user_uploaded_file"].ToString().Contains(Program.url))
                 {
                     Notification.Show(json["user_uploaded_file"].ToString(), "Failed");
                     Console.Log($"Failed to upload project\n{json["user_uploaded_file"]}");

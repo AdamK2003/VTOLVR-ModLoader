@@ -1,6 +1,7 @@
 ﻿/* This is the main class which stores and runs the core background things.
 
 */
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace VTOLVR_ModLoader
         public const string apiURL = "/api";
         public const string modsURL = "/mods";
         public const string skinsURL = "/skins";
-        private const string releasesURL = "/releases";
+        public const string releasesURL = "/releases";
         public const string modsChangelogsURL = "/mods-changelogs";
         public const string skinsChangelogsURL = "/skins-changelogs";
         public const string ProgramNameBase = "VTOL VR Mod Loader";
@@ -460,8 +461,9 @@ namespace VTOLVR_ModLoader
             Helper.SentryLog("Got releases", Helper.SentryLogCategory.Program);
             if (response.IsSuccessStatusCode)
             {
-                Releases = new List<Release>();
-                ConvertUpdates(await response.Content.ReadAsStringAsync());
+                Releases = JsonConvert.DeserializeObject<List<Release>>(await response.Content.ReadAsStringAsync());
+                MainWindow._instance.news.LoadNews();
+                Queue(Updater.CheckForUpdates);
             }
             else
             {
@@ -470,39 +472,6 @@ namespace VTOLVR_ModLoader
             }
             if (!string.IsNullOrEmpty(Views.Settings.Token))
                 MainWindow._instance.settings.TestToken(true);
-        }
-
-        private static void ConvertUpdates(string jsonString)
-        {
-            Helper.SentryLog("Converting Update", Helper.SentryLogCategory.Program);
-            JArray results = JArray.Parse(jsonString);
-            Release lastUpdate;
-            JArray lastFilesJson;
-            List<UpdateFile> files;
-            for (int i = 0; i < results.Count; i++)
-            {
-                lastUpdate = new Release($"{results[i]["tag_name"]} {results[i]["name"]}",
-                    results[i]["tag_name"].ToString(),
-                    results[i]["body"].ToString());
-                if (results[i]["files"] != null)
-                {
-                    lastFilesJson = JArray.FromObject(results[i]["files"]);
-                    files = new List<UpdateFile>(lastFilesJson.Count);
-                    for (int j = 0; j < lastFilesJson.Count; j++)
-                    {
-                        files.Add(new UpdateFile(
-                            lastFilesJson[j]["file_name"].ToString(),
-                            lastFilesJson[j]["file_hash"].ToString(),
-                            lastFilesJson[j]["file_location"].ToString(),
-                            lastFilesJson[j]["file"].ToString()));
-                    }
-                    lastUpdate.SetFiles(files.ToArray());
-                }
-                Releases.Add(lastUpdate);
-            }
-
-            MainWindow._instance.news.LoadNews();
-            Queue(Updater.CheckForUpdates);
         }
         private static void LowerCaseJsons()
         {

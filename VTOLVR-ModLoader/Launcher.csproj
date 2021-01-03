@@ -175,9 +175,10 @@
     </Compile>
     <Compile Include="Classes\ExtensionMethods.cs" />
     <Compile Include="Classes\HttpHelper.cs" />
+    <Compile Include="Classes\Json\UpdateFile.cs" />
     <Compile Include="Classes\Pilot.cs" />
     <Compile Include="Classes\Scenario.cs" />
-    <Compile Include="Classes\Release.cs" />
+    <Compile Include="Classes\Json\Release.cs" />
     <Compile Include="Classes\CommunicationsManager.cs" />
     <Compile Include="Classes\Helper.cs" />
     <Compile Include="Classes\SettingSave.cs" />

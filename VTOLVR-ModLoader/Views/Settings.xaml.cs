@@ -14,6 +14,8 @@ using System.Net.Http;
 using System.Security.Principal;
 using Microsoft.Win32;
 using VTOLVR_ModLoader.Classes.Json;
+using Newtonsoft.Json;
+using System.Windows.Media;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -31,6 +33,10 @@ namespace VTOLVR_ModLoader.Views
         public static bool tokenValid = false;
         private bool hideResult;
         private Action<bool, string> callBack;
+        private List<string> _branches;
+
+        private SolidColorBrush _yellowBrush = new SolidColorBrush(Color.FromRgb(241, 241, 39));
+        private SolidColorBrush _whiteBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
 
         //Settings
         public static UserSettings USettings { get; private set; }
@@ -57,6 +63,7 @@ namespace VTOLVR_ModLoader.Views
                 oneclickInstallButton.Content = "(Admin Needed)";
                 oneclickInstallButton.IsEnabled = false;
             }
+            SetupBranches();
             Helper.SentryLog("Created Settings Page", Helper.SentryLogCategory.Settings);
         }
         public async void UpdateButtons()
@@ -284,5 +291,78 @@ namespace VTOLVR_ModLoader.Views
         {
             Helper.CreateDiagnosticsZip();
         }
+        private void SetupBranches()
+        {
+            _branches = new List<string>();
+            _branches.Add("None");
+            _branchesBox.ItemsSource = _branches;
+            _branchesBox.SelectedIndex = 0;
+        }
+        private void AddBranch(string branch)
+        {
+            _branches.Add(branch);
+            _branchesBox.ItemsSource = _branches;
+        }
+        private void CheckBranch(object sender, RoutedEventArgs e)
+        {
+            _newBranchCodeBox.IsEnabled = false;
+            _branchCheckButton.IsEnabled = false;
+            CheckBranch(_newBranchCodeBox.Text);
+        }
+        private void CheckBranch(string branch)
+        {
+            Helper.SentryLog($"Checking Branch {branch}", Helper.SentryLogCategory.Settings);
+            Clipboard.SetText(Program.url + Program.apiURL + Program.releasesURL + "/" + $"?branch={branch}");
+            HttpHelper.DownloadStringAsync(
+                Program.url + Program.apiURL + Program.releasesURL + "/" + $"?branch={branch}",
+                CheckBranchDone);
+        }
+
+        private async void CheckBranchDone(HttpResponseMessage response)
+        {
+            Helper.SentryLog($"Got branch result {response.StatusCode}", Helper.SentryLogCategory.Settings);
+            if (response.IsSuccessStatusCode)
+            {
+                IsBranchValid(
+                    JsonConvert.DeserializeObject<List<Release>>(
+                        await response.Content.ReadAsStringAsync()));
+            }
+            else
+            {
+                //Failed
+                Console.Log("Error:\n" + response.StatusCode);
+            }
+        }
+        private void IsBranchValid(List<Release> releases)
+        {
+            if (releases.Count == 0)
+            {
+                _branchResultText.Text = _newBranchCodeBox.Text + " is not a valid branch";
+                _branchResultText.Foreground = _yellowBrush;
+                _branchResultText.Visibility = Visibility.Visible;
+                DelayHide(_branchResultText, 4);
+
+
+                _newBranchCodeBox.IsEnabled = true;
+                _branchCheckButton.IsEnabled = true;
+                return;
+            }
+            AddBranch(_newBranchCodeBox.Text);
+
+            _branchResultText.Text = _newBranchCodeBox.Text + " is a valid branch";
+            _branchResultText.Foreground = _whiteBrush;
+            _branchResultText.Visibility = Visibility.Visible;
+            DelayHide(_branchResultText, 4);
+
+            _newBranchCodeBox.Text = string.Empty;
+            _newBranchCodeBox.IsEnabled = true;
+            _branchCheckButton.IsEnabled = true;
+        }
+        private async void DelayHide(UIElement uiElement, float delayInSeconds)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(delayInSeconds));
+            uiElement.Visibility = Visibility.Hidden;
+        }
+
     }
 }

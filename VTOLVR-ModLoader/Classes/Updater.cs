@@ -31,7 +31,7 @@ namespace VTOLVR_ModLoader.Classes
                 return;
             }
             MainWindow.SetPlayButton(true);
-            UpdateFile[] updateFiles = Program.Releases[0].files;
+            UpdateFile[] updateFiles = Program.Releases[0].Files;
 
             if (updateFiles == null)
                 return;

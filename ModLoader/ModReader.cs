@@ -34,18 +34,20 @@ namespace ModLoader
             for (int i = 0; i < mods.Length; i++)
             {
                 if (isDevFolder)
-                    pathToCheck = Path.Combine(mods[i].FullName, "Builds", "info.json");
+                    pathToCheck = Path.Combine(mods[i].FullName, "Builds");
                 else
-                    pathToCheck = Path.Combine(mods[i].FullName, "info.json");
+                    pathToCheck = mods[i].FullName;
 
-                if (!File.Exists(pathToCheck))
+                if (!File.Exists(Path.Combine(pathToCheck, "info.json")))
                 {
                     Debug.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
                     continue;
                 }
-                if (TryGetBaseItem(mods[i].FullName, out BaseItem item))
+                if (TryGetBaseItem(pathToCheck, out BaseItem item))
                 {
                     lastMod = item;
+                    lastMod.IsDevFolder = isDevFolder;
+                    lastMod.CreateMod();
                     foundMods.Add(lastMod);
                 }
             }
@@ -86,66 +88,6 @@ namespace ModLoader
             currentMods = currentModsDictionary.Values.ToList();
 
             return newMods;
-        }
-
-        private static void ConvertOldMod(string folder)
-        {
-            Debug.LogWarning("Converting " + folder);
-            Mod currentMod;
-            bool hasInfo = false;
-            bool hasDLL = false;
-            bool hasPreview = false;
-
-
-            using (FileStream stream = new FileStream(folder + @"\info.xml", FileMode.Open))
-            {
-                XmlSerializer xml = new XmlSerializer(typeof(Mod));
-                currentMod = (Mod)xml.Deserialize(stream);
-                hasInfo = true;
-            }
-
-            string[] subFiles = Directory.GetFiles(folder, "*.dll");
-            Assembly lastAssembly;
-            IEnumerable<Type> source;
-
-            for (int j = 0; j < subFiles.Length; j++)
-            {
-                lastAssembly = Assembly.Load(File.ReadAllBytes(subFiles[j]));
-                source = from t in lastAssembly.GetTypes()
-                         where t.IsSubclassOf(typeof(VTOLMOD))
-                         select t;
-                if (source.Count() != 1)
-                {
-                    Debug.LogError("The mod " + subFiles[j] + " doesn't specify a mod class or specifies more than one");
-                    break;
-                }
-                hasDLL = true;
-                currentMod.dllPath = subFiles[j];
-                break;
-            }
-
-            if (File.Exists(folder + @"\preview.png"))
-            {
-                currentMod.imagePath = folder + @"\preview.png";
-                hasPreview = true;
-            }
-
-            if (hasInfo && hasDLL)
-            {
-                JObject json = new JObject();
-                json.Add("name", currentMod.name);
-                json.Add("description", currentMod.description);
-                string[] pathSpit = currentMod.dllPath.Split('\\');
-                json.Add("dll file", pathSpit[pathSpit.Length - 1]);
-                if (hasPreview)
-                {
-                    pathSpit = currentMod.imagePath.Split('\\');
-                    json.Add("preview image", pathSpit[pathSpit.Length - 1]);
-                }
-
-                File.WriteAllText(folder + @"\info.json", json.ToString());
-                File.Delete(folder + @"\info.xml");
-            }
         }
         private static bool TryGetBaseItem(string folder, out BaseItem item)
         {

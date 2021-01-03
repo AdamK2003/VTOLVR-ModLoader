@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using Valve.Newtonsoft.Json;
 
 namespace ModLoader.Classes.Json
@@ -43,14 +45,24 @@ namespace ModLoader.Classes.Json
         public DirectoryInfo Directory;
         [JsonIgnore]
         public Mod Mod;
-        public bool HasPublicID()
+        [JsonIgnore]
+        public GameObject ListGO, SettingsGO, SettingsHolerGO;
+        [JsonIgnore]
+        public string ImagePath
         {
-            return PublicID != string.Empty;
+            get
+            {
+                string path = Path.Combine(Directory.FullName, PreviewImage);
+                if (File.Exists(path))
+                    return path;
+                return string.Empty;
+            }
         }
-        public bool HasDll()
-        {
-            return DllPath != string.Empty;
-        }
+        [JsonIgnore]
+        public bool IsDevFolder = false;
+        public bool HasPublicID() => PublicID != string.Empty;
+        public bool HasDll() => DllPath != string.Empty;
+        public string GetFullDllPath() => Path.Combine(Directory.FullName, DllPath);
         public Mod CreateMod()
         {
             Mod = new Mod(Name, Description, Path.Combine(Directory.FullName, DllPath), Directory.FullName);

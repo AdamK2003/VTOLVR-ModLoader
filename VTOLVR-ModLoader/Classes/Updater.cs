@@ -56,7 +56,7 @@ namespace VTOLVR_ModLoader.Classes
             else
             {
                 if (_updateLauncher)
-                    Notification.Show("The launcher needs to be updated.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
+                    UpdateLauncher();
                 else
                     Console.Log("All fines are up to date");
                 MainWindow.SetPlayButton(false);
@@ -145,15 +145,13 @@ namespace VTOLVR_ModLoader.Classes
                 MainWindow.SetProgress(100, "Ready");
                 MainWindow.SetPlayButton(false);
                 if (_updateLauncher)
-                    Notification.Show("The launcher needs to be updated.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
+                {
+                    UpdateLauncher();
+                }
             }
         }
-
-        private static void UpdateLauncherCallback(bool result)
+        private static void UpdateLauncher()
         {
-            if (!result)
-                return;
-
             if (!File.Exists(Path.Combine(Program.root, "Updater.exe")))
             {
                 Notification.Show("Couldn't find the Updater.exe.", "Failed to Auto Update");

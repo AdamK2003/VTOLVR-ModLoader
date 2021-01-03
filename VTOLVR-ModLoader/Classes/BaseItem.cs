@@ -1,32 +1,49 @@
-﻿using System;
+﻿// BaseItem is the info.json file
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using VTOLVR_ModLoader.Views;
+using Console = VTOLVR_ModLoader.Views.Console;
 
 namespace VTOLVR_ModLoader.Classes
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class BaseItem
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public DirectoryInfo Directory { get; set; }
-        public JObject Json { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; } = string.Empty;
+        [JsonProperty("description")]
+        public string Description { get; set; } = string.Empty;
+        [JsonProperty("dll file")]
+        public string DllPath { get; set; } = string.Empty;
+        [JsonProperty("last edit")]
+        public long LastEdit { get; set; }
+        [JsonProperty("public id")]
+        public string PublicID { get; set; } = string.Empty;
+        [JsonProperty("version")]
+        public string Version { get; set; } = "N/A";
+        [JsonProperty("tagline")]
+        public string Tagline { get; set; } = string.Empty;
+        [JsonProperty("source")]
+        public string Source { get; set; } = string.Empty;
+        [JsonProperty("is public")]
+        public bool IsPublic { get; set; }
+        [JsonProperty("unlisted")]
+        public bool Unlisted { get; set; }
+        [JsonProperty("preview image")]
+        public string PreviewImage { get; set; } = string.Empty;
+        [JsonProperty("web preview image")]
+        public string WebPreviewImage { get; set; } = string.Empty;
+        [JsonProperty("dependencies")]
+        public List<string> Dependencies;
 
-        public BaseItem(string name, DirectoryInfo directory, JObject json)
-        {
-            Name = name;
-            Directory = directory;
-            Json = json;
-            CheckForDescription();
-        }
-        public void CheckForDescription()
-        {
-            if (Json[ProjectManager.jDescription] != null)
-                Description = Json[ProjectManager.jDescription].ToString();
-        }
+        [JsonIgnore]
+        public DirectoryInfo Directory { get; set; }
     }
 }

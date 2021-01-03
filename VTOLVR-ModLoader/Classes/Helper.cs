@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sentry;
 using Sentry.Protocol;
@@ -132,7 +133,7 @@ namespace VTOLVR_ModLoader.Classes
             DirectoryInfo downloadedMods = new DirectoryInfo(Program.root + Program.modsFolder);
             DirectoryInfo[] mods = downloadedMods.GetDirectories();
 
-            JObject json;
+            BaseItem lastMod;
             for (int i = 0; i < mods.Length; i++)
             {
                 if (!File.Exists(Path.Combine(mods[i].FullName, "info.json")))
@@ -140,19 +141,11 @@ namespace VTOLVR_ModLoader.Classes
                     Console.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
                     continue;
                 }
-
-                json = JObject.Parse(File.ReadAllText(Path.Combine(mods[i].FullName, "info.json")));
-                if (json[ProjectManager.jDll] == null)
-                {
-                    Console.Log($"Mod: Couldn't find {ProjectManager.jDll} in {Path.Combine(mods[i].FullName, "info.json")}");
-                    continue;
-                }
-                if (json[ProjectManager.jName] == null)
-                {
-                    Console.Log($"Mod: Couldn't find {ProjectManager.jName} in {Path.Combine(mods[i].FullName, "info.json")}");
-                    continue;
-                }
-                foundMods.Add(new BaseItem(json[ProjectManager.jName].ToString(), mods[i], json));
+                lastMod = JsonConvert.DeserializeObject<BaseItem>(
+                            File.ReadAllText(
+                                Path.Combine(mods[i].FullName, "info.json")));
+                lastMod.Directory = mods[i];
+                foundMods.Add(lastMod);
             }
             return foundMods;
         }
@@ -166,7 +159,7 @@ namespace VTOLVR_ModLoader.Classes
             DirectoryInfo downloadedSkins = new DirectoryInfo(Program.root + Program.skinsFolder);
             DirectoryInfo[] skins = downloadedSkins.GetDirectories();
 
-            JObject json;
+            BaseItem lastSkin;
             for (int i = 0; i < skins.Length; i++)
             {
                 if (!File.Exists(Path.Combine(skins[i].FullName, "info.json")))
@@ -174,14 +167,11 @@ namespace VTOLVR_ModLoader.Classes
                     Console.Log($"Skin: {skins[i].Name} doesn't have a info.json file");
                     continue;
                 }
-
-                json = JObject.Parse(File.ReadAllText(Path.Combine(skins[i].FullName, "info.json")));
-                if (json[ProjectManager.jName] == null)
-                {
-                    Console.Log($"Skin: Couldn't find {ProjectManager.jName} in {Path.Combine(skins[i].FullName, "info.json")}");
-                    continue;
-                }
-                foundSkins.Add(new BaseItem(json[ProjectManager.jName].ToString(), skins[i], json));
+                lastSkin = JsonConvert.DeserializeObject<BaseItem>(
+                            File.ReadAllText(
+                                Path.Combine(skins[i].FullName, "info.json")));
+                lastSkin.Directory = skins[i];
+                foundSkins.Add(lastSkin);
             }
 
             return foundSkins;

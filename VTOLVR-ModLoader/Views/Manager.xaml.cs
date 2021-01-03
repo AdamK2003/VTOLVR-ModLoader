@@ -84,16 +84,16 @@ namespace VTOLVR_ModLoader.Views
                     downloadedMods[i].Name,
                     downloadedMods[i].Description,
                     Visibility.Hidden,
-                    downloadedMods[i].Json[ProjectManager.jVersion] == null ? "N/A" : downloadedMods[i].Json[ProjectManager.jVersion].ToString(),
-                    downloadedMods[i].Json[ProjectManager.jID] == null ? "N/A" : "Requesting",
+                    downloadedMods[i].Version,
+                    downloadedMods[i].PublicID == string.Empty ? "N/A" : "Requesting",
                     false,
                     false,
                     downloadedMods[i].Directory.FullName));
 
-                if (downloadedMods[i].Json[ProjectManager.jID] != null)
+                if (downloadedMods[i].PublicID != string.Empty)
                 {
-                    items[i].PublicID = downloadedMods[i].Json[ProjectManager.jID].ToString();
-                    RequestMod(downloadedMods[i].Json[ProjectManager.jID].ToString());
+                    items[i].PublicID = downloadedMods[i].PublicID;
+                    RequestMod(downloadedMods[i].PublicID);
                 }
             }
         }
@@ -112,8 +112,8 @@ namespace VTOLVR_ModLoader.Views
                     downloadSkins[i].Name,
                     downloadSkins[i].Description,
                     Visibility.Hidden,
-                    downloadSkins[i].Json[ProjectManager.jVersion] == null ? "N/A" : downloadSkins[i].Json[ProjectManager.jVersion].ToString(),
-                    downloadSkins[i].Json[ProjectManager.jID] == null ? "N/A" : "Requesting",
+                    downloadSkins[i].Version,
+                    downloadSkins[i].PublicID == string.Empty ? "N/A" : "Requesting",
                     false,
                     false,
                     downloadSkins[i].Directory.FullName));
@@ -143,11 +143,11 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log($"Failed to read json response from website ({exception.Message}). Raw response is:\n{jsonText}");
                 return;
             }
-
+            string pub_id = json["pub_id"].ToString();
             for (int i = 0; i < _mods.Count; i++)
             {
                 if (!string.IsNullOrEmpty(_mods[i].PublicID) &&
-                    _mods[i].PublicID.Equals(json["pub_id"].ToString()))
+                    _mods[i].PublicID.Equals(pub_id))
                 {
                     Console.Log($"Checking {_mods[i].Name}");
                     _mods[i].SetWebsiteVersion(json["version"].ToString());

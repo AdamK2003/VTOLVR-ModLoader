@@ -123,40 +123,41 @@ namespace VTOLVR_ModLoader.Classes
             }
             return true;
         }
-        /// <summary>
-        /// Finds the mods which teh user has downloaded from the website
-        /// </summary>
-        /// <returns></returns>
-        public static List<BaseItem> FindDownloadMods()
+        public static List<BaseItem> FindDownloadMods() => FindMods(Program.root + Program.modsFolder);
+        public static List<BaseItem> FindMyMods() =>
+            FindMods(Views.Settings.ProjectsFolder + ProjectManager.modsFolder, true);
+        private static List<BaseItem> FindMods(string folder, bool isMyProjects = false)
         {
             List<BaseItem> foundMods = new List<BaseItem>();
-            DirectoryInfo downloadedMods = new DirectoryInfo(Program.root + Program.modsFolder);
-            DirectoryInfo[] mods = downloadedMods.GetDirectories();
+            DirectoryInfo folders = new DirectoryInfo(folder);
+            DirectoryInfo[] mods = folders.GetDirectories();
 
             BaseItem lastMod;
+            string pathToCheck;
             for (int i = 0; i < mods.Length; i++)
             {
-                if (!File.Exists(Path.Combine(mods[i].FullName, "info.json")))
+                if (isMyProjects)
+                    pathToCheck = Path.Combine(mods[i].FullName, "Builds", "info.json");
+                else
+                    pathToCheck = Path.Combine(mods[i].FullName, "info.json");
+
+                if (!File.Exists(pathToCheck))
                 {
                     Console.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
                     continue;
                 }
-                lastMod = JsonConvert.DeserializeObject<BaseItem>(
-                            File.ReadAllText(
-                                Path.Combine(mods[i].FullName, "info.json")));
+                lastMod = JsonConvert.DeserializeObject<BaseItem>(File.ReadAllText(pathToCheck));
                 lastMod.Directory = mods[i];
                 foundMods.Add(lastMod);
             }
             return foundMods;
         }
-        /// <summary>
-        /// Finds the skins which the user has downloaded from the website
-        /// </summary>
-        /// <returns></returns>
-        public static List<BaseItem> FindDownloadedSkins()
+        public static List<BaseItem> FindDownloadedSkins() => FindSkins(Program.root + Program.skinsFolder);
+        public static List<BaseItem> FindMySkins() => FindSkins(Views.Settings.ProjectsFolder + ProjectManager.skinsFolder);
+        private static List<BaseItem> FindSkins(string folder)
         {
             List<BaseItem> foundSkins = new List<BaseItem>();
-            DirectoryInfo downloadedSkins = new DirectoryInfo(Program.root + Program.skinsFolder);
+            DirectoryInfo downloadedSkins = new DirectoryInfo(folder);
             DirectoryInfo[] skins = downloadedSkins.GetDirectories();
 
             BaseItem lastSkin;
@@ -175,22 +176,6 @@ namespace VTOLVR_ModLoader.Classes
             }
 
             return foundSkins;
-        }
-        /// <summary>
-        /// Finds the mods which the user has created in the project manager
-        /// </summary>
-        /// <returns></returns>
-        public static List<BaseItem> FindUsersMods()
-        {
-            return null;
-        }
-        /// <summary>
-        /// Finds the skins which the user has created in the project manager
-        /// </summary>
-        /// <returns></returns>
-        public static List<BaseItem> FindUsersSkins()
-        {
-            return null;
         }
         public enum SentryLogCategory { Console, DevToos, EditProject, Manager, NewProject, News, NewVersion, ProjectManager, Settings, MainWindow, Program, Startup, CommunicationsManager, Helper }
         public static void SentryLog(string message, SentryLogCategory category)

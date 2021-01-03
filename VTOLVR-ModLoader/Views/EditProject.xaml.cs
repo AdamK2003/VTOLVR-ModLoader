@@ -87,7 +87,6 @@ namespace VTOLVR_ModLoader.Views
                 saveButton.Content = "Save Locally (Can't connect to server)";
             }
         }
-
         private void LoadMod()
         {
             Helper.SentryLog("Loading Mod", Helper.SentryLogCategory.EditProject);
@@ -96,27 +95,23 @@ namespace VTOLVR_ModLoader.Views
 
             modSource.Text = _item.Source;
         }
-
         private void LoadSkin()
         {
             Helper.SentryLog("Loading Skin", Helper.SentryLogCategory.EditProject);
             grid.RowDefinitions[6].Height = new GridLength(0);
             grid.RowDefinitions[7].Height = new GridLength(0);
         }
-
         private void ProjectNameChanged(object sender, TextChangedEventArgs e)
         {
             projectName.Text = projectName.Text.RemoveSpecialCharacters();
             projectName.CaretIndex = projectName.Text.Length;
         }
-
         private void Save(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Saving", Helper.SentryLogCategory.EditProject);
             UpdateDependencies();
             SaveProject();
         }
-
         private void UploadDataComplete(object sender, UploadValuesCompletedEventArgs e)
         {
             if (!e.Cancelled && e.Error == null)
@@ -129,7 +124,6 @@ namespace VTOLVR_ModLoader.Views
                 Notification.Show(e.Error.ToString());
             }
         }
-
         private void SaveProject()
         {
             Helper.SentryLog("Saving Project", Helper.SentryLogCategory.EditProject);
@@ -179,7 +173,6 @@ namespace VTOLVR_ModLoader.Views
                 saveButton.IsEnabled = true;
             };
         }
-
         private async void UpdateSent(HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode)
@@ -203,19 +196,16 @@ namespace VTOLVR_ModLoader.Views
                 saveButton.IsEnabled = true;
             };
         }
-
         private void PreviewImageButton(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Preview Image Button Pressed", Helper.SentryLogCategory.EditProject);
             FileDialog.Dialog(Directory.GetCurrentDirectory(), previewImageCallBack, new string[] { "png" });
         }
-
         private void WebPageImageButton(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Web Preview Image Button Pressed", Helper.SentryLogCategory.EditProject);
             FileDialog.Dialog(Directory.GetCurrentDirectory(), webImageCallBack, new string[] { "png" });
         }
-
         public void PreviewImageCallBack(bool selected, string filePath)
         {
             if (!selected)
@@ -256,7 +246,6 @@ namespace VTOLVR_ModLoader.Views
             webPageImage.Source = new BitmapImage().LoadImage(filePath);
             SaveProject();
         }
-
         private bool PreviewImageChecks(string path)
         {
             Helper.SentryLog("Preview Image Checks", Helper.SentryLogCategory.EditProject);
@@ -277,7 +266,6 @@ namespace VTOLVR_ModLoader.Views
 
             return true;
         }
-
         private bool WebImageChecks(string path)
         {
             Helper.SentryLog("Web Image Checks", Helper.SentryLogCategory.EditProject);
@@ -290,19 +278,16 @@ namespace VTOLVR_ModLoader.Views
             }
             return true;
         }
-
         private void UnlistedChanged(object sender, RoutedEventArgs e)
         {
             if (_item != null)
                 _item.Unlisted = unlisted.IsChecked.Value;
         }
-
         private void PublicChanged(object sender, RoutedEventArgs e)
         {
             if (_item != null)
                 _item.IsPublic = isPublic.IsChecked.Value;
         }
-
         private void UpdateDependencies()
         {
             Helper.SentryLog("Updating Dependencies", Helper.SentryLogCategory.EditProject);

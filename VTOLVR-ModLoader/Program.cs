@@ -210,7 +210,7 @@ namespace VTOLVR_ModLoader
             {
                 MainWindow.SetPlayButton(false);
                 MainWindow.SetProgress(100, "No new mods were found");
-                MoveDependencies();
+                ExtractSkins();
                 return;
             }
             modsToExtract = files.Length;
@@ -247,7 +247,7 @@ namespace VTOLVR_ModLoader
                 MainWindow.SetProgress(100, extractedMods == 0 ? "No mods were extracted" : "Extracted " + extractedMods +
                     (extractedMods == 1 ? " new mod" : " new mods"));
 
-                MoveDependencies();
+                ExtractSkins();
             }
         }
 
@@ -331,88 +331,6 @@ namespace VTOLVR_ModLoader
                 LaunchProcess();
             }
         }
-
-        private static void MoveDependencies()
-        {
-            Helper.SentryLog("Moving Dependencies", Helper.SentryLogCategory.Program);
-            MainWindow.SetPlayButton(true);
-            MovedDependencies();
-            return;
-            Task.Run(delegate
-            {
-                string[] modFolders = Directory.GetDirectories(root + modsFolder);
-
-                string fileName;
-                string[] split;
-                for (int i = 0; i < modFolders.Length; i++)
-                {
-                    string[] subFolders = Directory.GetDirectories(modFolders[i]);
-                    for (int j = 0; j < subFolders.Length; j++)
-                    {
-                        if (subFolders[j].ToLower().Contains("dependencies"))
-                        {
-                            Application.Current.Dispatcher.Invoke(new Action(() =>
-                            {
-                                Console.Log("Found the folder dependencies");
-                            }));
-
-                            string[] depFiles = Directory.GetFiles(subFolders[j], "*.dll");
-                            for (int k = 0; k < depFiles.Length; k++)
-                            {
-                                split = depFiles[k].Split('\\');
-                                fileName = split[split.Length - 1];
-
-                                if (File.Exists(Directory.GetParent(Program.root).FullName +
-                                            @"\VTOLVR_Data\Managed\" + fileName))
-                                {
-                                    string oldHash = CalculateMD5(Directory.GetParent(Program.root).FullName +
-                                            @"\VTOLVR_Data\Managed\" + fileName);
-                                    string newHash = CalculateMD5(depFiles[k]);
-                                    if (!oldHash.Equals(newHash))
-                                    {
-                                        File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
-                                            @"\VTOLVR_Data\Managed\" + fileName,
-                                            true);
-                                        movedDep++;
-                                        Application.Current.Dispatcher.Invoke(new Action(() =>
-                                        {
-                                            Console.Log($"Updated Dependence {depFiles[k]}");
-                                        }));
-                                    }
-                                }
-                                else
-                                {
-                                    File.Copy(depFiles[k], Directory.GetParent(Program.root).FullName +
-                                                @"\VTOLVR_Data\Managed\" + fileName,
-                                                true);
-                                    movedDep++;
-                                    Application.Current.Dispatcher.Invoke(new Action(() =>
-                                    {
-                                        Console.Log($"Moved Dependencies {depFiles[k]}");
-                                    }));
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }
-            }).ContinueWith(delegate
-            {
-                Application.Current.Dispatcher.Invoke(new Action(() =>
-                {
-                    MovedDependencies();
-                }));
-            });
-        }
-        private static void MovedDependencies()
-        {
-            MainWindow.SetPlayButton(false);
-            MainWindow.SetProgress(100, movedDep == 0 ? "Checked Dependencies" : "Moved " + movedDep
-                + (movedDep == 1 ? " dependency" : " dependencies"));
-
-            ExtractSkins();
-        }
-
         private static string CalculateMD5(string filename)
         {
             using (var md5 = MD5.Create())

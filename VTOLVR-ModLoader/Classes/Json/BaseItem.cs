@@ -14,7 +14,7 @@ using Console = VTOLVR_ModLoader.Views.Console;
 namespace VTOLVR_ModLoader.Classes
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class BaseItem
+    class BaseItem
     {
         [JsonProperty("name")]
         public string Name { get; set; } = string.Empty;
@@ -61,6 +61,22 @@ namespace VTOLVR_ModLoader.Classes
                 js.Formatting = Formatting.Indented;
                 js.Serialize(tw, this);
             }
+        }
+        public void FilloutForm(ref HttpHelper form, bool isMod, string currentPath)
+        {
+            form.SetValue("version", Version);
+            form.SetValue("name", Name);
+            form.SetValue("tagline", Tagline);
+            form.SetValue("description", Description);
+            form.SetValue("unlisted", Unlisted.ToString());
+            form.SetValue("is_public", IsPublic.ToString());
+            if (isMod)
+                form.SetValue("repository", Source);
+
+            form.AttachFile("header_image", WebPreviewImage, Path.Combine(currentPath, WebPreviewImage));
+            form.AttachFile("thumbnail", PreviewImage, Path.Combine(Directory.FullName, PreviewImage));
+            form.SetValue("user_uploaded_file", string.Empty);
+
         }
     }
 }

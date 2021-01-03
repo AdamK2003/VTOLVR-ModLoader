@@ -21,7 +21,7 @@ using Settings = VTOLVR_ModLoader.Views.Settings;
 
 namespace VTOLVR_ModLoader.Classes
 {
-    public static class Helper
+    static class Helper
     {
         public static string ClearSpaces(string input)
         {

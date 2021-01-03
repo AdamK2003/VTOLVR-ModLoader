@@ -169,7 +169,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Classes\BaseItem.cs" />
+    <Compile Include="Classes\Json\BaseItem.cs" />
     <Compile Include="Classes\CustomWebClient.cs">
       <SubType>Component</SubType>
     </Compile>

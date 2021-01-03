@@ -144,9 +144,8 @@
                            TextWrapping="Wrap" Visibility="Visible">
                     Select a branch you which to switch to:
                 </TextBlock>
-                <ComboBox Grid.Row="1"  Grid.Column="1" x:Name="_branchesBox" Margin="10,0">
-
-                </ComboBox>
+                <ComboBox Grid.Row="1"  Grid.Column="1" x:Name="_branchesBox" Margin="10,0" 
+                          SelectionChanged="BranchChanged"/>
 
                 <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Foreground="White" FontSize="15"
                            TextWrapping="Wrap" Margin="0,10,0,5">
@@ -160,7 +159,7 @@
                         Click="CheckBranch" x:Name="_branchCheckButton"/>
                 <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
                            x:Name="_branchResultText" Text="This is the result"
-                           Foreground="White" HorizontalAlignment="Center"/>
+                           Foreground="White" HorizontalAlignment="Center" Visibility="Hidden"/>
             </Grid>
         </Grid>
     </ScrollViewer>

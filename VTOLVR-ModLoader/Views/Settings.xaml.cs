@@ -63,7 +63,6 @@ namespace VTOLVR_ModLoader.Views
                 oneclickInstallButton.Content = "(Admin Needed)";
                 oneclickInstallButton.IsEnabled = false;
             }
-            SetupBranches();
             Helper.SentryLog("Created Settings Page", Helper.SentryLogCategory.Settings);
         }
         public async void UpdateButtons()
@@ -142,6 +141,7 @@ namespace VTOLVR_ModLoader.Views
             USettings.ProjectsFolder = ProjectsFolder;
             USettings.AutoUpdate = AutoUpdate;
             USettings.LaunchSteamVR = SteamVR;
+            USettings.ActiveBranch = Instance._branchesBox.SelectedIndex;
 
             UserSettings.SaveSettings(Program.root + SavePath);
             Console.Log("Saved Settings");
@@ -163,6 +163,7 @@ namespace VTOLVR_ModLoader.Views
                 projectsText.Text = $"Projects Folder Set:\n{ProjectsFolder}";
             autoUpdateCheckbox.IsChecked = AutoUpdate;
             steamvrCheckbox.IsChecked = SteamVR;
+            SetupBranchesFromSettings();
             SaveSettings();
         }
 
@@ -293,15 +294,42 @@ namespace VTOLVR_ModLoader.Views
         }
         private void SetupBranches()
         {
+            Helper.SentryLog("Setting up default branches", Helper.SentryLogCategory.Settings);
+            Console.Log("Setting up default branches");
             _branches = new List<string>();
             _branches.Add("None");
             _branchesBox.ItemsSource = _branches;
             _branchesBox.SelectedIndex = 0;
         }
+        private void SetupBranchesFromSettings()
+        {
+            if (USettings.Branches == null)
+            {
+                Console.Log("Branches in setting file where null");
+                SetupBranches();
+                return;
+            }
+            Helper.SentryLog("Setting up branches from settings", Helper.SentryLogCategory.Settings);
+            Console.Log("Setting up branches from settings file");
+            _branches = USettings.Branches;
+            _branchesBox.ItemsSource = _branches;
+            if (USettings.ActiveBranch > USettings.Branches.Count - 1)
+            {
+                Notification.Show($"Active branch {USettings.ActiveBranch} was outside the count of branches {USettings.Branches.Count}. Selected branch None");
+                _branchesBox.SelectedIndex = 0;
+                Console.Log($"Active branch {USettings.ActiveBranch} was outside the count of branches {USettings.Branches.Count}");
+            }
+            else
+                _branchesBox.SelectedIndex = USettings.ActiveBranch;
+
+        }
         private void AddBranch(string branch)
         {
+            Console.Log("Adding branch " + branch);
             _branches.Add(branch);
             _branchesBox.ItemsSource = _branches;
+            USettings.Branches = _branches;
+            SaveSettings();
         }
         private void CheckBranch(object sender, RoutedEventArgs e)
         {
@@ -317,7 +345,6 @@ namespace VTOLVR_ModLoader.Views
                 Program.url + Program.apiURL + Program.releasesURL + "/" + $"?branch={branch}",
                 CheckBranchDone);
         }
-
         private async void CheckBranchDone(HttpResponseMessage response)
         {
             Helper.SentryLog($"Got branch result {response.StatusCode}", Helper.SentryLogCategory.Settings);
@@ -340,11 +367,10 @@ namespace VTOLVR_ModLoader.Views
                 _branchResultText.Text = _newBranchCodeBox.Text + " is not a valid branch";
                 _branchResultText.Foreground = _yellowBrush;
                 _branchResultText.Visibility = Visibility.Visible;
+
                 DelayHide(_branchResultText, 4);
-
-
-                _newBranchCodeBox.IsEnabled = true;
-                _branchCheckButton.IsEnabled = true;
+                DelayEnable(_newBranchCodeBox, 4);
+                DelayEnable(_branchCheckButton, 4);
                 return;
             }
             AddBranch(_newBranchCodeBox.Text);
@@ -352,17 +378,25 @@ namespace VTOLVR_ModLoader.Views
             _branchResultText.Text = _newBranchCodeBox.Text + " is a valid branch";
             _branchResultText.Foreground = _whiteBrush;
             _branchResultText.Visibility = Visibility.Visible;
-            DelayHide(_branchResultText, 4);
 
+            DelayHide(_branchResultText, 4);
+            DelayEnable(_newBranchCodeBox, 4);
+            DelayEnable(_branchCheckButton, 4);
             _newBranchCodeBox.Text = string.Empty;
-            _newBranchCodeBox.IsEnabled = true;
-            _branchCheckButton.IsEnabled = true;
         }
         private async void DelayHide(UIElement uiElement, float delayInSeconds)
         {
             await Task.Delay(TimeSpan.FromSeconds(delayInSeconds));
             uiElement.Visibility = Visibility.Hidden;
         }
-
+        private async void DelayEnable(UIElement uiElement, float delayInSeconds)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(delayInSeconds));
+            uiElement.IsEnabled = true;
+        }
+        private void BranchChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            SaveSettings();
+        }
     }
 }

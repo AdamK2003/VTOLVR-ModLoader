@@ -22,6 +22,10 @@ namespace VTOLVR_ModLoader.Classes.Json
         public bool AutoUpdate = true;
         [JsonProperty("Launch SteamVR")]
         public bool LaunchSteamVR = true;
+        [JsonProperty("Branches")]
+        public List<string> Branches;
+        [JsonProperty("Active Branch")]
+        public int ActiveBranch = 0;
 
         [JsonProperty]
         public ObservableCollection<Manager.Item> Mods = new ObservableCollection<Manager.Item>();

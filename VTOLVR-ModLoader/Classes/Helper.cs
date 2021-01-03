@@ -177,6 +177,14 @@ namespace VTOLVR_ModLoader.Classes
 
             return foundSkins;
         }
+        public static BaseItem GetBaseItem(string folder)
+        {
+            BaseItem item = JsonConvert.DeserializeObject<BaseItem>(
+                                File.ReadAllText(
+                                    Path.Combine(folder, "info.json")));
+            item.Directory = new DirectoryInfo(folder);
+            return item;
+        }
         public enum SentryLogCategory { Console, DevToos, EditProject, Manager, NewProject, News, NewVersion, ProjectManager, Settings, MainWindow, Program, Startup, CommunicationsManager, Helper }
         public static void SentryLog(string message, SentryLogCategory category)
         {

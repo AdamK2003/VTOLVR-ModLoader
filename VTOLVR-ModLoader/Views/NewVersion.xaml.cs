@@ -31,7 +31,7 @@ namespace VTOLVR_ModLoader.Views
     /// </summary>
     public partial class NewVersion : UserControl
     {
-        private JObject _currentJson;
+        private BaseItem _item;
         private string _currentPath;
         private bool _isMod;
         private bool _hasInternet = true;
@@ -48,25 +48,12 @@ namespace VTOLVR_ModLoader.Views
                 MainWindow._instance.Creator(null, null);
                 return;
             }
+            _item = Helper.GetBaseItem(_currentPath + (_isMod ? @"\Builds" : string.Empty));
 
-            try
-            {
-                _currentJson = JObject.Parse(File.ReadAllText(_currentPath + (_isMod ? @"\Builds\info.json" : @"\info.json")));
-            }
-            catch (Exception e)
-            {
-                Notification.Show("Failed to Parse info.json", "Error");
-                Console.Log("Failed to parse info.json\n" + e.ToString());
-                MainWindow._instance.Creator(null, null);
-                return;
-            }
+            if (_item.Version != "N/A")
+                versionNumber.Text = _item.Version;
 
-            if (_currentJson[ProjectManager.jVersion] != null)
-            {
-                versionNumber.Text = _currentJson[ProjectManager.jVersion].ToString();
-            }
-
-            if (_currentJson[ProjectManager.jID] == null)
+            if (!_item.HasPublicID())
             {
                 changeLogTitle.Visibility = Visibility.Hidden;
                 titleHeader.Visibility = Visibility.Hidden;
@@ -81,8 +68,8 @@ namespace VTOLVR_ModLoader.Views
                 approvalWarning.SetValue(Grid.RowProperty, 2);
                 contentGuidelines.SetValue(Grid.RowProperty, 3);
 
-                if (_currentJson[ProjectManager.jPImage] != null ||
-                    _currentJson[ProjectManager.jWImage] != null)
+                if (_item.PreviewImage != string.Empty ||
+                    _item.WebPreviewImage != string.Empty)
                 {
                     uploadButton.Content = "Release";
                     uploadButton.IsEnabled = true;
@@ -114,8 +101,8 @@ namespace VTOLVR_ModLoader.Views
         }
         private void VersionNumberChanged(object sender, TextChangedEventArgs e)
         {
-            if (versionNumber != null && _currentJson != null)
-                _currentJson[ProjectManager.jVersion] = versionNumber.Text;
+            if (versionNumber != null && _item != null)
+                _item.Version = versionNumber.Text;
         }
         private async void Upload(object sender, RoutedEventArgs e)
         {
@@ -123,7 +110,7 @@ namespace VTOLVR_ModLoader.Views
             uploadButton.IsEnabled = false;
             MainWindow.SetBusy(true);
             SaveProject();
-            if (_currentJson[ProjectManager.jID] != null)
+            if (_item.HasPublicID())
                 await UpdateProject();
             else
                 await UploadNewProject();
@@ -143,18 +130,18 @@ namespace VTOLVR_ModLoader.Views
 
             HttpHelper form = new HttpHelper(Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + @"\");
             form.SetToken(Settings.Token);
-            form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
-            form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
-            form.SetValue("tagline", _currentJson[ProjectManager.jTagline].ToString());
-            form.SetValue("description", _currentJson[ProjectManager.jDescription].ToString());
-            form.SetValue("unlisted", _currentJson[ProjectManager.jUnlisted].ToString());
-            form.SetValue("is_public", _currentJson[ProjectManager.jPublic].ToString());
+            form.SetValue("version", _item.Version);
+            form.SetValue("name", _item.Name);
+            form.SetValue("tagline", _item.Tagline);
+            form.SetValue("description", _item.Description);
+            form.SetValue("unlisted", _item.Unlisted.ToString());
+            form.SetValue("is_public", _item.IsPublic.ToString());
             if (_isMod)
-                form.SetValue("repository", _currentJson[ProjectManager.jSource].ToString());
+                form.SetValue("repository", _item.Source);
 
-            form.AttachFile("header_image", _currentJson[ProjectManager.jWImage].ToString(), _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
-            form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
-            form.AttachFile("user_uploaded_file", "test.zip", zipPath);
+            form.AttachFile("header_image", _item.WebPreviewImage, _currentPath + @"\" + _item.WebPreviewImage);
+            form.AttachFile("thumbnail", _item.PreviewImage, _currentPath + (_isMod ? @"\Builds\" : @"\") + _item.PreviewImage);
+            form.AttachFile("user_uploaded_file", $"{_item.Name}.zip", zipPath);
 
             Console.Log("Sending Data");
             HttpResponseMessage result = await form.SendDataAsync(HttpHelper.HttpMethod.POST);
@@ -174,26 +161,27 @@ namespace VTOLVR_ModLoader.Views
             Console.Log("Zipping up project");
             string zipPath = ZipCurrentProject();
 
-            HttpHelper form = new HttpHelper(Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _currentJson[ProjectManager.jID].ToString() + "/");
+            HttpHelper form = new HttpHelper(
+                Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _item.PublicID + "/");
             form.SetToken(Settings.Token);
-            form.SetValue("version", _currentJson[ProjectManager.jVersion].ToString());
-            form.SetValue("name", _currentJson[ProjectManager.jName].ToString());
-            form.SetValue("tagline", _currentJson[ProjectManager.jTagline].ToString());
-            form.SetValue("description", _currentJson[ProjectManager.jDescription].ToString());
-            form.SetValue("unlisted", _currentJson[ProjectManager.jUnlisted].ToString());
-            form.SetValue("is_public", _currentJson[ProjectManager.jPublic].ToString());
+            form.SetValue("version", _item.Version);
+            form.SetValue("name", _item.Name);
+            form.SetValue("tagline", _item.Tagline);
+            form.SetValue("description", _item.Description);
+            form.SetValue("unlisted", _item.Unlisted.ToString());
+            form.SetValue("is_public", _item.IsPublic.ToString());
             if (_isMod)
-                form.SetValue("repository", _currentJson[ProjectManager.jSource].ToString());
+                form.SetValue("repository", _item.Source);
 
-            form.AttachFile("header_image", _currentJson[ProjectManager.jWImage].ToString(), _currentPath + @"\" + _currentJson[ProjectManager.jWImage].ToString());
-            form.AttachFile("thumbnail", _currentJson[ProjectManager.jPImage].ToString(), _currentPath + (_isMod ? @"\Builds\" : @"\") + _currentJson[ProjectManager.jPImage].ToString());
-            form.AttachFile("user_uploaded_file", $"{_currentJson[ProjectManager.jName]}.zip", zipPath);
+            form.AttachFile("header_image", _item.WebPreviewImage, _currentPath + @"\" + _item.WebPreviewImage);
+            form.AttachFile("thumbnail", _item.PreviewImage, _currentPath + (_isMod ? @"\Builds\" : @"\") + _item.PreviewImage);
+            form.AttachFile("user_uploaded_file", $"{_item.Name}.zip", zipPath);
 
 
 
             HttpResponseMessage result = await form.SendDataAsync(HttpHelper.HttpMethod.PUT);
             string response = await result.Content.ReadAsStringAsync();
-            Console.Log($"Raw Response from {Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _currentJson[ProjectManager.jID].ToString() + "/"}\n{response}");
+            Console.Log($"Raw Response from {Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _item.PublicID + "/"}\n{response}");
             JObject json = JObject.Parse(response);
 
             if (json["detail"] != null)
@@ -203,7 +191,7 @@ namespace VTOLVR_ModLoader.Views
                 return;
             }
 
-            HttpHelper form2 = new HttpHelper(Program.url + Program.apiURL + (_isMod ? Program.modsChangelogsURL : Program.skinsChangelogsURL) + "/" + _currentJson[ProjectManager.jID] + "/");
+            HttpHelper form2 = new HttpHelper(Program.url + Program.apiURL + (_isMod ? Program.modsChangelogsURL : Program.skinsChangelogsURL) + "/" + _item.PublicID + "/");
             form2.SetToken(Settings.Token);
             form2.SetValue("change_name", title.Text);
             form2.SetValue("change_log", description.Text);
@@ -213,7 +201,7 @@ namespace VTOLVR_ModLoader.Views
             Console.Log("Sending Change log");
             HttpResponseMessage changelogResult = await form2.SendDataAsync(HttpHelper.HttpMethod.PUT);
             response = await changelogResult.Content.ReadAsStringAsync();
-            Console.Log($"Raw Response from {Program.url + Program.apiURL + (_isMod ? Program.modsChangelogsURL : Program.skinsChangelogsURL) + "/" + _currentJson[ProjectManager.jID] + "/"}\n{response}");
+            Console.Log($"Raw Response from {Program.url + Program.apiURL + (_isMod ? Program.modsChangelogsURL : Program.skinsChangelogsURL) + "/" + _item.PublicID + "/"}\n{response}");
 
             if (changelogResult.IsSuccessStatusCode)
             {
@@ -272,20 +260,10 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log($"Uploaded new project at {Program.url}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
                 MainWindow._instance.Creator(null, null);
 
-                if (_currentJson[ProjectManager.jID] == null)
+                if (!_item.HasPublicID())
                 {
-                    _currentJson[ProjectManager.jID] = json["pub_id"].ToString();
-
-                    try
-                    {
-                        File.WriteAllText(_currentPath + (_isMod ? @"\Builds\info.json" : @"\info.json"), _currentJson.ToString());
-                    }
-                    catch (Exception e)
-                    {
-                        Console.Log($"Failed to save project\n{e}");
-                        MainWindow.SetBusy(false);
-                        return;
-                    }
+                    _item.PublicID = json["pub_id"].ToString();
+                    _item.SaveFile();
                     Console.Log("Saved Project!");
                 }
             }
@@ -301,38 +279,38 @@ namespace VTOLVR_ModLoader.Views
                 return false;
             }
 
-            if (_currentJson[ProjectManager.jDll] == null)
+            if (!_item.HasDll())
             {
                 Notification.Show("info.json seems to be missing the dll file name.\nMod was not uploaded.", "Missing Item");
                 return false;
             }
 
-            if (!File.Exists(_currentPath + @"\Builds\" + _currentJson[ProjectManager.jDll].ToString()))
+            if (!File.Exists(_currentPath + @"\Builds\" + _item.DllPath))
             {
-                Notification.Show($"Can't find {_currentJson[ProjectManager.jDll]}", $"Missing {_currentJson[ProjectManager.jDll]}");
+                Notification.Show($"Can't find {_item.DllPath}", $"Missing {_item.DllPath}");
                 return false;
             }
 
             IEnumerable<Type> source =
-                from t in Assembly.Load(File.ReadAllBytes(_currentPath + @"\Builds\" + _currentJson[ProjectManager.jDll].ToString())).GetTypes()
+                from t in Assembly.Load(File.ReadAllBytes(_currentPath + @"\Builds\" + _item.DllPath)).GetTypes()
                 where t.IsSubclassOf(typeof(VTOLMOD))
                 select t;
 
             if (source == null)
             {
-                Notification.Show($"It seems there is no class deriving from VTOLMOD in {_currentJson[ProjectManager.jDll]}",
+                Notification.Show($"It seems there is no class deriving from VTOLMOD in {_item.DllPath}",
                     "Missing VTOLMOD class");
                 return false;
             }
             if (source.Count() > 1)
             {
-                Notification.Show($"It seems there is two or more classes deriving from VTOLMOD in {_currentJson[ProjectManager.jDll]}",
+                Notification.Show($"It seems there is two or more classes deriving from VTOLMOD in {_item.DllPath}",
                     "Too many VTOLMOD classes");
                 return false;
             }
             else if (source.Count() == 0)
             {
-                Notification.Show($"It seems there is no classes deriving from VTOLMOD in {_currentJson[ProjectManager.jDll]}",
+                Notification.Show($"It seems there is no classes deriving from VTOLMOD in {_item.DllPath}",
                     "No VTOLMOD classes");
                 return false;
             }
@@ -342,9 +320,9 @@ namespace VTOLVR_ModLoader.Views
         private string ZipCurrentProject()
         {
             Helper.SentryLog("Zipping project", Helper.SentryLogCategory.NewVersion);
-            if (File.Exists($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip"))
-                File.Delete($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip");
-            ZipArchive zip = ZipFile.Open($"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip", ZipArchiveMode.Update);
+            if (File.Exists($"{_currentPath}\\{_item.Name}.zip"))
+                File.Delete($"{_currentPath}\\{_item.Name}.zip");
+            ZipArchive zip = ZipFile.Open($"{_currentPath}\\{_item.Name}.zip", ZipArchiveMode.Update);
 
             if (_isMod)
             {
@@ -356,12 +334,11 @@ namespace VTOLVR_ModLoader.Views
                     zip.CreateEntryFromFile(files[i].FullName, files[i].Name);
                 }
 
-                if (_currentJson[ProjectManager.jDeps] != null)
+                if (_item.Dependencies != null)
                 {
-                    JArray array = _currentJson[ProjectManager.jDeps] as JArray;
-                    for (int i = 0; i < array.Count; i++)
+                    for (int i = 0; i < _item.Dependencies.Count; i++)
                     {
-                        zip.CreateEntryFromFile(_currentPath + @"\Dependencies\" + array[i].ToString(), @"Dependencies\" + array[i].ToString()); ;
+                        zip.CreateEntryFromFile(_currentPath + @"\Dependencies\" + _item.Dependencies[i], @"Dependencies\" + _item.Dependencies[i]);
                     }
                 }
             }
@@ -377,21 +354,12 @@ namespace VTOLVR_ModLoader.Views
                 zip.CreateEntryFromFile($"{_currentPath}\\info.json", "info.json");
             }
             zip.Dispose();
-            return $"{_currentPath}\\{_currentJson[ProjectManager.jName]}.zip";
+            return $"{_currentPath}\\{_item.Name}.zip";
         }
         private void SaveProject()
         {
             Helper.SentryLog("Saving Project", Helper.SentryLogCategory.NewVersion);
-            try
-            {
-                File.WriteAllText(_currentPath + (_isMod ? @"\Builds\info.json" : @"\info.json"), _currentJson.ToString());
-            }
-            catch (Exception e)
-            {
-                Notification.Show($"Failed to save project\n{e.Message}", "Error");
-                Console.Log($"Failed to save project\n{e}");
-                return;
-            }
+            _item.SaveFile();
             Console.Log("Saved Project!");
         }
         private void TextChanged(object sender, TextChangedEventArgs e)

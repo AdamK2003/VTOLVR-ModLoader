@@ -45,5 +45,22 @@ namespace VTOLVR_ModLoader.Classes
 
         [JsonIgnore]
         public DirectoryInfo Directory { get; set; }
+        public bool HasPublicID()
+        {
+            return PublicID != string.Empty;
+        }
+        public bool HasDll()
+        {
+            return DllPath != string.Empty;
+        }
+        public void SaveFile()
+        {
+            using (TextWriter tw = new StreamWriter(Path.Combine(Directory.FullName, "info.json")))
+            {
+                var js = new JsonSerializer();
+                js.Formatting = Formatting.Indented;
+                js.Serialize(tw, this);
+            }
+        }
     }
 }

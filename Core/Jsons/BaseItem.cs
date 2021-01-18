@@ -10,7 +10,7 @@ using Valve.Newtonsoft.Json.Linq;
 namespace Core.Jsons
 {
     [JsonConverter(typeof(BaseItemConverter))]
-    class BaseItem
+    public class BaseItem
     {
         public const string JName = "name";
         public const string JDescription = "description";

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core
 {
-    static class Logger
+    public static class Logger
     {
         public enum LogType { Log, Warning, Error }
         public static Action<object, LogType> OnMessageLogged;

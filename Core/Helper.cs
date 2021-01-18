@@ -8,7 +8,7 @@ using Valve.Newtonsoft.Json.Linq;
 
 namespace Core
 {
-    static class Helper
+    public static class Helper
     {
         public static JObject JObjectTryParse(string content, out Exception exception)
         {

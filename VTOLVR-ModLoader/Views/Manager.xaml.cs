@@ -1,24 +1,24 @@
-﻿using Valve.Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.IO;
-using VTOLVR_ModLoader.Classes;
-using VTOLVR_ModLoader.Windows;
-using System.Net;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows.Media;
-using System.Collections.ObjectModel;
-using Valve.Newtonsoft.Json;
 using System.Windows.Threading;
-using VTOLVR_ModLoader.Classes.Json;
 using Core.Jsons;
+using Valve.Newtonsoft.Json;
+using Valve.Newtonsoft.Json.Linq;
+using VTOLVR_ModLoader.Classes;
+using VTOLVR_ModLoader.Classes.Json;
+using VTOLVR_ModLoader.Windows;
 
 namespace VTOLVR_ModLoader.Views
 {

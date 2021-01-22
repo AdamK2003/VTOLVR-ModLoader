@@ -59,6 +59,21 @@ namespace VTOLVR_ModLoader.Classes
             if (_client.DefaultRequestHeaders.Contains("Authorization"))
                 _client.DefaultRequestHeaders.Remove("Authorization");
         }
+        public static async void DownloadStringAsync(string url, Action<HttpResponseMessage, object[]> callback, string token = "", object[] extraData = null)
+        {
+            if (token == null || !token.Equals(""))
+            {
+                if (_client.DefaultRequestHeaders.Contains("Authorization"))
+                    _client.DefaultRequestHeaders.Remove("Authorization");
+                _client.DefaultRequestHeaders.Add("Authorization", "Token " + token);
+            }
+
+            if (callback != null)
+                callback.Invoke(await _client.GetAsync(url), extraData);
+
+            if (_client.DefaultRequestHeaders.Contains("Authorization"))
+                _client.DefaultRequestHeaders.Remove("Authorization");
+        }
         public static void DownloadFile(string url, string path, DownloadProgressChangedEventHandler downloadProgress, AsyncCompletedEventHandler downloadComplete)
         {
             WebClient client = new WebClient();

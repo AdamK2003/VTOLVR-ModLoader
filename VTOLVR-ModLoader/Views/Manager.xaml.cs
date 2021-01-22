@@ -94,7 +94,7 @@ namespace VTOLVR_ModLoader.Views
                 if (downloadedMods[i].PublicID != string.Empty)
                 {
                     items[i].PublicID = downloadedMods[i].PublicID;
-                    RequestMod(downloadedMods[i].PublicID);
+                    RequestItem(downloadedMods[i].PublicID, true);
                 }
             }
         }
@@ -118,21 +118,27 @@ namespace VTOLVR_ModLoader.Views
                     false,
                     false,
                     downloadSkins[i].Directory.FullName));
+
+                if (downloadSkins[i].PublicID != string.Empty)
+                {
+                    items[i].PublicID = downloadSkins[i].PublicID;
+                    RequestItem(downloadSkins[i].PublicID, false);
+                }
             }
 
         }
-        private void RequestMod(string publicID)
+        private void RequestItem(string publicID, bool isMod)
         {
             HttpHelper.DownloadStringAsync(
-                $"{Program.url}{Program.apiURL}{Program.modsURL}/{publicID}",
-                RequestModsCallback);
+                $"{Program.url}{Program.apiURL}{(isMod ? Program.modsURL : Program.skinsURL)}/{publicID}",
+                RequestItemCallback, extraData: new object[] { isMod });
         }
-        private async void RequestModsCallback(HttpResponseMessage response)
+        private async void RequestItemCallback(HttpResponseMessage response, object[] extraData)
         {
-            Helper.SentryLog("Request Mods Callback", Helper.SentryLogCategory.Manager);
+            Helper.SentryLog("Request Item Callback", Helper.SentryLogCategory.Manager);
             if (!response.IsSuccessStatusCode)
             {
-                Console.Log("Failed to received info on mod\nError Code from website:" + response.StatusCode.ToString());
+                Console.Log("Failed to received info on item\nError Code from website:" + response.StatusCode.ToString());
                 return;
             }
             string jsonText = await response.Content.ReadAsStringAsync();
@@ -142,6 +148,18 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log($"Failed to read json response from website ({exception.Message}). Raw response is:\n{jsonText}");
                 return;
             }
+
+            if ((bool)extraData[0] == true)
+            {
+                ReceivedModUpdateInfo(json);
+            }
+            else
+            {
+                ReceivedSkinUpdateInfo(json);
+            }
+        }
+        private void ReceivedModUpdateInfo(JObject json)
+        {
             string pub_id = json["pub_id"].ToString();
             for (int i = 0; i < _mods.Count; i++)
             {
@@ -173,6 +191,40 @@ namespace VTOLVR_ModLoader.Views
                 }
             }
         }
+        private void ReceivedSkinUpdateInfo(JObject json)
+        {
+            string pub_id = json["pub_id"].ToString();
+            for (int i = 0; i < _skins.Count; i++)
+            {
+                if (!string.IsNullOrEmpty(_skins[i].PublicID) &&
+                    _skins[i].PublicID.Equals(pub_id))
+                {
+                    Console.Log($"Checking {_skins[i].Name}");
+                    _skins[i].SetWebsiteVersion(json["version"].ToString());
+                    if (_skins[i].UpdateVisibility == Visibility.Visible)
+                    {
+                        _skins[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(241, 241, 39));
+                        _skins[i].Font = BoldFont;
+
+                        _skins[i].PopertyChanged("Font");
+                        _skins[i].PopertyChanged("CurrentVersionColour");
+
+                        if (_skins[i].AutoUpdateCheck)
+                        {
+                            Console.Log($"Auto Updating {_skins[i].Name}");
+                            MainWindow.SetPlayButton(true);
+                            string fileName = GetFileName(json["user_uploaded_file"].ToString());
+                            HttpHelper.DownloadFile(
+                                json["user_uploaded_file"].ToString(),
+                                $"{Program.root}{Program.modsFolder}\\{fileName}",
+                                ModDownloadProgress, ModDownloadComplete, new object[] { _skins[i].PublicID, _skins[i].Name });
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+
         //User has pressed the update button for one of their mods
         private void UpdateMod(object sender, RoutedEventArgs e)
         {

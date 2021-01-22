@@ -121,14 +121,12 @@ namespace VTOLVR_ModLoader.Views
             }
 
         }
-
         private void RequestMod(string publicID)
         {
             HttpHelper.DownloadStringAsync(
                 $"{Program.url}{Program.apiURL}{Program.modsURL}/{publicID}",
                 RequestModsCallback);
         }
-
         private async void RequestModsCallback(HttpResponseMessage response)
         {
             Helper.SentryLog("Request Mods Callback", Helper.SentryLogCategory.Manager);
@@ -175,7 +173,6 @@ namespace VTOLVR_ModLoader.Views
                 }
             }
         }
-
         //User has pressed the update button for one of their mods
         private void UpdateMod(object sender, RoutedEventArgs e)
         {
@@ -220,7 +217,6 @@ namespace VTOLVR_ModLoader.Views
             Console.Log($"user_uploaded_file = {json["user_uploaded_file"]} | {"pub_id"} = {json["pub_id"]} | Raw : {json}");
             Notification.Show("There seems to be no file for this mod on the website. Please contact vtolvr-mods.com staff saying which mod it is.", "Strange Error");
         }
-
         private void ModDownloadProgress(CustomWebClient.RequestData requestData)
         {
             string name = requestData.ExtraData[1] as string;
@@ -264,7 +260,6 @@ namespace VTOLVR_ModLoader.Views
                 //    File.Delete(Path.Combine(Program.root, currentDownloadFile));
             }
         }
-
         private void ExtractedMod(string zipPath, string extractedPath, string result, object[] extraData)
         {
             Helper.SentryLog($"Finished Extracting Mod Update", Helper.SentryLogCategory.Manager);
@@ -295,7 +290,6 @@ namespace VTOLVR_ModLoader.Views
                 break;
             }
         }
-
         private void DeleteMod(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
@@ -331,7 +325,6 @@ namespace VTOLVR_ModLoader.Views
                 }
             }
         }
-
         [JsonObject(MemberSerialization.OptIn)]
         public class Item : INotifyPropertyChanged
         {
@@ -401,7 +394,6 @@ namespace VTOLVR_ModLoader.Views
                 PropertyChanged(this, new PropertyChangedEventArgs("UpdateVisibility"));
             }
         }
-
         /// <summary>
         /// Gets a file name from the end of the URL
         /// </summary>
@@ -412,7 +404,6 @@ namespace VTOLVR_ModLoader.Views
             string[] split = url.Split('/');
             return split[split.Length - 1];
         }
-
         private void WindowSizeChanged(object sender, SizeChangedEventArgs e)
         {
             RefreshColumns();
@@ -444,17 +435,14 @@ namespace VTOLVR_ModLoader.Views
                 description.Width = descriptionNewWidth > 10 ? descriptionNewWidth : 10;
             }
         }
-
         private void LoadOnStartChanged(object sender, RoutedEventArgs e)
         {
             SaveValues();
         }
-
         private void AutoUpdateChanged(object sender, RoutedEventArgs e)
         {
             SaveValues();
         }
-
         private bool GetItem(bool isMod, string folderDir, out int position)
         {
             if (isMod)
@@ -482,7 +470,6 @@ namespace VTOLVR_ModLoader.Views
             position = -1;
             return false;
         }
-
         private void SaveValues()
         {
             UserSettings.Settings.Mods = _mods;

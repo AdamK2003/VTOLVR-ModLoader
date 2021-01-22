@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using Valve.Newtonsoft.Json;
 namespace VTOLVR_ModLoader.Classes
 {
     [JsonObject(MemberSerialization.OptIn)]

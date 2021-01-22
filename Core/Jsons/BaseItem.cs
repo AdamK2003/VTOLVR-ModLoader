@@ -1,6 +1,7 @@
 ﻿// This is the current json format as of 4.0.0
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,5 +44,23 @@ namespace Core.Jsons
         [JsonProperty(JWebPreviewImage)] public string WebPreviewImage { get; set; } = string.Empty;
         [JsonProperty(JDependencies)] public List<string> Dependencies { get; set; }
         [JsonProperty(JModDependencies)] public List<BaseItem> ModDependencies { get; set; }
+        [JsonIgnore] public DirectoryInfo Directory { get; set; }
+        public bool HasPublicID()
+        {
+            return PublicID != string.Empty;
+        }
+        public bool HasDll()
+        {
+            return DllPath != string.Empty;
+        }
+        public void SaveFile()
+        {
+            using (TextWriter tw = new StreamWriter(Path.Combine(Directory.FullName, "info.json")))
+            {
+                var js = new JsonSerializer();
+                js.Formatting = Formatting.Indented;
+                js.Serialize(tw, this);
+            }
+        }
     }
 }

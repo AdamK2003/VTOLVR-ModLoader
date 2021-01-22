@@ -10,14 +10,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Valve.Newtonsoft.Json;
+using Valve.Newtonsoft.Json.Linq;
 using Sentry;
 using Sentry.Protocol;
 using VTOLVR_ModLoader.Views;
 using VTOLVR_ModLoader.Windows;
 using Console = VTOLVR_ModLoader.Views.Console;
 using Settings = VTOLVR_ModLoader.Views.Settings;
+using Core.Jsons;
 
 namespace VTOLVR_ModLoader.Classes
 {
@@ -146,6 +147,7 @@ namespace VTOLVR_ModLoader.Classes
                     Console.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
                     continue;
                 }
+                Console.Log($"On {pathToCheck}");
                 lastMod = JsonConvert.DeserializeObject<BaseItem>(File.ReadAllText(pathToCheck));
                 lastMod.Directory = mods[i];
                 foundMods.Add(lastMod);

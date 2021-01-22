@@ -14,7 +14,7 @@ using VTOLVR_ModLoader.Windows;
 
 namespace VTOLVR_ModLoader.Classes
 {
-    class HttpHelper
+    public class HttpHelper
     {
         public enum HttpMethod { GET, HEAD, PUT, POST, OPTIONS }
         private static readonly HttpClient _client = new HttpClient();

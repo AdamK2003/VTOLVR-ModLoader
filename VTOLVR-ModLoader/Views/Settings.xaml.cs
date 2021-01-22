@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Valve.Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +14,7 @@ using System.Net.Http;
 using System.Security.Principal;
 using Microsoft.Win32;
 using VTOLVR_ModLoader.Classes.Json;
-using Newtonsoft.Json;
+using Valve.Newtonsoft.Json;
 using System.Windows.Media;
 
 namespace VTOLVR_ModLoader.Views

@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Valve.Newtonsoft.Json;
+using Valve.Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,6 +23,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Windows;
+using Core.Jsons;
 
 namespace VTOLVR_ModLoader.Views
 {

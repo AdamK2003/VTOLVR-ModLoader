@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 namespace VTOLVR_ModLoader.Classes
 {
-    class CustomWebClient : WebClient
+    public class CustomWebClient : WebClient
     {
         public class RequestData
         {

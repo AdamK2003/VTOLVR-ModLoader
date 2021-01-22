@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Valve.Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,6 +22,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Windows;
+using Core.Jsons;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -141,7 +142,7 @@ namespace VTOLVR_ModLoader.Views
 
             _item.SaveFile();
 
-            if (_item.HasPublicID())
+            if (_item.HasPublicID() && !Program.disableInternet)
             {
                 if (string.IsNullOrWhiteSpace(_item.WebPreviewImage))
                 {

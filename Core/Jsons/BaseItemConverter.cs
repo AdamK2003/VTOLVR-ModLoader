@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
+using Valve.Newtonsoft.Json.Serialization;
 
 namespace Core.Jsons
 {
-    class BaseItemConverter : JsonConverter
+    public class BaseItemConverter : JsonConverter
     {
         private readonly Dictionary<string, string> _propertyMappings = new Dictionary<string, string>
         {
@@ -39,11 +41,8 @@ namespace Core.Jsons
             { "Unlisted", BaseItem.JUnlisted }
 
         };
+
         public override bool CanConvert(Type objectType)
-        {
-            return objectType.GetTypeInfo().IsClass;
-        }
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             throw new NotImplementedException();
         }
@@ -56,16 +55,63 @@ namespace Core.Jsons
             JObject jo = JObject.Load(reader);
             foreach (JProperty jp in jo.Properties())
             {
-                if (!_propertyMappings.TryGetValue(jp.Name, out var name))
+                if (!_propertyMappings.TryGetValue(jp.Name, out string name))
+                {
                     name = jp.Name;
+                }
 
-                PropertyInfo prop = props.FirstOrDefault(pi =>
-                    pi.CanWrite && pi.GetCustomAttribute<JsonPropertyAttribute>().PropertyName == name);
-
-                prop?.SetValue(instance, jp.Value.ToObject(prop.PropertyType, serializer));
+                for (int i = 0; i < props.Count; i++)
+                {
+                    if (!props[i].CanWrite)
+                        continue;
+                    var hasAttribute = props[i].GetCustomAttribute<JsonPropertyAttribute>();
+                    if (hasAttribute != null &&
+                        hasAttribute.PropertyName == name)
+                    {
+                        hasAttribute.PropertyName = name;
+                        Logger.Log($"On {name} [{i}]");
+                        props[i].SetValue(instance, jp.Value.ToObject(props[i].PropertyType, serializer));
+                        break;
+                    }
+                }
             }
 
             return instance;
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            JsonObjectContract contract = (JsonObjectContract)serializer.ContractResolver.ResolveContract(value.GetType());
+
+            writer.WriteStartObject();
+            foreach (var property in contract.Properties)
+            {
+                if (property.PropertyType == typeof(DirectoryInfo))
+                    continue;
+
+                writer.WritePropertyName(property.PropertyName);
+
+                if (property.PropertyType == typeof(List<string>))
+                {
+                    List<string> list = property.ValueProvider.GetValue(value) as List<string>;
+                    if (list == null)
+                    {
+                        writer.WriteNull();
+                        continue;
+                    }
+
+                    writer.WriteStartArray();
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        writer.WriteValue(list[i]);
+                    }
+                    writer.WriteEndArray();
+                    continue;
+                }
+
+                writer.WriteValue(property.ValueProvider.GetValue(value));
+            }
+            writer.WriteEndObject();
         }
     }
 }

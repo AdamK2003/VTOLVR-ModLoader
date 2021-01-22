@@ -64,6 +64,7 @@ namespace VTOLVR_ModLoader
             if (!CheckFolder())
                 return false;
             ClearOldFiles();
+            AttachCoreLogger();
             return true;
         }
         /// <summary>
@@ -233,14 +234,23 @@ namespace VTOLVR_ModLoader
             if (File.Exists(Path.Combine(Program.root, "WpfAnimatedGif.dll")))
                 Helper.TryDelete(Path.Combine(Program.root, "WpfAnimatedGif.dll"));
 
-            if (File.Exists(Path.Combine(Program.root, "Valve.Newtonsoft.Json.dll")))
-                Helper.TryDelete(Path.Combine(Program.root, "Valve.Newtonsoft.Json.dll"));
+            if (File.Exists(Path.Combine(Program.root, "Valve.Valve.Newtonsoft.Json.dll")))
+                Helper.TryDelete(Path.Combine(Program.root, "Valve.Valve.Newtonsoft.Json.dll"));
 
             if (File.Exists(Path.Combine(Program.root, "SimpleTCP.dll")))
                 Helper.TryDelete(Path.Combine(Program.root, "SimpleTCP.dll"));
 
             if (File.Exists(Path.Combine(Program.root, "Gameloop.Vdf.dll")))
                 Helper.TryDelete(Path.Combine(Program.root, "Gameloop.Vdf.dll"));
+        }
+        private static void AttachCoreLogger()
+        {
+            Core.Logger.OnMessageLogged += CoreLogger;
+        }
+
+        private static void CoreLogger(object arg1, Core.Logger.LogType arg2)
+        {
+            Views.Console.Log($"(Core: {arg2}) {arg1}");
         }
     }
 }

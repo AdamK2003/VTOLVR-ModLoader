@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Valve.Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +15,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
-using Newtonsoft.Json;
+using Valve.Newtonsoft.Json;
 using System.Windows.Threading;
 using VTOLVR_ModLoader.Classes.Json;
+using Core.Jsons;
 
 namespace VTOLVR_ModLoader.Views
 {

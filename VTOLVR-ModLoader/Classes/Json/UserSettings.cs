@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using Valve.Newtonsoft.Json;
 using VTOLVR_ModLoader.Views;
 using Console = VTOLVR_ModLoader.Views.Console;
 

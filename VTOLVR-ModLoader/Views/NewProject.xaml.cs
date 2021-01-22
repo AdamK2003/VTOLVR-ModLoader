@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -21,6 +20,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Windows;
+using Core.Jsons;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -249,13 +249,15 @@ namespace VTOLVR_ModLoader.Views
         private void CreateJson(bool isMod = true)
         {
             Helper.SentryLog("Creating Json", Helper.SentryLogCategory.NewProject);
-            JObject jObject = new JObject();
-            jObject.Add(ProjectManager.jName, nameBox.Text);
-            jObject.Add(ProjectManager.jDescription, descriptionBox.Text);
+            BaseItem item = new BaseItem();
+            item.Name = nameBox.Text;
+            item.Description = descriptionBox.Text;
             if (isMod)
-                jObject.Add(ProjectManager.jDll, nameBox.Text.RemoveSpaces() + ".dll");
-            jObject.Add("last edit", DateTime.Now.Ticks);
-            File.WriteAllText(currentFolder.FullName + (isMod ? @"\Builds\" : @"\") + @"info.json", jObject.ToString());
+                item.DllPath = nameBox.Text.RemoveSpaces() + ".dll";
+            item.LastEdit = DateTime.Now.Ticks;
+
+            item.Directory = new DirectoryInfo(currentFolder.FullName + (isMod ? @"\Builds\" : @"\"));
+            item.SaveFile();
         }
 
         private void CreateSkinProject(string name)

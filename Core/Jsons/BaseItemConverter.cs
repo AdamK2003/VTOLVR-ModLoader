@@ -69,7 +69,6 @@ namespace Core.Jsons
                         hasAttribute.PropertyName == name)
                     {
                         hasAttribute.PropertyName = name;
-                        Logger.Log($"On {name} [{i}]");
                         props[i].SetValue(instance, jp.Value.ToObject(props[i].PropertyType, serializer));
                         break;
                     }

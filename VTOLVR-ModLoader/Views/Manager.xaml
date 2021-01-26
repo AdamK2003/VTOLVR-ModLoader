@@ -8,24 +8,21 @@
              d:DesignHeight="450" d:DesignWidth="800" SizeChanged="WindowSizeChanged">
     <Grid x:Name="_grid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="5"/>
-            <RowDefinition Height="50"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="1" Foreground="White" FontSize="30" Content="Manager"/>
-        <TextBlock Grid.Row="2" Foreground="White" Background="#FF2E2E2E" FontSize="20" 
+        <TextBlock Grid.Row="0" Foreground="White" Background="#FF2E2E2E" FontSize="20" 
                    Text="Mods" Style="{StaticResource BoldText}" x:Name="_titleText"/>
 
-        <Label Grid.Row="3" Foreground="White" FontSize="15" Content="" x:Name="_noItemsText"/>
+        <Label Grid.Row="1" Foreground="White" FontSize="15" Content="" x:Name="_noItemsText"/>
         <ListView
-            Grid.Row="3"
+            Grid.Row="2"
             x:Name="_listView" 
             Background="{x:Null}" 
             SelectionMode="Single">
             <ListView.View>
-                <GridView AllowsColumnReorder="False">
+                <GridView AllowsColumnReorder="False" x:Name="_gridView">
                     <GridView.Columns>
                         <GridViewColumn Width="200">
                             <GridViewColumn.CellTemplate>

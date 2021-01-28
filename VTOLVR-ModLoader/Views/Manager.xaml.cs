@@ -620,26 +620,12 @@ namespace VTOLVR_ModLoader.Views
         }
         private void SaveValues()
         {
-            UserSettings.Settings.Mods = _items;
-            UserSettings.Settings.Skins = _items;
+            UserSettings.Settings.Items = _items;
             UserSettings.SaveSettings(Program.root + Settings.SavePath);
         }
         private void LoadValues()
         {
-            ObservableCollection<Item> savedValues = UserSettings.Settings.Mods;
-            for (int i = 0; i < _items.Count; i++)
-            {
-                for (int j = 0; j < savedValues.Count; j++)
-                {
-                    if (_items[i].FolderDirectory == savedValues[j].FolderDirectory)
-                    {
-                        _items[i].LoadValue(savedValues[j]);
-                        break;
-                    }
-                }
-            }
-
-            savedValues = UserSettings.Settings.Skins;
+            ObservableCollection<Item> savedValues = UserSettings.Settings.Items;
             for (int i = 0; i < _items.Count; i++)
             {
                 for (int j = 0; j < savedValues.Count; j++)

@@ -28,9 +28,7 @@ namespace VTOLVR_ModLoader.Classes.Json
         public int ActiveBranch = 0;
 
         [JsonProperty]
-        public ObservableCollection<Manager.Item> Mods = new ObservableCollection<Manager.Item>();
-        [JsonProperty]
-        public ObservableCollection<Manager.Item> Skins = new ObservableCollection<Manager.Item>();
+        public ObservableCollection<Manager.Item> Items = new ObservableCollection<Manager.Item>();
 
         private static UserSettings _settings;
         public static UserSettings Settings

@@ -13,7 +13,7 @@ using System.Collections;
 using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
 using ModLoader.Classes.Json;
-
+using Core;
 namespace ModLoader
 {
     class ModReader : MonoBehaviour
@@ -43,12 +43,18 @@ namespace ModLoader
                     Debug.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
                     continue;
                 }
-                if (TryGetBaseItem(pathToCheck, out BaseItem item))
+
+                Core.Jsons.BaseItem item = Core.Jsons.BaseItem.GetItem(
+                    File.ReadAllText(Path.Combine(pathToCheck, "info.json")));
+
+                if (item != null)
                 {
-                    lastMod = item;
+                    lastMod = BaseItem.ToBaseItem(item);
+                    lastMod.Directory = new DirectoryInfo(pathToCheck);
                     lastMod.IsDevFolder = isDevFolder;
                     lastMod.CreateMod();
                     foundMods.Add(lastMod);
+                    Debug.Log("[Mod Reader] Added " + item.Name);
                 }
             }
 
@@ -88,21 +94,6 @@ namespace ModLoader
             currentMods = currentModsDictionary.Values.ToList();
 
             return newMods;
-        }
-        private static bool TryGetBaseItem(string folder, out BaseItem item)
-        {
-            try
-            {
-                item = JsonConvert.DeserializeObject<BaseItem>(File.ReadAllText(Path.Combine(folder, "info.json")));
-                item.Directory = new DirectoryInfo(folder);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("[Mod Reader] Failed to read base item. Exception:\n" + e);
-                item = null;
-                return false;
-            }
-            return true;
         }
     }
 }

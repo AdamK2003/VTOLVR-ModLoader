@@ -62,5 +62,15 @@ namespace Core.Jsons
                 js.Serialize(tw, this);
             }
         }
+        public static BaseItem GetItem(string json)
+        {
+            BaseItem item = Helper.DeserializeObject<BaseItem>(json, out Exception error);
+            if (error == null)
+            {
+                return item;
+            }
+            Logger.Error("Failed to get base item.\nError:" + error);
+            return null;
+        }
     }
 }

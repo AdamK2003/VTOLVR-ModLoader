@@ -8,13 +8,13 @@
              d:DesignHeight="450" d:DesignWidth="800" SizeChanged="WindowSizeChanged">
     <Grid x:Name="_grid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="1" Foreground="White" FontSize="15" Content="" x:Name="_noItemsText"/>
         <ListView
-            Grid.Row="2"
+            Grid.Row="0"
             x:Name="_listView" 
             Background="{x:Null}" 
             SelectionMode="Single">
@@ -180,5 +180,12 @@
                 </GroupStyle>
             </ListView.GroupStyle>
         </ListView>
+
+
+        <Label Grid.Row="1" Foreground="White" FontSize="15" 
+               Content="You can download mods and skins from the modding website" 
+               HorizontalAlignment="Center"/>
+        <Button Grid.Row="2" Style="{StaticResource darkButton}" Content="Open https://vtolvr-mods.com/"
+                Click="OpenSite" x:Name="_openSiteButton"/>
     </Grid>
 </UserControl>

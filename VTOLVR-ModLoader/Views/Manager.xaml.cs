@@ -46,6 +46,7 @@ namespace VTOLVR_ModLoader.Views
             BoldFont = new FontFamily(
                 new Uri("pack://application:,,,/VTOLVR-ModLoader;component/Resources/"),
                 "./#Montserrat ExtraBold");
+            _openSiteButton.Content = "Open " + Program.url;
         }
         private void UILoaded(object sender, RoutedEventArgs e)
         {
@@ -86,21 +87,36 @@ namespace VTOLVR_ModLoader.Views
 
             LoadValues();
 
-            _modsWatcher = new FileSystemWatcher(Program.root + Program.modsFolder);
-            _skinsWatcher = new FileSystemWatcher(Program.root + Program.skinsFolder);
+            if (_modsWatcher == null &&
+                _skinsWatcher == null)
+            {
+                _modsWatcher = new FileSystemWatcher(Program.root + Program.modsFolder);
+                _skinsWatcher = new FileSystemWatcher(Program.root + Program.skinsFolder);
 
-            _modsWatcher.Changed += OnChanged;
-            _modsWatcher.Created += OnChanged;
-            _modsWatcher.Deleted += OnChanged;
-            _modsWatcher.Renamed += OnRename;
+                _modsWatcher.Changed += OnChanged;
+                _modsWatcher.Created += OnChanged;
+                _modsWatcher.Deleted += OnChanged;
+                _modsWatcher.Renamed += OnRename;
 
-            _skinsWatcher.Changed += OnChanged;
-            _skinsWatcher.Created += OnChanged;
-            _skinsWatcher.Deleted += OnChanged;
-            _skinsWatcher.Renamed += OnRename;
+                _skinsWatcher.Changed += OnChanged;
+                _skinsWatcher.Created += OnChanged;
+                _skinsWatcher.Deleted += OnChanged;
+                _skinsWatcher.Renamed += OnRename;
 
-            _modsWatcher.EnableRaisingEvents = true;
-            _skinsWatcher.EnableRaisingEvents = true;
+                _modsWatcher.EnableRaisingEvents = true;
+                _skinsWatcher.EnableRaisingEvents = true;
+            }
+
+            if (_items.Count == 0)
+            {
+                _listView.Visibility = Visibility.Hidden;
+                _grid.RowDefinitions[0].Height = new GridLength(0);
+            }
+            else
+            {
+                _listView.Visibility = Visibility.Visible;
+                _grid.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
+            }
         }
 
         private void OnRename(object sender, RenamedEventArgs e)
@@ -121,7 +137,6 @@ namespace VTOLVR_ModLoader.Views
                 PopulateList();
             });
         }
-
         private void ScrollToMods()
         {
             if (_scrollViewer == null)
@@ -149,8 +164,6 @@ namespace VTOLVR_ModLoader.Views
                 items = new ObservableCollection<Item>();
 
             List<BaseItem> downloadedMods = Helper.FindDownloadMods();
-            if (downloadedMods.Count > 0)
-                _noItemsText.Visibility = Visibility.Hidden;
 
             Item lastItem;
             for (int i = 0; i < downloadedMods.Count; i++)
@@ -181,8 +194,6 @@ namespace VTOLVR_ModLoader.Views
                 items = new ObservableCollection<Item>();
 
             List<BaseItem> downloadSkins = Helper.FindDownloadedSkins();
-            if (downloadSkins.Count > 0)
-                _noItemsText.Visibility = Visibility.Hidden;
 
             Item lastItem;
             for (int i = 0; i < downloadSkins.Count; i++)
@@ -640,6 +651,10 @@ namespace VTOLVR_ModLoader.Views
                     }
                 }
             }
+        }
+        private void OpenSite(object sender, RoutedEventArgs e)
+        {
+            Process.Start(Program.url);
         }
     }
 }

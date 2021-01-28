@@ -36,7 +36,7 @@ namespace ModLoader
             CampaignsScenarios campaigns = new CampaignsScenarios(VTResources.GetBuiltInCampaigns());
             Debug.Log("Finished collecting camps");
             gameData.Add(new JProperty("Campaigns", JArray.FromObject(campaigns.Campaigns)));
-            Debug.Log("Addded it");
+            Debug.Log("Added it");
         }
 
         private static void FindMaterials()

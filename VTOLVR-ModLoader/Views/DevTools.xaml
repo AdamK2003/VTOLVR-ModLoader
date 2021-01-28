@@ -28,8 +28,6 @@
                    VerticalAlignment="Center" TextAlignment="Center"
                    Foreground="Yellow" FontSize="30" TextWrapping="Wrap">
                 Warning, this page is for mod creators. If you don't know what you're doing here, please head back.
-                <LineBreak/><LineBreak/>
-                You'll be able to load mods in game.
             </TextBlock>
             <Button Grid.Row="2" Content="Take me back!" Click="TakeBack"
                     Style="{StaticResource darkButton}" FontSize="30"

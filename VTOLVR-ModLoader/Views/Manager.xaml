@@ -24,7 +24,7 @@
             <ListView.View>
                 <GridView AllowsColumnReorder="False" x:Name="_gridView">
                     <GridView.Columns>
-                        <GridViewColumn Width="200">
+                        <GridViewColumn Width="Auto">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock 
@@ -169,6 +169,17 @@
                     </Style.Triggers>
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock FontSize="25" Text="{Binding Name}"
+                                       Foreground="White" 
+                                       FontFamily="/VTOLVR-ModLoader;component/Resources/#Montserrat ExtraBold"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
         </ListView>
     </Grid>
 </UserControl>

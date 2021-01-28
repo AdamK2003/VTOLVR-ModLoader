@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Core.Jsons;
@@ -29,10 +30,10 @@ namespace VTOLVR_ModLoader.Views
     {
         public static FontFamily DefaultFont;
         public static FontFamily BoldFont;
-        private ObservableCollection<Item> _mods = new ObservableCollection<Item>();
-        private ObservableCollection<Item> _skins = new ObservableCollection<Item>();
+        private ObservableCollection<Item> _items = new ObservableCollection<Item>();
         public Manager()
         {
+            Loaded += UILoaded;
             InitializeComponent();
             Helper.SentryLog("Created Manager", Helper.SentryLogCategory.Manager);
 
@@ -43,31 +44,56 @@ namespace VTOLVR_ModLoader.Views
                 new Uri("pack://application:,,,/VTOLVR-ModLoader;component/Resources/"),
                 "./#Montserrat ExtraBold");
         }
+        private void UILoaded(object sender, RoutedEventArgs e)
+        {
+            RefreshColumns();
+        }
         public void UpdateUI(bool isMods)
         {
             this.DataContext = this;
             Helper.SentryLog("Updating UI", Helper.SentryLogCategory.Manager);
             Console.Log("Updating UI for Manager");
+
+            if (_items.Count == 0)
+                PopulateList();
+
             if (isMods)
-            {
-                _mods = new ObservableCollection<Item>();
-                _listView.ItemsSource = _mods;
-                FindMods(ref _mods);
-                _titleText.Text = "Mods";
-                _noItemsText.Content = "No Mods Downloaded";
-            }
+                ScrollToMods();
             else
-            {
-                _skins = new ObservableCollection<Item>();
-                _listView.ItemsSource = _skins;
-                FindSkins(ref _skins);
-                _titleText.Text = "Skins";
-                _noItemsText.Content = "No Skins Downloaded";
-            }
+                ScrollToSkins();
+        }
+        private void PopulateList()
+        {
+            Helper.SentryLog("Populating List", Helper.SentryLogCategory.Manager);
+            Console.Log("Populating List");
+            FindMods(ref _items);
+            FindSkins(ref _items);
+            _listView.ItemsSource = _items;
 
-            RefreshColumns();
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(_listView.ItemsSource);
+            view.GroupDescriptions.Add(new PropertyGroupDescription("ItemType"));
+
             LoadValues();
-
+        }
+        private void ScrollToMods()
+        {
+            if (_items.Count == 0)
+                return;
+            _listView.ScrollIntoView(_items[0]);
+        }
+        private void ScrollToSkins()
+        {
+            for (int i = 0; i < _items.Count; i++)
+            {
+                if (_items[i].ItemType == Item.ContentType.Skins)
+                {
+                    _listView.ScrollIntoView(_items[_items.Count - 1]);
+                    Dispatcher.Invoke(new Action(() => { _listView.ScrollIntoView(_items[i]); }),
+                        DispatcherPriority.ContextIdle,
+                        null);
+                    return;
+                }
+            }
         }
         private void FindMods(ref ObservableCollection<Item> items)
         {
@@ -82,6 +108,7 @@ namespace VTOLVR_ModLoader.Views
             for (int i = 0; i < downloadedMods.Count; i++)
             {
                 items.Add(new Item(
+                    Item.ContentType.Mods,
                     downloadedMods[i].Name,
                     downloadedMods[i].Description,
                     Visibility.Hidden,
@@ -110,6 +137,7 @@ namespace VTOLVR_ModLoader.Views
             for (int i = 0; i < downloadSkins.Count; i++)
             {
                 items.Add(new Item(
+                    Item.ContentType.Skins,
                     downloadSkins[i].Name,
                     downloadSkins[i].Description,
                     Visibility.Hidden,
@@ -161,30 +189,30 @@ namespace VTOLVR_ModLoader.Views
         private void ReceivedModUpdateInfo(JObject json)
         {
             string pub_id = json["pub_id"].ToString();
-            for (int i = 0; i < _mods.Count; i++)
+            for (int i = 0; i < _items.Count; i++)
             {
-                if (!string.IsNullOrEmpty(_mods[i].PublicID) &&
-                    _mods[i].PublicID.Equals(pub_id))
+                if (!string.IsNullOrEmpty(_items[i].PublicID) &&
+                    _items[i].PublicID.Equals(pub_id))
                 {
-                    Console.Log($"Checking {_mods[i].Name}");
-                    _mods[i].SetWebsiteVersion(json["version"].ToString());
-                    if (_mods[i].UpdateVisibility == Visibility.Visible)
+                    Console.Log($"Checking {_items[i].Name}");
+                    _items[i].SetWebsiteVersion(json["version"].ToString());
+                    if (_items[i].UpdateVisibility == Visibility.Visible)
                     {
-                        _mods[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(241, 241, 39));
-                        _mods[i].Font = BoldFont;
+                        _items[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(241, 241, 39));
+                        _items[i].Font = BoldFont;
 
-                        _mods[i].PopertyChanged("Font");
-                        _mods[i].PopertyChanged("CurrentVersionColour");
+                        _items[i].PopertyChanged("Font");
+                        _items[i].PopertyChanged("CurrentVersionColour");
 
-                        if (_mods[i].AutoUpdateCheck)
+                        if (_items[i].AutoUpdateCheck)
                         {
-                            Console.Log($"Auto Updating {_mods[i].Name}");
+                            Console.Log($"Auto Updating {_items[i].Name}");
                             MainWindow.SetPlayButton(true);
                             string fileName = GetFileName(json["user_uploaded_file"].ToString());
                             HttpHelper.DownloadFile(
                                 json["user_uploaded_file"].ToString(),
                                 $"{Program.root}{Program.modsFolder}\\{fileName}",
-                                ModDownloadProgress, ModDownloadComplete, new object[] { _mods[i].PublicID, _mods[i].Name });
+                                ModDownloadProgress, ModDownloadComplete, new object[] { _items[i].PublicID, _items[i].Name });
                         }
                     }
                     return;
@@ -194,30 +222,30 @@ namespace VTOLVR_ModLoader.Views
         private void ReceivedSkinUpdateInfo(JObject json)
         {
             string pub_id = json["pub_id"].ToString();
-            for (int i = 0; i < _skins.Count; i++)
+            for (int i = 0; i < _items.Count; i++)
             {
-                if (!string.IsNullOrEmpty(_skins[i].PublicID) &&
-                    _skins[i].PublicID.Equals(pub_id))
+                if (!string.IsNullOrEmpty(_items[i].PublicID) &&
+                    _items[i].PublicID.Equals(pub_id))
                 {
-                    Console.Log($"Checking {_skins[i].Name}");
-                    _skins[i].SetWebsiteVersion(json["version"].ToString());
-                    if (_skins[i].UpdateVisibility == Visibility.Visible)
+                    Console.Log($"Checking {_items[i].Name}");
+                    _items[i].SetWebsiteVersion(json["version"].ToString());
+                    if (_items[i].UpdateVisibility == Visibility.Visible)
                     {
-                        _skins[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(241, 241, 39));
-                        _skins[i].Font = BoldFont;
+                        _items[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(241, 241, 39));
+                        _items[i].Font = BoldFont;
 
-                        _skins[i].PopertyChanged("Font");
-                        _skins[i].PopertyChanged("CurrentVersionColour");
+                        _items[i].PopertyChanged("Font");
+                        _items[i].PopertyChanged("CurrentVersionColour");
 
-                        if (_skins[i].AutoUpdateCheck)
+                        if (_items[i].AutoUpdateCheck)
                         {
-                            Console.Log($"Auto Updating {_skins[i].Name}");
+                            Console.Log($"Auto Updating {_items[i].Name}");
                             MainWindow.SetPlayButton(true);
                             string fileName = GetFileName(json["user_uploaded_file"].ToString());
                             HttpHelper.DownloadFile(
                                 json["user_uploaded_file"].ToString(),
                                 $"{Program.root}{Program.modsFolder}\\{fileName}",
-                                ModDownloadProgress, ModDownloadComplete, new object[] { _skins[i].PublicID, _skins[i].Name });
+                                ModDownloadProgress, ModDownloadComplete, new object[] { _items[i].PublicID, _items[i].Name });
                         }
                     }
                     return;
@@ -333,12 +361,12 @@ namespace VTOLVR_ModLoader.Views
         private void UpdateModUI(object[] data)
         {
             string publicID = data[0] as string;
-            for (int i = 0; i < _mods.Count; i++)
+            for (int i = 0; i < _items.Count; i++)
             {
-                if (_mods[i].PublicID != publicID)
+                if (_items[i].PublicID != publicID)
                     continue;
 
-                _mods[i].Updated();
+                _items[i].Updated();
                 break;
             }
         }
@@ -366,13 +394,13 @@ namespace VTOLVR_ModLoader.Views
                     return;
                 }
                 string folderDir = info[0].ToString();
-                for (int i = 0; i < _mods.Count; i++)
+                for (int i = 0; i < _items.Count; i++)
                 {
-                    if (_mods[i].FolderDirectory != folderDir)
+                    if (_items[i].FolderDirectory != folderDir)
                         continue;
 
-                    _mods.Remove(_mods[i]);
-                    _listView.ItemsSource = _mods.ToArray();
+                    _items.Remove(_items[i]);
+                    _listView.ItemsSource = _items.ToArray();
                     break;
                 }
             }
@@ -380,6 +408,8 @@ namespace VTOLVR_ModLoader.Views
         [JsonObject(MemberSerialization.OptIn)]
         public class Item : INotifyPropertyChanged
         {
+            public enum ContentType { Mods, Skins }
+            public ContentType ItemType { get; set; }
             public string Name { get; set; }
             public string Description { get; set; }
             public Visibility UpdateVisibility { get; set; }
@@ -395,8 +425,9 @@ namespace VTOLVR_ModLoader.Views
             public string PublicID { get; set; }
             public FontFamily Font { get; set; }
 
-            public Item(string name, string description, Visibility updateVisibility, string currentVersion, string websiteVersion, bool loadOnStartCheck, bool autoUpdateCheck, string folderDirectory)
+            public Item(ContentType contentType, string name, string description, Visibility updateVisibility, string currentVersion, string websiteVersion, bool loadOnStartCheck, bool autoUpdateCheck, string folderDirectory)
             {
+                ItemType = contentType;
                 Name = name;
                 Description = description;
                 UpdateVisibility = updateVisibility;
@@ -470,13 +501,10 @@ namespace VTOLVR_ModLoader.Views
                 foreach (var column in grid.Columns)
                 {
                     if (column.Header?.ToString() == "Description")
-                    {
                         description = column;
-                    }
                     else
-                    {
                         totalSize += column.ActualWidth;
-                    }
+
                     if (double.IsNaN(column.Width))
                     {
                         column.Width = column.ActualWidth;
@@ -484,7 +512,7 @@ namespace VTOLVR_ModLoader.Views
                     }
                 }
                 double descriptionNewWidth = _grid.ActualWidth - totalSize - 35;
-                description.Width = descriptionNewWidth > 10 ? descriptionNewWidth : 10;
+                description.Width = descriptionNewWidth > 0 ? descriptionNewWidth : 0;
             }
         }
         private void LoadOnStartChanged(object sender, RoutedEventArgs e)
@@ -499,9 +527,9 @@ namespace VTOLVR_ModLoader.Views
         {
             if (isMod)
             {
-                for (int i = 0; i < _mods.Count; i++)
+                for (int i = 0; i < _items.Count; i++)
                 {
-                    if (_mods[i].FolderDirectory == folderDir)
+                    if (_items[i].FolderDirectory == folderDir)
                     {
                         position = i;
                         return true;
@@ -511,9 +539,9 @@ namespace VTOLVR_ModLoader.Views
                 return false;
             }
 
-            for (int i = 0; i < _skins.Count; i++)
+            for (int i = 0; i < _items.Count; i++)
             {
-                if (_skins[i].FolderDirectory == folderDir)
+                if (_items[i].FolderDirectory == folderDir)
                 {
                     position = i;
                     return true;
@@ -524,37 +552,59 @@ namespace VTOLVR_ModLoader.Views
         }
         private void SaveValues()
         {
-            UserSettings.Settings.Mods = _mods;
-            UserSettings.Settings.Skins = _skins;
+            UserSettings.Settings.Mods = _items;
+            UserSettings.Settings.Skins = _items;
             UserSettings.SaveSettings(Program.root + Settings.SavePath);
         }
         private void LoadValues()
         {
             ObservableCollection<Item> savedValues = UserSettings.Settings.Mods;
-            for (int i = 0; i < _mods.Count; i++)
+            for (int i = 0; i < _items.Count; i++)
             {
                 for (int j = 0; j < savedValues.Count; j++)
                 {
-                    if (_mods[i].FolderDirectory == savedValues[j].FolderDirectory)
+                    if (_items[i].FolderDirectory == savedValues[j].FolderDirectory)
                     {
-                        _mods[i].LoadValue(savedValues[j]);
+                        _items[i].LoadValue(savedValues[j]);
                         break;
                     }
                 }
             }
 
             savedValues = UserSettings.Settings.Skins;
-            for (int i = 0; i < _skins.Count; i++)
+            for (int i = 0; i < _items.Count; i++)
             {
                 for (int j = 0; j < savedValues.Count; j++)
                 {
-                    if (_skins[i].FolderDirectory == savedValues[j].FolderDirectory)
+                    if (_items[i].FolderDirectory == savedValues[j].FolderDirectory)
                     {
-                        _skins[i].LoadValue(savedValues[j]);
+                        _items[i].LoadValue(savedValues[j]);
                         break;
                     }
                 }
             }
+        }
+        public static DependencyObject GetScrollViewer(DependencyObject o)
+        {
+            if (o is ScrollViewer)
+            { return o; }
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(o); i++)
+            {
+                var child = VisualTreeHelper.GetChild(o, i);
+
+                var result = GetScrollViewer(child);
+                if (result == null)
+                {
+                    continue;
+                }
+                else
+                {
+                    return result;
+                }
+            }
+
+            return null;
         }
     }
 }

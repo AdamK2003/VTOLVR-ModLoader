@@ -31,6 +31,8 @@ namespace VTOLVR_ModLoader.Views
         public static FontFamily DefaultFont;
         public static FontFamily BoldFont;
         private ObservableCollection<Item> _items = new ObservableCollection<Item>();
+        private FileSystemWatcher _modsWatcher;
+        private FileSystemWatcher _skinsWatcher;
         public Manager()
         {
             Loaded += UILoaded;
@@ -66,6 +68,8 @@ namespace VTOLVR_ModLoader.Views
         {
             Helper.SentryLog("Populating List", Helper.SentryLogCategory.Manager);
             Console.Log("Populating List");
+
+            _items = new ObservableCollection<Item>();
             FindMods(ref _items);
             FindSkins(ref _items);
             _listView.ItemsSource = _items;
@@ -74,7 +78,43 @@ namespace VTOLVR_ModLoader.Views
             view.GroupDescriptions.Add(new PropertyGroupDescription("ItemType"));
 
             LoadValues();
+
+            _modsWatcher = new FileSystemWatcher(Program.root + Program.modsFolder);
+            _skinsWatcher = new FileSystemWatcher(Program.root + Program.skinsFolder);
+
+            _modsWatcher.Changed += OnChanged;
+            _modsWatcher.Created += OnChanged;
+            _modsWatcher.Deleted += OnChanged;
+            _modsWatcher.Renamed += OnRename;
+
+            _skinsWatcher.Changed += OnChanged;
+            _skinsWatcher.Created += OnChanged;
+            _skinsWatcher.Deleted += OnChanged;
+            _skinsWatcher.Renamed += OnRename;
+
+            _modsWatcher.EnableRaisingEvents = true;
+            _skinsWatcher.EnableRaisingEvents = true;
         }
+
+        private void OnRename(object sender, RenamedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                Console.Log($"File Renamed: {e.OldFullPath} renamed to {e.FullPath}");
+                PopulateList();
+            });
+
+        }
+
+        private void OnChanged(object sender, FileSystemEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                Console.Log($"File Changed: {e.FullPath} has been {e.ChangeType}");
+                PopulateList();
+            });
+        }
+
         private void ScrollToMods()
         {
             if (_items.Count == 0)

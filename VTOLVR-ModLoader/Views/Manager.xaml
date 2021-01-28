@@ -12,9 +12,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Foreground="White" Background="#FF2E2E2E" FontSize="20" 
-                   Text="Mods" Style="{StaticResource BoldText}" x:Name="_titleText"/>
-
         <Label Grid.Row="1" Foreground="White" FontSize="15" Content="" x:Name="_noItemsText"/>
         <ListView
             Grid.Row="2"
@@ -173,9 +170,10 @@
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock FontSize="25" Text="{Binding Name}"
-                                       Foreground="White" 
-                                       FontFamily="/VTOLVR-ModLoader;component/Resources/#Montserrat ExtraBold"/>
+                            <TextBlock FontSize="20" Text="{Binding Name}"
+                                       Foreground="White" Background="#FF2E2E2E"
+                                       Style="{StaticResource BoldText}" 
+                                       HorizontalAlignment="Stretch"/>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>

@@ -28,6 +28,8 @@ namespace VTOLVR_ModLoader.Classes.Json
         public int ActiveBranch = 0;
         [JsonProperty("Accepted Devtools")]
         public bool AcceptedDevtools = false;
+        [JsonProperty("Max Find Process Attempts")]
+        public int MaxProcessAttempts = 5;
 
         [JsonProperty]
         public ObservableCollection<Manager.Item> Items = new ObservableCollection<Manager.Item>();

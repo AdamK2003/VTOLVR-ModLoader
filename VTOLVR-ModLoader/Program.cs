@@ -147,17 +147,15 @@ namespace VTOLVR_ModLoader
         {
             Helper.SentryLog("Waiting for process", Helper.SentryLogCategory.Program);
             Console.Log("Waiting for VTOL VR Process");
-            int maxTries = 5;
-            for (int i = 1; i <= maxTries; i++)
+            for (int i = 1; i <= Views.Settings.USettings.MaxProcessAttempts; i++)
             {
-                //Doing 5 tries to search for the process
-                MainWindow.SetProgress(10 * i, "Searching for process...   (Attempt " + i + ")");
+                MainWindow.SetProgress((50 / Views.Settings.USettings.MaxProcessAttempts) * i, "Searching for process...   (Attempt " + i + ")");
                 await Task.Delay(5000);
 
                 if (Process.GetProcessesByName("vtolvr").Length == 1)
                     break;
 
-                if (i == maxTries)
+                if (i == Views.Settings.USettings.MaxProcessAttempts)
                 {
                     //If we couldn't find it, go back to how it was at the start
                     MainWindow.GifState(MainWindow.gifStates.Paused);

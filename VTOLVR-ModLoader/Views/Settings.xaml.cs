@@ -16,6 +16,7 @@ using Microsoft.Win32;
 using VTOLVR_ModLoader.Classes.Json;
 using Valve.Newtonsoft.Json;
 using System.Windows.Media;
+using System.Text.RegularExpressions;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -63,6 +64,7 @@ namespace VTOLVR_ModLoader.Views
                 oneclickInstallButton.Content = "(Admin Needed)";
                 oneclickInstallButton.IsEnabled = false;
             }
+            _processTries.TextChanged += ProcessTextChanged;
             Helper.SentryLog("Created Settings Page", Helper.SentryLogCategory.Settings);
         }
         public async void UpdateButtons()
@@ -163,6 +165,12 @@ namespace VTOLVR_ModLoader.Views
                 projectsText.Text = $"Projects Folder Set:\n{ProjectsFolder}";
             autoUpdateCheckbox.IsChecked = AutoUpdate;
             steamvrCheckbox.IsChecked = SteamVR;
+
+            if (USettings.MaxProcessAttempts <= 0)
+                USettings.MaxProcessAttempts = 1;
+
+            _processTries.Text = USettings.MaxProcessAttempts.ToString();
+
             SetupBranchesFromSettings();
             SaveSettings();
         }
@@ -404,6 +412,26 @@ namespace VTOLVR_ModLoader.Views
             if (Program.branch == "None")
                 Program.branch = string.Empty;
             Program.GetReleases();
+        }
+
+        private void ProcessTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (int.TryParse(_processTries.Text, out int result))
+            {
+                if (result <= 0)
+                    result = 1;
+                USettings.MaxProcessAttempts = result;
+
+                SaveSettings();
+            }
+            _processTries.Text = USettings.MaxProcessAttempts.ToString();
+            _processTries.CaretIndex = _processTries.Text.Length;
+        }
+
+        private void ValidInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }

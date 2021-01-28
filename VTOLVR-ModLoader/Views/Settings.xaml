@@ -18,6 +18,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="Settings" Foreground="White" FontSize="30"
@@ -160,6 +161,21 @@
                 <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
                            x:Name="_branchResultText" Text="This is the result"
                            Foreground="White" HorizontalAlignment="Center" Visibility="Hidden"/>
+            </Grid>
+
+            <Grid Grid.Row="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Maximum attempts to find the VTOLVR process. Default is 5"
+                           Foreground="White" FontSize="15"/>
+
+                <TextBox Grid.Column="1" Text="5" x:Name="_processTries"
+                         HorizontalAlignment="Stretch"
+                         PreviewTextInput="ValidInput"/>
+
             </Grid>
         </Grid>
     </ScrollViewer>

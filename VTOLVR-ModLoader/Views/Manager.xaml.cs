@@ -466,6 +466,7 @@ namespace VTOLVR_ModLoader.Views
             public string Name { get; set; }
             public string Description { get; set; }
             public Visibility UpdateVisibility { get; set; }
+            public Visibility LoadOnStartVisibility { get; set; } = Visibility.Visible;
             public Brush CurrentVersionColour { get; set; }
             public string CurrentVersion { get; set; }
             public string WebsiteVersion { get; set; }
@@ -491,6 +492,9 @@ namespace VTOLVR_ModLoader.Views
                 AutoUpdateCheck = autoUpdateCheck;
                 FolderDirectory = folderDirectory;
                 Font = DefaultFont;
+
+                if (ItemType == ContentType.Skins)
+                    LoadOnStartVisibility = Visibility.Hidden;
             }
 
             public event PropertyChangedEventHandler PropertyChanged = delegate { };

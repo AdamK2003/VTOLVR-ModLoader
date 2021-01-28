@@ -86,7 +86,8 @@
                                         Tag="Mod"
                                         ToolTip="{Binding FolderDirectory}"
                                         Unchecked="LoadOnStartChanged"
-                                        Checked="LoadOnStartChanged"/>
+                                        Checked="LoadOnStartChanged"
+                                        Visibility="{Binding LoadOnStartVisibility}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

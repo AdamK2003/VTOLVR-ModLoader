@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Xml.Serialization;
 using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Properties;
+using VTOLVR_ModLoader.Classes.Json;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -339,6 +340,11 @@ namespace VTOLVR_ModLoader.Views
             //Resaving it because of if a enabled mod was deleted,
             //we need to update that json file
             SaveSettings();
+
+            if (Settings.USettings.AcceptedDevtools)
+                ToggleWarning(Visibility.Hidden);
+            else
+                ToggleWarning(Visibility.Visible);
         }
 
         private void LoadScenarios()
@@ -409,6 +415,45 @@ namespace VTOLVR_ModLoader.Views
                 DevToolsEnabled = true;
             }
             MainWindow.DevToolsWarning(DevToolsEnabled);
+        }
+
+        private void TakeBack(object sender, RoutedEventArgs e)
+        {
+            MainWindow.GoHome();
+        }
+
+        private void IsModCreator(object sender, RoutedEventArgs e)
+        {
+            Settings.USettings.AcceptedDevtools = true;
+            Settings.SaveSettings();
+            ToggleWarning(Visibility.Hidden);
+        }
+        private void ToggleWarning(Visibility visibility)
+        {
+            switch (visibility)
+            {
+                case Visibility.Visible:
+                    _warning.Visibility = Visibility.Visible;
+
+                    _title.Visibility = Visibility.Hidden;
+                    _missionLoadingTitle.Visibility = Visibility.Hidden;
+                    _missionGrid.Visibility = Visibility.Hidden;
+                    _missionPilotGrid.Visibility = Visibility.Hidden;
+                    _modLoadingTitle.Visibility = Visibility.Hidden;
+                    _modLoadingScrollViewer.Visibility = Visibility.Hidden;
+                    break;
+                case Visibility.Hidden:
+                    _warning.Visibility = Visibility.Hidden;
+
+                    _title.Visibility = Visibility.Visible;
+                    _missionLoadingTitle.Visibility = Visibility.Visible;
+                    _missionGrid.Visibility = Visibility.Visible;
+                    _missionPilotGrid.Visibility = Visibility.Visible;
+                    _modLoadingTitle.Visibility = Visibility.Visible;
+                    _modLoadingScrollViewer.Visibility = Visibility.Visible;
+                    break;
+            }
+
         }
     }
     public class ModItem

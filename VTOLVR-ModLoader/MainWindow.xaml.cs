@@ -201,6 +201,13 @@ namespace VTOLVR_ModLoader
             ItemManager.UpdateUI(isMods);
             _instance.DataContext = ItemManager;
         }
+        public static void GoHome()
+        {
+            if (_instance.ItemManager == null)
+                _instance.ItemManager = new Manager();
+            _instance.ItemManager.UpdateUI(true);
+            _instance.DataContext = _instance.ItemManager;
+        }
 
         public void CheckForEvent()
         {

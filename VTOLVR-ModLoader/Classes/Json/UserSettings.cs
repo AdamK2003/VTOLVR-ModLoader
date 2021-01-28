@@ -26,6 +26,8 @@ namespace VTOLVR_ModLoader.Classes.Json
         public List<string> Branches;
         [JsonProperty("Active Branch")]
         public int ActiveBranch = 0;
+        [JsonProperty("Accepted Devtools")]
+        public bool AcceptedDevtools = false;
 
         [JsonProperty]
         public ObservableCollection<Manager.Item> Items = new ObservableCollection<Manager.Item>();

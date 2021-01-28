@@ -16,13 +16,53 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <Grid Grid.Row="0" Grid.RowSpan="6" x:Name="_warning">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="1" 
+                   VerticalAlignment="Center" TextAlignment="Center"
+                   Foreground="Yellow" FontSize="30" TextWrapping="Wrap">
+                Warning, this page is for mod creators. If you don't know what you're doing here, please head back.
+                <LineBreak/><LineBreak/>
+                You'll be able to load mods in game.
+            </TextBlock>
+            <Button Grid.Row="2" Content="Take me back!" Click="TakeBack"
+                    Style="{StaticResource darkButton}" FontSize="30"
+                    Margin="20"/>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Button Grid.Column="1" Grid.Row="1"
+                        Style="{StaticResource transparentButton}"
+                        Foreground="White"
+                        Content="I know what I am doing." Click="IsModCreator"/>
+            </Grid>
+        </Grid>
+
+
+
         <TextBlock Grid.Row="0" Text="Mod Development Tools" VerticalAlignment="Center" 
-                   HorizontalAlignment="Center" Foreground="White" FontSize="30" Margin="0,0,0,10"/>
+                   HorizontalAlignment="Center" Foreground="White" FontSize="30" Margin="0,0,0,10"
+                   x:Name="_title"/>
 
         <TextBlock Grid.Row="1" Text="Mission Loading" VerticalAlignment="Center" 
-                   HorizontalAlignment="Center" Foreground="White" FontSize="20"/>
+                   HorizontalAlignment="Center" Foreground="White" FontSize="20"
+                   x:Name="_missionLoadingTitle"/>
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" x:Name="_missionGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -36,7 +76,7 @@
 
         </Grid>
 
-        <Grid Grid.Row="3" Margin="0,0,0,10">
+        <Grid Grid.Row="3" Margin="0,0,0,10" x:Name="_missionPilotGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -62,9 +102,11 @@
         </Grid>
 
         <TextBlock Grid.Row="4" Text="Mod Loading" VerticalAlignment="Center" 
-                   HorizontalAlignment="Center" Foreground="White" FontSize="20"/>
+                   HorizontalAlignment="Center" Foreground="White" FontSize="20" 
+                   x:Name="_modLoadingTitle"/>
 
-        <ScrollViewer Grid.Row="5" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="5" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      x:Name="_modLoadingScrollViewer">
             <ItemsControl x:Name="mods" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

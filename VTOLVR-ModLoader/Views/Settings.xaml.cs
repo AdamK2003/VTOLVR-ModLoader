@@ -133,7 +133,7 @@ namespace VTOLVR_ModLoader.Views
             updateButton.Content = "Disabled";
             updateButton.IsEnabled = false;
         }
-        private static void SaveSettings()
+        public static void SaveSettings()
         {
             Helper.SentryLog("Saving Settings", Helper.SentryLogCategory.Settings);
 

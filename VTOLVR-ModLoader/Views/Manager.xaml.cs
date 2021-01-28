@@ -145,9 +145,10 @@ namespace VTOLVR_ModLoader.Views
             if (downloadedMods.Count > 0)
                 _noItemsText.Visibility = Visibility.Hidden;
 
+            Item lastItem;
             for (int i = 0; i < downloadedMods.Count; i++)
             {
-                items.Add(new Item(
+                lastItem = new Item(
                     Item.ContentType.Mods,
                     downloadedMods[i].Name,
                     downloadedMods[i].Description,
@@ -156,13 +157,14 @@ namespace VTOLVR_ModLoader.Views
                     downloadedMods[i].PublicID == string.Empty ? "N/A" : "Requesting",
                     false,
                     false,
-                    downloadedMods[i].Directory.FullName));
+                    downloadedMods[i].Directory.FullName);
 
                 if (downloadedMods[i].PublicID != string.Empty)
                 {
-                    items[i].PublicID = downloadedMods[i].PublicID;
+                    lastItem.PublicID = downloadedMods[i].PublicID;
                     RequestItem(downloadedMods[i].PublicID, true);
                 }
+                items.Add(lastItem);
             }
         }
         private void FindSkins(ref ObservableCollection<Item> items)
@@ -174,9 +176,12 @@ namespace VTOLVR_ModLoader.Views
             List<BaseItem> downloadSkins = Helper.FindDownloadedSkins();
             if (downloadSkins.Count > 0)
                 _noItemsText.Visibility = Visibility.Hidden;
+
+            Item lastItem;
             for (int i = 0; i < downloadSkins.Count; i++)
             {
-                items.Add(new Item(
+
+                lastItem = new Item(
                     Item.ContentType.Skins,
                     downloadSkins[i].Name,
                     downloadSkins[i].Description,
@@ -185,13 +190,14 @@ namespace VTOLVR_ModLoader.Views
                     downloadSkins[i].PublicID == string.Empty ? "N/A" : "Requesting",
                     false,
                     false,
-                    downloadSkins[i].Directory.FullName));
+                    downloadSkins[i].Directory.FullName);
 
                 if (downloadSkins[i].PublicID != string.Empty)
                 {
-                    items[i].PublicID = downloadSkins[i].PublicID;
+                    lastItem.PublicID = downloadSkins[i].PublicID;
                     RequestItem(downloadSkins[i].PublicID, false);
                 }
+                items.Add(lastItem);
             }
 
         }

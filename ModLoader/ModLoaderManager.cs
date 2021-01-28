@@ -21,7 +21,7 @@ using SimpleTCP;
 using Harmony;
 using ModLoader.Classes;
 using ModLoader.Classes.Json;
-
+using Core;
 namespace ModLoader
 {
     public class Load
@@ -120,6 +120,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
             CreateAPI();
             FindProjectFolder();
+            AttachCoreLogger();
 
             try
             {
@@ -528,6 +529,25 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             }
 
             LauncherSettings.LoadSettings(path);
+        }
+        private static void AttachCoreLogger()
+        {
+            Core.Logger.OnMessageLogged += CoreLog;
+        }
+        private static void CoreLog(object message, Core.Logger.LogType type)
+        {
+            switch (type)
+            {
+                case Core.Logger.LogType.Log:
+                    Debug.Log($"[Core] {message}");
+                    break;
+                case Core.Logger.LogType.Warning:
+                    Debug.LogWarning($"[Core] {message}");
+                    break;
+                case Core.Logger.LogType.Error:
+                    Debug.LogError($"[Core] {message}");
+                    break;
+            }
         }
     }
 }

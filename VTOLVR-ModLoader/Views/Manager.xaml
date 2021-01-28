@@ -185,7 +185,7 @@
         <Label Grid.Row="1" Foreground="White" FontSize="15" 
                Content="You can download mods and skins from the modding website" 
                HorizontalAlignment="Center"/>
-        <Button Grid.Row="2" Style="{StaticResource darkButton}" Content="Open https://vtolvr-mods.com/"
+        <Button Grid.Row="2" Style="{StaticResource darkButton}"
                 Click="OpenSite" x:Name="_openSiteButton"/>
     </Grid>
 </UserControl>

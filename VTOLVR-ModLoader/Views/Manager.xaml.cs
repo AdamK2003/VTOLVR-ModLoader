@@ -46,12 +46,12 @@ namespace VTOLVR_ModLoader.Views
             BoldFont = new FontFamily(
                 new Uri("pack://application:,,,/VTOLVR-ModLoader;component/Resources/"),
                 "./#Montserrat ExtraBold");
-            _openSiteButton.Content = "Open " + Program.url;
         }
         private void UILoaded(object sender, RoutedEventArgs e)
         {
             RefreshColumns();
             GetScrollViewer();
+            _openSiteButton.Content = "Open " + Program.url;
         }
         private void GetScrollViewer()
         {

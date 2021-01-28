@@ -11,38 +11,9 @@ using Valve.Newtonsoft.Json;
 namespace ModLoader.Classes.Json
 {
     [JsonObject(MemberSerialization.OptIn)]
-    class BaseItem
+    class BaseItem : Core.Jsons.BaseItem
     {
         public const string DllOnlyDescription = "This only a .dll file, please make mods into .zip with a json file when releasing the mod.";
-        [JsonProperty("name")]
-        public string Name = string.Empty;
-        [JsonProperty("description")]
-        public string Description = string.Empty;
-        [JsonProperty("dll file")]
-        public string DllPath = string.Empty;
-        [JsonProperty("last edit")]
-        public long LastEdit;
-        [JsonProperty("public id")]
-        public string PublicID = string.Empty;
-        [JsonProperty("version")]
-        public string Version = "N/A";
-        [JsonProperty("tagline")]
-        public string Tagline = string.Empty;
-        [JsonProperty("source")]
-        public string Source = string.Empty;
-        [JsonProperty("is public")]
-        public bool IsPublic;
-        [JsonProperty("unlisted")]
-        public bool Unlisted;
-        [JsonProperty("preview image")]
-        public string PreviewImage = string.Empty;
-        [JsonProperty("web preview image")]
-        public string WebPreviewImage = string.Empty;
-        [JsonProperty("dependencies")]
-        public List<string> Dependencies;
-
-        [JsonIgnore]
-        public DirectoryInfo Directory;
         [JsonIgnore]
         public Mod Mod;
         [JsonIgnore]
@@ -60,8 +31,6 @@ namespace ModLoader.Classes.Json
         }
         [JsonIgnore]
         public bool IsDevFolder = false;
-        public bool HasPublicID() => PublicID != string.Empty;
-        public bool HasDll() => DllPath != string.Empty;
         public string GetFullDllPath() => Path.Combine(Directory.FullName, DllPath);
         public Mod CreateMod()
         {

@@ -121,6 +121,8 @@ namespace VTOLVR_ModLoader.Views
 
         private void OnRename(object sender, RenamedEventArgs e)
         {
+            if (e.Name.EndsWith(".zip"))
+                return;
             Dispatcher.Invoke(() =>
             {
                 Console.Log($"File Renamed: {e.OldFullPath} renamed to {e.FullPath}");
@@ -131,6 +133,8 @@ namespace VTOLVR_ModLoader.Views
 
         private void OnChanged(object sender, FileSystemEventArgs e)
         {
+            if (e.Name.EndsWith(".zip"))
+                return;
             Dispatcher.Invoke(() =>
             {
                 Console.Log($"File Changed: {e.FullPath} has been {e.ChangeType}");

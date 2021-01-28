@@ -330,7 +330,7 @@ namespace VTOLVR_ModLoader.Views
         {
             Console.Log("Adding branch " + branch);
             _branches.Add(branch);
-            _branchesBox.ItemsSource = _branches;
+            _branchesBox.ItemsSource = _branches.ToArray();
             USettings.Branches = _branches;
             SaveSettings();
         }

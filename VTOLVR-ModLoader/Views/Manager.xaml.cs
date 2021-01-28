@@ -276,7 +276,7 @@ namespace VTOLVR_ModLoader.Views
                             HttpHelper.DownloadFile(
                                 json["user_uploaded_file"].ToString(),
                                 $"{Program.root}{Program.modsFolder}\\{fileName}",
-                                ModDownloadProgress, ModDownloadComplete, new object[] { _items[i].PublicID, _items[i].Name });
+                                DownloadProgress, DownloadComplete, new object[] { _items[i].PublicID, _items[i].Name });
                         }
                     }
                     return;
@@ -309,23 +309,37 @@ namespace VTOLVR_ModLoader.Views
                             HttpHelper.DownloadFile(
                                 json["user_uploaded_file"].ToString(),
                                 $"{Program.root}{Program.modsFolder}\\{fileName}",
-                                ModDownloadProgress, ModDownloadComplete, new object[] { _items[i].PublicID, _items[i].Name });
+                                DownloadProgress, DownloadComplete, new object[] { _items[i].PublicID, _items[i].Name });
                         }
                     }
                     return;
                 }
             }
         }
-
-        //User has pressed the update button for one of their mods
-        private void UpdateMod(object sender, RoutedEventArgs e)
+        private void UpdateItem(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
             Helper.SentryLog($"Update button pressed for {button.Tag}", Helper.SentryLogCategory.Manager);
             Console.Log($"Update button pressed for {button.Tag}");
-            HttpHelper.DownloadStringAsync(
-                $"{Program.url}{Program.apiURL}{Program.modsURL}/{button.Tag}",
-                UpdateModReceivedInfo);
+
+            for (int i = 0; i < _items.Count; i++)
+            {
+                if (_items[i].PublicID == (string)button.Tag)
+                {
+                    if (_items[i].ItemType == Item.ContentType.Mods)
+                    {
+                        HttpHelper.DownloadStringAsync(
+                            $"{Program.url}{Program.apiURL}{Program.modsURL}/{button.Tag}",
+                            UpdateModReceivedInfo);
+                        return;
+                    }
+                    HttpHelper.DownloadStringAsync(
+                            $"{Program.url}{Program.apiURL}{Program.skinsURL}/{button.Tag}",
+                            UpdateSkinReceivedInfo);
+                    return;
+                }
+            }
+
         }
         // Getting the json string to find the download link of the mod which the user
         // wants to update
@@ -354,14 +368,46 @@ namespace VTOLVR_ModLoader.Views
                 HttpHelper.DownloadFile(
                     json["user_uploaded_file"].ToString(),
                     $"{Program.root}{Program.modsFolder}\\{fileName}",
-                    ModDownloadProgress, ModDownloadComplete, new object[] { json["pub_id"].ToString(), json["name"].ToString() });
+                    DownloadProgress, DownloadComplete, new object[] { json["pub_id"].ToString(), json["name"].ToString() });
                 return;
             }
             Console.Log($"Couldn't seem to find a file on the website");
             Console.Log($"user_uploaded_file = {json["user_uploaded_file"]} | {"pub_id"} = {json["pub_id"]} | Raw : {json}");
             Notification.Show("There seems to be no file for this mod on the website. Please contact vtolvr-mods.com staff saying which mod it is.", "Strange Error");
         }
-        private void ModDownloadProgress(CustomWebClient.RequestData requestData)
+        private async void UpdateSkinReceivedInfo(HttpResponseMessage response)
+        {
+            Helper.SentryLog("Update Skin Received Info", Helper.SentryLogCategory.Manager);
+            if (!response.IsSuccessStatusCode)
+            {
+                Notification.Show($"Error from website, please try again later\n{response.StatusCode}", "Error");
+                return;
+            }
+            string jsonText = await response.Content.ReadAsStringAsync();
+            JObject json = Helper.JObjectTryParse(jsonText, out Exception exception);
+            if (exception != null)
+            {
+                Notification.Show($"Error reading response from website, if this continues, please report to vtolvr-mods.com staff", "Error");
+                Console.Log($"Error reading response from website ({exception.Message}). Raw response:\n{jsonText}");
+                return;
+            }
+
+            Console.Log("Received Skin Info from server");
+            if (json["user_uploaded_file"] != null && json["pub_id"] != null)
+            {
+                string fileName = GetFileName(json["user_uploaded_file"].ToString());
+                Console.Log("Downloading " + fileName);
+                HttpHelper.DownloadFile(
+                    json["user_uploaded_file"].ToString(),
+                    $"{Program.root}{Program.skinsFolder}\\{fileName}",
+                    DownloadProgress, DownloadComplete, new object[] { json["pub_id"].ToString(), json["name"].ToString() });
+                return;
+            }
+            Console.Log($"Couldn't seem to find a file on the website");
+            Console.Log($"user_uploaded_file = {json["user_uploaded_file"]} | {"pub_id"} = {json["pub_id"]} | Raw : {json}");
+            Notification.Show("There seems to be no file for this skin on the website. Please contact vtolvr-mods.com staff saying which mod it is.", "Strange Error");
+        }
+        private void DownloadProgress(CustomWebClient.RequestData requestData)
         {
             string name = requestData.ExtraData[1] as string;
             Console.Log($"[{requestData.Progress}%] Downloading {name}");
@@ -377,7 +423,7 @@ namespace VTOLVR_ModLoader.Views
 
         }
         //The zip from the website has finished downloading and is now in their mods folder
-        private void ModDownloadComplete(CustomWebClient.RequestData requestData)
+        private void DownloadComplete(CustomWebClient.RequestData requestData)
         {
             string publicID = requestData.ExtraData[0] as string;
             string name = requestData.ExtraData[1] as string;
@@ -390,7 +436,7 @@ namespace VTOLVR_ModLoader.Views
                 string currentFolder = requestData.FilePath.Split('.')[0];
 
                 Directory.CreateDirectory(currentFolder);
-                Console.Log("Extracting " + requestData.FilePath);
+                Console.Log("Extracting " + requestData.FilePath + " to " + currentFolder);
                 MainWindow.SetBusy(true);
                 MainWindow.SetProgress(0, $"Extracting {name}");
                 Helper.ExtractZipToDirectory(requestData.FilePath, currentFolder, completedWithArgs: ExtractedMod, extraData: requestData.ExtraData);

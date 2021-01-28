@@ -115,7 +115,7 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Foreground="White" Click="UpdateMod"
+                                        <Button Foreground="White" Click="UpdateItem"
                                                 Style="{StaticResource darkButton}" 
                                                 Visibility="{Binding UpdateVisibility}"
                                                 Tag="{Binding PublicID}" Margin="5,1">

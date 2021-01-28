@@ -33,6 +33,7 @@ namespace VTOLVR_ModLoader.Views
         private ObservableCollection<Item> _items = new ObservableCollection<Item>();
         private FileSystemWatcher _modsWatcher;
         private FileSystemWatcher _skinsWatcher;
+        private ScrollViewer _scrollViewer;
         public Manager()
         {
             Loaded += UILoaded;
@@ -49,6 +50,12 @@ namespace VTOLVR_ModLoader.Views
         private void UILoaded(object sender, RoutedEventArgs e)
         {
             RefreshColumns();
+            GetScrollViewer();
+        }
+        private void GetScrollViewer()
+        {
+            Decorator border = VisualTreeHelper.GetChild(_listView, 0) as Decorator;
+            _scrollViewer = border.Child as ScrollViewer;
         }
         public void UpdateUI(bool isMods)
         {
@@ -117,9 +124,9 @@ namespace VTOLVR_ModLoader.Views
 
         private void ScrollToMods()
         {
-            if (_items.Count == 0)
+            if (_scrollViewer == null)
                 return;
-            _listView.ScrollIntoView(_items[0]);
+            _scrollViewer.ScrollToTop();
         }
         private void ScrollToSkins()
         {
@@ -127,7 +134,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 if (_items[i].ItemType == Item.ContentType.Skins)
                 {
-                    _listView.ScrollIntoView(_items[_items.Count - 1]);
+                    _scrollViewer.ScrollToBottom();
                     Dispatcher.Invoke(new Action(() => { _listView.ScrollIntoView(_items[i]); }),
                         DispatcherPriority.ContextIdle,
                         null);
@@ -629,28 +636,6 @@ namespace VTOLVR_ModLoader.Views
                     }
                 }
             }
-        }
-        public static DependencyObject GetScrollViewer(DependencyObject o)
-        {
-            if (o is ScrollViewer)
-            { return o; }
-
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(o); i++)
-            {
-                var child = VisualTreeHelper.GetChild(o, i);
-
-                var result = GetScrollViewer(child);
-                if (result == null)
-                {
-                    continue;
-                }
-                else
-                {
-                    return result;
-                }
-            }
-
-            return null;
         }
     }
 }

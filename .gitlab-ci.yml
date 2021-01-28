@@ -30,6 +30,7 @@ build_dll:
    paths:
    - ModLoader\bin\Release\ModLoader.dll
    - ModLoader\bin\Release\ModLoader.xml
+   - Core\bin\Release\Core.dll
    expire_in: 1 day
 
 build_wpf:

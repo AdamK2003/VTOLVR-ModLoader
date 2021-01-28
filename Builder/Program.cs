@@ -127,6 +127,7 @@ namespace Build
             Directory.CreateDirectory(dir + @"\temp\VTOLVR_ModLoader\mods");
             Directory.CreateDirectory(dir + @"\temp\VTOLVR_ModLoader\skins");
 
+            TryMove(dir + @"\Core\bin\Release\Core.dll", dir + @"\temp\VTOLVR_Data\Managed\Core.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\temp\VTOLVR_ModLoader\ModLoader.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\temp\VTOLVR_ModLoader\ModLoader.xml");
             TryMove(dir + @"\VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe", dir + @"\temp\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
@@ -180,6 +181,7 @@ namespace Build
             Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_ModLoader\skins");
 
             Log("Moving Applications");
+            TryMove(dir + @"\Core\bin\Release\Core.dll", dir + @"\autoupdate\template\VTOLVR_Data\Managed\Core.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.xml");
             TryMove(dir + @"\VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");

@@ -145,10 +145,14 @@ namespace VTOLVR_ModLoader
                 }
             }
 
-            //Checking if the mods folder is there
             if (!Directory.Exists(Program.root + Program.modsFolder))
             {
                 Directory.CreateDirectory(Program.root + Program.modsFolder);
+            }
+
+            if (!Directory.Exists(Program.root + Program.skinsFolder))
+            {
+                Directory.CreateDirectory(Program.root + Program.skinsFolder);
             }
 
             //Checking the Managed Folder

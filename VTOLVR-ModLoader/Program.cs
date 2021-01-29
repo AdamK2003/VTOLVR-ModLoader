@@ -131,8 +131,6 @@ namespace VTOLVR_ModLoader
         }
         private static void LaunchProcess()
         {
-            LowerCaseJsons();
-
             Helper.SentryLog("Starting process", Helper.SentryLogCategory.Program);
             Console.Log("Launching VTOL VR");
             Process.Start("steam://run/667970");
@@ -329,17 +327,6 @@ namespace VTOLVR_ModLoader
                 LaunchProcess();
             }
         }
-        private static string CalculateMD5(string filename)
-        {
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(filename))
-                {
-                    var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-                }
-            }
-        }
         #endregion
 
         #region Action Queueing
@@ -390,109 +377,6 @@ namespace VTOLVR_ModLoader
             }
             if (!string.IsNullOrEmpty(Views.Settings.Token))
                 MainWindow._instance.settings.TestToken(true);
-        }
-        private static void LowerCaseJsons()
-        {
-            // We had to make all the keys in the mods info.json lower case
-            // So this function just converts the old info.json to lower case
-
-            Helper.SentryLog("Finding Mods", Helper.SentryLogCategory.Program);
-            Console.Log("Checking if we need to update any mods info.json");
-            DirectoryInfo folder = new DirectoryInfo(root + modsFolder);
-
-            DirectoryInfo[] folders = folder.GetDirectories();
-            JObject lastJson;
-            Console.Log($"We have {folders.Length} to check");
-            for (int i = 0; i < folders.Length; i++)
-            {
-                if (File.Exists(folders[i].FullName + "\\info.json"))
-                {
-                    lastJson = Helper.JObjectTryParse(
-                        File.ReadAllText(folders[i].FullName + "\\info.json"),
-                        out Exception exception);
-                    if (lastJson != null)
-                    {
-                        ConvertJson(lastJson, folders[i].FullName + "\\info.json");
-                    }
-                    else
-                    {
-                        Console.Log(exception.Message);
-                    }
-                }
-            }
-
-            //Finding users my projects mods
-            if (!string.IsNullOrEmpty(Views.Settings.ProjectsFolder))
-            {
-                Console.Log("Checking the users projects folder");
-                DirectoryInfo projectsFolder = new DirectoryInfo(Views.Settings.ProjectsFolder + ProjectManager.modsFolder);
-                folders = projectsFolder.GetDirectories();
-                Console.Log($"There are {folders.Length} to check");
-                for (int i = 0; i < folders.Length; i++)
-                {
-                    if (!File.Exists(Path.Combine(folders[i].FullName, "Builds", "info.json")))
-                    {
-                        Console.Log("Missing info.json in " +
-                            Path.Combine(folders[i].FullName, "Builds", "info.json"));
-                        continue;
-                    }
-                    JObject json = Helper.JObjectTryParse(
-                        File.ReadAllText(Path.Combine(folders[i].FullName, "Builds", "info.json")),
-                        out Exception exception);
-
-                    if (json != null)
-                    {
-                        ConvertJson(json, Path.Combine(folders[i].FullName, "Builds", "info.json"));
-                    }
-                }
-                Console.Log("End of for loop");
-            }
-            Console.Log("Finished checking JSONs");
-        }
-        private static void ConvertJson(JObject json, string path)
-        {
-            Helper.SentryLog("Checking Json", Helper.SentryLogCategory.Program);
-            Console.Log("Checking json at: " + path);
-            bool hasChanged = false;
-            JObject newJson = new JObject();
-
-            ChangeJsonName("Name", ProjectManager.jName, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Description", ProjectManager.jDescription, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Tagline", ProjectManager.jTagline, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Version", ProjectManager.jVersion, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Dll File", ProjectManager.jDll, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Last Edit", ProjectManager.jEdit, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Source", ProjectManager.jSource, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Preview Image", ProjectManager.jPImage, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Web Preview Image", ProjectManager.jWImage, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Dependencies", ProjectManager.jDeps, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Public ID", ProjectManager.jID, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Is Public", ProjectManager.jPublic, ref json, ref newJson, ref hasChanged);
-            ChangeJsonName("Unlisted", ProjectManager.jUnlisted, ref json, ref newJson, ref hasChanged);
-
-            if (hasChanged)
-            {
-                Helper.SentryLog("Saving new json", Helper.SentryLogCategory.Program);
-                Console.Log($"{path} has been changed, saving");
-                File.WriteAllText(path, newJson.ToString());
-                Console.Log("Saved");
-            }
-            else
-            {
-                Console.Log("All JSONs are up to date");
-            }
-        }
-        private static void ChangeJsonName(string oldName, string newName, ref JObject oldJson, ref JObject newJson, ref bool hasChanged)
-        {
-            if (oldJson[oldName] != null)
-            {
-                newJson[newName] = oldJson[oldName];
-                hasChanged = true;
-            }
-            else if (oldJson[newName] != null)
-            {
-                newJson[newName] = oldJson[newName];
-            }
         }
     }
 }

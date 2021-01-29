@@ -11,6 +11,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <ListView
@@ -42,9 +43,7 @@
                                             Text="{Binding Description}"
                                             Foreground="{Binding CurrentVersionColour}"
                                             FontFamily="{Binding Font}"
-                                            TextWrapping="NoWrap"
-                                            
-                                            />
+                                            TextWrapping="NoWrap"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -183,11 +182,12 @@
             </ListView.GroupStyle>
         </ListView>
 
-
-        <Label Grid.Row="1" Foreground="White" FontSize="15" 
+        <Label Grid.Row="1" Foreground="#FF6B71" FontSize="15" 
+               HorizontalAlignment="Center" x:Name="_warningText"/>
+        <Label Grid.Row="2" Foreground="White" FontSize="15" 
                Content="You can download mods and skins from the modding website" 
                HorizontalAlignment="Center"/>
-        <Button Grid.Row="2" Style="{StaticResource darkButton}"
+        <Button Grid.Row="3" Style="{StaticResource darkButton}"
                 Click="OpenSite" x:Name="_openSiteButton"/>
     </Grid>
 </UserControl>

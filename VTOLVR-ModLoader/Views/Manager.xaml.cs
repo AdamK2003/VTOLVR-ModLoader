@@ -34,6 +34,8 @@ namespace VTOLVR_ModLoader.Views
         private FileSystemWatcher _modsWatcher;
         private FileSystemWatcher _skinsWatcher;
         private ScrollViewer _scrollViewer;
+
+        private int _outdatedItems = 0;
         public Manager()
         {
             Loaded += UILoaded;
@@ -71,6 +73,16 @@ namespace VTOLVR_ModLoader.Views
                 ScrollToMods();
             else
                 ScrollToSkins();
+
+            if (_outdatedItems > 0)
+            {
+                _warningText.Content = $"You have {_outdatedItems} outdated {(_outdatedItems == 1 ? "item" : "items")}. Please redownload these items marked in red.";
+                _warningText.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                _warningText.Visibility = Visibility.Hidden;
+            }
         }
         private void PopulateList()
         {
@@ -188,6 +200,15 @@ namespace VTOLVR_ModLoader.Views
                     lastItem.PublicID = downloadedMods[i].PublicID;
                     RequestItem(downloadedMods[i].PublicID, true);
                 }
+                else
+                {
+                    _outdatedItems++;
+                    lastItem.CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 107, 113));
+                    lastItem.Font = BoldFont;
+
+                    lastItem.PopertyChanged("Font");
+                    lastItem.PopertyChanged("CurrentVersionColour");
+                }
                 items.Add(lastItem);
             }
         }
@@ -218,6 +239,15 @@ namespace VTOLVR_ModLoader.Views
                 {
                     lastItem.PublicID = downloadSkins[i].PublicID;
                     RequestItem(downloadSkins[i].PublicID, false);
+                }
+                else
+                {
+                    _outdatedItems++;
+                    lastItem.CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 107, 113));
+                    lastItem.Font = BoldFont;
+
+                    lastItem.PopertyChanged("Font");
+                    lastItem.PopertyChanged("CurrentVersionColour");
                 }
                 items.Add(lastItem);
             }
@@ -538,6 +568,7 @@ namespace VTOLVR_ModLoader.Views
             [JsonProperty("Folder Directory")]
             public string FolderDirectory { get; set; }
             public string PublicID { get; set; }
+            public bool HasPublicID { get { return PublicID == string.Empty; } }
             public FontFamily Font { get; set; }
 
             public Item(ContentType contentType, string name, string description, Visibility updateVisibility, string currentVersion, string websiteVersion, bool loadOnStartCheck, bool autoUpdateCheck, string folderDirectory)

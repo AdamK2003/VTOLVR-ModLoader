@@ -28,35 +28,34 @@ namespace VTOLVR_ModLoader
 {
     public static class Program
     {
-        public const string modsFolder = @"\mods";
-        public const string skinsFolder = @"\skins";
-        public const string injector = @"\injector.exe";
-        public static string url = @"https://vtolvr-mods.com";
-        public static string branch = string.Empty;
-        public const string pageFormat = "&page=";
-        public const string jsonFormat = "/?format=json";
-        public const string apiURL = "/api";
-        public const string modsURL = "/mods";
-        public const string skinsURL = "/skins";
-        public const string releasesURL = "/releases";
-        public const string modsChangelogsURL = "/mods-changelogs";
-        public const string skinsChangelogsURL = "/skins-changelogs";
+        public const string ModsFolder = @"\mods";
+        public const string SkinsFolder = @"\skins";
+        public const string Injector = @"\injector.exe";
+        public static string URL = @"https://vtolvr-mods.com";
+        public static string Branch = string.Empty;
+        public const string PageFormat = "&page=";
+        public const string JsonFormat = "/?format=json";
+        public const string ApiURL = "/api";
+        public const string ModsURL = "/mods";
+        public const string SkinsURL = "/skins";
+        public const string ReleasesURL = "/releases";
+        public const string ModsChangelogsURL = "/mods-changelogs";
+        public const string SkinsChangelogsURL = "/skins-changelogs";
         public const string ProgramNameBase = "VTOL VR Mod Loader";
         public const string LogName = "Launcher Log.txt";
 
-        public static string root;
-        public static string vtolFolder;
+        public static string Root;
+        public static string VTOLFolder;
         public static string ProgramName = ProgramNameBase;
-        public static bool autoStart { get; private set; }
-        public static bool disableInternet = false;
-        public static bool isBusy;
+        public static bool IsAutoStarting { get; private set; }
+        public static bool DisableInternet = false;
+        public static bool IsBusy;
         public static List<Release> Releases { get; private set; }
 
-        private static bool uiLoaded = false;
+        private static bool _uiLoaded = false;
         private static int _itemsToExtract = 0;
         private static int _itemsExtracted = 0;
-        private static int modsToExtract, skinsToExtract, extractedMods, extractedSkins, movedDep;
-        private static Queue<Action> actionQueue = new Queue<Action>();
+        private static Queue<Action> _actionQueue = new Queue<Action>();
         public async static void SetupAfterUI()
         {
             await WaitForUI();
@@ -81,22 +80,22 @@ namespace VTOLVR_ModLoader
         public static void SetVariables()
         {
             Helper.SentryLog("Setting Variables", Helper.SentryLogCategory.Program);
-            root = Directory.GetCurrentDirectory();
-            vtolFolder = root.Replace("VTOLVR_ModLoader", "");
+            Root = Directory.GetCurrentDirectory();
+            VTOLFolder = Root.Replace("VTOLVR_ModLoader", "");
         }
 
         private async static Task WaitForUI()
         {
             new DispatcherTimer(TimeSpan.Zero, DispatcherPriority.ApplicationIdle, UILoaded,
                        Application.Current.Dispatcher);
-            while (!uiLoaded)
+            while (!_uiLoaded)
                 await Task.Delay(1);
             return;
         }
 
         private static void UILoaded(object sender, EventArgs e)
         {
-            uiLoaded = true;
+            _uiLoaded = true;
             //This stops the timer from running as it would just continue
             DispatcherTimer timer = sender as DispatcherTimer;
             timer.Stop();
@@ -122,7 +121,7 @@ namespace VTOLVR_ModLoader
             {
                 if (line == "autostart")
                 {
-                    autoStart = true;
+                    IsAutoStarting = true;
                 }
             }
         }
@@ -183,7 +182,7 @@ namespace VTOLVR_ModLoader
             //Injecting the default mod
             string defaultStart = string.Format("inject -p {0} -a {1} -n {2} -c {3} -m {4}", "vtolvr", "ModLoader.dll", "ModLoader", "Load", "Init");
             Console.Log("Injecting the ModLoader.dll");
-            Process.Start(root + injector, defaultStart);
+            Process.Start(Root + Injector, defaultStart);
         }
 
         public static void Quit(string reason)
@@ -198,15 +197,15 @@ namespace VTOLVR_ModLoader
         {
             Helper.SentryLog("Checking for items", Helper.SentryLogCategory.Program);
             bool hasUpdated = false;
-            if (!Directory.Exists(root + modsFolder))
-                Directory.CreateDirectory(root + modsFolder);
+            if (!Directory.Exists(Root + ModsFolder))
+                Directory.CreateDirectory(Root + ModsFolder);
             else
-                ExtractItems(root + modsFolder);
+                ExtractItems(Root + ModsFolder);
 
-            if (!Directory.Exists(root + skinsFolder))
-                Directory.CreateDirectory(root + skinsFolder);
+            if (!Directory.Exists(Root + SkinsFolder))
+                Directory.CreateDirectory(Root + SkinsFolder);
             else
-                ExtractItems(root + skinsFolder);
+                ExtractItems(Root + SkinsFolder);
 
         }
         private static void ExtractItems(string folderPath)
@@ -275,16 +274,16 @@ namespace VTOLVR_ModLoader
          */
         public static void Queue(Action action)
         {
-            actionQueue.Enqueue(action);
-            if (isBusy)
+            _actionQueue.Enqueue(action);
+            if (IsBusy)
                 return;
 
-            isBusy = true;
-            while (actionQueue.Count > 0)
+            IsBusy = true;
+            while (_actionQueue.Count > 0)
             {
-                actionQueue.Dequeue().Invoke();
+                _actionQueue.Dequeue().Invoke();
             }
-            isBusy = false;
+            IsBusy = false;
         }
         #endregion
 
@@ -295,7 +294,7 @@ namespace VTOLVR_ModLoader
             Helper.SentryLog("Getting Releases", Helper.SentryLogCategory.Program);
             Console.Log($"Connecting to API for latest releases");
             HttpHelper.DownloadStringAsync(
-                url + apiURL + releasesURL + "/" + (branch == string.Empty ? string.Empty : $"?branch={branch}"),
+                URL + ApiURL + ReleasesURL + "/" + (Branch == string.Empty ? string.Empty : $"?branch={Branch}"),
                 NewsDone);
         }
 

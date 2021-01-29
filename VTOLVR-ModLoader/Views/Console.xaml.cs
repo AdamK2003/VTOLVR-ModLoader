@@ -164,12 +164,12 @@ namespace VTOLVR_ModLoader.Views
             Helper.SentryLog("Deleting Console Log File", Helper.SentryLogCategory.Console);
             try
             {
-                if (File.Exists(Path.Combine(Program.root, Program.LogName)))
-                    File.Delete(Path.Combine(Program.root, Program.LogName));
+                if (File.Exists(Path.Combine(Program.Root, Program.LogName)))
+                    File.Delete(Path.Combine(Program.Root, Program.LogName));
             }
             catch (Exception error)
             {
-                Log($"Error when trying to delete ({Path.Combine(Program.root, Program.LogName)})\n{error}");
+                Log($"Error when trying to delete ({Path.Combine(Program.Root, Program.LogName)})\n{error}");
                 Windows.Notification.Show("Error when deleting log\n" + error, "Error");
                 return;
             }
@@ -200,7 +200,7 @@ namespace VTOLVR_ModLoader.Views
 
         private void OpenLauncherLog(object sender, RoutedEventArgs e)
         {
-            string path = Path.Combine(Program.root, Program.LogName);
+            string path = Path.Combine(Program.Root, Program.LogName);
             if (!File.Exists(path))
             {
                 Log($"Couldn't find {path}");

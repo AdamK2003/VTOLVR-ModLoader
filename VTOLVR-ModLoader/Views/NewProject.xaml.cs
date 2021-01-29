@@ -210,11 +210,11 @@ namespace VTOLVR_ModLoader.Views
         private void MoveDlls(string path)
         {
             Helper.SentryLog("Moving Dlls", Helper.SentryLogCategory.NewProject);
-            Helper.TryCopy(Program.root + @"\ModLoader.dll", path + @"\ModLoader.dll");
-            Helper.TryCopy(Program.root + @"\ModLoader.xml", path + @"\ModLoader.xml");
-            Helper.TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\Assembly-CSharp.dll", path + @"\Assembly-CSharp.dll");
-            Helper.TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\UnityEngine.dll", path + @"\UnityEngine.dll");
-            Helper.TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\UnityEngine.CoreModule.dll", path + @"\UnityEngine.CoreModule.dll");
+            Helper.TryCopy(Program.Root + @"\ModLoader.dll", path + @"\ModLoader.dll");
+            Helper.TryCopy(Program.Root + @"\ModLoader.xml", path + @"\ModLoader.xml");
+            Helper.TryCopy(Program.VTOLFolder + @"\VTOLVR_Data\Managed\Assembly-CSharp.dll", path + @"\Assembly-CSharp.dll");
+            Helper.TryCopy(Program.VTOLFolder + @"\VTOLVR_Data\Managed\UnityEngine.dll", path + @"\UnityEngine.dll");
+            Helper.TryCopy(Program.VTOLFolder + @"\VTOLVR_Data\Managed\UnityEngine.CoreModule.dll", path + @"\UnityEngine.CoreModule.dll");
         }
 
         private void ChangeFilesText()
@@ -231,7 +231,7 @@ namespace VTOLVR_ModLoader.Views
 
             string csproj = File.ReadAllText($"{currentFolder.FullName}\\{projectName}\\VTOLVR_Mod_Boilerplate.csproj");
             csproj = csproj.Replace("VTOLVR_Mod_Boilerplate", projectName);
-            csproj = csproj.Replace("{{VTOLVR}}", Program.root + @"\VTOLVR-ModLoader.exe");
+            csproj = csproj.Replace("{{VTOLVR}}", Program.Root + @"\VTOLVR-ModLoader.exe");
             csproj = csproj.Replace("{{MODPATH}}", currentFolder.FullName + @"\Builds\" + projectName + @".dll");
             File.WriteAllText($"{currentFolder.FullName}\\{projectName}\\{projectName}.csproj", csproj);
             File.Delete($"{currentFolder.FullName}\\{projectName}\\VTOLVR_Mod_Boilerplate.csproj");

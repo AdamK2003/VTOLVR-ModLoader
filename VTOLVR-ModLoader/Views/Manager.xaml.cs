@@ -52,7 +52,7 @@ namespace VTOLVR_ModLoader.Views
         {
             RefreshColumns();
             GetScrollViewer();
-            _openSiteButton.Content = "Open " + Program.url;
+            _openSiteButton.Content = "Open " + Program.URL;
         }
         private void GetScrollViewer()
         {
@@ -235,7 +235,7 @@ namespace VTOLVR_ModLoader.Views
         private void RequestItem(string publicID, bool isMod)
         {
             HttpHelper.DownloadStringAsync(
-                $"{Program.url}{Program.apiURL}{(isMod ? Program.modsURL : Program.skinsURL)}/{publicID}",
+                $"{Program.URL}{Program.ApiURL}{(isMod ? Program.ModsURL : Program.SkinsURL)}/{publicID}",
                 RequestItemCallback, extraData: new object[] { isMod });
         }
         private async void RequestItemCallback(HttpResponseMessage response, object[] extraData)
@@ -288,7 +288,7 @@ namespace VTOLVR_ModLoader.Views
                             string fileName = GetFileName(json["user_uploaded_file"].ToString());
                             HttpHelper.DownloadFile(
                                 json["user_uploaded_file"].ToString(),
-                                $"{Program.root}{Program.modsFolder}\\{fileName}",
+                                $"{Program.Root}{Program.ModsFolder}\\{fileName}",
                                 DownloadProgress, DownloadComplete, new object[] { _items[i].PublicID, _items[i].Name });
                         }
                     }
@@ -321,7 +321,7 @@ namespace VTOLVR_ModLoader.Views
                             string fileName = GetFileName(json["user_uploaded_file"].ToString());
                             HttpHelper.DownloadFile(
                                 json["user_uploaded_file"].ToString(),
-                                $"{Program.root}{Program.modsFolder}\\{fileName}",
+                                $"{Program.Root}{Program.ModsFolder}\\{fileName}",
                                 DownloadProgress, DownloadComplete, new object[] { _items[i].PublicID, _items[i].Name });
                         }
                     }
@@ -342,12 +342,12 @@ namespace VTOLVR_ModLoader.Views
                     if (_items[i].ItemType == Item.ContentType.Mods)
                     {
                         HttpHelper.DownloadStringAsync(
-                            $"{Program.url}{Program.apiURL}{Program.modsURL}/{button.Tag}",
+                            $"{Program.URL}{Program.ApiURL}{Program.ModsURL}/{button.Tag}",
                             UpdateModReceivedInfo);
                         return;
                     }
                     HttpHelper.DownloadStringAsync(
-                            $"{Program.url}{Program.apiURL}{Program.skinsURL}/{button.Tag}",
+                            $"{Program.URL}{Program.ApiURL}{Program.SkinsURL}/{button.Tag}",
                             UpdateSkinReceivedInfo);
                     return;
                 }
@@ -380,7 +380,7 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log("Downloading " + fileName);
                 HttpHelper.DownloadFile(
                     json["user_uploaded_file"].ToString(),
-                    $"{Program.root}{Program.modsFolder}\\{fileName}",
+                    $"{Program.Root}{Program.ModsFolder}\\{fileName}",
                     DownloadProgress, DownloadComplete, new object[] { json["pub_id"].ToString(), json["name"].ToString() });
                 return;
             }
@@ -412,7 +412,7 @@ namespace VTOLVR_ModLoader.Views
                 Console.Log("Downloading " + fileName);
                 HttpHelper.DownloadFile(
                     json["user_uploaded_file"].ToString(),
-                    $"{Program.root}{Program.skinsFolder}\\{fileName}",
+                    $"{Program.Root}{Program.SkinsFolder}\\{fileName}",
                     DownloadProgress, DownloadComplete, new object[] { json["pub_id"].ToString(), json["name"].ToString() });
                 return;
             }
@@ -684,7 +684,7 @@ namespace VTOLVR_ModLoader.Views
         private void SaveValues()
         {
             UserSettings.Settings.Items = _items;
-            UserSettings.SaveSettings(Program.root + Settings.SavePath);
+            UserSettings.SaveSettings(Program.Root + Settings.SavePath);
         }
         private void LoadValues()
         {
@@ -703,7 +703,7 @@ namespace VTOLVR_ModLoader.Views
         }
         private void OpenSite(object sender, RoutedEventArgs e)
         {
-            Process.Start(Program.url);
+            Process.Start(Program.URL);
         }
     }
 }

@@ -142,7 +142,7 @@ namespace VTOLVR_ModLoader.Views
 
             _item.SaveFile();
 
-            if (_item.HasPublicID() && !Program.disableInternet)
+            if (_item.HasPublicID() && !Program.DisableInternet)
             {
                 if (string.IsNullOrWhiteSpace(_item.WebPreviewImage))
                 {
@@ -156,7 +156,7 @@ namespace VTOLVR_ModLoader.Views
                 {
                     Helper.SentryLog("Submitting changes to website", Helper.SentryLogCategory.EditProject);
                     Console.Log("Submitting changes to website");
-                    HttpHelper form = new HttpHelper($"{Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL)}/{_item.PublicID}/");
+                    HttpHelper form = new HttpHelper($"{Program.URL + Program.ApiURL + (_isMod ? Program.ModsURL : Program.SkinsURL)}/{_item.PublicID}/");
                     form.SetToken(Settings.Token);
                     _item.FilloutForm(ref form, _isMod, _currentPath);
                     form.SendDataAsync(HttpHelper.HttpMethod.PUT, UpdateSent);
@@ -182,7 +182,7 @@ namespace VTOLVR_ModLoader.Views
                     "Failed to update on website");
                 Console.Log("There was an error when trying to submit the saved data to the website.\n" +
                     $"Error Code: {response.StatusCode}\n" +
-                    $"URL: { Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL)}/{_item.PublicID}/\n" +
+                    $"URL: { Program.URL + Program.ApiURL + (_isMod ? Program.ModsURL : Program.SkinsURL)}/{_item.PublicID}/\n" +
                     $"Raw Response: {await response.Content.ReadAsStringAsync()}");
                 saveButton.Content = "Save";
                 return;

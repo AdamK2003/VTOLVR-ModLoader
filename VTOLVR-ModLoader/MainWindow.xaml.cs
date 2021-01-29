@@ -73,7 +73,7 @@ namespace VTOLVR_ModLoader
         public static void SetPlayButton(bool disabled)
         {
             _instance.launchButton.Content = disabled ? "Busy" : "Play";
-            Program.isBusy = disabled;
+            Program.IsBusy = disabled;
         }
         public static void GifState(gifStates state, int frame = 0)
         {
@@ -114,7 +114,7 @@ namespace VTOLVR_ModLoader
         private void OpenFolder(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Opened Folder", Helper.SentryLogCategory.MainWindow);
-            Process.Start(Program.root);
+            Process.Start(Program.Root);
             Console.Log("Mod Loader Folder Opened!");
         }
         private void OpenGame(object sender, RoutedEventArgs e)

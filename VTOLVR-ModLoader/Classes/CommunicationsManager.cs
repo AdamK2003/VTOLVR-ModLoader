@@ -61,7 +61,7 @@ namespace VTOLVR_ModLoader.Classes
             if (CheckArgs("nointernet", out string line))
             {
                 Views.Console.Log("Internet has been disabled");
-                Program.disableInternet = true;
+                Program.DisableInternet = true;
             }
         }
         public static void CheckCustomBranch()
@@ -69,8 +69,8 @@ namespace VTOLVR_ModLoader.Classes
             if (CheckArgs("branch", out string line))
             {
                 line = line.Replace("branch=", string.Empty);
-                Program.branch = line;
-                Program.ProgramName += $" [{Program.branch} Branch]";
+                Program.Branch = line;
+                Program.ProgramName += $" [{Program.Branch} Branch]";
             }
         }
         public static void CheckCustomURL()
@@ -78,7 +78,7 @@ namespace VTOLVR_ModLoader.Classes
             if (CheckArgs("url", out string line))
             {
                 line = line.Replace("url=", string.Empty);
-                Program.url = line;
+                Program.URL = line;
             }
         }
         public static void CheckAutoUpdate()
@@ -128,8 +128,8 @@ namespace VTOLVR_ModLoader.Classes
                             SetDownloadFile($"mods/{split[4]}");
                             Console.Log($"Downloading {currentDownloadFile}");
                             HttpHelper.DownloadFile(
-                                $"{Program.url}/download/{split[2]}/{split[3]}/",
-                                Path.Combine(Program.root, "mods", split[4]),
+                                $"{Program.URL}/download/{split[2]}/{split[3]}/",
+                                Path.Combine(Program.Root, "mods", split[4]),
                                 DownloadProgress,
                                 DownloadDone);
                         });
@@ -141,8 +141,8 @@ namespace VTOLVR_ModLoader.Classes
                             SetDownloadFile($"skins/{split[4]}");
                             Console.Log($"Downloading {currentDownloadFile}");
                             HttpHelper.DownloadFile(
-                                $"{Program.url}/download/{split[2]}/{split[3]}/",
-                                Path.Combine(Program.root, "skins", split[4]),
+                                $"{Program.URL}/download/{split[2]}/{split[3]}/",
+                                Path.Combine(Program.Root, "skins", split[4]),
                                 DownloadProgress,
                                 DownloadDone);
                         });
@@ -175,8 +175,8 @@ namespace VTOLVR_ModLoader.Classes
                 MainWindow.SetProgress(100, $"Ready");
                 Notification.Show($"{e.Error.Message}", "Error when downloading file");
                 Console.Log("Error:\n" + e.Error.ToString());
-                if (File.Exists(Path.Combine(Program.root, currentDownloadFile)))
-                    File.Delete(Path.Combine(Program.root, currentDownloadFile));
+                if (File.Exists(Path.Combine(Program.Root, currentDownloadFile)))
+                    File.Delete(Path.Combine(Program.Root, currentDownloadFile));
             }
         }
         public static bool CheckSteamVR()

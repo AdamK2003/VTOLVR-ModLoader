@@ -153,7 +153,7 @@ namespace VTOLVR_ModLoader.Views
         {
             Helper.SentryLog("Finding Mods", Helper.SentryLogCategory.DevToos);
             Console.Log("Finding Mods for Dev Tools");
-            DirectoryInfo folder = new DirectoryInfo(Program.root + Program.modsFolder);
+            DirectoryInfo folder = new DirectoryInfo(Program.Root + Program.ModsFolder);
             FileInfo[] files = folder.GetFiles("*.dll");
             List<ModItem> mods = new List<ModItem>();
             for (int i = 0; i < files.Length; i++)
@@ -272,7 +272,7 @@ namespace VTOLVR_ModLoader.Views
 
             try
             {
-                File.WriteAllText(Program.root + savePath, jObject.ToString());
+                File.WriteAllText(Program.Root + savePath, jObject.ToString());
             }
             catch (Exception e)
             {
@@ -285,13 +285,13 @@ namespace VTOLVR_ModLoader.Views
 
         private void LoadSettings()
         {
-            if (!File.Exists(Program.root + savePath))
+            if (!File.Exists(Program.Root + savePath))
                 return;
             Helper.SentryLog("Loading Settings", Helper.SentryLogCategory.DevToos);
             JObject json;
             try
             {
-                json = JObject.Parse(File.ReadAllText(Program.root + savePath));
+                json = JObject.Parse(File.ReadAllText(Program.Root + savePath));
             }
             catch (Exception e)
             {
@@ -354,13 +354,13 @@ namespace VTOLVR_ModLoader.Views
 
             try
             {
-                if (!File.Exists(Program.root + gameData))
+                if (!File.Exists(Program.Root + gameData))
                 {
                     json = JObject.Parse(Properties.Resources.CampaignsJsonString);
                 }
                 else
                 {
-                    json = JObject.Parse(File.ReadAllText(Program.root + gameData));
+                    json = JObject.Parse(File.ReadAllText(Program.Root + gameData));
                 }
             }
             catch (Exception e)

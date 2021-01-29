@@ -133,7 +133,7 @@ namespace VTOLVR_ModLoader.Windows
         {
             List<DirectoryInfo> directories = new List<DirectoryInfo>();
 
-            directories.Add(new DirectoryInfo(Program.vtolFolder));
+            directories.Add(new DirectoryInfo(Program.VTOLFolder));
 
             directories.Add(
                 new DirectoryInfo(Environment.GetFolderPath(

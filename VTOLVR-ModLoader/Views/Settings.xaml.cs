@@ -101,7 +101,7 @@ namespace VTOLVR_ModLoader.Views
                 tokenValid = false;
                 Console.Log("Testing token");
                 HttpHelper.DownloadStringAsync(
-                    Program.url + Program.apiURL + userURL + Program.jsonFormat,
+                    Program.URL + Program.ApiURL + userURL + Program.JsonFormat,
                     TestTokenDone,
                     Token);
             }
@@ -145,14 +145,14 @@ namespace VTOLVR_ModLoader.Views
             USettings.LaunchSteamVR = SteamVR;
             USettings.ActiveBranch = Instance._branchesBox.SelectedIndex;
 
-            UserSettings.SaveSettings(Program.root + SavePath);
+            UserSettings.SaveSettings(Program.Root + SavePath);
             Console.Log("Saved Settings");
         }
 
         private void LoadSettings()
         {
             Helper.SentryLog("Loading Settings", Helper.SentryLogCategory.Settings);
-            UserSettings.LoadSettings(Program.root + SavePath);
+            UserSettings.LoadSettings(Program.Root + SavePath);
 
             USettings = UserSettings.Settings;
             ProjectsFolder = USettings.ProjectsFolder;
@@ -181,7 +181,7 @@ namespace VTOLVR_ModLoader.Views
             if (!string.IsNullOrEmpty(ProjectsFolder))
                 FolderDialog.Dialog(ProjectsFolder, callBack);
             else
-                FolderDialog.Dialog(Program.root, callBack);
+                FolderDialog.Dialog(Program.Root, callBack);
         }
         public void SetProjectsFolder(bool set, string path)
         {
@@ -248,7 +248,7 @@ namespace VTOLVR_ModLoader.Views
         private void SetOneClickInstall(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Setting one click install", Helper.SentryLogCategory.Settings);
-            CreateURI(Program.root);
+            CreateURI(Program.Root);
         }
 
         /// <summary>
@@ -330,7 +330,7 @@ namespace VTOLVR_ModLoader.Views
             else
             {
                 _branchesBox.SelectedIndex = USettings.ActiveBranch;
-                Program.branch = USettings.Branches[USettings.ActiveBranch];
+                Program.Branch = USettings.Branches[USettings.ActiveBranch];
             }
 
         }
@@ -351,9 +351,9 @@ namespace VTOLVR_ModLoader.Views
         private void CheckBranch(string branch)
         {
             Helper.SentryLog($"Checking Branch {branch}", Helper.SentryLogCategory.Settings);
-            Clipboard.SetText(Program.url + Program.apiURL + Program.releasesURL + "/" + $"?branch={branch}");
+            Clipboard.SetText(Program.URL + Program.ApiURL + Program.ReleasesURL + "/" + $"?branch={branch}");
             HttpHelper.DownloadStringAsync(
-                Program.url + Program.apiURL + Program.releasesURL + "/" + $"?branch={branch}",
+                Program.URL + Program.ApiURL + Program.ReleasesURL + "/" + $"?branch={branch}",
                 CheckBranchDone);
         }
         private async void CheckBranchDone(HttpResponseMessage response)
@@ -408,9 +408,9 @@ namespace VTOLVR_ModLoader.Views
         private void BranchChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             SaveSettings();
-            Program.branch = _branches[_branchesBox.SelectedIndex];
-            if (Program.branch == "None")
-                Program.branch = string.Empty;
+            Program.Branch = _branches[_branchesBox.SelectedIndex];
+            if (Program.Branch == "None")
+                Program.Branch = string.Empty;
             Program.GetReleases();
         }
 

@@ -124,7 +124,7 @@ namespace VTOLVR_ModLoader.Classes
             }
             return true;
         }
-        public static List<BaseItem> FindDownloadMods() => FindMods(Program.root + Program.modsFolder);
+        public static List<BaseItem> FindDownloadMods() => FindMods(Program.Root + Program.ModsFolder);
         public static List<BaseItem> FindMyMods() =>
             FindMods(Views.Settings.ProjectsFolder + ProjectManager.modsFolder, true);
         private static List<BaseItem> FindMods(string folder, bool isMyProjects = false)
@@ -154,7 +154,7 @@ namespace VTOLVR_ModLoader.Classes
             }
             return foundMods;
         }
-        public static List<BaseItem> FindDownloadedSkins() => FindSkins(Program.root + Program.skinsFolder);
+        public static List<BaseItem> FindDownloadedSkins() => FindSkins(Program.Root + Program.SkinsFolder);
         public static List<BaseItem> FindMySkins() => FindSkins(Views.Settings.ProjectsFolder + ProjectManager.skinsFolder);
         private static List<BaseItem> FindSkins(string folder)
         {
@@ -239,7 +239,7 @@ namespace VTOLVR_ModLoader.Classes
             SentryLog("Creating Diagnostics Zip", SentryLogCategory.Helper);
 
             string datetime = DateTime.Now.ToString().Replace('/', '-').Replace(':', '-');
-            Directory.CreateDirectory(Path.Combine(Program.root, datetime));
+            Directory.CreateDirectory(Path.Combine(Program.Root, datetime));
 
             Console.Log("Copying Game Log");
             string[] lines = null;
@@ -251,31 +251,31 @@ namespace VTOLVR_ModLoader.Classes
             {
                 Console.Log("Can't read player log because the game is open");
                 Notification.Show("Please close the game before creating a diagnostics zip.", "Error");
-                Directory.Delete(Path.Combine(Program.root, datetime));
+                Directory.Delete(Path.Combine(Program.Root, datetime));
                 return;
             }
             string[] shortLines = ShortenPlayerLog(lines);
-            File.WriteAllLines(Path.Combine(Program.root, datetime, "Player.log"), shortLines);
+            File.WriteAllLines(Path.Combine(Program.Root, datetime, "Player.log"), shortLines);
 
             Console.Log("Copying Mod Loader Log");
             File.Copy(
-                Path.Combine(Program.root, Program.LogName),
-                Path.Combine(Program.root, datetime, Program.LogName));
+                Path.Combine(Program.Root, Program.LogName),
+                Path.Combine(Program.Root, datetime, Program.LogName));
 
             Console.Log("Gathering Extra Info");
             StringBuilder infoBuilder = new StringBuilder("# Created: " + DateTime.Now.ToString());
             infoBuilder.AppendLine();
             infoBuilder.AppendLine($"# Version: {Program.ProgramName}");
             GatherExtraInfo(ref infoBuilder);
-            File.WriteAllText(Path.Combine(Program.root, datetime, "Info.txt"), infoBuilder.ToString());
+            File.WriteAllText(Path.Combine(Program.Root, datetime, "Info.txt"), infoBuilder.ToString());
 
             Console.Log("Zipping up content");
             string zipName = $"DiagnosticsZip [{datetime}].zip";
             FastZip zip = new FastZip();
-            zip.CreateZip(zipName, Path.Combine(Program.root, datetime), false, null);
+            zip.CreateZip(zipName, Path.Combine(Program.Root, datetime), false, null);
 
-            Directory.Delete(Path.Combine(Program.root, datetime), true);
-            Process.Start("explorer.exe", string.Format("/select,\"{0}\\{1}\"", Program.root, zipName));
+            Directory.Delete(Path.Combine(Program.Root, datetime), true);
+            Process.Start("explorer.exe", string.Format("/select,\"{0}\\{1}\"", Program.Root, zipName));
         }
         public static string PlayerLogPath()
         {
@@ -331,7 +331,7 @@ namespace VTOLVR_ModLoader.Classes
         {
 
             builder.AppendLine();
-            DirectoryInfo[] modFolders = new DirectoryInfo(Program.root + Program.modsFolder).GetDirectories();
+            DirectoryInfo[] modFolders = new DirectoryInfo(Program.Root + Program.ModsFolder).GetDirectories();
             builder.AppendLine($"## Downloaded Mods ({modFolders.Length})");
             for (int i = 0; i < modFolders.Length; i++)
             {
@@ -339,7 +339,7 @@ namespace VTOLVR_ModLoader.Classes
             }
 
             builder.AppendLine();
-            DirectoryInfo[] skinFolders = new DirectoryInfo(Program.root + Program.skinsFolder).GetDirectories();
+            DirectoryInfo[] skinFolders = new DirectoryInfo(Program.Root + Program.SkinsFolder).GetDirectories();
             builder.AppendLine($"## Downloaded Skins ({skinFolders.Length})");
             for (int i = 0; i < skinFolders.Length; i++)
             {
@@ -355,7 +355,7 @@ namespace VTOLVR_ModLoader.Classes
 
             builder.AppendLine();
             builder.AppendLine("## Mod Loader Folder Files");
-            FileInfo[] files = new DirectoryInfo(Program.root).GetFiles();
+            FileInfo[] files = new DirectoryInfo(Program.Root).GetFiles();
             for (int i = 0; i < files.Length; i++)
             {
                 builder.AppendLine($"/{files[i].Name} (MD5: {CalculateMD5(files[i].Name)})");

@@ -129,7 +129,7 @@ namespace VTOLVR_ModLoader.Views
             string zipPath = ZipCurrentProject();
             Console.Log("Filling out form to submit");
 
-            HttpHelper form = new HttpHelper(Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + @"\");
+            HttpHelper form = new HttpHelper(Program.URL + Program.ApiURL + (_isMod ? Program.ModsURL : Program.SkinsURL) + @"\");
             form.SetToken(Settings.Token);
             form.SetValue("version", _item.Version);
             form.SetValue("name", _item.Name);
@@ -163,7 +163,7 @@ namespace VTOLVR_ModLoader.Views
             string zipPath = ZipCurrentProject();
 
             HttpHelper form = new HttpHelper(
-                Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _item.PublicID + "/");
+                Program.URL + Program.ApiURL + (_isMod ? Program.ModsURL : Program.SkinsURL) + "/" + _item.PublicID + "/");
             form.SetToken(Settings.Token);
             form.SetValue("version", _item.Version);
             form.SetValue("name", _item.Name);
@@ -182,7 +182,7 @@ namespace VTOLVR_ModLoader.Views
 
             HttpResponseMessage result = await form.SendDataAsync(HttpHelper.HttpMethod.PUT);
             string response = await result.Content.ReadAsStringAsync();
-            Console.Log($"Raw Response from {Program.url + Program.apiURL + (_isMod ? Program.modsURL : Program.skinsURL) + "/" + _item.PublicID + "/"}\n{response}");
+            Console.Log($"Raw Response from {Program.URL + Program.ApiURL + (_isMod ? Program.ModsURL : Program.SkinsURL) + "/" + _item.PublicID + "/"}\n{response}");
             JObject json = JObject.Parse(response);
 
             if (json["detail"] != null)
@@ -192,7 +192,7 @@ namespace VTOLVR_ModLoader.Views
                 return;
             }
 
-            HttpHelper form2 = new HttpHelper(Program.url + Program.apiURL + (_isMod ? Program.modsChangelogsURL : Program.skinsChangelogsURL) + "/" + _item.PublicID + "/");
+            HttpHelper form2 = new HttpHelper(Program.URL + Program.ApiURL + (_isMod ? Program.ModsChangelogsURL : Program.SkinsChangelogsURL) + "/" + _item.PublicID + "/");
             form2.SetToken(Settings.Token);
             form2.SetValue("change_name", title.Text);
             form2.SetValue("change_log", description.Text);
@@ -202,7 +202,7 @@ namespace VTOLVR_ModLoader.Views
             Console.Log("Sending Change log");
             HttpResponseMessage changelogResult = await form2.SendDataAsync(HttpHelper.HttpMethod.PUT);
             response = await changelogResult.Content.ReadAsStringAsync();
-            Console.Log($"Raw Response from {Program.url + Program.apiURL + (_isMod ? Program.modsChangelogsURL : Program.skinsChangelogsURL) + "/" + _item.PublicID + "/"}\n{response}");
+            Console.Log($"Raw Response from {Program.URL + Program.ApiURL + (_isMod ? Program.ModsChangelogsURL : Program.SkinsChangelogsURL) + "/" + _item.PublicID + "/"}\n{response}");
 
             if (changelogResult.IsSuccessStatusCode)
             {
@@ -248,7 +248,7 @@ namespace VTOLVR_ModLoader.Views
             }
             if (json["user_uploaded_file"] != null)
             {
-                if (!json["user_uploaded_file"].ToString().Contains(Program.url))
+                if (!json["user_uploaded_file"].ToString().Contains(Program.URL))
                 {
                     Notification.Show(json["user_uploaded_file"].ToString(), "Failed");
                     Console.Log($"Failed to upload project\n{json["user_uploaded_file"]}");
@@ -256,9 +256,9 @@ namespace VTOLVR_ModLoader.Views
             }
             if (json["pub_id"] != null)
             {
-                Process.Start($"{Program.url}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
+                Process.Start($"{Program.URL}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
                 Notification.Show("Uploaded!", "Success");
-                Console.Log($"Uploaded new project at {Program.url}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
+                Console.Log($"Uploaded new project at {Program.URL}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
                 MainWindow._instance.Creator(null, null);
 
                 if (!_item.HasPublicID())

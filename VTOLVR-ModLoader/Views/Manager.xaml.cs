@@ -30,9 +30,8 @@ namespace VTOLVR_ModLoader.Views
     {
         public static FontFamily DefaultFont;
         public static FontFamily BoldFont;
+
         private ObservableCollection<Item> _items = new ObservableCollection<Item>();
-        private FileSystemWatcher _modsWatcher;
-        private FileSystemWatcher _skinsWatcher;
         private ScrollViewer _scrollViewer;
 
         private int _outdatedItems = 0;
@@ -84,7 +83,7 @@ namespace VTOLVR_ModLoader.Views
                 _warningText.Visibility = Visibility.Hidden;
             }
         }
-        private void PopulateList()
+        public void PopulateList()
         {
             Helper.SentryLog("Populating List", Helper.SentryLogCategory.Manager);
             Console.Log("Populating List");
@@ -98,26 +97,6 @@ namespace VTOLVR_ModLoader.Views
             view.GroupDescriptions.Add(new PropertyGroupDescription("ItemType"));
 
             LoadValues();
-
-            if (_modsWatcher == null &&
-                _skinsWatcher == null)
-            {
-                _modsWatcher = new FileSystemWatcher(Program.root + Program.modsFolder);
-                _skinsWatcher = new FileSystemWatcher(Program.root + Program.skinsFolder);
-
-                _modsWatcher.Changed += OnChanged;
-                _modsWatcher.Created += OnChanged;
-                _modsWatcher.Deleted += OnChanged;
-                _modsWatcher.Renamed += OnRename;
-
-                _skinsWatcher.Changed += OnChanged;
-                _skinsWatcher.Created += OnChanged;
-                _skinsWatcher.Deleted += OnChanged;
-                _skinsWatcher.Renamed += OnRename;
-
-                _modsWatcher.EnableRaisingEvents = true;
-                _skinsWatcher.EnableRaisingEvents = true;
-            }
 
             if (_items.Count == 0)
             {

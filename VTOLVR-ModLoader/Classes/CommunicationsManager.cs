@@ -167,6 +167,7 @@ namespace VTOLVR_ModLoader.Classes
                 MainWindow.SetProgress(100, $"Ready");
                 Console.Log($"Downloaded {currentDownloadFile}");
                 Helper.SentryLog($"Finished downloading {currentDownloadFile}", Helper.SentryLogCategory.CommunicationsManager);
+                Program.ExtractItem(currentDownloadFile, true, 1);
             }
             else
             {

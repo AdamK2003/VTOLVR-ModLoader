@@ -53,6 +53,8 @@ namespace VTOLVR_ModLoader
         public static List<Release> Releases { get; private set; }
 
         private static bool uiLoaded = false;
+        private static int _itemsToExtract = 0;
+        private static int _itemsExtracted = 0;
         private static int modsToExtract, skinsToExtract, extractedMods, extractedSkins, movedDep;
         private static Queue<Action> actionQueue = new Queue<Action>();
         public async static void SetupAfterUI()
@@ -73,6 +75,7 @@ namespace VTOLVR_ModLoader
             MainWindow._instance.CheckForEvent();
             MainWindow._instance.ItemManager.UpdateUI(true);
             MainWindow.SetProgress(100, "Ready");
+            CheckForItems();
         }
 
         public static void SetVariables()
@@ -127,7 +130,8 @@ namespace VTOLVR_ModLoader
         {
             Helper.SentryLog("Launching game", Helper.SentryLogCategory.Program);
             MainWindow.GifState(MainWindow.gifStates.Play);
-            ExtractMods();
+            CheckForItems();
+            LaunchProcess();
         }
         private static void LaunchProcess()
         {
@@ -189,142 +193,76 @@ namespace VTOLVR_ModLoader
             Process.GetCurrentProcess().Kill();
         }
 
-        #region Mod/Skin Handling
-        public static void ExtractMods()
+        #region Item Extracting
+        private static void CheckForItems()
         {
-            Helper.SentryLog("Extracting Mods", Helper.SentryLogCategory.Program);
-            MainWindow.SetPlayButton(true);
-            MainWindow.SetProgress(0, "Extracting  mods...");
-
-            //If the mods folder is missing
+            Helper.SentryLog("Checking for items", Helper.SentryLogCategory.Program);
+            bool hasUpdated = false;
             if (!Directory.Exists(root + modsFolder))
                 Directory.CreateDirectory(root + modsFolder);
+            else
+                ExtractItems(root + modsFolder);
 
-            DirectoryInfo folder = new DirectoryInfo(root + modsFolder);
-            FileInfo[] files = folder.GetFiles("*.zip");
-            if (files.Length == 0)
-            {
-                MainWindow.SetPlayButton(false);
-                MainWindow.SetProgress(100, "No new mods were found");
-                ExtractSkins();
-                return;
-            }
-            modsToExtract = files.Length;
-            string currentFolder;
-
-            MainWindow.SetProgress(0, "Extracting mods...");
-            for (int i = 0; i < files.Length; i++)
-            {
-                //This should remove the .zip at the end for the folder path
-                currentFolder = files[i].FullName.Split('.')[0];
-
-                Directory.CreateDirectory(currentFolder);
-                Console.Log("Extracting " + files[i].FullName);
-                Helper.ExtractZipToDirectory(files[i].FullName, currentFolder, ExtractedMod);
-            }
-        }
-
-        private static void ExtractedMod(string zipPath, string extractedPath, string result)
-        {
-            if (!result.Equals("Success"))
-            {
-                Notification.Show($"Error Extracting {zipPath}\nError:{result}");
-                Console.Log($"Error Extracting {zipPath}\nError:{result}");
-            }
-            extractedMods++;
-            Console.Log($"({extractedMods}/{modsToExtract})Finished Extracting {zipPath}");
-            MainWindow.SetProgress(extractedMods / modsToExtract * 100, $"({extractedMods}/{modsToExtract})Extracting mods...");
-            //Deleting the zip
-            Helper.TryDelete(zipPath);
-
-            if (extractedMods == modsToExtract)
-            {
-                MainWindow.SetPlayButton(false);
-                MainWindow.SetProgress(100, extractedMods == 0 ? "No mods were extracted" : "Extracted " + extractedMods +
-                    (extractedMods == 1 ? " new mod" : " new mods"));
-
-                ExtractSkins();
-            }
-        }
-
-        private static void ExtractSkins()
-        {
-            Helper.SentryLog("Extracting Skins", Helper.SentryLogCategory.Program);
-            MainWindow.SetPlayButton(true);
-            MainWindow.SetProgress(0, "Extracting skins...");
-
-            //If the skins folder is missing
             if (!Directory.Exists(root + skinsFolder))
                 Directory.CreateDirectory(root + skinsFolder);
+            else
+                ExtractItems(root + skinsFolder);
 
-            DirectoryInfo folder = new DirectoryInfo(Program.root + Program.skinsFolder);
+        }
+        private static void ExtractItems(string folderPath)
+        {
+            Helper.SentryLog("Extracting Items", Helper.SentryLogCategory.Program);
+            Console.Log("Extracting Items in " + folderPath);
+
+            DirectoryInfo folder = new DirectoryInfo(folderPath);
             FileInfo[] files = folder.GetFiles("*.zip");
+
             if (files.Length == 0)
             {
-                MainWindow.SetPlayButton(false);
-                MainWindow.SetProgress(100,
-                    (extractedMods == 0 ? "0 New Mods" : (extractedMods == 1 ? "1 New Mod" : extractedMods + " New Mods")) +
-                    " and " +
-                    (extractedSkins == 0 ? "0 New Skins" : (extractedSkins == 1 ? "1 New Skin" : extractedSkins + " New Skins")) +
-                    " extracted" +
-                    " and " +
-                    (movedDep == 0 ? "0 New Dependencies" : (movedDep == 1 ? "1 New Dependencies" : movedDep + " New Dependencies")) +
-                    " moved");
-                extractedMods = 0;
-                extractedSkins = 0;
-                movedDep = 0;
-                skinsToExtract = 0;
-                modsToExtract = 0;
-
-                LaunchProcess();
+                Console.Log("No zips to extract in " + folderPath);
                 return;
             }
-            skinsToExtract = files.Length;
-            string currentFolder;
-            MainWindow.SetProgress(0, "Extracting skins...");
+
             for (int i = 0; i < files.Length; i++)
             {
-                //This should remove the .zip at the end for the folder path
-                currentFolder = files[i].FullName.Split('.')[0];
-
-                Directory.CreateDirectory(currentFolder);
-                Helper.ExtractZipToDirectory(files[i].FullName, currentFolder, SkinExtracted);
+                _itemsToExtract++;
+                ExtractItem(files[i].FullName);
             }
         }
-
-        private static void SkinExtracted(string zipPath, string extractedPath, string result)
+        public static void ExtractItem(string zipPath, bool overideItemsToExtract = false, int overideAmount = -1)
         {
-            if (!result.Equals("Success"))
+            Helper.SentryLog("Extracting Item", Helper.SentryLogCategory.Program);
+            Console.Log("Extracting " + zipPath);
+
+            if (overideItemsToExtract)
+                _itemsToExtract = overideAmount;
+
+            string currentFolder = zipPath.Split('.')[0];
+            Directory.CreateDirectory(currentFolder);
+
+            ItemHandler handler = new ItemHandler();
+            handler.Callback += ExtractItemCallback;
+            handler.ExtractItem(zipPath, currentFolder);
+        }
+        private static void ExtractItemCallback(object sender, ItemHandler.ItemExtractResult e)
+        {
+            if (e.IsSuccessful)
             {
-                Notification.Show($"Error Extracting {zipPath}\nError:{result}");
-                Console.Log($"Error Extracting {zipPath}\nError:{result}");
+                Console.Log("Extracted " + e.ZipPath);
+                Helper.TryDelete(e.ZipPath);
             }
-            extractedSkins++;
-            Console.Log($"({extractedSkins}/{skinsToExtract})Finished Extracting {zipPath}");
-            MainWindow.SetProgress(extractedSkins / skinsToExtract * 100, $"({extractedSkins}/{skinsToExtract})Extracting skins...");
-            //Deleting the zip
-            Helper.TryDelete(zipPath);
-
-            if (extractedSkins == skinsToExtract)
+            else
             {
-                MainWindow.SetPlayButton(false);
-                //This is the final text displayed in the progress text
-                MainWindow.SetProgress(100,
-                    (extractedMods == 0 ? "0 New Mods" : (extractedMods == 1 ? "1 New Mod" : extractedMods + " New Mods")) +
-                    " and " +
-                    (extractedSkins == 0 ? "0 New Skins" : (extractedSkins == 1 ? "1 New Skin" : extractedSkins + " New Skins")) +
-                    " extracted" +
-                    " and " +
-                    (movedDep == 0 ? "0 New Dependencies" : (movedDep == 1 ? "1 New Dependencies" : movedDep + " New Dependencies")) +
-                    " moved");
+                Console.Log($"Failed to extract {e.ZipPath}\nError:{e.ErrorMessage}");
+            }
+            _itemsExtracted++;
 
-                extractedMods = 0;
-                extractedSkins = 0;
-                movedDep = 0;
-                skinsToExtract = 0;
-                modsToExtract = 0;
-
-                LaunchProcess();
+            if (_itemsExtracted == _itemsToExtract)
+            {
+                Console.Log("Finished extracting all items");
+                MainWindow._instance.ItemManager.PopulateList();
+                _itemsExtracted = 0;
+                _itemsToExtract = -1;
             }
         }
         #endregion

@@ -544,7 +544,10 @@ namespace VTOLVR_ModLoader.Views
             {
                 ItemType = contentType;
                 Name = name;
-                Description = description;
+                if (description.Length > 75)
+                    Description = description.Remove(75) + "...";
+                else
+                    Description = description;
                 UpdateVisibility = updateVisibility;
                 CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                 CurrentVersion = currentVersion;

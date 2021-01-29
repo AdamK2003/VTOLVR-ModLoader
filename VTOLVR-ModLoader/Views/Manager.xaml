@@ -42,6 +42,8 @@
                                             Text="{Binding Description}"
                                             Foreground="{Binding CurrentVersionColour}"
                                             FontFamily="{Binding Font}"
+                                            TextWrapping="NoWrap"
+                                            
                                             />
                                     </StackPanel>
                                 </DataTemplate>

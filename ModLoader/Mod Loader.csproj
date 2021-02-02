@@ -112,7 +112,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsMenu.cs" />
     <Compile Include="SkinManager.cs" />
-    <Compile Include="UConsole.cs" />
     <Compile Include="UI\ListItemTemplate.cs" />
     <Compile Include="VTOLAPI.cs" />
     <Compile Include="VTOLMOD.cs" />

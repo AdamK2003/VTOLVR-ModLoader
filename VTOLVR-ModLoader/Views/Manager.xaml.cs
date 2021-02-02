@@ -75,7 +75,7 @@ namespace VTOLVR_ModLoader.Views
 
             if (_outdatedItems > 0)
             {
-                _warningText.Content = $"You have {_outdatedItems} outdated {(_outdatedItems == 1 ? "item" : "items")}. Please redownload these items marked in red.";
+                _warningText.Content = $"You have {_outdatedItems} outdated {(_outdatedItems == 1 ? "item" : "items")}. Please manually redownload these items marked in red.";
                 _warningText.Visibility = Visibility.Visible;
             }
             else

@@ -22,7 +22,7 @@ namespace ModLoader.Classes.Json
         {
             get
             {
-                string path = Path.Combine(Directory.FullName, PreviewImage);
+                string path = Path.Combine(Directory.FullName, "preview.png");
                 if (File.Exists(path))
                     return path;
                 return string.Empty;

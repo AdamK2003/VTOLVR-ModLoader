@@ -48,6 +48,8 @@
     <Compile Include="Helper.cs" />
     <Compile Include="Jsons\BaseItem.cs" />
     <Compile Include="Jsons\BaseItemConverter.cs" />
+    <Compile Include="Jsons\DevTools.cs" />
+    <Compile Include="Jsons\Scenario.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -10,6 +10,8 @@ namespace Core.Enums
     {
         None,
         Mods,
-        Skins
+        Skins,
+        MyMods,
+        MySkins
     }
 }

@@ -16,13 +16,25 @@ using ModLoader.Classes.Json;
 using Core;
 namespace ModLoader
 {
-    class ModReader : MonoBehaviour
+    class ModReader
     {
+        public static List<Core.Jsons.BaseItem> Items
+        {
+            get
+            {
+                if (_items == null)
+                    _items = GetItems();
+                return _items;
+            }
+        }
+        private static List<Core.Jsons.BaseItem> _items;
+
         /// <summary>
         /// Gets all of the mods info located in the path into memory
         /// </summary>
         /// <param name="path">The folder to check for mods</param>
         /// <param name="isDevFolder">If we are checking through the users My Projects Folder</param>
+        [Obsolete]
         public static List<BaseItem> GetMods(string path, bool isDevFolder = false)
         {
             List<BaseItem> foundMods = new List<BaseItem>();
@@ -78,6 +90,7 @@ namespace ModLoader
         /// <param name="path">Folder where the mods are located</param>
         /// <param name="currentMods">The current list of mods</param>
         /// <returns>True if there where new mods</returns>
+        [Obsolete]
         public static bool GetNewMods(string path, ref List<BaseItem> currentMods)
         {
             List<BaseItem> mods = GetMods(path);
@@ -94,6 +107,23 @@ namespace ModLoader
             currentMods = currentModsDictionary.Values.ToList();
 
             return newMods;
+        }
+
+        private static List<Core.Jsons.BaseItem> GetItems()
+        {
+            List<Core.Jsons.BaseItem> items =
+                Helper.FindMods(Path.Combine(ModLoaderManager.RootPath, "mods"));
+
+            items.AddRange(
+                Helper.FindMods(Path.Combine(ModLoaderManager.MyProjectsPath, "My Mods"), true));
+
+            items.AddRange(
+                Helper.FindSkins(Path.Combine(ModLoaderManager.RootPath, "skins")));
+
+            items.AddRange(
+                Helper.FindSkins(Path.Combine(ModLoaderManager.MyProjectsPath, "My Skins")));
+
+            return items;
         }
     }
 }

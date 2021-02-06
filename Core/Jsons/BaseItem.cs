@@ -79,13 +79,19 @@ namespace Core.Jsons
 
         private ContentType GetContentType()
         {
-            if (Directory.Parent.Name.ToLower().Contains("mod"))
+            switch (Directory.Parent.Name.ToLower())
             {
-                return ContentType.Mods;
-            }
-            else
-            {
-                return ContentType.Skins;
+                case "mods":
+                    return ContentType.Mods;
+                case "skins":
+                    return ContentType.Skins;
+                case "my mods":
+                    return ContentType.MyMods;
+                case "my skins":
+                    return ContentType.MySkins;
+                default:
+                    Logger.Error($"Error, couldn't match {Directory.Parent.Name.ToLower()} to a Content Type");
+                    return ContentType.None;
             }
         }
 

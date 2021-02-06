@@ -95,12 +95,6 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
         private VTOLAPI _api;
         private string[] _args;
 
-        private bool _loadMission;
-        private string _pilotName = "";
-        private string _cID = "";
-        private string _sID = "";
-
-
         //Discord
         private DiscordController _discord;
         public string _discordDetail, _discordState;
@@ -142,7 +136,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
             SteamAPI.Init();
 
-            CheckDevTools();
+            DevTools.ReadDevTools();
 
             SceneManager.sceneLoaded += SceneLoaded;
 
@@ -206,8 +200,10 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                     DataCollector.CollectData();
                     _discordDetail = "Selecting mods";
                     StartCoroutine(CreateModLoader());
-                    if (_loadMission)
+                    if (DevTools.Scenario != null)
+                    {
                         StartCoroutine(LoadLevel());
+                    }
                     break;
                 case "Akutan":
                     if (PilotSaveManager.currentVehicle == null || PilotSaveManager.currentCampaign == null)
@@ -301,109 +297,74 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             Harmony.Traverse.Create(interactable).Method("StartInteraction").GetValue();
             Debug.Log($"Invoked OnInteract on GameObject {message}");
         }
-        public void LoadMod(string path)
+        public void LoadMod(Core.Jsons.BaseItem item)
         {
             try
             {
-                Debug.Log($"Loading mod from {path}");
+                Debug.Log($"[Dev Tools] Loading {item.Name}");
+
+                string path = string.Empty;
+                if (item.ContentType == Core.Enums.ContentType.Mods)
+                    path = Path.Combine(item.Directory.FullName, item.DllPath);
+                else if (item.ContentType == Core.Enums.ContentType.MyMods)
+                    path = Path.Combine(item.Directory.FullName, "Builds", item.DllPath);
+                else
+                {
+                    Debug.LogError($"[Dev Tools] Content type didn't match mod, so item isn't loaded");
+                    return;
+                }
+
+                byte[] dllBytes = File.ReadAllBytes(path);
                 IEnumerable<Type> source =
-          from t in Assembly.Load(File.ReadAllBytes(path)).GetTypes()
-          where t.IsSubclassOf(typeof(VTOLMOD))
-          select t;
+                      from t in Assembly.Load(dllBytes).GetTypes()
+                      where t.IsSubclassOf(typeof(VTOLMOD))
+                      select t;
                 if (source != null && source.Count() == 1)
                 {
-                    GameObject newModGo = new GameObject(path, source.First());
+                    GameObject newModGo = new GameObject(item.DllPath, source.First());
                     VTOLMOD mod = newModGo.GetComponent<VTOLMOD>();
-                    mod.SetModInfo(new Mod(path, "STARTUPMOD", path, new FileInfo(path).DirectoryName));
-                    newModGo.name = path;
+                    mod.SetModInfo(new Mod(
+                        item.Name,
+                        item.Description,
+                        Path.Combine(item.Directory.FullName, item.DllPath),
+                        item.Directory.FullName));
+                    newModGo.name = item.Name;
                     DontDestroyOnLoad(newModGo);
                     mod.ModLoaded();
 
                     LoadedModsCount++;
                     UpdateDiscord();
+                    return;
                 }
                 else
                 {
-                    Debug.LogError("Source is null");
+                    Debug.LogError("[Dev Tools] Source is null");
                 }
 
-                Debug.Log("Loaded Startup mod from path = " + path);
+                Debug.Log($"[Dev Tools] Failed to load {item.Name}");
             }
             catch (Exception e)
             {
-                Debug.LogError("Error when loading startup mod\n" + e.ToString());
+                Debug.LogError($"[Dev Tools] Error when loading {item.Name}\n{e}");
             }
         }
-        private void CheckDevTools()
-        {
-            if (File.Exists(RootPath + "/devtools.json"))
-            {
-                ReadDevTools(File.ReadAllText(RootPath + "/devtools.json"));
-            }
-        }
-        private void ReadDevTools(string jsonString)
-        {
-            JObject json;
-            try
-            {
-                json = JObject.Parse(jsonString);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("Error when reading devtools.json");
-                Debug.LogError(e.ToString());
-                return;
-            }
 
-            Debug.Log("DevTools: Checking for any mods or scenarios");
-
-
-            if (json["scenario"] != null && json["pilot"] != null)
-            {
-                _pilotName = json["pilot"].Value<string>() ?? null;
-                if (_pilotName != "No Selection" && !string.IsNullOrEmpty(_pilotName))
-                {
-                    JObject scenario = json["scenario"] as JObject;
-                    string scenarioName = scenario["name"].ToString();
-                    _sID = scenario["id"].ToString();
-                    _cID = scenario["cid"].ToString();
-
-                    if (scenarioName != "No Selection" && !string.IsNullOrEmpty(_sID))
-                    {
-                        _loadMission = true;
-                        Debug.Log($"Devtools - Pilot={_pilotName} ScenarioName={scenarioName}" +
-                            $"sID={_sID} cID={_cID}");
-                    }
-                }
-            }
-
-            if (json["previousMods"] != null)
-            {
-                JArray mods = JArray.FromObject(json["previousMods"]);
-                Debug.Log($"Devtools: Found {mods.Count} mods to load");
-                for (int i = 0; i < mods.Count; i++)
-                {
-                    LoadMod(mods[i].ToString());
-                }
-            }
-        }
         private IEnumerator LoadLevel()
         {
-            _loadMission = false;
             Debug.Log("Loading Pilots from file");
             PilotSaveManager.LoadPilotsFromFile();
             yield return new WaitForSeconds(2);
 
-            Debug.Log($"Loading Level\nPilot={_pilotName}\ncID={_cID}\nsID={_sID}");
+            Debug.Log($"Loading Level\n{DevTools.Scenario}");
             VTMapManager.nextLaunchMode = VTMapManager.MapLaunchModes.Scenario;
             Debug.Log("Setting Pilot");
-            PilotSaveManager.current = PilotSaveManager.pilots[_pilotName];
+            PilotSaveManager.current = PilotSaveManager.pilots[DevTools.Scenario.Pilot];
             Debug.Log("Going though All built in campaigns");
             if (VTResources.GetBuiltInCampaigns() != null)
             {
                 foreach (VTCampaignInfo info in VTResources.GetBuiltInCampaigns())
                 {
-                    if (info.campaignID == _cID)
+                    if (info.campaignID == DevTools.Scenario.CampaignID)
                     {
                         Debug.Log("Setting Campaign");
                         PilotSaveManager.currentCampaign = info.ToIngameCampaign();
@@ -419,7 +380,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             Debug.Log("Going though All missions in that campaign");
             foreach (CampaignScenario cs in PilotSaveManager.currentCampaign.missions)
             {
-                if (cs.scenarioID == _sID)
+                if (cs.scenarioID == DevTools.Scenario.ScenarioID)
                 {
                     Debug.Log("Setting Scenario");
                     PilotSaveManager.currentScenario = cs;
@@ -431,7 +392,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
             Debug.Log(string.Format("Loading into game, Pilot:{3}, Campaign:{0}, Scenario:{1}, Vehicle:{2}",
                 PilotSaveManager.currentCampaign.campaignName, PilotSaveManager.currentScenario.scenarioName,
-                PilotSaveManager.currentVehicle.vehicleName, _pilotName));
+                PilotSaveManager.currentVehicle.vehicleName, DevTools.Scenario.Pilot));
 
             VTScenario.LaunchScenario(VTScenario.currentScenarioInfo);
             yield return new WaitForSeconds(5); // Waiting for us to be in the loader scene

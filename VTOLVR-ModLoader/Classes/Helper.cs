@@ -124,61 +124,14 @@ namespace VTOLVR_ModLoader.Classes
             }
             return true;
         }
-        public static List<BaseItem> FindDownloadMods() => FindMods(Program.Root + Program.ModsFolder);
+        public static List<BaseItem> FindDownloadMods() =>
+            Core.Helper.FindMods(Program.Root + Program.ModsFolder);
         public static List<BaseItem> FindMyMods() =>
-            FindMods(Views.Settings.ProjectsFolder + ProjectManager.modsFolder, true);
-        private static List<BaseItem> FindMods(string folder, bool isMyProjects = false)
-        {
-            List<BaseItem> foundMods = new List<BaseItem>();
-            DirectoryInfo folders = new DirectoryInfo(folder);
-            DirectoryInfo[] mods = folders.GetDirectories();
-
-            BaseItem lastMod;
-            string pathToCheck;
-            for (int i = 0; i < mods.Length; i++)
-            {
-                if (isMyProjects)
-                    pathToCheck = Path.Combine(mods[i].FullName, "Builds", "info.json");
-                else
-                    pathToCheck = Path.Combine(mods[i].FullName, "info.json");
-
-                if (!File.Exists(pathToCheck))
-                {
-                    Console.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
-                    continue;
-                }
-                Console.Log($"On {pathToCheck}");
-                lastMod = JsonConvert.DeserializeObject<BaseItem>(File.ReadAllText(pathToCheck));
-                lastMod.Directory = mods[i];
-                foundMods.Add(lastMod);
-            }
-            return foundMods;
-        }
-        public static List<BaseItem> FindDownloadedSkins() => FindSkins(Program.Root + Program.SkinsFolder);
-        public static List<BaseItem> FindMySkins() => FindSkins(Views.Settings.ProjectsFolder + ProjectManager.skinsFolder);
-        private static List<BaseItem> FindSkins(string folder)
-        {
-            List<BaseItem> foundSkins = new List<BaseItem>();
-            DirectoryInfo downloadedSkins = new DirectoryInfo(folder);
-            DirectoryInfo[] skins = downloadedSkins.GetDirectories();
-
-            BaseItem lastSkin;
-            for (int i = 0; i < skins.Length; i++)
-            {
-                if (!File.Exists(Path.Combine(skins[i].FullName, "info.json")))
-                {
-                    Console.Log($"Skin: {skins[i].Name} doesn't have a info.json file");
-                    continue;
-                }
-                lastSkin = JsonConvert.DeserializeObject<BaseItem>(
-                            File.ReadAllText(
-                                Path.Combine(skins[i].FullName, "info.json")));
-                lastSkin.Directory = skins[i];
-                foundSkins.Add(lastSkin);
-            }
-
-            return foundSkins;
-        }
+            Core.Helper.FindMods(Views.Settings.ProjectsFolder + ProjectManager.modsFolder, true);
+        public static List<BaseItem> FindDownloadedSkins() =>
+            Core.Helper.FindSkins(Program.Root + Program.SkinsFolder);
+        public static List<BaseItem> FindMySkins() =>
+            Core.Helper.FindSkins(Views.Settings.ProjectsFolder + ProjectManager.skinsFolder);
         public static BaseItem GetBaseItem(string folder)
         {
             BaseItem item = JsonConvert.DeserializeObject<BaseItem>(

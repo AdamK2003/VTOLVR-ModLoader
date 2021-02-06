@@ -18,6 +18,9 @@ using System.Xml.Serialization;
 using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Properties;
 using VTOLVR_ModLoader.Classes.Json;
+using Core.Jsons;
+using Core.Enums;
+using Scenario = VTOLVR_ModLoader.Classes.Scenario;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -153,79 +156,18 @@ namespace VTOLVR_ModLoader.Views
         {
             Helper.SentryLog("Finding Mods", Helper.SentryLogCategory.DevToos);
             Console.Log("Finding Mods for Dev Tools");
-            DirectoryInfo folder = new DirectoryInfo(Program.Root + Program.ModsFolder);
-            FileInfo[] files = folder.GetFiles("*.dll");
+            List<BaseItem> items = Program.Items;
             List<ModItem> mods = new List<ModItem>();
-            for (int i = 0; i < files.Length; i++)
+            for (int i = 0; i < items.Count; i++)
             {
-                if (ModsToLoad.Contains(files[i].FullName))
-                    mods.Add(new ModItem(files[i].FullName, true));
+                if (items[i].ContentType == ContentType.Skins ||
+                    items[i].ContentType == ContentType.MySkins)
+                    continue;
+
+                if (ModsToLoad.Contains(items[i].Directory.FullName))
+                    mods.Add(new ModItem(items[i].Directory.FullName, true));
                 else
-                    mods.Add(new ModItem(files[i].FullName));
-            }
-
-            DirectoryInfo[] folders = folder.GetDirectories();
-            for (int i = 0; i < folders.Length; i++)
-            {
-                if (File.Exists(folders[i].FullName + "\\" + folders[i].Name + ".dll"))
-                {
-                    if (ModsToLoad.Contains(folders[i].FullName + "\\" + folders[i].Name + ".dll"))
-                    {
-                        mods.Add(new ModItem(folders[i].FullName + "\\" + folders[i].Name + ".dll", true));
-                    }
-                    else
-                        mods.Add(new ModItem(folders[i].FullName + "\\" + folders[i].Name + ".dll"));
-                }
-            }
-
-            //Finding users my projects mods
-            if (!string.IsNullOrEmpty(Settings.ProjectsFolder))
-            {
-                DirectoryInfo projectsFolder = new DirectoryInfo(Settings.ProjectsFolder + ProjectManager.modsFolder);
-                folders = projectsFolder.GetDirectories();
-                for (int i = 0; i < folders.Length; i++)
-                {
-                    if (!File.Exists(Path.Combine(folders[i].FullName, "Builds", "info.json")))
-                    {
-                        Console.Log("Missing info.json in " +
-                            Path.Combine(folders[i].FullName, "Builds", "info.json"));
-                        continue;
-                    }
-                    JObject json;
-                    try
-                    {
-                        json = JObject.Parse(File.ReadAllText(
-                            Path.Combine(folders[i].FullName, "Builds", "info.json")));
-                    }
-                    catch (Exception e)
-                    {
-                        Console.Log($"Failed to read {Path.Combine(folders[i].FullName, "Builds", "info.json")}" +
-                            $"{e.Message}");
-                        continue;
-                    }
-
-                    if (json[ProjectManager.jDll] == null)
-                    {
-                        Console.Log($"Missing {ProjectManager.jDll} in {Path.Combine(folders[i].FullName, "Builds", "info.json")}");
-                        continue;
-                    }
-
-                    if (!File.Exists(Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString())))
-                    {
-                        Console.Log($"Couldn't find {json[ProjectManager.jDll]} at " +
-                            $"{Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString())}");
-                        continue;
-                    }
-
-                    if (ModsToLoad.Contains(Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString())))
-                    {
-                        mods.Add(new ModItem(Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString()), true));
-                    }
-                    else
-                    {
-                        mods.Add(new ModItem(Path.Combine(folders[i].FullName, "Builds", json[ProjectManager.jDll].ToString())));
-                    }
-                }
+                    mods.Add(new ModItem(items[i].Directory.FullName));
             }
             this.mods.ItemsSource = mods;
             Console.Log($"Found {mods.Count} mods");
@@ -252,35 +194,22 @@ namespace VTOLVR_ModLoader.Views
         private void SaveSettings()
         {
             Helper.SentryLog("Saving Settings", Helper.SentryLogCategory.DevToos);
-            JObject jObject = new JObject();
+            Core.Jsons.DevTools devTools = new Core.Jsons.DevTools();
+            devTools.Scenario = new Core.Jsons.Scenario();
+
             if (PilotSelected != null)
-                jObject.Add("pilot", PilotSelected.Name);
+                devTools.Scenario.Pilot = PilotSelected.Name;
+
             if (ScenarioSelected != null)
             {
-                JObject scenario = new JObject();
-                scenario.Add("name", ScenarioSelected.Name);
-                scenario.Add("id", ScenarioSelected.ID);
-                scenario.Add("cid", ScenarioSelected.cID);
-                jObject.Add(new JProperty("scenario", scenario));
+                devTools.Scenario.ScenarioName = ScenarioSelected.Name;
+                devTools.Scenario.ScenarioID = ScenarioSelected.ID;
+                devTools.Scenario.CampaignID = ScenarioSelected.cID;
             }
 
-            if (ModsToLoad.Count > 0)
-            {
-                JArray previousMods = new JArray(ModsToLoad.ToArray());
-                jObject.Add(new JProperty("previousMods", previousMods));
-            }
+            devTools.PreviousMods = ModsToLoad;
 
-            try
-            {
-                File.WriteAllText(Program.Root + savePath, jObject.ToString());
-            }
-            catch (Exception e)
-            {
-                Console.Log($"Failed to save {savePath}");
-                Console.Log(e.Message);
-            }
-
-
+            devTools.SaveFile(Program.Root + savePath);
         }
 
         private void LoadSettings()
@@ -288,50 +217,50 @@ namespace VTOLVR_ModLoader.Views
             if (!File.Exists(Program.Root + savePath))
                 return;
             Helper.SentryLog("Loading Settings", Helper.SentryLogCategory.DevToos);
-            JObject json;
-            try
-            {
-                json = JObject.Parse(File.ReadAllText(Program.Root + savePath));
-            }
-            catch (Exception e)
-            {
-                Console.Log("Error when reading " + savePath);
-                Console.Log(e.ToString());
+
+            Core.Jsons.DevTools devTools = Core.Jsons.DevTools.GetDevTools(
+                File.ReadAllText(Program.Root + savePath));
+
+            if (devTools == null)
                 return;
-            }
 
-            if (json["pilot"] != null)
-                PilotSelected = new Pilot(json["pilot"].ToString());
-
-            if (json["scenario"] != null)
+            if (devTools.Scenario != null)
             {
-                JObject scenario = json["scenario"] as JObject;
-                for (int i = 0; i < _scenarios.Count; i++)
+                if (devTools.Scenario.Pilot != string.Empty)
+                    PilotSelected = new Pilot(devTools.Scenario.Pilot);
+
+                if (devTools.Scenario.ScenarioID != string.Empty &&
+                    devTools.Scenario.CampaignID != string.Empty)
                 {
-                    if (_scenarios[i].Name.Equals(scenario["name"].ToString()) &&
-                        _scenarios[i].ID.Equals(scenario["id"].ToString()) &&
-                        _scenarios[i].cID.Equals(scenario["cid"].ToString()))
+                    for (int i = 0; i < _scenarios.Count; i++)
                     {
-                        ScenarioDropdown.SelectedIndex = i;
-                        ScenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
-                        break;
+                        if (_scenarios[i].Name.Equals(devTools.Scenario.ScenarioName) &&
+                            _scenarios[i].ID.Equals(devTools.Scenario.ScenarioID) &&
+                            _scenarios[i].cID.Equals(devTools.Scenario.CampaignID))
+                        {
+                            ScenarioDropdown.SelectedIndex = i;
+                            ScenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
+                            break;
+                        }
                     }
                 }
+
             }
 
-            if (json["previousMods"] != null)
+            if (devTools.PreviousMods != null)
             {
-                JArray mods = json["previousMods"] as JArray;
+                List<string> mods = devTools.PreviousMods;
                 for (int i = 0; i < mods.Count; i++)
                 {
                     if (!ModsToLoad.Contains(mods[i].ToString()))
                     {
-                        if (File.Exists(mods[i].ToString()))
+                        if (Directory.Exists(mods[i].ToString()))
+                        {
                             ModsToLoad.Add(mods[i].ToString());
+                        }
                         else
                             Console.Log($"{mods[i]} isn't there are more");
                     }
-
                 }
             }
 

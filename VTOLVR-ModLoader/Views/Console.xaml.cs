@@ -190,11 +190,11 @@ namespace VTOLVR_ModLoader.Views
             try
             {
                 Process.Start(path);
-                Log($"Opened {Program.LogName}");
+                Log($"Opened Player.log");
             }
             catch (Exception error)
             {
-                Log("Failed to open Launcher Log. " + error.Message);
+                Log("Failed to open Player.log. " + error.Message);
             }
         }
 

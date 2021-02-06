@@ -44,6 +44,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\ContentType.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Jsons\BaseItem.cs" />
     <Compile Include="Jsons\BaseItemConverter.cs" />

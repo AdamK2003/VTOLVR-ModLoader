@@ -23,6 +23,7 @@ using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Views;
 using VTOLVR_ModLoader.Windows;
 using Console = VTOLVR_ModLoader.Views.Console;
+using Core.Jsons;
 
 namespace VTOLVR_ModLoader
 {
@@ -51,6 +52,7 @@ namespace VTOLVR_ModLoader
         public static bool DisableInternet = false;
         public static bool IsBusy;
         public static List<Release> Releases { get; private set; }
+        public static List<BaseItem> Items;
 
         private static bool _uiLoaded = false;
         private static int _itemsToExtract = 0;
@@ -72,9 +74,10 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
             MainWindow._instance.CheckForEvent();
-            MainWindow._instance.ItemManager.UpdateUI(true);
             MainWindow.SetProgress(100, "Ready");
             CheckForItems();
+            FindItems();
+            MainWindow._instance.ItemManager.UpdateUI(true);
         }
 
         public static void SetVariables()
@@ -125,6 +128,17 @@ namespace VTOLVR_ModLoader
                 }
             }
         }
+
+        private static void FindItems()
+        {
+            Helper.SentryLog("Finding Items", Helper.SentryLogCategory.Program);
+            Console.Log("Finding items");
+            Items = Helper.FindDownloadMods();
+            Items.AddRange(Helper.FindDownloadedSkins());
+            Items.AddRange(Helper.FindMyMods());
+            Items.AddRange(Helper.FindMySkins());
+        }
+
         public static void LaunchGame()
         {
             Helper.SentryLog("Launching game", Helper.SentryLogCategory.Program);

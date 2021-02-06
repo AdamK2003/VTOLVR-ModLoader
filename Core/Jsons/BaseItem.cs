@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
+using Core.Enums;
 
 namespace Core.Jsons
 {
@@ -45,6 +46,19 @@ namespace Core.Jsons
         [JsonProperty(JDependencies)] public List<string> Dependencies { get; set; }
         [JsonProperty(JModDependencies)] public List<BaseItem> ModDependencies { get; set; }
         [JsonIgnore] public DirectoryInfo Directory { get; set; }
+
+        [JsonIgnore]
+        public ContentType ContentType
+        {
+            get
+            {
+                if (_contentType == ContentType.None)
+                    _contentType = GetContentType();
+                return _contentType;
+            }
+        }
+
+        [JsonIgnore] private ContentType _contentType;
         public bool HasPublicID()
         {
             return PublicID != string.Empty;
@@ -62,6 +76,19 @@ namespace Core.Jsons
                 js.Serialize(tw, this);
             }
         }
+
+        private ContentType GetContentType()
+        {
+            if (Directory.Parent.Name.ToLower().Contains("mod"))
+            {
+                return ContentType.Mods;
+            }
+            else
+            {
+                return ContentType.Skins;
+            }
+        }
+
         public static BaseItem GetItem(string json)
         {
             BaseItem item = Helper.DeserializeObject<BaseItem>(json, out Exception error);

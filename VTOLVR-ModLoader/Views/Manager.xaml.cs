@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Core.Enums;
 using Core.Jsons;
 using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
@@ -89,8 +90,7 @@ namespace VTOLVR_ModLoader.Views
             Console.Log("Populating List");
 
             _items = new ObservableCollection<Item>();
-            FindMods(ref _items);
-            FindSkins(ref _items);
+            ConvertItems();
             _listView.ItemsSource = _items;
 
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(_listView.ItemsSource);
@@ -142,7 +142,7 @@ namespace VTOLVR_ModLoader.Views
         {
             for (int i = 0; i < _items.Count; i++)
             {
-                if (_items[i].ItemType == Item.ContentType.Skins)
+                if (_items[i].ItemType == ContentType.Skins)
                 {
                     _scrollViewer.ScrollToBottom();
                     Dispatcher.Invoke(new Action(() => { _listView.ScrollIntoView(_items[i]); }),
@@ -152,32 +152,30 @@ namespace VTOLVR_ModLoader.Views
                 }
             }
         }
-        private void FindMods(ref ObservableCollection<Item> items)
+
+        private void ConvertItems()
         {
-            Helper.SentryLog("Finding Mods", Helper.SentryLogCategory.Manager);
-            if (items == null)
-                items = new ObservableCollection<Item>();
-
-            List<BaseItem> downloadedMods = Helper.FindDownloadMods();
-
+            List<BaseItem> items = Program.Items;
             Item lastItem;
-            for (int i = 0; i < downloadedMods.Count; i++)
+            for (int i = 0; i < items.Count; i++)
             {
                 lastItem = new Item(
-                    Item.ContentType.Mods,
-                    downloadedMods[i].Name,
-                    downloadedMods[i].Description,
+                    items[i].ContentType,
+                    items[i].Name,
+                    items[i].Description,
                     Visibility.Hidden,
-                    downloadedMods[i].Version,
-                    downloadedMods[i].PublicID == string.Empty ? "N/A" : "Requesting",
+                    items[i].Version,
+                    items[i].PublicID == string.Empty ? "N/A" : "Requesting",
                     false,
                     false,
-                    downloadedMods[i].Directory.FullName);
+                    items[i].Directory.FullName);
 
-                if (downloadedMods[i].PublicID != string.Empty)
+                if (items[i].PublicID != string.Empty)
                 {
-                    lastItem.PublicID = downloadedMods[i].PublicID;
-                    RequestItem(downloadedMods[i].PublicID, true);
+                    lastItem.PublicID = items[i].PublicID;
+
+                    RequestItem(items[i].PublicID,
+                        items[i].ContentType == ContentType.Mods ? true : false);
                 }
                 else
                 {
@@ -188,49 +186,8 @@ namespace VTOLVR_ModLoader.Views
                     lastItem.PopertyChanged("Font");
                     lastItem.PopertyChanged("CurrentVersionColour");
                 }
-                items.Add(lastItem);
+                _items.Add(lastItem);
             }
-        }
-        private void FindSkins(ref ObservableCollection<Item> items)
-        {
-            Helper.SentryLog("Finding Skins", Helper.SentryLogCategory.Manager);
-            if (items == null)
-                items = new ObservableCollection<Item>();
-
-            List<BaseItem> downloadSkins = Helper.FindDownloadedSkins();
-
-            Item lastItem;
-            for (int i = 0; i < downloadSkins.Count; i++)
-            {
-
-                lastItem = new Item(
-                    Item.ContentType.Skins,
-                    downloadSkins[i].Name,
-                    downloadSkins[i].Description,
-                    Visibility.Hidden,
-                    downloadSkins[i].Version,
-                    downloadSkins[i].PublicID == string.Empty ? "N/A" : "Requesting",
-                    false,
-                    false,
-                    downloadSkins[i].Directory.FullName);
-
-                if (downloadSkins[i].PublicID != string.Empty)
-                {
-                    lastItem.PublicID = downloadSkins[i].PublicID;
-                    RequestItem(downloadSkins[i].PublicID, false);
-                }
-                else
-                {
-                    _outdatedItems++;
-                    lastItem.CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 107, 113));
-                    lastItem.Font = BoldFont;
-
-                    lastItem.PopertyChanged("Font");
-                    lastItem.PopertyChanged("CurrentVersionColour");
-                }
-                items.Add(lastItem);
-            }
-
         }
         private void RequestItem(string publicID, bool isMod)
         {
@@ -339,7 +296,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 if (_items[i].PublicID == (string)button.Tag)
                 {
-                    if (_items[i].ItemType == Item.ContentType.Mods)
+                    if (_items[i].ItemType == ContentType.Mods)
                     {
                         HttpHelper.DownloadStringAsync(
                             $"{Program.URL}{Program.ApiURL}{Program.ModsURL}/{button.Tag}",
@@ -531,7 +488,6 @@ namespace VTOLVR_ModLoader.Views
         [JsonObject(MemberSerialization.OptIn)]
         public class Item : INotifyPropertyChanged
         {
-            public enum ContentType { Mods, Skins }
             public ContentType ItemType { get; set; }
             public string Name { get; set; }
             public string Description { get; set; }

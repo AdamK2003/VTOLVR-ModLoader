@@ -58,6 +58,12 @@ namespace VTOLVR_ModLoader.Views
             Helper.SentryLog("Setting UI", Helper.SentryLogCategory.DevToos);
             LoadSettings();
             FindMods();
+
+            if (Settings.USettings.AcceptedDevtools)
+                ToggleWarning(Visibility.Hidden);
+            else
+                ToggleWarning(Visibility.Visible);
+
             if (!FindPilots())
                 return;
             if (PilotSelected != null)
@@ -269,11 +275,6 @@ namespace VTOLVR_ModLoader.Views
             //Resaving it because of if a enabled mod was deleted,
             //we need to update that json file
             SaveSettings();
-
-            if (Settings.USettings.AcceptedDevtools)
-                ToggleWarning(Visibility.Hidden);
-            else
-                ToggleWarning(Visibility.Visible);
         }
 
         private void LoadScenarios()
@@ -357,6 +358,7 @@ namespace VTOLVR_ModLoader.Views
             Settings.SaveSettings();
             ToggleWarning(Visibility.Hidden);
         }
+
         private void ToggleWarning(Visibility visibility)
         {
             switch (visibility)
@@ -384,6 +386,7 @@ namespace VTOLVR_ModLoader.Views
             }
 
         }
+
     }
     public class ModItem
     {

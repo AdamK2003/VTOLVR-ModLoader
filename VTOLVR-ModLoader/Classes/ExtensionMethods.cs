@@ -63,5 +63,16 @@ namespace VTOLVR_ModLoader.Classes
             form.SetValue("user_uploaded_file", string.Empty);
 
         }
+
+        public static DirectoryInfo GetFolder(this DirectoryInfo directoryInfo, string folder)
+        {
+            DirectoryInfo[] folders = directoryInfo.GetDirectories();
+            for (int i = 0; i < folders.Length; i++)
+            {
+                if (folders[i].Name == folder)
+                    return folders[i];
+            }
+            return null;
+        }
     }
 }

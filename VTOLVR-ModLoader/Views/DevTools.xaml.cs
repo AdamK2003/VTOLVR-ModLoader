@@ -20,7 +20,7 @@ using VTOLVR_ModLoader.Properties;
 using VTOLVR_ModLoader.Classes.Json;
 using Core.Jsons;
 using Core.Enums;
-using Scenario = VTOLVR_ModLoader.Classes.Scenario;
+using VTOLVR_ModLoader.Classes.Workshop;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -32,10 +32,8 @@ namespace VTOLVR_ModLoader.Views
         private const string savePath = "/devtools.json";
         private const string gameData = "/gamedata.json";
         public static bool DevToolsEnabled { get; private set; } = false;
-        public static Pilot PilotSelected;
-        public static Scenario ScenarioSelected;
-        public static List<string> ModsToLoad = new List<string>();
         public static string[] PilotsCFG;
+        public static Core.Jsons.DevTools Values;
 
         private static List<Scenario> _scenarios = new List<Scenario>();
 
@@ -43,6 +41,8 @@ namespace VTOLVR_ModLoader.Views
         {
             InitializeComponent();
             LoadScenarios();
+            LoadWorkshop();
+
             try
             {
                 LoadSettings();
@@ -64,24 +64,25 @@ namespace VTOLVR_ModLoader.Views
             else
                 ToggleWarning(Visibility.Visible);
 
+            ScenarioDropdown.ItemsSource = _scenarios.ToArray();
+            ScenarioDropdown.SelectedIndex = 0;
+
             if (!FindPilots())
                 return;
-            if (PilotSelected != null)
+            if (Values.Scenario != null)
             {
-                foreach (Pilot p in PilotDropdown.ItemsSource)
+                foreach (string pilotName in PilotDropdown.ItemsSource)
                 {
-                    if (p.Name == PilotSelected.Name)
+                    if (pilotName == Values.Scenario.Pilot)
                     {
-                        PilotDropdown.SelectedItem = p;
+                        PilotDropdown.SelectedItem = pilotName;
                         break;
                     }
                 }
-            }
-            if (ScenarioSelected != null)
-            {
+
                 foreach (Scenario s in ScenarioDropdown.ItemsSource)
                 {
-                    if (s.ID == ScenarioSelected.ID)
+                    if (s.Equals(Values.Scenario))
                     {
                         ScenarioDropdown.SelectedItem = s;
                         break;
@@ -124,13 +125,13 @@ namespace VTOLVR_ModLoader.Views
                         "SaveData",
                         "pilots.cfg"));
             string result;
-            List<Pilot> pilots = new List<Pilot>(1) { new Pilot("No Selection") };
+            List<string> pilots = new List<string>(1) { "No Selection" };
             for (int i = 0; i < PilotsCFG.Length; i++)
             {
                 result = Helper.ClearSpaces(PilotsCFG[i]);
                 if (result.Contains("pilotName="))
                 {
-                    pilots.Add(new Pilot(result.Replace("pilotName=", string.Empty)));
+                    pilots.Add(result.Replace("pilotName=", string.Empty));
                 }
             }
 
@@ -145,7 +146,7 @@ namespace VTOLVR_ModLoader.Views
         private void PilotChanged(object sender, EventArgs e)
         {
             Helper.SentryLog("Pilot Changed", Helper.SentryLogCategory.DevToos);
-            PilotSelected = (Pilot)PilotDropdown.SelectedItem;
+            Values.Scenario.Pilot = PilotDropdown.SelectedItem.ToString();
             SaveSettings();
             IsDevToolsEnabled();
         }
@@ -153,7 +154,9 @@ namespace VTOLVR_ModLoader.Views
         private void ScenarioChanged(object sender, EventArgs e)
         {
             Helper.SentryLog("Scenario Changed", Helper.SentryLogCategory.DevToos);
-            ScenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
+            string pilot = Values.Scenario.Pilot;
+            Values.Scenario = (Scenario)ScenarioDropdown.SelectedItem;
+            Values.Scenario.Pilot = pilot;
             SaveSettings();
             IsDevToolsEnabled();
         }
@@ -170,7 +173,7 @@ namespace VTOLVR_ModLoader.Views
                     items[i].ContentType == ContentType.MySkins)
                     continue;
 
-                if (ModsToLoad.Contains(items[i].Directory.FullName))
+                if (Values.PreviousMods.Contains(items[i].Directory.FullName))
                     mods.Add(new ModItem(items[i].Directory.FullName, true));
                 else
                     mods.Add(new ModItem(items[i].Directory.FullName));
@@ -185,12 +188,12 @@ namespace VTOLVR_ModLoader.Views
             CheckBox checkBox = (CheckBox)sender;
             if (checkBox.IsChecked == true)
             {
-                ModsToLoad.Add(checkBox.ToolTip.ToString());
+                Values.PreviousMods.Add(checkBox.ToolTip.ToString());
                 Console.Log($"Added {checkBox.ToolTip}");
             }
             else if (checkBox.IsChecked == false)
             {
-                ModsToLoad.Remove(checkBox.ToolTip.ToString());
+                Values.PreviousMods.Remove(checkBox.ToolTip.ToString());
                 Console.Log($"Removed {checkBox.ToolTip}");
             }
             SaveSettings();
@@ -200,22 +203,7 @@ namespace VTOLVR_ModLoader.Views
         private void SaveSettings()
         {
             Helper.SentryLog("Saving Settings", Helper.SentryLogCategory.DevToos);
-            Core.Jsons.DevTools devTools = new Core.Jsons.DevTools();
-            devTools.Scenario = new Core.Jsons.Scenario();
-
-            if (PilotSelected != null)
-                devTools.Scenario.Pilot = PilotSelected.Name;
-
-            if (ScenarioSelected != null)
-            {
-                devTools.Scenario.ScenarioName = ScenarioSelected.Name;
-                devTools.Scenario.ScenarioID = ScenarioSelected.ID;
-                devTools.Scenario.CampaignID = ScenarioSelected.cID;
-            }
-
-            devTools.PreviousMods = ModsToLoad;
-
-            devTools.SaveFile(Program.Root + savePath);
+            Values.SaveFile(Program.Root + savePath);
         }
 
         private void LoadSettings()
@@ -224,45 +212,23 @@ namespace VTOLVR_ModLoader.Views
                 return;
             Helper.SentryLog("Loading Settings", Helper.SentryLogCategory.DevToos);
 
-            Core.Jsons.DevTools devTools = Core.Jsons.DevTools.GetDevTools(
+            Values = Core.Jsons.DevTools.GetDevTools(
                 File.ReadAllText(Program.Root + savePath));
 
-            if (devTools == null)
+            if (Values == null)
                 return;
+            Console.Log("Loading Dev Tools");
 
-            if (devTools.Scenario != null)
+            if (Values.PreviousMods != null)
             {
-                if (devTools.Scenario.Pilot != string.Empty)
-                    PilotSelected = new Pilot(devTools.Scenario.Pilot);
-
-                if (devTools.Scenario.ScenarioID != string.Empty &&
-                    devTools.Scenario.CampaignID != string.Empty)
-                {
-                    for (int i = 0; i < _scenarios.Count; i++)
-                    {
-                        if (_scenarios[i].Name.Equals(devTools.Scenario.ScenarioName) &&
-                            _scenarios[i].ID.Equals(devTools.Scenario.ScenarioID) &&
-                            _scenarios[i].cID.Equals(devTools.Scenario.CampaignID))
-                        {
-                            ScenarioDropdown.SelectedIndex = i;
-                            ScenarioSelected = (Scenario)ScenarioDropdown.SelectedItem;
-                            break;
-                        }
-                    }
-                }
-
-            }
-
-            if (devTools.PreviousMods != null)
-            {
-                List<string> mods = devTools.PreviousMods;
+                List<string> mods = Values.PreviousMods;
                 for (int i = 0; i < mods.Count; i++)
                 {
-                    if (!ModsToLoad.Contains(mods[i].ToString()))
+                    if (!Values.PreviousMods.Contains(mods[i].ToString()))
                     {
                         if (Directory.Exists(mods[i].ToString()))
                         {
-                            ModsToLoad.Add(mods[i].ToString());
+                            Values.PreviousMods.Add(mods[i].ToString());
                         }
                         else
                             Console.Log($"{mods[i]} isn't there are more");
@@ -304,10 +270,25 @@ namespace VTOLVR_ModLoader.Views
             AddScenarios(json);
         }
 
+        private void LoadWorkshop()
+        {
+            List<WorkshopItem> items = VTWorkshopDecoder.GetWorkshopScenarios();
+            for (int i = 0; i < items.Count; i++)
+            {
+                _scenarios.Add(new Scenario()
+                {
+                    ScenarioName = items[i].ScenarioName,
+                    ScenarioID = items[i].ScenarioID,
+                    IsWorkshop = true
+                });
+            }
+        }
+
+
         private void AddScenarios(JObject json)
         {
             Helper.SentryLog("Adding Scenarios", Helper.SentryLogCategory.DevToos);
-            _scenarios.Add(new Scenario("No Selection", string.Empty, string.Empty));
+            _scenarios.Add(new Scenario() { ScenarioName = "No Selection" });
             if (json["Campaigns"] != null)
             {
                 JArray campaignJArray = json["Campaigns"] as JArray;
@@ -317,30 +298,27 @@ namespace VTOLVR_ModLoader.Views
                     scenariosJArray = campaignJArray[i]["Scenarios"] as JArray;
                     for (int s = 0; s < scenariosJArray.Count; s++)
                     {
-                        _scenarios.Add(new Scenario(
-                            campaignJArray[i]["Vehicle"].ToString() + " " + scenariosJArray[s]["Name"].ToString(),
-                            campaignJArray[i]["CampaignID"].ToString(),
-                            scenariosJArray[s]["Id"].ToString()));
+                        _scenarios.Add(new Scenario()
+                        {
+                            ScenarioName = campaignJArray[i]["Vehicle"].ToString() + " " + scenariosJArray[s]["Name"].ToString(),
+                            CampaignID = campaignJArray[i]["CampaignID"].ToString(),
+                            ScenarioID = scenariosJArray[s]["Id"].ToString()
+                        });
                     }
                 }
             }
-
-            ScenarioDropdown.ItemsSource = _scenarios.ToArray();
-            ScenarioDropdown.SelectedIndex = 0;
         }
 
         private void IsDevToolsEnabled()
         {
             Helper.SentryLog("Checking if dev tools is enabled", Helper.SentryLogCategory.DevToos);
             DevToolsEnabled = false;
-            if (PilotSelected != null &&
-                ScenarioSelected != null &&
-                !PilotSelected.Name.Equals("No Selection") &&
-                !ScenarioSelected.Name.Equals("No Selection"))
+            if (Values.PreviousMods != null && Values.PreviousMods.Count != 0)
             {
                 DevToolsEnabled = true;
             }
-            if (ModsToLoad != null && ModsToLoad.Count > 0)
+            if (Values.Scenario != null && Values.Scenario.Pilot != "No Selection" &&
+                Values.Scenario.ScenarioName != "No Selection")
             {
                 DevToolsEnabled = true;
             }

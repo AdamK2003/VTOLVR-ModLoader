@@ -12,7 +12,7 @@ namespace Core.Jsons
 {
     public class DevTools
     {
-        [JsonProperty("previous_mods")] public List<string> PreviousMods;
+        [JsonProperty("previous_mods")] public List<string> PreviousMods = new List<string>();
         [JsonProperty("scenario")] public Scenario Scenario;
 
         public static DevTools GetDevTools(string json)

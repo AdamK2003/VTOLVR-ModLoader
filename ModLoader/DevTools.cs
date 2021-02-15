@@ -21,8 +21,7 @@ namespace ModLoader
             {
                 if (value.Pilot == "No Selection" ||
                     value.ScenarioName == "No Selection" ||
-                    value.ScenarioID == string.Empty ||
-                    value.CampaignID == string.Empty)
+                    value.ScenarioID == string.Empty)
                 {
                     _scenario = null;
                     Warning("Scenario is null");
@@ -52,6 +51,7 @@ namespace ModLoader
                 LoadMods(devTools.PreviousMods);
 
             Scenario = devTools.Scenario;
+            Log("This is scenario: " + devTools.Scenario);
         }
 
         private static void LoadMods(List<string> mods)
@@ -69,6 +69,101 @@ namespace ModLoader
                 }
             }
         }
+
+        private static async Task SelectPilot()
+        {
+            Log("Loading Pilots");
+            PilotSaveManager.LoadPilotsFromFile();
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            VTMapManager.nextLaunchMode = VTMapManager.MapLaunchModes.Scenario;
+            Log("Setting Pilot");
+            PilotSaveManager.current = PilotSaveManager.pilots[Scenario.Pilot];
+        }
+
+        public static async void LoadWorkshopMission()
+        {
+            await SelectPilot();
+
+            VTResources.SteamWorkshopItemRequest<VTScenarioInfo> result =
+                VTResources.LoadSteamWorkshopScenarios();
+
+            Log("Loading workshop scenarios");
+            while (!result.done)
+            {
+                Log("Loading " + result.progress);
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
+            Log("Finished loading workshop Scenarios");
+
+
+            Log("Going through all workshop campaigns");
+            VTScenarioInfo scenarioInfo =
+                VTResources.GetSteamWorkshopStandaloneScenario(Scenario.ScenarioID);
+
+            if (scenarioInfo == null)
+            {
+                Debug.LogError($"Couldn't find {Scenario.ScenarioID}");
+                return;
+            }
+
+            VTScenario.currentScenarioInfo = scenarioInfo;
+            PlayerVehicle vehicle = scenarioInfo.vehicle;
+            PilotSaveManager.currentVehicle = vehicle;
+            PilotSaveManager.current.lastVehicleUsed = vehicle.vehicleName;
+
+            VTScenario.LaunchScenario(scenarioInfo);
+            await Task.Delay(TimeSpan.FromSeconds(5));
+            ReadyUp();
+            Log("Player is ready");
+        }
+
+        public static async void LoadBuiltInMission()
+        {
+            await SelectPilot();
+            Debug.Log("Going though All built in campaigns");
+            if (VTResources.GetBuiltInCampaigns() != null)
+            {
+                foreach (VTCampaignInfo info in VTResources.GetBuiltInCampaigns())
+                {
+                    if (info.campaignID == DevTools.Scenario.CampaignID)
+                    {
+                        Debug.Log("Setting Campaign");
+                        PilotSaveManager.currentCampaign = info.ToIngameCampaign();
+                        Debug.Log("Setting Vehicle");
+                        PilotSaveManager.currentVehicle = VTResources.GetPlayerVehicle(info.vehicle);
+                        break;
+                    }
+                }
+            }
+            else
+                Debug.Log("Campaigns are null");
+
+            Debug.Log("Going though All missions in that campaign");
+            foreach (CampaignScenario cs in PilotSaveManager.currentCampaign.missions)
+            {
+                if (cs.scenarioID == DevTools.Scenario.ScenarioID)
+                {
+                    Debug.Log("Setting Scenario");
+                    PilotSaveManager.currentScenario = cs;
+                    break;
+                }
+            }
+
+            VTScenario.currentScenarioInfo = VTResources.GetScenario(PilotSaveManager.currentScenario.scenarioID, PilotSaveManager.currentCampaign);
+
+            Debug.Log(string.Format("Loading into game, Pilot:{3}, Campaign:{0}, Scenario:{1}, Vehicle:{2}",
+                PilotSaveManager.currentCampaign.campaignName, PilotSaveManager.currentScenario.scenarioName,
+                PilotSaveManager.currentVehicle.vehicleName, DevTools.Scenario.Pilot));
+
+            VTScenario.LaunchScenario(VTScenario.currentScenarioInfo);
+
+            await Task.Delay(TimeSpan.FromSeconds(5));
+            ReadyUp();
+            Log("Player Ready");
+        }
+
+        private static void ReadyUp() => LoadingSceneController.instance.PlayerReady();
 
         private static void Log(object message) => Debug.Log($"[Dev Tools]{message}");
 

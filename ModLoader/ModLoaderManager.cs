@@ -202,7 +202,10 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                     StartCoroutine(CreateModLoader());
                     if (DevTools.Scenario != null)
                     {
-                        StartCoroutine(LoadLevel());
+                        if (DevTools.Scenario.IsWorkshop)
+                            DevTools.LoadWorkshopMission();
+                        else
+                            DevTools.LoadBuiltInMission();
                     }
                     break;
                 case "Akutan":
@@ -349,62 +352,6 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             }
         }
 
-        private IEnumerator LoadLevel()
-        {
-            Debug.Log("Loading Pilots from file");
-            PilotSaveManager.LoadPilotsFromFile();
-            yield return new WaitForSeconds(2);
-
-            Debug.Log($"Loading Level\n{DevTools.Scenario}");
-            VTMapManager.nextLaunchMode = VTMapManager.MapLaunchModes.Scenario;
-            Debug.Log("Setting Pilot");
-            PilotSaveManager.current = PilotSaveManager.pilots[DevTools.Scenario.Pilot];
-            Debug.Log("Going though All built in campaigns");
-            if (VTResources.GetBuiltInCampaigns() != null)
-            {
-                foreach (VTCampaignInfo info in VTResources.GetBuiltInCampaigns())
-                {
-                    if (info.campaignID == DevTools.Scenario.CampaignID)
-                    {
-                        Debug.Log("Setting Campaign");
-                        PilotSaveManager.currentCampaign = info.ToIngameCampaign();
-                        Debug.Log("Setting Vehicle");
-                        PilotSaveManager.currentVehicle = VTResources.GetPlayerVehicle(info.vehicle);
-                        break;
-                    }
-                }
-            }
-            else
-                Debug.Log("Campaigns are null");
-
-            Debug.Log("Going though All missions in that campaign");
-            foreach (CampaignScenario cs in PilotSaveManager.currentCampaign.missions)
-            {
-                if (cs.scenarioID == DevTools.Scenario.ScenarioID)
-                {
-                    Debug.Log("Setting Scenario");
-                    PilotSaveManager.currentScenario = cs;
-                    break;
-                }
-            }
-
-            VTScenario.currentScenarioInfo = VTResources.GetScenario(PilotSaveManager.currentScenario.scenarioID, PilotSaveManager.currentCampaign);
-
-            Debug.Log(string.Format("Loading into game, Pilot:{3}, Campaign:{0}, Scenario:{1}, Vehicle:{2}",
-                PilotSaveManager.currentCampaign.campaignName, PilotSaveManager.currentScenario.scenarioName,
-                PilotSaveManager.currentVehicle.vehicleName, DevTools.Scenario.Pilot));
-
-            VTScenario.LaunchScenario(VTScenario.currentScenarioInfo);
-            yield return new WaitForSeconds(5); // Waiting for us to be in the loader scene
-            LoadingSceneController.instance.PlayerReady(); //<< Auto Ready
-            Debug.Log("Player is ready");
-
-            while (SceneManager.GetActiveScene().buildIndex != 7)
-            {
-                //Pausing this method till the loader scene is unloaded
-                yield return null;
-            }
-        }
         private void FindProjectFolder()
         {
             if (!File.Exists(Path.Combine(RootPath, "settings.json")))

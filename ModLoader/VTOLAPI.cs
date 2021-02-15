@@ -27,6 +27,7 @@ public class VTOLAPI : MonoBehaviour
     /// This should be the safest way to start running code when a level is loaded.
     /// </summary>
     public static UnityAction<VTOLScenes> SceneLoaded;
+
     /// <summary>
     /// This gets invoked when the mission as been reloaded by the player.
     /// </summary>
@@ -99,6 +100,7 @@ public class VTOLAPI : MonoBehaviour
                 break;
         }
     }
+
     private IEnumerator WaitForScenario(VTOLScenes Scene)
     {
         while (VTMapManager.fetch == null || !VTMapManager.fetch.scenarioReady)
@@ -107,6 +109,7 @@ public class VTOLAPI : MonoBehaviour
         }
         CallSceneLoaded(Scene);
     }
+
     private void CallSceneLoaded(VTOLScenes Scene)
     {
         currentScene = Scene;
@@ -122,6 +125,7 @@ public class VTOLAPI : MonoBehaviour
     {
         return SteamUser.GetSteamID().m_SteamID;
     }
+
     /// <summary>
     /// Returns the current name of the steam user, if they change their name during play session, this doesn't update.
     /// </summary>
@@ -130,6 +134,7 @@ public class VTOLAPI : MonoBehaviour
     {
         return SteamFriends.GetPersonaName();
     }
+
     /// <summary>
     /// Returns the parent gameobject of what vehicle the player is currently flying, it will return null if nothing is found.
     /// </summary>
@@ -150,6 +155,7 @@ public class VTOLAPI : MonoBehaviour
                 return null;
         }
     }
+
     /// <summary>
     /// Returns which vehicle the player is using in a Enum.
     /// </summary>
@@ -172,6 +178,7 @@ public class VTOLAPI : MonoBehaviour
                 return VTOLVehicles.None;
         }
     }
+
     /// <summary>
     /// Creates a settings page in the `mod settings` tab.
     /// Make sure to fully create your settings before calling this as you 
@@ -224,6 +231,7 @@ public class VTOLAPI : MonoBehaviour
         }
         Debug.Log(stringBuilder.ToString());
     }
+
     /// <summary>
     /// Returns a list of mods which are currently loaded
     /// </summary>

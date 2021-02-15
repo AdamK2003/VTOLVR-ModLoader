@@ -41,7 +41,7 @@ namespace VTOLVR_ModLoader.Views
         {
             InitializeComponent();
             LoadScenarios();
-            LoadWorkshop();
+            //LoadWorkshop();
 
             try
             {

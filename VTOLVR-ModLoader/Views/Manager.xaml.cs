@@ -510,7 +510,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 ItemType = contentType;
                 Name = name;
-                if (description.Length > 75)
+                if (description != null && description.Length > 75)
                     Description = description.Remove(75) + "...";
                 else
                     Description = description;

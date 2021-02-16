@@ -523,7 +523,7 @@ namespace VTOLVR_ModLoader.Views
                 FolderDirectory = folderDirectory;
                 Font = DefaultFont;
 
-                if (ItemType == ContentType.Skins)
+                if (ItemType == ContentType.Skins || ItemType == ContentType.MySkins)
                     LoadOnStartVisibility = Visibility.Hidden;
             }
 

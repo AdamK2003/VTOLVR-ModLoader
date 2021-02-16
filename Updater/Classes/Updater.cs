@@ -23,10 +23,14 @@ namespace AutoUpdater
             if (Program.Releases == null || Program.Releases.Count == 0)
             {
                 Console.Log("Couldn't find any releases");
+                if (Program.Releases == null)
+                    Console.Log("Releases == null");
+                else
+                    Console.Log("Releases.Count == 0");
                 return;
             }
             UpdateFile[] updateFiles = Program.Releases[0].files;
-            
+
             if (updateFiles == null)
                 return;
             string lastPath;
@@ -95,7 +99,7 @@ namespace AutoUpdater
                 Process.Start(Program.Root + "/VTOLVR-ModLoader.exe");
                 Program.Quit();
             }
-                
+
         }
     }
 }

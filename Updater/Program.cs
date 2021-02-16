@@ -68,6 +68,7 @@ namespace AutoUpdater
                 return;
 
             Console.Log($"Connecting to API for latest releases");
+            Console.Log($"URL = {url + apiURL + releasesURL + "/" + (branch == string.Empty ? string.Empty : $"?branch={branch}")}");
             HttpHelper.DownloadStringAsync(
                 url + apiURL + releasesURL + "/" + (branch == string.Empty ? string.Empty : $"?branch={branch}"),
                 NewsDone);
@@ -77,7 +78,9 @@ namespace AutoUpdater
             if (response.IsSuccessStatusCode)
             {
                 Releases = new List<Release>();
-                ConvertUpdates(await response.Content.ReadAsStringAsync());
+                string json = await response.Content.ReadAsStringAsync();
+                Console.Log($"Here is the raw json\n{json}");
+                ConvertUpdates(json);
             }
             else
             {

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ModLoader</RootNamespace>
     <AssemblyName>ModLoader</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -98,21 +98,31 @@
     <Compile Include="API\VTOLScenes.cs" />
     <Compile Include="API\VTOLVehicles.cs" />
     <Compile Include="Classes\Campaigns.cs" />
+    <Compile Include="Classes\Item.cs" />
+    <Compile Include="Classes\Json\Item.cs" />
+    <Compile Include="Classes\Json\LauncherSettings.cs" />
     <Compile Include="Classes\SteamAuthentication.cs" />
     <Compile Include="DataCollector.cs" />
+    <Compile Include="DevTools.cs" />
     <Compile Include="DiscordController.cs" />
     <Compile Include="DiscordRpc.cs" />
+    <Compile Include="Classes\Mod.cs" />
     <Compile Include="ModLoader.cs" />
     <Compile Include="ModLoaderManager.cs" />
     <Compile Include="Patches\VTMapManagerPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsMenu.cs" />
     <Compile Include="SkinManager.cs" />
-    <Compile Include="UConsole.cs" />
     <Compile Include="UI\ListItemTemplate.cs" />
     <Compile Include="VTOLAPI.cs" />
     <Compile Include="VTOLMOD.cs" />
     <Compile Include="ModReader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{260bf2d3-dd28-4db5-80c3-b137e350930d}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

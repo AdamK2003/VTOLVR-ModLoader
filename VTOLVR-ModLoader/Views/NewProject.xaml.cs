@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -21,6 +20,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Windows;
+using Core.Jsons;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -210,11 +210,11 @@ namespace VTOLVR_ModLoader.Views
         private void MoveDlls(string path)
         {
             Helper.SentryLog("Moving Dlls", Helper.SentryLogCategory.NewProject);
-            Helper.TryCopy(Program.root + @"\ModLoader.dll", path + @"\ModLoader.dll");
-            Helper.TryCopy(Program.root + @"\ModLoader.xml", path + @"\ModLoader.xml");
-            Helper.TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\Assembly-CSharp.dll", path + @"\Assembly-CSharp.dll");
-            Helper.TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\UnityEngine.dll", path + @"\UnityEngine.dll");
-            Helper.TryCopy(Program.vtolFolder + @"\VTOLVR_Data\Managed\UnityEngine.CoreModule.dll", path + @"\UnityEngine.CoreModule.dll");
+            Helper.TryCopy(Program.Root + @"\ModLoader.dll", path + @"\ModLoader.dll");
+            Helper.TryCopy(Program.Root + @"\ModLoader.xml", path + @"\ModLoader.xml");
+            Helper.TryCopy(Program.VTOLFolder + @"\VTOLVR_Data\Managed\Assembly-CSharp.dll", path + @"\Assembly-CSharp.dll");
+            Helper.TryCopy(Program.VTOLFolder + @"\VTOLVR_Data\Managed\UnityEngine.dll", path + @"\UnityEngine.dll");
+            Helper.TryCopy(Program.VTOLFolder + @"\VTOLVR_Data\Managed\UnityEngine.CoreModule.dll", path + @"\UnityEngine.CoreModule.dll");
         }
 
         private void ChangeFilesText()
@@ -231,7 +231,7 @@ namespace VTOLVR_ModLoader.Views
 
             string csproj = File.ReadAllText($"{currentFolder.FullName}\\{projectName}\\VTOLVR_Mod_Boilerplate.csproj");
             csproj = csproj.Replace("VTOLVR_Mod_Boilerplate", projectName);
-            csproj = csproj.Replace("{{VTOLVR}}", Program.root + @"\VTOLVR-ModLoader.exe");
+            csproj = csproj.Replace("{{VTOLVR}}", Program.Root + @"\VTOLVR-ModLoader.exe");
             csproj = csproj.Replace("{{MODPATH}}", currentFolder.FullName + @"\Builds\" + projectName + @".dll");
             File.WriteAllText($"{currentFolder.FullName}\\{projectName}\\{projectName}.csproj", csproj);
             File.Delete($"{currentFolder.FullName}\\{projectName}\\VTOLVR_Mod_Boilerplate.csproj");
@@ -249,13 +249,15 @@ namespace VTOLVR_ModLoader.Views
         private void CreateJson(bool isMod = true)
         {
             Helper.SentryLog("Creating Json", Helper.SentryLogCategory.NewProject);
-            JObject jObject = new JObject();
-            jObject.Add(ProjectManager.jName, nameBox.Text);
-            jObject.Add(ProjectManager.jDescription, descriptionBox.Text);
+            BaseItem item = new BaseItem();
+            item.Name = nameBox.Text;
+            item.Description = descriptionBox.Text;
             if (isMod)
-                jObject.Add(ProjectManager.jDll, nameBox.Text.RemoveSpaces() + ".dll");
-            jObject.Add("last edit", DateTime.Now.Ticks);
-            File.WriteAllText(currentFolder.FullName + (isMod ? @"\Builds\" : @"\") + @"info.json", jObject.ToString());
+                item.DllPath = nameBox.Text.RemoveSpaces() + ".dll";
+            item.LastEdit = DateTime.Now.Ticks;
+
+            item.Directory = new DirectoryInfo(currentFolder.FullName + (isMod ? @"\Builds\" : @"\"));
+            item.SaveFile();
         }
 
         private void CreateSkinProject(string name)

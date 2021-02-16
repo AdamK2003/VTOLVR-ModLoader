@@ -21,8 +21,6 @@ build_builder:
     paths:
     - Builder.exe
     expire_in: 1 day
-  only:
-   - release
 
 build_dll:
   stage: build_dll
@@ -32,9 +30,8 @@ build_dll:
    paths:
    - ModLoader\bin\Release\ModLoader.dll
    - ModLoader\bin\Release\ModLoader.xml
+   - Core\bin\Release\Core.dll
    expire_in: 1 day
-  only:
-   - release
 
 build_wpf:
   stage: build_wpf
@@ -44,8 +41,6 @@ build_wpf:
    paths:
    - VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe
    expire_in: 1 day
-  only:
-   - release
 
 build_updater:
   stage: build_updater
@@ -55,8 +50,6 @@ build_updater:
    paths:
    - Updater\bin\Release\Updater.exe
    expire_in: 1 day
-  only:
-   - release
 
 zip:
   stage: zip
@@ -66,8 +59,6 @@ zip:
    paths:
    - Installer\Resources\ModLoader.zip
    expire_in: 1 day
-  only:
-   - release
 
 build_installer:
   stage: build_installer
@@ -77,8 +68,6 @@ build_installer:
    paths:
    - Installer\bin\Release\Installer.exe
    expire_in: 1 day
-  only:
-   - release
 
 autoupdate_zip:
   stage: autoupdate_zip
@@ -88,12 +77,8 @@ autoupdate_zip:
    paths:
    - autoupdate.zip
    expire_in: 1 day
-  only:
-   - release
 
 move_files:
   stage: move_files
   script:
    - .\Builder.exe move
-  only:
-   - release

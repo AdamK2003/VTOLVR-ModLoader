@@ -10,23 +10,25 @@ using System.Threading.Tasks;
 using System.Windows;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
-using Newtonsoft.Json.Linq;
+using Valve.Newtonsoft.Json;
+using Valve.Newtonsoft.Json.Linq;
 using Sentry;
 using Sentry.Protocol;
 using VTOLVR_ModLoader.Views;
 using VTOLVR_ModLoader.Windows;
 using Console = VTOLVR_ModLoader.Views.Console;
 using Settings = VTOLVR_ModLoader.Views.Settings;
+using Core.Jsons;
 
 namespace VTOLVR_ModLoader.Classes
 {
-    public static class Helper
+    static class Helper
     {
         public static string ClearSpaces(string input)
         {
             return Regex.Replace(input, @"\s+", "");
         }
-        public static async void ExtractZipToDirectory(string zipPath, string extractPath, Action<string, string, string> completed)
+        public static async void ExtractZipToDirectory(string zipPath, string extractPath, Action<string, string, string> completed = null, Action<string, string, string, object[]> completedWithArgs = null, object[] extraData = null)
         {
             string result = await Task.Run(() =>
             {
@@ -70,6 +72,7 @@ namespace VTOLVR_ModLoader.Classes
                 }
             });
             completed?.Invoke(zipPath, extractPath, result);
+            completedWithArgs?.Invoke(zipPath, extractPath, result, extraData);
         }
         public static string CalculateMD5(string filename)
         {
@@ -121,85 +124,21 @@ namespace VTOLVR_ModLoader.Classes
             }
             return true;
         }
-        /// <summary>
-        /// Finds the mods which teh user has downloaded from the website
-        /// </summary>
-        /// <returns></returns>
-        public static List<BaseItem> FindDownloadMods()
+        public static List<BaseItem> FindDownloadMods() =>
+            Core.Helper.FindMods(Program.Root + Program.ModsFolder);
+        public static List<BaseItem> FindMyMods() =>
+            Core.Helper.FindMods(Views.Settings.ProjectsFolder + ProjectManager.modsFolder, true);
+        public static List<BaseItem> FindDownloadedSkins() =>
+            Core.Helper.FindSkins(Program.Root + Program.SkinsFolder);
+        public static List<BaseItem> FindMySkins() =>
+            Core.Helper.FindSkins(Views.Settings.ProjectsFolder + ProjectManager.skinsFolder);
+        public static BaseItem GetBaseItem(string folder)
         {
-            List<BaseItem> foundMods = new List<BaseItem>();
-            DirectoryInfo downloadedMods = new DirectoryInfo(Program.root + Program.modsFolder);
-            DirectoryInfo[] mods = downloadedMods.GetDirectories();
-
-            JObject json;
-            for (int i = 0; i < mods.Length; i++)
-            {
-                if (!File.Exists(Path.Combine(mods[i].FullName, "info.json")))
-                {
-                    Console.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
-                    continue;
-                }
-
-                json = JObject.Parse(File.ReadAllText(Path.Combine(mods[i].FullName, "info.json")));
-                if (json[ProjectManager.jDll] == null)
-                {
-                    Console.Log($"Mod: Couldn't find {ProjectManager.jDll} in {Path.Combine(mods[i].FullName, "info.json")}");
-                    continue;
-                }
-                if (json[ProjectManager.jName] == null)
-                {
-                    Console.Log($"Mod: Couldn't find {ProjectManager.jName} in {Path.Combine(mods[i].FullName, "info.json")}");
-                    continue;
-                }
-                foundMods.Add(new BaseItem(json[ProjectManager.jName].ToString(), mods[i], json));
-            }
-            return foundMods;
-        }
-        /// <summary>
-        /// Finds the skins which the user has downloaded from the website
-        /// </summary>
-        /// <returns></returns>
-        public static List<BaseItem> FindDownloadedSkins()
-        {
-            List<BaseItem> foundSkins = new List<BaseItem>();
-            DirectoryInfo downloadedSkins = new DirectoryInfo(Program.root + Program.skinsFolder);
-            DirectoryInfo[] skins = downloadedSkins.GetDirectories();
-
-            JObject json;
-            for (int i = 0; i < skins.Length; i++)
-            {
-                if (!File.Exists(Path.Combine(skins[i].FullName, "info.json")))
-                {
-                    Console.Log($"Skin: {skins[i].Name} doesn't have a info.json file");
-                    continue;
-                }
-
-                json = JObject.Parse(File.ReadAllText(Path.Combine(skins[i].FullName, "info.json")));
-                if (json[ProjectManager.jName] == null)
-                {
-                    Console.Log($"Skin: Couldn't find {ProjectManager.jName} in {Path.Combine(skins[i].FullName, "info.json")}");
-                    continue;
-                }
-                foundSkins.Add(new BaseItem(json[ProjectManager.jName].ToString(), skins[i], json));
-            }
-
-            return foundSkins;
-        }
-        /// <summary>
-        /// Finds the mods which the user has created in the project manager
-        /// </summary>
-        /// <returns></returns>
-        public static List<BaseItem> FindUsersMods()
-        {
-            return null;
-        }
-        /// <summary>
-        /// Finds the skins which the user has created in the project manager
-        /// </summary>
-        /// <returns></returns>
-        public static List<BaseItem> FindUsersSkins()
-        {
-            return null;
+            BaseItem item = JsonConvert.DeserializeObject<BaseItem>(
+                                File.ReadAllText(
+                                    Path.Combine(folder, "info.json")));
+            item.Directory = new DirectoryInfo(folder);
+            return item;
         }
         public enum SentryLogCategory { Console, DevToos, EditProject, Manager, NewProject, News, NewVersion, ProjectManager, Settings, MainWindow, Program, Startup, CommunicationsManager, Helper }
         public static void SentryLog(string message, SentryLogCategory category)
@@ -253,7 +192,7 @@ namespace VTOLVR_ModLoader.Classes
             SentryLog("Creating Diagnostics Zip", SentryLogCategory.Helper);
 
             string datetime = DateTime.Now.ToString().Replace('/', '-').Replace(':', '-');
-            Directory.CreateDirectory(Path.Combine(Program.root, datetime));
+            Directory.CreateDirectory(Path.Combine(Program.Root, datetime));
 
             Console.Log("Copying Game Log");
             string[] lines = null;
@@ -265,33 +204,33 @@ namespace VTOLVR_ModLoader.Classes
             {
                 Console.Log("Can't read player log because the game is open");
                 Notification.Show("Please close the game before creating a diagnostics zip.", "Error");
-                Directory.Delete(Path.Combine(Program.root, datetime));
+                Directory.Delete(Path.Combine(Program.Root, datetime));
                 return;
             }
             string[] shortLines = ShortenPlayerLog(lines);
-            File.WriteAllLines(Path.Combine(Program.root, datetime, "Player.log"), shortLines);
+            File.WriteAllLines(Path.Combine(Program.Root, datetime, "Player.log"), shortLines);
 
             Console.Log("Copying Mod Loader Log");
             File.Copy(
-                Path.Combine(Program.root, Program.LogName),
-                Path.Combine(Program.root, datetime, Program.LogName));
+                Path.Combine(Program.Root, Program.LogName),
+                Path.Combine(Program.Root, datetime, Program.LogName));
 
             Console.Log("Gathering Extra Info");
             StringBuilder infoBuilder = new StringBuilder("# Created: " + DateTime.Now.ToString());
             infoBuilder.AppendLine();
             infoBuilder.AppendLine($"# Version: {Program.ProgramName}");
             GatherExtraInfo(ref infoBuilder);
-            File.WriteAllText(Path.Combine(Program.root, datetime, "Info.txt"), infoBuilder.ToString());
+            File.WriteAllText(Path.Combine(Program.Root, datetime, "Info.txt"), infoBuilder.ToString());
 
             Console.Log("Zipping up content");
             string zipName = $"DiagnosticsZip [{datetime}].zip";
             FastZip zip = new FastZip();
-            zip.CreateZip(zipName, Path.Combine(Program.root, datetime), false, null);
+            zip.CreateZip(zipName, Path.Combine(Program.Root, datetime), false, null);
 
-            Directory.Delete(Path.Combine(Program.root, datetime), true);
-            Process.Start("explorer.exe", string.Format("/select,\"{0}\\{1}\"", Program.root, zipName));
+            Directory.Delete(Path.Combine(Program.Root, datetime), true);
+            Process.Start("explorer.exe", string.Format("/select,\"{0}\\{1}\"", Program.Root, zipName));
         }
-        private static string PlayerLogPath()
+        public static string PlayerLogPath()
         {
             // This is a massive pain because it's stored in LocalLow but there is no special folder
             // for LocalLow
@@ -345,7 +284,7 @@ namespace VTOLVR_ModLoader.Classes
         {
 
             builder.AppendLine();
-            DirectoryInfo[] modFolders = new DirectoryInfo(Program.root + Program.modsFolder).GetDirectories();
+            DirectoryInfo[] modFolders = new DirectoryInfo(Program.Root + Program.ModsFolder).GetDirectories();
             builder.AppendLine($"## Downloaded Mods ({modFolders.Length})");
             for (int i = 0; i < modFolders.Length; i++)
             {
@@ -353,7 +292,7 @@ namespace VTOLVR_ModLoader.Classes
             }
 
             builder.AppendLine();
-            DirectoryInfo[] skinFolders = new DirectoryInfo(Program.root + Program.skinsFolder).GetDirectories();
+            DirectoryInfo[] skinFolders = new DirectoryInfo(Program.Root + Program.SkinsFolder).GetDirectories();
             builder.AppendLine($"## Downloaded Skins ({skinFolders.Length})");
             for (int i = 0; i < skinFolders.Length; i++)
             {
@@ -369,7 +308,7 @@ namespace VTOLVR_ModLoader.Classes
 
             builder.AppendLine();
             builder.AppendLine("## Mod Loader Folder Files");
-            FileInfo[] files = new DirectoryInfo(Program.root).GetFiles();
+            FileInfo[] files = new DirectoryInfo(Program.Root).GetFiles();
             for (int i = 0; i < files.Length; i++)
             {
                 builder.AppendLine($"/{files[i].Name} (MD5: {CalculateMD5(files[i].Name)})");

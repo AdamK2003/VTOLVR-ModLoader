@@ -14,10 +14,18 @@ using System.Collections;
 /// </summary>
 public class VTOLAPI : MonoBehaviour
 {
+    public enum ErrorResult { None, NotRegistered, KeyNotFound }
+
     /// <summary>
     /// This is the current instance of the API in the game world.
     /// </summary>
     public static VTOLAPI instance { get; private set; }
+
+    public static Action<string> ModRegistered;
+    public static Action<string, string, object> ModValueChanged;
+
+    private static Dictionary<VTOLMOD, Dictionary<string, object>> _dataSharing = new Dictionary<VTOLMOD, Dictionary<string, object>>();
+
     private string gamePath;
     private string modsPath = @"\VTOLVR_ModLoader\mods";
     private Dictionary<string, Action<string>> commands = new Dictionary<string, Action<string>>();
@@ -27,6 +35,7 @@ public class VTOLAPI : MonoBehaviour
     /// This should be the safest way to start running code when a level is loaded.
     /// </summary>
     public static UnityAction<VTOLScenes> SceneLoaded;
+
     /// <summary>
     /// This gets invoked when the mission as been reloaded by the player.
     /// </summary>
@@ -99,6 +108,7 @@ public class VTOLAPI : MonoBehaviour
                 break;
         }
     }
+
     private IEnumerator WaitForScenario(VTOLScenes Scene)
     {
         while (VTMapManager.fetch == null || !VTMapManager.fetch.scenarioReady)
@@ -107,6 +117,7 @@ public class VTOLAPI : MonoBehaviour
         }
         CallSceneLoaded(Scene);
     }
+
     private void CallSceneLoaded(VTOLScenes Scene)
     {
         currentScene = Scene;
@@ -122,6 +133,7 @@ public class VTOLAPI : MonoBehaviour
     {
         return SteamUser.GetSteamID().m_SteamID;
     }
+
     /// <summary>
     /// Returns the current name of the steam user, if they change their name during play session, this doesn't update.
     /// </summary>
@@ -130,6 +142,7 @@ public class VTOLAPI : MonoBehaviour
     {
         return SteamFriends.GetPersonaName();
     }
+
     /// <summary>
     /// Returns the parent gameobject of what vehicle the player is currently flying, it will return null if nothing is found.
     /// </summary>
@@ -150,6 +163,7 @@ public class VTOLAPI : MonoBehaviour
                 return null;
         }
     }
+
     /// <summary>
     /// Returns which vehicle the player is using in a Enum.
     /// </summary>
@@ -172,6 +186,7 @@ public class VTOLAPI : MonoBehaviour
                 return VTOLVehicles.None;
         }
     }
+
     /// <summary>
     /// Creates a settings page in the `mod settings` tab.
     /// Make sure to fully create your settings before calling this as you 
@@ -224,6 +239,7 @@ public class VTOLAPI : MonoBehaviour
         }
         Debug.Log(stringBuilder.ToString());
     }
+
     /// <summary>
     /// Returns a list of mods which are currently loaded
     /// </summary>
@@ -250,5 +266,121 @@ public class VTOLAPI : MonoBehaviour
         if (MissionReloaded != null)
             MissionReloaded.Invoke();
     }
+
+    /// <summary>
+    /// You need to Register your mod before you start setting values inside your Shared Data
+    /// </summary>
+    /// <param name="mod">Your mod's class (use "this")</param>
+    public static void RegisterMod(VTOLMOD mod)
+    {
+        Dictionary<string, object> data;
+        bool exists = IsRegistered(mod, out data);
+        if (exists)
+        {
+            Warning($"{mod.name} is already registered");
+            return;
+        }
+
+        data = new Dictionary<string, object>();
+        _dataSharing.Add(mod, data);
+        Log($"Registered {mod.name}");
+        ModRegistered?.Invoke(mod.name);
+    }
+
+    private static bool IsRegistered(VTOLMOD mod, out Dictionary<string, object> data)
+    {
+        return _dataSharing.TryGetValue(mod, out data);
+    }
+
+    private static bool IsRegistered(string modName, out Dictionary<string, object> data)
+    {
+        foreach (var item in _dataSharing.Keys)
+        {
+            if (item.name == modName)
+            {
+                return _dataSharing.TryGetValue(item, out data);
+            }
+        }
+        data = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Sets a value for your mods shared data.
+    /// </summary>
+    /// <param name="mod">Your mod (use "this")</param>
+    /// <param name="key">The key you want to use. if it's already existing, it will be overridden</param>
+    /// <param name="value">the value you want to set it to</param>
+    /// <param name="isSuccessful">if it was successful in setting it</param>
+    public static void SetValue(VTOLMOD mod, string key, object value, out bool isSuccessful)
+    {
+        Dictionary<string, object> data;
+        isSuccessful = false;
+        bool exists = IsRegistered(mod, out data);
+
+        if (!exists)
+        {
+            NotRegistered(mod.name);
+            return;
+        }
+
+        exists = data.TryGetValue(key, out object oldValue);
+        if (exists)
+        {
+            data[key] = value;
+            Log($"Changed value on key \"{key}\" to \"{mod.name}\"");
+        }
+        else
+        {
+            data.Add(key, value);
+            Log($"Added new key \"{key}\" to \"{mod.name}\"");
+        }
+        isSuccessful = true;
+        ModValueChanged?.Invoke(mod.name, key, value);
+    }
+
+    /// <summary>
+    /// Gets a value stored in the Mod Shared Data inside the API
+    /// </summary>
+    /// <param name="modName">The name of the mod. CASE SENSITIVE</param>
+    /// <param name="key">The key in the dictionary</param>
+    /// <param name="isSuccessful">If the value was found</param>
+    /// <param name="value">The stored value inside the dictionary if it was there. This will be null if it wasn't found</param>
+    /// <param name="error">Reason why it couldn't find the key, this will be None if it was found</param>
+    public static void GetValue(string modName, string key, out bool isSuccessful, out object value, out ErrorResult error)
+    {
+        Dictionary<string, object> data;
+        bool exists = IsRegistered(modName, out data);
+        isSuccessful = false;
+        value = null;
+        error = ErrorResult.None;
+
+        if (!exists)
+        {
+            NotRegistered(modName);
+            error = ErrorResult.NotRegistered;
+            return;
+        }
+
+        exists = data.TryGetValue(key, out value);
+
+        if (!exists)
+        {
+            Error($"Couldn't find a key matching \"{key}\" in \"{modName}\"");
+            error = ErrorResult.KeyNotFound;
+            return;
+        }
+
+        isSuccessful = true;
+    }
+
+    private static void NotRegistered(string modName) =>
+        Error($"{modName} is not registered. Please register it first with VTOLAPI.RegisterMod(this);");
+
+    private static void Log(object message) => Debug.Log($"[VTOL API]{message}");
+
+    private static void Warning(object message) => Debug.LogWarning($"[VTOL API]{message}");
+
+    private static void Error(object message) => Debug.LogError($"[VTOL API]{message}");
 }
 

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Valve.Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VTOLVR_ModLoader.Classes;
 using VTOLVR_ModLoader.Windows;
+using Core.Jsons;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -88,105 +89,38 @@ namespace VTOLVR_ModLoader.Views
         private void FindMods(ref List<MyProject> localProjects)
         {
             Helper.SentryLog("Finding Mods", Helper.SentryLogCategory.ProjectManager);
-            DirectoryInfo myMods = new DirectoryInfo(Settings.ProjectsFolder + modsFolder);
-            DirectoryInfo[] mods = myMods.GetDirectories();
+            List<BaseItem> baseItems = Helper.FindMyMods();
 
-            for (int i = 0; i < mods.Length; i++)
+            BaseItem lastItem;
+            for (int i = 0; i < baseItems.Count; i++)
             {
-                if (Directory.Exists(mods[i].FullName + @"\Builds") &&
-                    File.Exists(mods[i].FullName + @"\Builds\info.json"))
-                {
-                    JObject jObject;
-                    try
-                    {
-                        jObject = JObject.Parse(File.ReadAllText(mods[i].FullName + @"\Builds\info.json"));
-                    }
-                    catch (Exception e)
-                    {
-                        Console.Log($"Failed to parse {mods[i].FullName}\\Builds\\info.json\n{e.Message}");
-                        continue;
-                    }
-
-                    if (jObject[jName] != null || jObject[jDescription] != null)
-                    {
-                        string lastedit = string.Empty;
-                        long result = 0;
-                        if (jObject[jEdit] != null)
-                        {
-                            if (long.TryParse(jObject[jEdit].ToString(), out result))
-                            {
-                                lastedit = new DateTime(result).ToString();
-                            }
-                        }
-                        localProjects.Add(new MyProject(jObject[jName].ToString(),
-                        jObject[jDescription].ToString(),
-                        mods[i].FullName,
-                        lastedit,
-                        openProjectText,
-                        jObject[jID] == null ? releaseText : newReleaseText,
-                        new DateTime(result)));
-                    }
-                    else
-                    {
-                        Console.Log($"{mods[i].Name} is missing something in it's info.json file");
-                    }
-                }
-                else
-                {
-                    Console.Log($"{mods[i].Name} doesn't seem to have a builds folder or a info.json, ignoring folder");
-                }
+                lastItem = baseItems[i];
+                localProjects.Add(new MyProject(lastItem.Name,
+                    lastItem.Description,
+                    lastItem.Directory.FullName,
+                    openProjectText,
+                    lastItem.PublicID == string.Empty ? releaseText : newReleaseText,
+                    new DateTime(lastItem.LastEdit)
+                    ));
             }
         }
 
         private void FindSkins(ref List<MyProject> localProjects)
         {
             Helper.SentryLog("Finding Skins", Helper.SentryLogCategory.ProjectManager);
-            DirectoryInfo mySkins = new DirectoryInfo(Settings.ProjectsFolder + skinsFolder);
-            DirectoryInfo[] skins = mySkins.GetDirectories();
+            List<BaseItem> baseItems = Helper.FindMySkins();
 
-            for (int i = 0; i < skins.Length; i++)
+            BaseItem lastItem;
+            for (int i = 0; i < baseItems.Count; i++)
             {
-                if (File.Exists(skins[i].FullName + @"\info.json"))
-                {
-                    JObject jObject;
-                    try
-                    {
-                        jObject = JObject.Parse(File.ReadAllText(skins[i].FullName + @"\info.json"));
-                    }
-                    catch (Exception e)
-                    {
-                        Console.Log($"Failed to parse {skins[i].FullName}\\info.json\n{e.Message}");
-                        continue;
-                    }
-
-                    if (jObject[jName] != null || jObject[jDescription] != null)
-                    {
-                        string lastedit = string.Empty;
-                        long result = 0;
-                        if (jObject[jEdit] != null)
-                        {
-                            if (long.TryParse(jObject[jEdit].ToString(), out result))
-                            {
-                                lastedit = new DateTime(result).ToString();
-                            }
-                        }
-                        localProjects.Add(new MyProject(jObject[jName].ToString(),
-                        jObject[jDescription].ToString(),
-                        skins[i].FullName,
-                        lastedit,
-                        openFolderText,
-                        jObject[jID] == null ? releaseText : newReleaseText,
-                        new DateTime(result)));
-                    }
-                    else
-                    {
-                        Console.Log($"{skins[i].Name} is missing something in it's info.json file");
-                    }
-                }
-                else
-                {
-                    Console.Log($"{skins[i].Name} doesn't seem to have a info.json, ignoring folder");
-                }
+                lastItem = baseItems[i];
+                localProjects.Add(new MyProject(lastItem.Name,
+                    lastItem.Description,
+                    lastItem.Directory.FullName,
+                    openFolderText,
+                    lastItem.PublicID == string.Empty ? releaseText : newReleaseText,
+                    new DateTime(lastItem.LastEdit)
+                    ));
             }
         }
 
@@ -206,12 +140,12 @@ namespace VTOLVR_ModLoader.Views
             public string NewReleaseText { get; set; }
             public DateTime DateTime { get; set; }
 
-            public MyProject(string name, string description, string path, string lastEdit, string openProjectText, string newReleaseText, DateTime dateTime)
+            public MyProject(string name, string description, string path, string openProjectText, string newReleaseText, DateTime dateTime)
             {
                 Name = name;
                 Description = description;
                 Path = path;
-                LastEdit = lastEdit;
+                LastEdit = dateTime.ToString();
                 OpenProjectText = openProjectText;
                 NewReleaseText = newReleaseText;
                 DateTime = dateTime;

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Valve.Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +13,10 @@ using VTOLVR_ModLoader.Classes;
 using System.Net.Http;
 using System.Security.Principal;
 using Microsoft.Win32;
+using VTOLVR_ModLoader.Classes.Json;
+using Valve.Newtonsoft.Json;
+using System.Windows.Media;
+using System.Text.RegularExpressions;
 
 namespace VTOLVR_ModLoader.Views
 {
@@ -23,21 +27,20 @@ namespace VTOLVR_ModLoader.Views
     {
         public static Settings Instance;
 
+        public const string SavePath = @"\settings.json";
         private const string userURL = "/get-token";
-        private const string savePath = @"\settings.json";
         private const string uriPath = @"HKEY_CLASSES_ROOT\VTOLVRML";
-        private const string jProjectsFolder = "projectsFolder";
-        private const string jAutoUpdate = "AutoUpdate";
-        private const string jSteamVR = "Launch SteamVR";
-        private const string jToken = "token";
-
-
 
         public static bool tokenValid = false;
         private bool hideResult;
         private Action<bool, string> callBack;
+        private List<string> _branches;
+
+        private SolidColorBrush _yellowBrush = new SolidColorBrush(Color.FromRgb(241, 241, 39));
+        private SolidColorBrush _whiteBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
 
         //Settings
+        public static UserSettings USettings { get; private set; }
         public static string Token;
         public static string ProjectsFolder;
         public static bool AutoUpdate = true;
@@ -47,6 +50,7 @@ namespace VTOLVR_ModLoader.Views
         {
             Instance = this;
             callBack += SetProjectsFolder;
+            USettings = UserSettings.Settings;
             InitializeComponent();
             LoadSettings();
             if (CommunicationsManager.CheckArgs("vtolvrml", out string line))
@@ -60,6 +64,7 @@ namespace VTOLVR_ModLoader.Views
                 oneclickInstallButton.Content = "(Admin Needed)";
                 oneclickInstallButton.IsEnabled = false;
             }
+            _processTries.TextChanged += ProcessTextChanged;
             Helper.SentryLog("Created Settings Page", Helper.SentryLogCategory.Settings);
         }
         public async void UpdateButtons()
@@ -96,7 +101,7 @@ namespace VTOLVR_ModLoader.Views
                 tokenValid = false;
                 Console.Log("Testing token");
                 HttpHelper.DownloadStringAsync(
-                    Program.url + Program.apiURL + userURL + Program.jsonFormat,
+                    Program.URL + Program.ApiURL + userURL + Program.JsonFormat,
                     TestTokenDone,
                     Token);
             }
@@ -130,133 +135,43 @@ namespace VTOLVR_ModLoader.Views
             updateButton.Content = "Disabled";
             updateButton.IsEnabled = false;
         }
-        private static void SaveSettings()
+        public static void SaveSettings()
         {
             Helper.SentryLog("Saving Settings", Helper.SentryLogCategory.Settings);
-            JObject jObject;
 
-            if (File.Exists(Program.root + savePath))
-            {
-                try
-                {
-                    jObject = JObject.Parse(File.ReadAllText(Program.root + savePath));
-                }
-                catch
-                {
-                    Console.Log("Failed to read settings, overriding it.");
-                    jObject = new JObject();
-                }
-            }
-            else
-            {
-                jObject = new JObject();
-            }
+            USettings.Token = Token;
+            USettings.ProjectsFolder = ProjectsFolder;
+            USettings.AutoUpdate = AutoUpdate;
+            USettings.LaunchSteamVR = SteamVR;
+            USettings.ActiveBranch = Instance._branchesBox.SelectedIndex;
 
-            if (!string.IsNullOrEmpty(Token))
-            {
-                if (jObject[jToken] == null)
-                    jObject.Add(jToken, Token);
-                else
-                    jObject[jToken] = Token;
-            }
-
-            if (!string.IsNullOrWhiteSpace(ProjectsFolder))
-            {
-                if (jObject[jProjectsFolder] == null)
-                    jObject.Add(jProjectsFolder, ProjectsFolder);
-                else
-                    jObject[jProjectsFolder] = ProjectsFolder;
-            }
-
-            if (jObject[jAutoUpdate] == null)
-                jObject.Add(jAutoUpdate, AutoUpdate);
-            else
-                jObject[jAutoUpdate] = AutoUpdate;
-
-            if (jObject[jSteamVR] == null)
-                jObject.Add(jSteamVR, SteamVR);
-            else
-                jObject[jSteamVR] = SteamVR;
-
-            try
-            {
-                File.WriteAllText(Program.root + savePath, jObject.ToString());
-                Console.Log("Saved Settings");
-            }
-            catch (Exception e)
-            {
-                Console.Log($"Failed to save {savePath}");
-                Console.Log(e.Message);
-            }
-
+            UserSettings.SaveSettings(Program.Root + SavePath);
             Console.Log("Saved Settings");
         }
 
         private void LoadSettings()
         {
             Helper.SentryLog("Loading Settings", Helper.SentryLogCategory.Settings);
-            JObject json = null;
-            if (!File.Exists(Program.root + savePath))
-            {
-                SaveSettings();
-                return;
-            }
+            UserSettings.LoadSettings(Program.Root + SavePath);
 
-            try
-            {
-                json = JObject.Parse(File.ReadAllText(Program.root + savePath));
-            }
-            catch (Exception e)
-            {
-                Console.Log($"Failed Reading Settings: {e.Message}");
-                return;
-            }
-
-            if (json["projectsFolder"] != null)
-            {
-                Console.Log("Found the Projects Folder");
-                ProjectsFolder = json["projectsFolder"].ToString();
-            }
-
-            if (json["AutoUpdate"] != null)
-            {
-                Console.Log("Found Auto Updates");
-                if (bool.TryParse(json["AutoUpdate"].ToString(), out bool result))
-                {
-                    Console.Log($"Auto Updates is {result}");
-                    AutoUpdate = result;
-                }
-                else
-                {
-                    Console.Log($"Failed to convert {json["AutoUpdate"]} to bool");
-                }
-            }
-
-            if (json["Launch SteamVR"] != null)
-            {
-                Console.Log("Found SteamVR");
-                if (bool.TryParse(json["Launch SteamVR"].ToString(), out bool result))
-                {
-                    Console.Log($"Launch Steam VR is {result}");
-                    SteamVR = result;
-                }
-                else
-                {
-                    Console.Log($"Failed to convert {json["Launch SteamVR"]} to bool");
-                }
-            }
-
-            if (json["token"] != null)
-            {
-                Console.Log("Found the token");
-                Token = json["token"].ToString();
-            }
+            USettings = UserSettings.Settings;
+            ProjectsFolder = USettings.ProjectsFolder;
+            AutoUpdate = USettings.AutoUpdate;
+            SteamVR = USettings.LaunchSteamVR;
+            Token = USettings.Token;
 
             tokenBox.Password = Token;
             if (!string.IsNullOrWhiteSpace(ProjectsFolder))
                 projectsText.Text = $"Projects Folder Set:\n{ProjectsFolder}";
             autoUpdateCheckbox.IsChecked = AutoUpdate;
             steamvrCheckbox.IsChecked = SteamVR;
+
+            if (USettings.MaxProcessAttempts <= 0)
+                USettings.MaxProcessAttempts = 1;
+
+            _processTries.Text = USettings.MaxProcessAttempts.ToString();
+
+            SetupBranchesFromSettings();
             SaveSettings();
         }
 
@@ -266,7 +181,7 @@ namespace VTOLVR_ModLoader.Views
             if (!string.IsNullOrEmpty(ProjectsFolder))
                 FolderDialog.Dialog(ProjectsFolder, callBack);
             else
-                FolderDialog.Dialog(Program.root, callBack);
+                FolderDialog.Dialog(Program.Root, callBack);
         }
         public void SetProjectsFolder(bool set, string path)
         {
@@ -333,7 +248,7 @@ namespace VTOLVR_ModLoader.Views
         private void SetOneClickInstall(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Setting one click install", Helper.SentryLogCategory.Settings);
-            CreateURI(Program.root);
+            CreateURI(Program.Root);
         }
 
         /// <summary>
@@ -384,6 +299,139 @@ namespace VTOLVR_ModLoader.Views
         private void CreateDiagnosticsZip(object sender, RoutedEventArgs e)
         {
             Helper.CreateDiagnosticsZip();
+        }
+        private void SetupBranches()
+        {
+            Helper.SentryLog("Setting up default branches", Helper.SentryLogCategory.Settings);
+            Console.Log("Setting up default branches");
+            _branches = new List<string>();
+            _branches.Add("None");
+            _branchesBox.ItemsSource = _branches;
+            _branchesBox.SelectedIndex = 0;
+        }
+        private void SetupBranchesFromSettings()
+        {
+            if (USettings.Branches == null)
+            {
+                Console.Log("Branches in setting file where null");
+                SetupBranches();
+                return;
+            }
+            Helper.SentryLog("Setting up branches from settings", Helper.SentryLogCategory.Settings);
+            Console.Log("Setting up branches from settings file");
+            _branches = USettings.Branches;
+            _branchesBox.ItemsSource = _branches;
+            if (USettings.ActiveBranch > USettings.Branches.Count - 1)
+            {
+                Notification.Show($"Active branch {USettings.ActiveBranch} was outside the count of branches {USettings.Branches.Count}. Selected branch None");
+                _branchesBox.SelectedIndex = 0;
+                Console.Log($"Active branch {USettings.ActiveBranch} was outside the count of branches {USettings.Branches.Count}");
+            }
+            else
+            {
+                _branchesBox.SelectedIndex = USettings.ActiveBranch;
+                Program.Branch = USettings.Branches[USettings.ActiveBranch];
+            }
+
+        }
+        private void AddBranch(string branch)
+        {
+            Console.Log("Adding branch " + branch);
+            _branches.Add(branch);
+            _branchesBox.ItemsSource = _branches.ToArray();
+            USettings.Branches = _branches;
+            SaveSettings();
+        }
+        private void CheckBranch(object sender, RoutedEventArgs e)
+        {
+            _newBranchCodeBox.IsEnabled = false;
+            _branchCheckButton.IsEnabled = false;
+            CheckBranch(_newBranchCodeBox.Text);
+        }
+        private void CheckBranch(string branch)
+        {
+            Helper.SentryLog($"Checking Branch {branch}", Helper.SentryLogCategory.Settings);
+            Clipboard.SetText(Program.URL + Program.ApiURL + Program.ReleasesURL + "/" + $"?branch={branch}");
+            HttpHelper.DownloadStringAsync(
+                Program.URL + Program.ApiURL + Program.ReleasesURL + "/" + $"?branch={branch}",
+                CheckBranchDone);
+        }
+        private async void CheckBranchDone(HttpResponseMessage response)
+        {
+            Helper.SentryLog($"Got branch result {response.StatusCode}", Helper.SentryLogCategory.Settings);
+            if (response.IsSuccessStatusCode)
+            {
+                IsBranchValid(
+                    JsonConvert.DeserializeObject<List<Release>>(
+                        await response.Content.ReadAsStringAsync()));
+            }
+            else
+            {
+                //Failed
+                Console.Log("Error:\n" + response.StatusCode);
+            }
+        }
+        private void IsBranchValid(List<Release> releases)
+        {
+            if (releases.Count == 0)
+            {
+                _branchResultText.Text = _newBranchCodeBox.Text + " is not a valid branch";
+                _branchResultText.Foreground = _yellowBrush;
+                _branchResultText.Visibility = Visibility.Visible;
+
+                DelayHide(_branchResultText, 4);
+                DelayEnable(_newBranchCodeBox, 4);
+                DelayEnable(_branchCheckButton, 4);
+                return;
+            }
+            AddBranch(_newBranchCodeBox.Text);
+
+            _branchResultText.Text = _newBranchCodeBox.Text + " is a valid branch";
+            _branchResultText.Foreground = _whiteBrush;
+            _branchResultText.Visibility = Visibility.Visible;
+
+            DelayHide(_branchResultText, 4);
+            DelayEnable(_newBranchCodeBox, 4);
+            DelayEnable(_branchCheckButton, 4);
+            _newBranchCodeBox.Text = string.Empty;
+        }
+        private async void DelayHide(UIElement uiElement, float delayInSeconds)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(delayInSeconds));
+            uiElement.Visibility = Visibility.Hidden;
+        }
+        private async void DelayEnable(UIElement uiElement, float delayInSeconds)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(delayInSeconds));
+            uiElement.IsEnabled = true;
+        }
+        private void BranchChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            SaveSettings();
+            Program.Branch = _branches[_branchesBox.SelectedIndex];
+            if (Program.Branch == "None")
+                Program.Branch = string.Empty;
+            Program.GetReleases();
+        }
+
+        private void ProcessTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (int.TryParse(_processTries.Text, out int result))
+            {
+                if (result <= 0)
+                    result = 1;
+                USettings.MaxProcessAttempts = result;
+
+                SaveSettings();
+            }
+            _processTries.Text = USettings.MaxProcessAttempts.ToString();
+            _processTries.CaretIndex = _processTries.Text.Length;
+        }
+
+        private void ValidInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }

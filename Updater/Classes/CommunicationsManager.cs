@@ -42,7 +42,7 @@ namespace AutoUpdater.Classes
             if (CheckArgs("branch", out string line))
             {
                 Program.SentryLog($"Custom Branch Found", Program.SentryLogCategory.CommunicationsManager);
-                line = line.Replace("branch=", string.Empty);
+                line = line.Replace("?branch=", string.Empty);
                 Program.branch = line;
                 Program.ProgramName += $" [{Program.branch} Branch]";
             }

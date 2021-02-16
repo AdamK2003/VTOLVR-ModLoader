@@ -31,7 +31,7 @@ namespace VTOLVR_ModLoader.Classes
                 return;
             }
             MainWindow.SetPlayButton(true);
-            UpdateFile[] updateFiles = Program.Releases[0].files;
+            UpdateFile[] updateFiles = Program.Releases[0].Files;
 
             if (updateFiles == null)
                 return;
@@ -39,7 +39,7 @@ namespace VTOLVR_ModLoader.Classes
             for (int i = 0; i < updateFiles.Length; i++)
             {
 
-                lastPath = Program.vtolFolder + "/" + updateFiles[i].Location;
+                lastPath = Program.VTOLFolder + "/" + updateFiles[i].Location;
                 if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(updateFiles[i].Hash))
                 {
                     Console.Log($"Need to update {updateFiles[i].Location}");
@@ -56,7 +56,7 @@ namespace VTOLVR_ModLoader.Classes
             else
             {
                 if (_updateLauncher)
-                    Notification.Show("The launcher needs to be updated.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
+                    UpdateLauncher();
                 else
                     Console.Log("All fines are up to date");
                 MainWindow.SetPlayButton(false);
@@ -70,11 +70,17 @@ namespace VTOLVR_ModLoader.Classes
         }
         private static void UpdateFiles()
         {
+            if (_updateLauncher)
+            {
+                UpdateLauncher();
+                return;
+            }
+
             currentFile = filesToUpdate.Dequeue();
             Console.Log($"Updating {currentFile.Name}");
             HttpHelper.DownloadFile(
                 currentFile.Url,
-                $"{Program.vtolFolder}/{currentFile.Location}.temp",
+                $"{Program.VTOLFolder}/{currentFile.Location}.temp",
                 DownloadProgress,
                 DownloadDone);
         }
@@ -88,19 +94,19 @@ namespace VTOLVR_ModLoader.Classes
             {
                 try
                 {
-                    if (File.Exists($"{Program.vtolFolder}/{currentFile.Location}"))
-                        Helper.TryDelete($"{Program.vtolFolder}/{currentFile.Location}");
+                    if (File.Exists($"{Program.VTOLFolder}/{currentFile.Location}"))
+                        Helper.TryDelete($"{Program.VTOLFolder}/{currentFile.Location}");
                 }
                 catch (Exception error)
                 {
-                    Console.Log($"Failed to delete {Program.vtolFolder}/{currentFile.Location}\n{error.Message}");
+                    Console.Log($"Failed to delete {Program.VTOLFolder}/{currentFile.Location}\n{error.Message}");
                     ClearUp();
                     return;
                 }
 
 
-                Helper.TryMove($"{Program.vtolFolder}/{currentFile.Location}.temp",
-                    $"{Program.vtolFolder}/{currentFile.Location}");
+                Helper.TryMove($"{Program.VTOLFolder}/{currentFile.Location}.temp",
+                    $"{Program.VTOLFolder}/{currentFile.Location}");
 
                 //Checking if we need to update dependencies in users mods
                 string[] split = currentFile.Location.Split('/');
@@ -119,7 +125,7 @@ namespace VTOLVR_ModLoader.Classes
                         {
                             Console.Log($"Moved {split[split.Length - 1]} to {subFolders[i].Name}");
                             Helper.TryDelete(Path.Combine(subFolders[i].FullName, "Dependencies", split[split.Length - 1]));
-                            Helper.TryCopy($"{Program.vtolFolder}/{currentFile.Location}",
+                            Helper.TryCopy($"{Program.VTOLFolder}/{currentFile.Location}",
                                 Path.Combine(subFolders[i].FullName, "Dependencies", split[split.Length - 1]));
                         }
                     }
@@ -135,8 +141,8 @@ namespace VTOLVR_ModLoader.Classes
 
         private static void ClearUp()
         {
-            if (File.Exists($"{Program.vtolFolder}/{currentFile.Location}.temp"))
-                File.Delete($"{Program.vtolFolder}/{currentFile.Location}.temp");
+            if (File.Exists($"{Program.VTOLFolder}/{currentFile.Location}.temp"))
+                File.Delete($"{Program.VTOLFolder}/{currentFile.Location}.temp");
 
             if (filesToUpdate.Count > 0)
                 UpdateFiles();
@@ -145,22 +151,20 @@ namespace VTOLVR_ModLoader.Classes
                 MainWindow.SetProgress(100, "Ready");
                 MainWindow.SetPlayButton(false);
                 if (_updateLauncher)
-                    Notification.Show("The launcher needs to be updated.\nWould you like to do that now?", "Launcher Update", Notification.Buttons.NoYes, yesNoResultCallback: UpdateLauncherCallback);
+                {
+                    UpdateLauncher();
+                }
             }
         }
-
-        private static void UpdateLauncherCallback(bool result)
+        private static void UpdateLauncher()
         {
-            if (!result)
-                return;
-
-            if (!File.Exists(Path.Combine(Program.root, "Updater.exe")))
+            if (!File.Exists(Path.Combine(Program.Root, "Updater.exe")))
             {
                 Notification.Show("Couldn't find the Updater.exe.", "Failed to Auto Update");
                 return;
             }
 
-            Process.Start(Path.Combine(Program.root, "Updater.exe"), Program.branch == string.Empty ? string.Empty : $"?branch={Program.branch}");
+            Process.Start(Path.Combine(Program.Root, "Updater.exe"), Program.Branch == string.Empty ? string.Empty : $"?branch={Program.Branch}");
             Program.Quit("Updating Launcher.exe");
         }
     }

@@ -164,18 +164,57 @@ namespace VTOLVR_ModLoader.Views
             Helper.SentryLog("Deleting Console Log File", Helper.SentryLogCategory.Console);
             try
             {
-                if (File.Exists(Path.Combine(Program.root, Program.LogName)))
-                    File.Delete(Path.Combine(Program.root, Program.LogName));
+                if (File.Exists(Path.Combine(Program.Root, Program.LogName)))
+                    File.Delete(Path.Combine(Program.Root, Program.LogName));
             }
             catch (Exception error)
             {
-                Log($"Error when trying to delete ({Path.Combine(Program.root, Program.LogName)})\n{error}");
+                Log($"Error when trying to delete ({Path.Combine(Program.Root, Program.LogName)})\n{error}");
                 Windows.Notification.Show("Error when deleting log\n" + error, "Error");
                 return;
             }
             ConsoleFeed = new List<Feed>();
             console.ItemsSource = ConsoleFeed.ToArray();
             scrollView.ScrollToBottom();
+        }
+
+        private void OpenGameLog(object sender, RoutedEventArgs e)
+        {
+            string path = Helper.PlayerLogPath();
+            if (!File.Exists(path))
+            {
+                Log($"Couldn't find {path}");
+                return;
+            }
+
+            try
+            {
+                Process.Start(path);
+                Log($"Opened Player.log");
+            }
+            catch (Exception error)
+            {
+                Log("Failed to open Player.log. " + error.Message);
+            }
+        }
+
+        private void OpenLauncherLog(object sender, RoutedEventArgs e)
+        {
+            string path = Path.Combine(Program.Root, Program.LogName);
+            if (!File.Exists(path))
+            {
+                Log($"Couldn't find {path}");
+                return;
+            }
+            try
+            {
+                Process.Start(path);
+                Log($"Opened {Program.LogName}");
+            }
+            catch (Exception error)
+            {
+                Log("Failed to open Launcher Log. " + error.Message);
+            }
         }
     }
 }

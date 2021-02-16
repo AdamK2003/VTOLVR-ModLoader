@@ -36,7 +36,7 @@ namespace ModLoader
             CampaignsScenarios campaigns = new CampaignsScenarios(VTResources.GetBuiltInCampaigns());
             Debug.Log("Finished collecting camps");
             gameData.Add(new JProperty("Campaigns", JArray.FromObject(campaigns.Campaigns)));
-            Debug.Log("Addded it");
+            Debug.Log("Added it");
         }
 
         private static void FindMaterials()
@@ -50,9 +50,9 @@ namespace ModLoader
                 {
                     names.Add($"\"{mats[i].GetTexture("_MainTex").name}.png\" should be renamed to \"{mats[i].name}.png\"");
                 }
-                catch 
+                catch
                 {
-                    Debug.Log($"Failed on {mats[i].name}");
+                    //Debug.Log($"Failed on {mats[i].name}");
                 }
             }
             gameData.Add(new JProperty("Skin Texture Names", JArray.FromObject(names.ToArray())));
@@ -62,7 +62,7 @@ namespace ModLoader
         private static void SaveGameData()
         {
             Debug.Log("Saving the data we have collected!");
-            File.WriteAllText(ModLoaderManager.RootPath + GameDataFile,gameData.ToString());
+            File.WriteAllText(ModLoaderManager.RootPath + GameDataFile, gameData.ToString());
         }
     }
 }

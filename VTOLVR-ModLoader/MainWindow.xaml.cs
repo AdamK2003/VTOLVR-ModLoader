@@ -63,7 +63,7 @@ namespace VTOLVR_ModLoader
             devTools = new DevTools();
             pManager = new ProjectManager();
             ItemManager = new Manager();
-            DataContext = news;
+            DataContext = ItemManager;
         }
         public static void SetProgress(int barValue, string text)
         {
@@ -73,7 +73,7 @@ namespace VTOLVR_ModLoader
         public static void SetPlayButton(bool disabled)
         {
             _instance.launchButton.Content = disabled ? "Busy" : "Play";
-            Program.isBusy = disabled;
+            Program.IsBusy = disabled;
         }
         public static void GifState(gifStates state, int frame = 0)
         {
@@ -114,7 +114,7 @@ namespace VTOLVR_ModLoader
         private void OpenFolder(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Opened Folder", Helper.SentryLogCategory.MainWindow);
-            Process.Start(Program.root);
+            Process.Start(Program.Root);
             Console.Log("Mod Loader Folder Opened!");
         }
         private void OpenGame(object sender, RoutedEventArgs e)
@@ -192,10 +192,21 @@ namespace VTOLVR_ModLoader
         private void Manager(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Opened Manager", Helper.SentryLogCategory.MainWindow);
+            Button button = (Button)sender;
+            bool isMods = true;
+            if (button.Tag.ToString() == "Skins")
+                isMods = false;
             if (ItemManager == null)
                 ItemManager = new Manager();
-            ItemManager.UpdateUI();
+            ItemManager.UpdateUI(isMods);
             _instance.DataContext = ItemManager;
+        }
+        public static void GoHome()
+        {
+            if (_instance.ItemManager == null)
+                _instance.ItemManager = new Manager();
+            _instance.ItemManager.UpdateUI(true);
+            _instance.DataContext = _instance.ItemManager;
         }
 
         public void CheckForEvent()

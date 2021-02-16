@@ -21,12 +21,14 @@ namespace VTOLVR_ModLoader.Windows
     /// </summary>
     public partial class Notification : Window
     {
-        public enum Results { None, Ok,No,Yes,Cancel}
-        public enum Buttons { None, Ok, NoYes, OkCancel}
+        public enum Results { None, Ok, No, Yes, Cancel }
+        public enum Buttons { None, Ok, NoYes, OkCancel }
         private Buttons buttons;
         private Action callback;
         private Action<bool> _yesNoCallback;
-        public Notification(Action callback, Action<bool> yesnoCallback, Buttons buttons)
+        private Action<bool, object[]> _yesNoCallbackWithData;
+        private object[] _callbackData;
+        public Notification(Action callback, Action<bool> yesnoCallback, Buttons buttons, object[] callbackData, Action<bool, object[]> yesNoResultCallbackWithData)
         {
             this.callback = callback;
             this.buttons = buttons;
@@ -49,10 +51,14 @@ namespace VTOLVR_ModLoader.Windows
                 default:
                     break;
             }
+
+            if (callbackData != null)
+                _callbackData = callbackData;
+            _yesNoCallbackWithData = yesNoResultCallbackWithData;
         }
-        public static void Show(string message, string title = "Message", Buttons buttons = Buttons.None, Action closedCallback = null, Action<bool> yesNoResultCallback = null)
+        public static void Show(string message, string title = "Message", Buttons buttons = Buttons.None, Action closedCallback = null, Action<bool> yesNoResultCallback = null, Action<bool, object[]> yesNoResultCallbackWithData = null, object[] callbackData = null)
         {
-            Notification window = new Notification(closedCallback, yesNoResultCallback, buttons);
+            Notification window = new Notification(closedCallback, yesNoResultCallback, buttons, callbackData, yesNoResultCallbackWithData);
             window.textBlock.Text = message;
             window.Title = title;
             window.titleText.Text = " " + title;
@@ -112,14 +118,18 @@ namespace VTOLVR_ModLoader.Windows
 
         private void NoClicked(object sender, RoutedEventArgs e)
         {
-            if (_yesNoCallback != null)
+            if (_callbackData != null)
+                _yesNoCallbackWithData.Invoke(false, _callbackData);
+            else if (_yesNoCallback != null)
                 _yesNoCallback.Invoke(false);
             Close();
         }
 
         private void YesClicked(object sender, RoutedEventArgs e)
         {
-            if (_yesNoCallback != null)
+            if (_callbackData != null)
+                _yesNoCallbackWithData.Invoke(true, _callbackData);
+            else if (_yesNoCallback != null)
                 _yesNoCallback.Invoke(true);
             Close();
         }

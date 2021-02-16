@@ -11,12 +11,13 @@ using UnityEngine.UI;
 using System.Net;
 using System.Reflection;
 using TMPro;
+using ModLoader.Classes.Json;
 
 namespace ModLoader
 {
-    public class ModLoader : VTOLMOD
+    class ModLoader : VTOLMOD
     {
-        public enum Pages { MainMenu,Mods,Settings}
+        public enum Pages { MainMenu, Mods, Settings }
         public enum KeyboardType { DisableAll, Int, Float, String }
         public static ModLoader instance { get; private set; }
         public static AssetBundle assetBundle;
@@ -24,15 +25,15 @@ namespace ModLoader
         public List<Mod> ModsLoaded { get; private set; } = new List<Mod>();
         private ModLoaderManager manager;
         private VTOLAPI api;
-        
-        private GameObject modsPage, settingsPage, CampaignListTemplate, settingsCampaignListTemplate,settingsScrollBox;
-        private GameObject s_StringTemplate, s_BoolTemplate, s_FloatTemplate, s_IntTemplate,s_CustomLabel,s_Holder;
-        private ScrollRect Scroll_View,settingsScrollView,settingsScrollBoxView;
+
+        private GameObject modsPage, settingsPage, CampaignListTemplate, settingsCampaignListTemplate, settingsScrollBox;
+        private GameObject s_StringTemplate, s_BoolTemplate, s_FloatTemplate, s_IntTemplate, s_CustomLabel, s_Holder;
+        private ScrollRect Scroll_View, settingsScrollView, settingsScrollBoxView;
         private Text SelectButton;
         private RectTransform selectionTF, settingsSelection;
-        private Mod selectedMod;
+        private BaseItem _selectedMod;
         private float buttonHeight = 100;
-        private List<Mod> currentMods = new List<Mod>();
+        private List<BaseItem> _currentMods = new List<BaseItem>();
         private List<Settings> currentSettings = new List<Settings>();
         private VRPointInteractableCanvas InteractableCanvasScript;
         private VRKeyboard stringKeyboard, floatKeyboard, intKeyboard;
@@ -43,6 +44,7 @@ namespace ModLoader
         private CampaignInfoUI modInfoUI;
         private TextMeshProUGUI modName, modDescription, loadButton;
         private RawImage modImage;
+
         private void Awake()
         {
             if (instance)
@@ -61,13 +63,13 @@ namespace ModLoader
 
             SceneManager.sceneLoaded += SceneLoaded;
         }
-
         private void SceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
             switch (scene.name)
             {
                 case "ReadyRoom":
                     CreateUI();
+                    CheckForLOSMods();
                     break;
                 case "Akutan":
                     break;
@@ -124,7 +126,7 @@ namespace ModLoader
             stringKeyboard.gameObject.SetActive(false);
             floatKeyboard.gameObject.SetActive(false);
             intKeyboard.gameObject.SetActive(false);
-            
+
             Log("Creating Mods Button");//Mods Button
             GameObject SettingsButton = MainScreen.transform.GetChild(0).GetChild(0).GetChild(8).gameObject;
             GameObject ModsButton = Instantiate(assetBundle.LoadAsset<GameObject>("ModsButton"), SettingsButton.transform.parent);
@@ -134,7 +136,7 @@ namespace ModLoader
 
             Log("Creating Mods Page");//Mods Page
             modsPage = Instantiate(assetBundle.LoadAsset<GameObject>("ModLoaderDisplay"), CampaignDisplay.transform.parent);
-            
+
             CampaignListTemplate = modsPage.transform.GetChild(3).GetChild(0).GetChild(0).GetChild(1).gameObject;
             Scroll_View = modsPage.transform.GetChild(3).GetComponent<ScrollRect>();
             buttonHeight = ((RectTransform)CampaignListTemplate.transform).rect.height;
@@ -153,21 +155,27 @@ namespace ModLoader
             settingsInteractable.OnInteract.AddListener(delegate { OpenPage(Pages.Settings); });
 
 
-            if (currentMods.Count == 0)
+            if (_currentMods.Count == 0)
             {
                 Log("Finding mods");
                 //The users created mods show at the top, then the downloaded ones.
-                currentMods = ModReader.GetMods(ModLoaderManager.RootPath + @"\mods");
+                _currentMods = ModReader.GetMods(ModLoaderManager.RootPath + @"\mods");
                 if (!string.IsNullOrEmpty(ModLoaderManager.MyProjectsPath) &&
                     Directory.Exists(Path.Combine(ModLoaderManager.MyProjectsPath, "My Mods")))
-                    currentMods.AddRange(ModReader.GetMods(Path.Combine(ModLoaderManager.MyProjectsPath, "My Mods"), true));
+                {
+                    _currentMods.AddRange(
+                        ModReader.GetMods(
+                            Path.Combine(ModLoaderManager.MyProjectsPath, "My Mods"),
+                            true));
+                }
+
             }
             else
             {
-                Log("Searching for any new mods\nCurrent Count = " + currentMods.Count);
-                if (ModReader.GetNewMods(ModLoaderManager.RootPath + @"\mods", ref currentMods))
+                Log("Searching for any new mods\nCurrent Count = " + _currentMods.Count);
+                if (ModReader.GetNewMods(ModLoaderManager.RootPath + @"\mods", ref _currentMods))
                 {
-                    Log("Found new mods\nNew count = " + currentMods.Count);
+                    Log("Found new mods\nNew count = " + _currentMods.Count);
                 }
                 else
                 {
@@ -176,23 +184,23 @@ namespace ModLoader
             }
 
 
-            for (int i = 0; i < currentMods.Count; i++)
+            for (int i = 0; i < _currentMods.Count; i++)
             {
-                currentMods[i].listGO = Instantiate(CampaignListTemplate, Scroll_View.content);
-                currentMods[i].listGO.transform.localPosition = new Vector3(0f, -i * buttonHeight, 0f);
-                currentMods[i].listGO.GetComponent<VRUIListItemTemplate>().Setup(currentMods[i].name, i, OpenMod);
+                _currentMods[i].ListGO = Instantiate(CampaignListTemplate, Scroll_View.content);
+                _currentMods[i].ListGO.transform.localPosition = new Vector3(0f, -i * buttonHeight, 0f);
+                _currentMods[i].ListGO.GetComponent<VRUIListItemTemplate>().Setup(_currentMods[i].Name, i, OpenMod);
                 //Button currentButton = currentMods[i].listGO.transform.GetChild(2).GetComponent<Button>();
                 //currentButton.onClick.RemoveAllListeners(); //Trying to remove the existing button click
-                Log("Added Mod:\n" + currentMods[i].name + "\n" + currentMods[i].description);
+                Log("Added Mod:\n" + _currentMods[i].Name + "\n" + _currentMods[i].Description);
             }
 
-            Log("Loaded " + currentMods.Count + " mods");
+            Log("Loaded " + _currentMods.Count + " mods");
 
             Log("Mod Settings");//Mod Setttings
             settingsPage = Instantiate(assetBundle.LoadAsset<GameObject>("ModSettings"), CampaignDisplay.transform.parent);
             settingsSelection = (RectTransform)settingsPage.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(0).transform;
-            
-            
+
+
             s_BoolTemplate = assetBundle.LoadAsset<GameObject>("BoolTemplate");
             s_StringTemplate = assetBundle.LoadAsset<GameObject>("StringTemplate");
             s_IntTemplate = assetBundle.LoadAsset<GameObject>("NumberTemplate");
@@ -211,7 +219,7 @@ namespace ModLoader
 
             Log("Finished clearning up");//Finished and clearning up
             OpenPage(Pages.MainMenu);
-            Scroll_View.content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (2f + currentMods.Count) * buttonHeight);
+            Scroll_View.content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (2f + _currentMods.Count) * buttonHeight);
             Scroll_View.ClampVertical();
             InteractableCanvasScript.RefreshInteractables();
             CampaignDisplay.SetActive(false);
@@ -221,33 +229,39 @@ namespace ModLoader
         }
         public void LoadMod()
         {
-            if (selectedMod == null)
+            if (_selectedMod == null)
             {
                 LogError("There was no selected mod");
                 return;
             }
-
-            if (selectedMod.isLoaded)
+            if (_selectedMod.Mod == null)
             {
-                Log(selectedMod.name + " is already loaded");
+                LogError("It seems the Mod was null in " + _selectedMod.Name);
+                return;
+            }
+            if (_selectedMod.Mod.isLoaded)
+            {
+                Log(_selectedMod.Name + " is already loaded");
                 return;
             }
 
-            IEnumerable<Type> source = 
-                from t in Assembly.Load(File.ReadAllBytes(selectedMod.dllPath)).GetTypes()
+            CheckForDependencies();
+
+            IEnumerable<Type> source =
+                from t in Assembly.Load(File.ReadAllBytes(_selectedMod.GetFullDllPath())).GetTypes()
                 where t.IsSubclassOf(typeof(VTOLMOD))
                 select t;
             if (source != null && source.Count() == 1)
             {
-                GameObject newModGo = new GameObject(selectedMod.name, source.First());
+                GameObject newModGo = new GameObject(_selectedMod.Name, source.First());
                 VTOLMOD mod = newModGo.GetComponent<VTOLMOD>();
-                mod.SetModInfo(selectedMod);
-                newModGo.name = selectedMod.name;
+                mod.SetModInfo(_selectedMod.Mod);
+                newModGo.name = _selectedMod.Name;
                 DontDestroyOnLoad(newModGo);
-                selectedMod.isLoaded = true;
+                _selectedMod.Mod.isLoaded = true;
                 SelectButton.text = "Loaded!";
                 mod.ModLoaded();
-                ModsLoaded.Add(selectedMod);
+                ModsLoaded.Add(_selectedMod.Mod);
                 ModLoaderManager.LoadedModsCount++;
                 ModLoaderManager.Instance.UpdateDiscord();
             }
@@ -256,25 +270,86 @@ namespace ModLoader
                 LogError("Source is null");
             }
         }
+        private void CheckForDependencies()
+        {
+            string path = string.Empty;
+            if (_selectedMod.IsDevFolder)
+                path = Path.Combine(_selectedMod.Directory.Parent.FullName, "dependencies");
+            else
+                path = Path.Combine(_selectedMod.Directory.FullName, "dependencies");
+
+            if (!Directory.Exists(path))
+            {
+                Log($"{_selectedMod.Name} doesn't have a dependencies folder. Checked {path} DevFolder = {_selectedMod.IsDevFolder}");
+                return;
+            }
+
+            FileInfo[] dlls = new DirectoryInfo(path).GetFiles("*.dll");
+            for (int i = 0; i < dlls.Length; i++)
+            {
+                for (int j = 0; j < _selectedMod.Dependencies.Count; j++)
+                {
+                    if (_selectedMod.Dependencies[j] == dlls[i].Name)
+                        LoadDependency(dlls[i]);
+                }
+            }
+        }
+        private void LoadDependency(FileInfo fileInfo)
+        {
+            Assembly assembly = Assembly.Load(File.ReadAllBytes(fileInfo.FullName));
+            Log("Loaded Dependency " + fileInfo.FullName);
+
+            IEnumerable<Type> source =
+                from t in assembly.GetTypes()
+                where t.IsSubclassOf(typeof(VTOLMOD))
+                select t;
+            // This Dependency is a VTOL Mod
+            if (source != null && source.Count() == 1)
+            {
+                BaseItem item = CreateBaseItem(fileInfo);
+                _currentMods.Add(item);
+
+                GameObject newModGo = new GameObject(fileInfo.Name, source.First());
+                VTOLMOD mod = newModGo.GetComponent<VTOLMOD>();
+                mod.SetModInfo(item.Mod);
+                newModGo.name = fileInfo.Name;
+                DontDestroyOnLoad(newModGo);
+                mod.ModLoaded();
+                ModLoaderManager.LoadedModsCount++;
+                Log("The Dependency was also a vtol mod and has been spawned");
+                return;
+            }
+
+        }
+        private BaseItem CreateBaseItem(FileInfo info)
+        {
+            BaseItem item = new BaseItem();
+            item.Name = $"{_selectedMod.Name}/{info.Name}";
+            item.DllPath = info.Name;
+            item.Description = $"This mod is a dependency for {_selectedMod.Name}";
+            item.Directory = info.Directory;
+            item.CreateMod();
+            return item;
+        }
         public void OpenMod(int id)
         {
-            if (id > currentMods.Count - 1)
+            if (id > _currentMods.Count - 1)
             {
                 LogError("Open Mods tried to open a number too high.");
                 return;
             }
             Log("Opening Mod " + id);
-            selectedMod = currentMods[id];
-            SelectButton.text = selectedMod.isLoaded ? "Loaded!" : "Load";
-            Scroll_View.ViewContent((RectTransform)selectedMod.listGO.transform);
-            selectionTF.position = selectedMod.listGO.transform.position;
+            _selectedMod = _currentMods[id];
+            SelectButton.text = _selectedMod.Mod.isLoaded ? "Loaded!" : "Load";
+            Scroll_View.ViewContent((RectTransform)_selectedMod.ListGO.transform);
+            selectionTF.position = _selectedMod.ListGO.transform.position;
             selectionTF.GetComponent<Image>().color = new Color(0.3529411764705882f, 0.196078431372549f, 0);
-            modInfoUI.campaignName.text = selectedMod.name;
-            modInfoUI.campaignDescription.text = selectedMod.description;
-            if (!string.IsNullOrWhiteSpace(selectedMod.imagePath))
+            modInfoUI.campaignName.text = _selectedMod.Name;
+            modInfoUI.campaignDescription.text = _selectedMod.Description;
+            if (!string.IsNullOrWhiteSpace(_selectedMod.ImagePath))
             {
                 modInfoUI.campaignImage.color = Color.white;
-                StartCoroutine(SetModPreviewImage(modInfoUI.campaignImage, selectedMod.imagePath));
+                StartCoroutine(SetModPreviewImage(modInfoUI.campaignImage, _selectedMod.ImagePath));
             }
             else
             {
@@ -313,7 +388,6 @@ namespace ModLoader
                     break;
             }
         }
-
         private IEnumerator SetModPreviewImage(RawImage raw, string path)
         {
             if (raw == null)
@@ -336,14 +410,14 @@ namespace ModLoader
         {
             int currentModIndex = FindModIndex(settings.Mod.ThisMod.name);
 
-            currentMods[currentModIndex].settingsGO = Instantiate(settingsCampaignListTemplate, settingsScrollView.content);
-            currentMods[currentModIndex].settingsGO.SetActive(true);
-            currentMods[currentModIndex].settingsGO.transform.localPosition = new Vector3(0f, -(settingsScrollView.content.childCount - 5) * buttonHeight, 0f);
-            currentMods[currentModIndex].settingsGO.GetComponent<VRUIListItemTemplate>().Setup(currentMods[currentModIndex].name, currentModIndex, OpenSetting);
+            _currentMods[currentModIndex].SettingsGO = Instantiate(settingsCampaignListTemplate, settingsScrollView.content);
+            _currentMods[currentModIndex].SettingsGO.SetActive(true);
+            _currentMods[currentModIndex].SettingsGO.transform.localPosition = new Vector3(0f, -(settingsScrollView.content.childCount - 5) * buttonHeight, 0f);
+            _currentMods[currentModIndex].SettingsGO.GetComponent<VRUIListItemTemplate>().Setup(_currentMods[currentModIndex].Name, currentModIndex, OpenSetting);
             currentSettings.Add(settings);
 
-            currentMods[currentModIndex].settingsHolerGO = new GameObject(currentMods[currentModIndex].name, typeof(RectTransform));
-            currentMods[currentModIndex].settingsHolerGO.transform.SetParent(s_Holder.transform, false);
+            _currentMods[currentModIndex].SettingsHolerGO = new GameObject(_currentMods[currentModIndex].Name, typeof(RectTransform));
+            _currentMods[currentModIndex].SettingsHolerGO.transform.SetParent(s_Holder.transform, false);
 
             for (int i = 0; i < settings.subSettings.Count; i++)
             {
@@ -351,25 +425,26 @@ namespace ModLoader
                 {
                     Log("Found Bool Setting");
                     Settings.BoolSetting currentBool = (Settings.BoolSetting)settings.subSettings[i];
-                    GameObject boolGO = Instantiate(s_BoolTemplate, currentMods[currentModIndex].settingsHolerGO.transform, false);
+                    GameObject boolGO = Instantiate(s_BoolTemplate, _currentMods[currentModIndex].SettingsHolerGO.transform, false);
                     boolGO.transform.GetChild(1).GetComponent<Text>().text = currentBool.settingName;
                     currentBool.text = boolGO.transform.GetChild(2).GetComponentInChildren<Text>();
                     currentBool.text.text = currentBool.defaultValue.ToString();
                     boolGO.transform.GetChild(2).GetComponent<VRInteractable>().OnInteract.AddListener(delegate { currentBool.Invoke(); });
                     boolGO.SetActive(true);
-                    
+
                     Log($"Spawned Bool Setting. Name:{currentBool.settingName} at {boolGO.transform.position}");
                 }
                 else if (settings.subSettings[i] is Settings.FloatSetting)
                 {
                     Log("Found Float Setting");
                     Settings.FloatSetting currentFloat = (Settings.FloatSetting)settings.subSettings[i];
-                    GameObject floatGO = Instantiate(s_FloatTemplate, currentMods[currentModIndex].settingsHolerGO.transform, false);
+                    GameObject floatGO = Instantiate(s_FloatTemplate, _currentMods[currentModIndex].SettingsHolerGO.transform, false);
                     floatGO.transform.GetChild(1).GetComponent<Text>().text = currentFloat.settingName;
                     currentFloat.text = floatGO.transform.GetChild(2).GetComponent<Text>();
                     currentFloat.text.text = currentFloat.value.ToString();
-                    floatGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate {
-                        OpenKeyboard(KeyboardType.Float, currentFloat.value.ToString(), 32, new UnityAction<string>(currentFloat.SetValue)); 
+                    floatGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate
+                    {
+                        OpenKeyboard(KeyboardType.Float, currentFloat.value.ToString(), 32, new UnityAction<string>(currentFloat.SetValue));
                     });
                     floatGO.SetActive(true);
                     Log($"Spawned Float setting called {currentFloat.settingName} at {floatGO.transform.position}");
@@ -378,11 +453,12 @@ namespace ModLoader
                 {
                     Log("Found Int Setting");
                     Settings.IntSetting currentInt = (Settings.IntSetting)settings.subSettings[i];
-                    GameObject intGO = Instantiate(s_IntTemplate, currentMods[currentModIndex].settingsHolerGO.transform, false);
+                    GameObject intGO = Instantiate(s_IntTemplate, _currentMods[currentModIndex].SettingsHolerGO.transform, false);
                     intGO.transform.GetChild(1).GetComponent<Text>().text = currentInt.settingName;
                     currentInt.text = intGO.transform.GetChild(2).GetComponent<Text>();
                     currentInt.text.text = currentInt.value.ToString();
-                    intGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate {
+                    intGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate
+                    {
                         OpenKeyboard(KeyboardType.Int, currentInt.value.ToString(), 32, new UnityAction<string>(currentInt.SetValue));
                     });
                     intGO.SetActive(true);
@@ -393,12 +469,13 @@ namespace ModLoader
                 {
                     Log("Found String Setting");
                     Settings.StringSetting currentString = (Settings.StringSetting)settings.subSettings[i];
-                    GameObject stringGO = Instantiate(s_StringTemplate, currentMods[currentModIndex].settingsHolerGO.transform, false);
+                    GameObject stringGO = Instantiate(s_StringTemplate, _currentMods[currentModIndex].SettingsHolerGO.transform, false);
                     stringGO.transform.GetChild(1).GetComponent<Text>().text = currentString.settingName;
                     currentString.text = stringGO.transform.GetChild(2).GetComponentInChildren<Text>();
                     currentString.text.text = currentString.value;
-                    stringGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate { 
-                        OpenKeyboard(KeyboardType.String, currentString.value, 32, new UnityAction<string>(currentString.SetValue)); 
+                    stringGO.transform.GetChild(3).GetComponent<VRInteractable>().OnInteract.AddListener(delegate
+                    {
+                        OpenKeyboard(KeyboardType.String, currentString.value, 32, new UnityAction<string>(currentString.SetValue));
                     });
                     stringGO.SetActive(true);
                     Log($"Spawned String setting called {currentString.settingName} at {stringGO.transform.position}");
@@ -407,13 +484,13 @@ namespace ModLoader
                 {
                     Log("Found a custom label");
                     Settings.CustomLabel currentLabel = (Settings.CustomLabel)settings.subSettings[i];
-                    GameObject label = Instantiate(s_CustomLabel, currentMods[currentModIndex].settingsHolerGO.transform, false);
+                    GameObject label = Instantiate(s_CustomLabel, _currentMods[currentModIndex].SettingsHolerGO.transform, false);
                     label.GetComponentInChildren<Text>().text = currentLabel.settingName;
                     label.SetActive(true);
                     Log($"Spawned a custom label with the text:\n{currentLabel.settingName}");
                 }
             }
-            currentMods[currentModIndex].settingsHolerGO.SetActive(false);
+            _currentMods[currentModIndex].SettingsHolerGO.SetActive(false);
             if (!recreating)
             {
                 if (_modSettings == null)
@@ -423,7 +500,6 @@ namespace ModLoader
             Debug.Log("Done spawning " + settings.subSettings.Count + " settings");
             RefreshSettings();
         }
-
         private void RefreshSettings()
         {
             settingsScrollView.content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (2f + settingsScrollView.content.childCount) * buttonHeight);
@@ -434,23 +510,23 @@ namespace ModLoader
         }
         public void OpenSetting(int id)
         {
-            if (id > currentMods.Count - 1)
+            if (id > _currentMods.Count - 1)
             {
                 LogError("Open Mods tried to open a number too high.");
                 return;
             }
             Log("Opening Settings for mod " + id);
-            Mod selectedMod = currentMods[id];
-            settingsScrollView.ViewContent((RectTransform)selectedMod.settingsGO.transform);
-            settingsSelection.position = selectedMod.settingsGO.transform.position;
+            BaseItem selectedMod = _currentMods[id];
+            settingsScrollView.ViewContent((RectTransform)selectedMod.SettingsGO.transform);
+            settingsSelection.position = selectedMod.SettingsGO.transform.position;
             settingsSelection.GetComponent<Image>().color = new Color(0.3529411764705882f, 0.196078431372549f, 0);
 
-            if(currentSelectedSetting != string.Empty) 
+            if (currentSelectedSetting != string.Empty)
             {
                 //There already is something on the content of the settings scroll box.
                 MoveBackToPool(currentSelectedSetting);
             }
-            MoveToSettingsView(selectedMod.settingsHolerGO.transform);
+            MoveToSettingsView(selectedMod.SettingsHolerGO.transform);
             RefreshSettings();
         }
         private void MoveToSettingsView(Transform parent)
@@ -470,18 +546,18 @@ namespace ModLoader
         private void MoveBackToPool(string name)
         {
             int modIndex = FindModIndex(name);
-            Transform holder = s_Holder.transform.Find(currentMods[modIndex].settingsHolerGO.name);
+            Transform holder = s_Holder.transform.Find(_currentMods[modIndex].SettingsHolerGO.name);
             if (holder == null)
             {
                 //Couldn't find the holder for some reason in the pool.
                 LogWarning("Couldn't find holder for settings, recreating it");
-                holder = new GameObject(currentMods[modIndex].name, typeof(RectTransform)).transform;
+                holder = new GameObject(_currentMods[modIndex].Name, typeof(RectTransform)).transform;
                 holder.SetParent(s_Holder.transform, false);
-                currentMods[modIndex].settingsHolerGO = holder.gameObject;
+                _currentMods[modIndex].SettingsHolerGO = holder.gameObject;
             }
 
             Transform[] itemsToMove = new Transform[settingsScrollBoxView.content.childCount];
-            for (int i = 0; i < settingsScrollBoxView.content.childCount; i++) 
+            for (int i = 0; i < settingsScrollBoxView.content.childCount; i++)
             {
                 itemsToMove[i] = settingsScrollBoxView.content.GetChild(i);
             }
@@ -499,9 +575,9 @@ namespace ModLoader
         private int FindModIndex(string name)
         {
             int returnValue = -1;
-            for (int i = 0; i < currentMods.Count; i++)
+            for (int i = 0; i < _currentMods.Count; i++)
             {
-                if (currentMods[i].name.Equals(name))
+                if (_currentMods[i].Name.Equals(name))
                 {
                     returnValue = i;
                     break;
@@ -509,7 +585,7 @@ namespace ModLoader
             }
             return returnValue;
         }
-        public void OpenKeyboard(KeyboardType keyboardType,string startingText, int maxChars, UnityAction<string> onEntered, UnityAction onCancelled = null)
+        public void OpenKeyboard(KeyboardType keyboardType, string startingText, int maxChars, UnityAction<string> onEntered, UnityAction onCancelled = null)
         {
             OpenKeyboard(KeyboardType.DisableAll); //Closing them all first incase one is opened
             if (keyboardType == KeyboardType.DisableAll)
@@ -534,6 +610,26 @@ namespace ModLoader
             stringKeyboard.gameObject.SetActive(false);
             intKeyboard.gameObject.SetActive(false);
             floatKeyboard.gameObject.SetActive(false);
+        }
+        private void CheckForLOSMods()
+        {
+            Log("Checking for Load On Start Mods");
+            for (int i = 0; i < _currentMods.Count; i++)
+            {
+                for (int j = 0; j < LauncherSettings.Settings.Mods.Count; j++)
+                {
+
+                    if (LauncherSettings.Settings.Mods[j].LoadOnStartCheck &&
+                        _currentMods[i].Directory.FullName.ToLower() == LauncherSettings.Settings.Mods[j].FolderDirectory.ToLower())
+                    {
+                        Log($"Found {_currentMods[i].Name} with LOS");
+                        _selectedMod = _currentMods[i];
+                        LoadMod();
+                        break;
+                    }
+                }
+            }
+            _selectedMod = null;
         }
     }
 }

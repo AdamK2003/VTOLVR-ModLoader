@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using System.IO.Compression;
+using System.Reflection;
 using Path = System.IO.Path;
 using IWshRuntimeLibrary;
 using File = System.IO.File;
@@ -34,33 +35,70 @@ namespace Installer
         private Point lm = new Point();
 
         //Pages
-        public enum Page { About, SelectFolder, Confirm, Extracting, Finished, Error }
+        public enum Page
+        {
+            About,
+            SelectFolder,
+            Confirm,
+            Extracting,
+            Finished,
+            Error
+        }
+
         private Page currentPage;
 
         //
         private string vtFolder;
         private static string uriPath = @"HKEY_CLASSES_ROOT\VTOLVRML";
         private bool inAdmin;
+
         public MainWindow()
         {
             InitializeComponent();
             SwitchPage();
             CheckForAdmin();
+
+            FocusWindow();
+        }
+
+        private async Task FocusWindow()
+        {
+            await Task.Delay(500);
+
+            Show();
+            Activate();
         }
 
         private void CheckForAdmin()
         {
             if (!(new WindowsPrincipal(WindowsIdentity.GetCurrent()))
-             .IsInRole(WindowsBuiltInRole.Administrator))
+                .IsInRole(WindowsBuiltInRole.Administrator))
             {
-                MessageBoxResult result = MessageBox.Show("Please run the installer as administrator.\nIf you run without administrator you will not be able to use one click install on the website.", "Missing Permissions",
-                    MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                string AdminErrorText =
+                    @"To support one click install for the website, the installer HAS to run as an administrator.
+If you run without administrator you will NOT be able to use one click install on the website.
+
+Restart the installer as an administrator?";
+
+                MessageBoxResult result = MessageBox.Show(AdminErrorText, "Missing Permissions",
+                    MessageBoxButton.YesNo, MessageBoxImage.Error);
+
                 switch (result)
                 {
-                    case MessageBoxResult.OK:
+                    case MessageBoxResult.Yes:
+                        var processStartInfo = new ProcessStartInfo();
+                        processStartInfo.WorkingDirectory = Environment.CurrentDirectory;
+                        processStartInfo.FileName = Assembly.GetEntryAssembly().CodeBase;
+                        processStartInfo.UseShellExecute = true;
+                        processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+
+                        processStartInfo.Verb = "runas";
+
+                        Process.Start(processStartInfo);
+
                         Quit();
                         break;
-                    case MessageBoxResult.Cancel:
+                    case MessageBoxResult.No:
                         inAdmin = false;
                         break;
                 }
@@ -71,24 +109,26 @@ namespace Installer
 
         private void Window_Initialized(object sender, EventArgs e)
         {
-
         }
 
         private string FindVTOL()
         {
-            string regPath = (string)Registry.GetValue(
+            string regPath = (string) Registry.GetValue(
                 @"HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam",
                 @"InstallPath",
                 @"NULL");
             string[] contents = File.ReadAllText(regPath + @"\steamapps\libraryfolders.vdf").Split('"');
             string gameFolder = regPath;
 
-            for (int i = 13; !Directory.Exists(gameFolder + "\\steamapps\\common\\VTOL VR\\") && i < contents.Length; i += 4) //Loops through all steamlibrary folders to check if the game is installed there
+            for (int i = 13;
+                !Directory.Exists(gameFolder + "\\steamapps\\common\\VTOL VR\\") && i < contents.Length;
+                i += 4) //Loops through all steamlibrary folders to check if the game is installed there
             {
                 gameFolder = contents[i];
             }
 
-            if (!Directory.Exists(gameFolder + "\\steamapps\\common\\VTOL VR\\")) //Throws an error if the game can't be found
+            if (!Directory.Exists(gameFolder + "\\steamapps\\common\\VTOL VR\\")
+            ) //Throws an error if the game can't be found
             {
                 Error.Visibility = Visibility.Visible;
 
@@ -102,10 +142,11 @@ namespace Installer
                 if (!string.IsNullOrWhiteSpace(split[i]))
                     result += split[i] + @"\";
             }
+
             result += @"steamapps\common\VTOL VR\";
             return result;
-
         }
+
         /// <summary>
         /// If the file exists it will delete it other wise,
         /// it doesn't throw an error
@@ -116,6 +157,7 @@ namespace Installer
             if (File.Exists(path))
                 File.Delete(path);
         }
+
         private void InstallFiles()
         {
             //If they change the folder path by typing it in by hand
@@ -133,7 +175,8 @@ namespace Installer
 
                 if (dShortcut.IsChecked == true)
                     CreateShortcut(
-                        Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\VTOL VR Mod Loader.lnk",
+                        Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) +
+                        @"\VTOL VR Mod Loader.lnk",
                         vtFolder + @"VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
                 if (smShortcut.IsChecked == true)
                     CreateShortcut(
@@ -154,14 +197,15 @@ namespace Installer
                 Console.WriteLine(e.ToString());
                 return;
             }
+
             SetProgress(100);
             currentPage++;
             SwitchPage();
-
         }
+
         private void CreateURI(string root)
         {
-            string value = (string)Registry.GetValue(
+            string value = (string) Registry.GetValue(
                 uriPath,
                 @"",
                 @"");
@@ -169,14 +213,14 @@ namespace Installer
             {
                 //Setting Default
                 Registry.SetValue(
-                uriPath,
-                @"",
-                @"URL:VTOLVRML");
+                    uriPath,
+                    @"",
+                    @"URL:VTOLVRML");
                 //Setting URL Protocol
                 Registry.SetValue(
-                uriPath,
-                @"URL Protocol",
-                @"");
+                    uriPath,
+                    @"URL Protocol",
+                    @"");
                 //Setting Default Icon
                 Registry.SetValue(
                     uriPath + @"\DefaultIcon",
@@ -189,10 +233,11 @@ namespace Installer
                     "\"" + root + @"\VTOLVR-ModLoader.exe" + "\" \"" + @"%1" + "\"");
             }
         }
+
         private void CreateShortcut(string shortcutPath, string targetPath)
         {
             WshShell shell = new WshShell();
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutPath);
+            IWshShortcut shortcut = (IWshShortcut) shell.CreateShortcut(shortcutPath);
             shortcut.Description = "Open VTOL VR with mods";
             shortcut.TargetPath = targetPath;
             shortcut.WorkingDirectory = vtFolder + @"VTOLVR_ModLoader\";
@@ -241,6 +286,7 @@ namespace Installer
         {
             Quit();
         }
+
         private void Quit()
         {
             Process.GetCurrentProcess().Kill();
@@ -267,6 +313,7 @@ namespace Installer
                 Process.Start(startInfo);
                 Quit();
             }
+
             currentPage--;
             SwitchPage();
         }
@@ -275,6 +322,7 @@ namespace Installer
         {
             OpenFileBrowser();
         }
+
         private void SetProgress(float barValue)
         {
             progressBar.Value = barValue;
@@ -306,6 +354,7 @@ namespace Installer
         }
 
         #region Moving Window
+
         private void TopBarDown(object sender, MouseButtonEventArgs e)
         {
             holdingDown = true;
@@ -328,7 +377,6 @@ namespace Installer
 
         private void WindowClosing(object sender, CancelEventArgs e)
         {
-
         }
 
         private void TopBarLeave(object sender, MouseEventArgs e)
@@ -353,9 +401,12 @@ namespace Installer
                             Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));
                             continue;
                         }
+
                         //This is a file
-                        Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName.Replace(filesInZip[f].Name, string.Empty)));
-                        filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName), File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
+                        Directory.CreateDirectory(Path.Combine(extractPath,
+                            filesInZip[f].FullName.Replace(filesInZip[f].Name, string.Empty)));
+                        filesInZip[f].ExtractToFile(Path.Combine(extractPath, filesInZip[f].FullName),
+                            File.Exists(Path.Combine(extractPath, filesInZip[f].FullName)));
                     }
                     else if (!Directory.Exists(Path.Combine(extractPath, filesInZip[f].FullName)))
                         Directory.CreateDirectory(Path.Combine(extractPath, filesInZip[f].FullName));

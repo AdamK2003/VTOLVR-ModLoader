@@ -52,7 +52,10 @@ namespace VTOLVR_ModLoader
 #if DEBUG
             debug = true;
 #endif
-            Program.ProgramName = $"{Program.ProgramNameBase} {version.Major}.{version.Minor}.{version.Build} {(debug ? "[Development Mode]" : string.Empty)}";
+            string devText = string.Empty;
+            if (version.Revision != 0)
+                devText = $"d{version.Revision}";
+            Program.ProgramName = $"{Program.ProgramNameBase} {version.Major}.{version.Minor}.{version.Build}{devText} {(debug ? "[Development Mode]" : string.Empty)}";
             Views.Console.Log(Program.ProgramName);
             HttpHelper.SetHeader();
             Program.SetVariables();
@@ -61,6 +64,7 @@ namespace VTOLVR_ModLoader
             if (!CheckFolder())
                 return false;
             ClearOldFiles();
+            AttachCoreLogger();
             return true;
         }
         /// <summary>
@@ -96,7 +100,7 @@ namespace VTOLVR_ModLoader
         {
             Helper.SentryLog("Checking base folder", Helper.SentryLogCategory.Startup);
             //Checking the folder which this is in
-            string[] pathSplit = Program.root.Split('\\');
+            string[] pathSplit = Program.Root.Split('\\');
             if (pathSplit[pathSplit.Length - 1] != "VTOLVR_ModLoader")
             {
                 try
@@ -106,7 +110,7 @@ namespace VTOLVR_ModLoader
                 catch (Exception e)
                 {
                     Views.Console.Log("Not in correct folder\n" + e);
-                    Notification.Show("It seems I am not in the folder \"VTOLVR_ModLoader\", place make sure I am in there other wise the in game menu won't load",
+                    Notification.Show("It seems I am not in the \"VTOLVR_ModLoader\" folder, please make sure I am in there otherwise the in-game menu won't load",
                         "Wrong Folder",
                         closedCallback: delegate { Program.Quit("Not in correct folder"); });
                     return false;
@@ -115,7 +119,7 @@ namespace VTOLVR_ModLoader
             }
 
             //Now it should be in the correct folder, but just need to check if its in the games folder
-            string vtolexe = Program.root.Replace("VTOLVR_ModLoader", "VTOLVR.exe");
+            string vtolexe = Program.Root.Replace("VTOLVR_ModLoader", "VTOLVR.exe");
             if (!File.Exists(vtolexe))
             {
                 Notification.Show("It seems the VTOLVR_ModLoader folder isn't with the other games files\nPlease move me to VTOL VR's game Program.root directory.",
@@ -134,23 +138,27 @@ namespace VTOLVR_ModLoader
             //Checking if the files we need to run are there
             foreach (string file in needFiles)
             {
-                if (!File.Exists(Program.root + @"\" + file))
+                if (!File.Exists(Program.Root + @"\" + file))
                 {
                     WrongFolder(file);
                     return false;
                 }
             }
 
-            //Checking if the mods folder is there
-            if (!Directory.Exists(Program.root + Program.modsFolder))
+            if (!Directory.Exists(Program.Root + Program.ModsFolder))
             {
-                Directory.CreateDirectory(Program.root + Program.modsFolder);
+                Directory.CreateDirectory(Program.Root + Program.ModsFolder);
+            }
+
+            if (!Directory.Exists(Program.Root + Program.SkinsFolder))
+            {
+                Directory.CreateDirectory(Program.Root + Program.SkinsFolder);
             }
 
             //Checking the Managed Folder
             foreach (string file in neededDLLFiles)
             {
-                if (!File.Exists(Directory.GetParent(Program.root).FullName + @"\VTOLVR_Data" + file))
+                if (!File.Exists(Directory.GetParent(Program.Root).FullName + @"\VTOLVR_Data" + file))
                 {
                     MissingManagedFile(file);
                     return false;
@@ -227,17 +235,26 @@ namespace VTOLVR_ModLoader
             // When Costura got added, these DLLs were merged into 
             // the launcher.exe, so this function deletes them as 
             // they're just a waste of space.
-            if (File.Exists(Path.Combine(Program.root, "WpfAnimatedGif.dll")))
-                Helper.TryDelete(Path.Combine(Program.root, "WpfAnimatedGif.dll"));
+            if (File.Exists(Path.Combine(Program.Root, "WpfAnimatedGif.dll")))
+                Helper.TryDelete(Path.Combine(Program.Root, "WpfAnimatedGif.dll"));
 
-            if (File.Exists(Path.Combine(Program.root, "Valve.Newtonsoft.Json.dll")))
-                Helper.TryDelete(Path.Combine(Program.root, "Valve.Newtonsoft.Json.dll"));
+            if (File.Exists(Path.Combine(Program.Root, "Valve.Valve.Newtonsoft.Json.dll")))
+                Helper.TryDelete(Path.Combine(Program.Root, "Valve.Valve.Newtonsoft.Json.dll"));
 
-            if (File.Exists(Path.Combine(Program.root, "SimpleTCP.dll")))
-                Helper.TryDelete(Path.Combine(Program.root, "SimpleTCP.dll"));
+            if (File.Exists(Path.Combine(Program.Root, "SimpleTCP.dll")))
+                Helper.TryDelete(Path.Combine(Program.Root, "SimpleTCP.dll"));
 
-            if (File.Exists(Path.Combine(Program.root, "Gameloop.Vdf.dll")))
-                Helper.TryDelete(Path.Combine(Program.root, "Gameloop.Vdf.dll"));
+            if (File.Exists(Path.Combine(Program.Root, "Gameloop.Vdf.dll")))
+                Helper.TryDelete(Path.Combine(Program.Root, "Gameloop.Vdf.dll"));
+        }
+        private static void AttachCoreLogger()
+        {
+            Core.Logger.OnMessageLogged += CoreLogger;
+        }
+
+        private static void CoreLogger(object arg1, Core.Logger.LogType arg2)
+        {
+            Views.Console.Log($"(Core: {arg2}) {arg1}");
         }
     }
 }

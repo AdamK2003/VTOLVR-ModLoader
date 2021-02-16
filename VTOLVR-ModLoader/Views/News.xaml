@@ -12,13 +12,13 @@
                 <DataTemplate>
                     <Border Padding="0,0,0,50" >
                         <StackPanel>
-                            <TextBlock Text="{Binding name}" 
-                                           Foreground="White" FontSize="20" TextWrapping="Wrap"
-                                               Background="#FF3D3D3D"/>
+                            <TextBlock Text="{Binding Name}" Foreground="White" 
+                                       FontSize="20" TextWrapping="Wrap"
+                                       Background="#FF3D3D3D"/>
 
-                            <TextBlock  Text="{Binding body}" 
-                                           Foreground="White" FontSize="10" TextWrapping="Wrap"
-                                                Background="#FF3D3D3D"/>
+                            <TextBlock  Text="{Binding Body}" Foreground="White" 
+                                        FontSize="10" TextWrapping="Wrap"
+                                        Background="#FF3D3D3D"/>
                         </StackPanel>
                     </Border>
                 </DataTemplate>

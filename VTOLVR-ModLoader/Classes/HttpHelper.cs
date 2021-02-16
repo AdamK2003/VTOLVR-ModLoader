@@ -14,31 +14,31 @@ using VTOLVR_ModLoader.Windows;
 
 namespace VTOLVR_ModLoader.Classes
 {
-    class HttpHelper
+    public class HttpHelper
     {
-        public enum HttpMethod { GET, HEAD, PUT, POST, OPTIONS}
+        public enum HttpMethod { GET, HEAD, PUT, POST, OPTIONS }
         private static readonly HttpClient _client = new HttpClient();
 
         private readonly MultipartFormDataContent _form;
         private readonly string _url;
         private Dictionary<string, string> _files = new Dictionary<string, string>();
-        
+
         public static void SetHeader()
         {
-            if  (!_client.DefaultRequestHeaders.Contains("user-agent"))
+            if (!_client.DefaultRequestHeaders.Contains("user-agent"))
                 _client.DefaultRequestHeaders.Add("user-agent", Program.ProgramName.RemoveSpecialCharacters());
         }
         public static async Task<bool> CheckForInternet()
         {
-            if (Program.disableInternet)
+            if (Program.DisableInternet)
                 return false;
             try
             {
-                HttpResponseMessage response = await _client.GetAsync(Program.url);
+                HttpResponseMessage response = await _client.GetAsync(Program.URL);
                 if (response.IsSuccessStatusCode)
                     return true;
             }
-            catch 
+            catch
             {
 
             }
@@ -59,6 +59,21 @@ namespace VTOLVR_ModLoader.Classes
             if (_client.DefaultRequestHeaders.Contains("Authorization"))
                 _client.DefaultRequestHeaders.Remove("Authorization");
         }
+        public static async void DownloadStringAsync(string url, Action<HttpResponseMessage, object[]> callback, string token = "", object[] extraData = null)
+        {
+            if (token == null || !token.Equals(""))
+            {
+                if (_client.DefaultRequestHeaders.Contains("Authorization"))
+                    _client.DefaultRequestHeaders.Remove("Authorization");
+                _client.DefaultRequestHeaders.Add("Authorization", "Token " + token);
+            }
+
+            if (callback != null)
+                callback.Invoke(await _client.GetAsync(url), extraData);
+
+            if (_client.DefaultRequestHeaders.Contains("Authorization"))
+                _client.DefaultRequestHeaders.Remove("Authorization");
+        }
         public static void DownloadFile(string url, string path, DownloadProgressChangedEventHandler downloadProgress, AsyncCompletedEventHandler downloadComplete)
         {
             WebClient client = new WebClient();
@@ -66,6 +81,14 @@ namespace VTOLVR_ModLoader.Classes
             client.DownloadProgressChanged += downloadProgress;
             client.DownloadFileCompleted += downloadComplete;
             client.DownloadFileAsync(new Uri(url), path);
+        }
+        public static void DownloadFile(string url, string path, Action<CustomWebClient.RequestData> downloadProgress, Action<CustomWebClient.RequestData> downloadComplete, object[] extraData = null)
+        {
+            CustomWebClient client = new CustomWebClient();
+            client.Headers.Add("user-agent", Program.ProgramName.RemoveSpecialCharacters());
+            client.DownloadProgress += downloadProgress;
+            client.DownloadComplete += downloadComplete;
+            client.DownloadFileAsync(new Uri(url), path, extraData);
         }
 
         public HttpHelper(string url)
@@ -82,7 +105,7 @@ namespace VTOLVR_ModLoader.Classes
         public void AttachFile(string field, string fileName, string filePath)
         {
             Stream stream = File.OpenRead(filePath);
-            _form.Add(new StreamContent(stream),field,fileName);
+            _form.Add(new StreamContent(stream), field, fileName);
         }
         public void SetValue(string field, string value)
         {

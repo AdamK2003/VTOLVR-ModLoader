@@ -170,6 +170,9 @@ namespace VTOLVR_ModLoader.Views
                     false,
                     items[i].Directory.FullName);
 
+                if (!items[i].HasDll())
+                    lastItem.LoadOnStartVisibility = Visibility.Hidden;
+
                 if (items[i].PublicID != string.Empty)
                 {
                     lastItem.PublicID = items[i].PublicID;

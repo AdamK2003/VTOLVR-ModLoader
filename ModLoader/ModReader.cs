@@ -59,7 +59,7 @@ namespace ModLoader
                 Core.Jsons.BaseItem item = Core.Jsons.BaseItem.GetItem(
                     File.ReadAllText(Path.Combine(pathToCheck, "info.json")));
 
-                if (item != null)
+                if (item != null && item.HasDll())
                 {
                     lastMod = BaseItem.ToBaseItem(item);
                     lastMod.Directory = new DirectoryInfo(pathToCheck);

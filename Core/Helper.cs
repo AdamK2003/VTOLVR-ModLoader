@@ -43,6 +43,12 @@ namespace Core
         public static List<BaseItem> FindMods(string folder, bool isMyProjects = false)
         {
             List<BaseItem> foundMods = new List<BaseItem>();
+
+            if (!Directory.Exists(folder))
+            {
+                Logger.Error("Couldn't find folder " + folder);
+                return foundMods;
+            }
             DirectoryInfo folders = new DirectoryInfo(folder);
             DirectoryInfo[] mods = folders.GetDirectories();
 
@@ -70,6 +76,13 @@ namespace Core
         public static List<BaseItem> FindSkins(string folder)
         {
             List<BaseItem> foundSkins = new List<BaseItem>();
+
+            if (!Directory.Exists(folder))
+            {
+                Logger.Error("Couldn't find folder " + folder);
+                return foundSkins;
+            }
+
             DirectoryInfo downloadedSkins = new DirectoryInfo(folder);
             DirectoryInfo[] skins = downloadedSkins.GetDirectories();
 

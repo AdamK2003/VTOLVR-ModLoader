@@ -269,6 +269,7 @@ namespace ModLoader
             {
                 LogError("Source is null");
             }
+            Log("End of LoadMod");
         }
         private void CheckForDependencies()
         {
@@ -613,14 +614,13 @@ namespace ModLoader
         }
         private void CheckForLOSMods()
         {
-            Log("Checking for Load On Start Mods");
+            Log($"Checking for Load On Start Mods. Count = {_currentMods.Count} Settings Count = {LauncherSettings.Settings.Items.Count}");
             for (int i = 0; i < _currentMods.Count; i++)
             {
-                for (int j = 0; j < LauncherSettings.Settings.Mods.Count; j++)
+                for (int j = 0; j < LauncherSettings.Settings.Items.Count; j++)
                 {
-
-                    if (LauncherSettings.Settings.Mods[j].LoadOnStartCheck &&
-                        _currentMods[i].Directory.FullName.ToLower() == LauncherSettings.Settings.Mods[j].FolderDirectory.ToLower())
+                    if (LauncherSettings.Settings.Items[j].LoadOnStartCheck &&
+                        _currentMods[i].Directory.FullName.ToLower() == LauncherSettings.Settings.Items[j].FolderDirectory.ToLower())
                     {
                         Log($"Found {_currentMods[i].Name} with LOS");
                         _selectedMod = _currentMods[i];

@@ -170,6 +170,9 @@ namespace VTOLVR_ModLoader.Views
                     false,
                     items[i].Directory.FullName);
 
+                if (!items[i].HasDll())
+                    lastItem.LoadOnStartVisibility = Visibility.Hidden;
+
                 if (items[i].PublicID != string.Empty)
                 {
                     lastItem.PublicID = items[i].PublicID;
@@ -510,7 +513,7 @@ namespace VTOLVR_ModLoader.Views
             {
                 ItemType = contentType;
                 Name = name;
-                if (description.Length > 75)
+                if (description != null && description.Length > 75)
                     Description = description.Remove(75) + "...";
                 else
                     Description = description;

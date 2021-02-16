@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Valve.Newtonsoft.Json;
 using ModLoader.Classes;
+using UnityEngine;
 
 namespace ModLoader.Classes.Json
 {
@@ -23,9 +24,7 @@ namespace ModLoader.Classes.Json
         public bool LaunchSteamVR = true;
 
         [JsonProperty]
-        public ObservableCollection<Item> Mods = new ObservableCollection<Item>();
-        [JsonProperty]
-        public ObservableCollection<Item> Skins = new ObservableCollection<Item>();
+        public ObservableCollection<Item> Items = new ObservableCollection<Item>();
 
         private static LauncherSettings _settings;
         public static LauncherSettings Settings
@@ -48,12 +47,25 @@ namespace ModLoader.Classes.Json
             {
                 Settings = JsonConvert.DeserializeObject<LauncherSettings>(
                     File.ReadAllText(path));
+                Log($"Loaded Settings.\n{Settings}");
             }
             catch (Exception e)
             {
-                ModLoader.instance.Log($"Failed Reading Settings: {e.Message}");
+                Error($"Failed Reading Settings: {e.Message}");
                 Settings = new LauncherSettings();
             }
+        }
+        private static void Log(object message) => Debug.Log($"[Launcher Settings]{message}");
+
+        private static void Warning(object message) => Debug.LogWarning($"[Launcher Settings]{message}");
+
+        private static void Error(object message) => Debug.LogError($"[Launcher Settings]{message}");
+        public override string ToString()
+        {
+            return $"Projects Folder = {ProjectsFolder}|" +
+                $"AutoUpdate = {AutoUpdate}|" +
+                $"LaunchSteamVR = {LaunchSteamVR}|" +
+                $"Items Count = {Items.Count}";
         }
     }
 }

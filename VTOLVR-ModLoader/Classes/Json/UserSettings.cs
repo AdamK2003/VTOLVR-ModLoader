@@ -71,12 +71,24 @@ namespace VTOLVR_ModLoader.Classes.Json
             {
                 Settings = JsonConvert.DeserializeObject<UserSettings>(
                     File.ReadAllText(path));
+                Console.Log($"Loaded Settings.\n{Settings}");
             }
             catch (Exception e)
             {
                 Console.Log($"Failed Reading Settings: {e.Message}");
                 Settings = new UserSettings();
             }
+        }
+        public override string ToString()
+        {
+            return $"ProjectsFolder = {ProjectsFolder}|" +
+                $"AutoUpdate = {AutoUpdate}|" +
+                $"LaunchSteamVR = {LaunchSteamVR}|" +
+                $"Branches = {Branches}|" +
+                $"ActiveBranch = {ActiveBranch}|" +
+                $"AcceptedDevtools = {AcceptedDevtools}|" +
+                $"MaxProcessAttempts = {MaxProcessAttempts}|" +
+                $"Items count = {Items.Count}";
         }
     }
 }

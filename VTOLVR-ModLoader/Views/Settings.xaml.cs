@@ -408,10 +408,12 @@ namespace VTOLVR_ModLoader.Views
         private void BranchChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             SaveSettings();
+            string oldBranch = Program.Branch;
             Program.Branch = _branches[_branchesBox.SelectedIndex];
             if (Program.Branch == "None")
                 Program.Branch = string.Empty;
-            Program.GetReleases();
+            if (oldBranch != Program.Branch)
+                Program.GetReleases();
         }
 
         private void ProcessTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)

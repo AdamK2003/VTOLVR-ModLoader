@@ -70,6 +70,12 @@ namespace VTOLVR_ModLoader.Classes
         }
         private static void UpdateFiles()
         {
+            if (_updateLauncher)
+            {
+                UpdateLauncher();
+                return;
+            }
+
             currentFile = filesToUpdate.Dequeue();
             Console.Log($"Updating {currentFile.Name}");
             HttpHelper.DownloadFile(

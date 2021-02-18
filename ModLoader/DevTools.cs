@@ -19,7 +19,8 @@ namespace ModLoader
             }
             private set
             {
-                if (value.Pilot == "No Selection" ||
+                if (value == null ||
+                    value.Pilot == "No Selection" ||
                     value.ScenarioName == "No Selection" ||
                     value.ScenarioID == string.Empty)
                 {

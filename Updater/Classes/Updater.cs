@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -49,7 +49,7 @@ namespace AutoUpdater
                 UpdateFiles();
             else
             {
-                Console.Log("All fines are upto date");
+                Console.Log("All files are up to date");
                 Process.Start(Program.Root + "/VTOLVR-ModLoader.exe");
                 Program.Quit();
             }

@@ -129,7 +129,7 @@ namespace VTOLVR_ModLoader
             }
         }
 
-        private static void FindItems()
+        public static void FindItems()
         {
             Helper.SentryLog("Finding Items", Helper.SentryLogCategory.Program);
             Console.Log("Finding items");

@@ -90,6 +90,7 @@ namespace VTOLVR_ModLoader.Views
             Console.Log("Populating List");
 
             _items = new ObservableCollection<Item>();
+            Program.FindItems();
             ConvertItems();
             _listView.ItemsSource = _items;
 
@@ -162,7 +163,7 @@ namespace VTOLVR_ModLoader.Views
                 lastItem = new Item(
                     items[i].ContentType,
                     items[i].Name,
-                    items[i].Description,
+                    items[i].Tagline,
                     Visibility.Hidden,
                     items[i].Version,
                     items[i].PublicID == string.Empty ? "N/A" : "Requesting",

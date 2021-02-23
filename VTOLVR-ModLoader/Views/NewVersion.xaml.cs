@@ -352,7 +352,6 @@ namespace VTOLVR_ModLoader.Views
                     if (!files[i].Name.Contains("web_preview.png"))
                         zip.CreateEntryFromFile(files[i].FullName, files[i].Name);
                 }
-                zip.CreateEntryFromFile($"{_currentPath}\\info.json", "info.json");
             }
             zip.Dispose();
             return $"{_currentPath}\\{_item.Name}.zip";

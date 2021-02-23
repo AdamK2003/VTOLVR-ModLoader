@@ -98,6 +98,10 @@ namespace Core.Jsons
         public static BaseItem GetItem(string json)
         {
             BaseItem item = Helper.DeserializeObject<BaseItem>(json, out Exception error);
+
+            if (item.DllPath == null)
+                item.DllPath = string.Empty;
+
             if (error == null)
             {
                 return item;

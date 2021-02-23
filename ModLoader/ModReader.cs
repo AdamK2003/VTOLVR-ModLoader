@@ -45,6 +45,7 @@ namespace ModLoader
             string pathToCheck;
             for (int i = 0; i < mods.Length; i++)
             {
+                Debug.Log($"[Mod Reader] Searching {mods[i].FullName}");
                 if (isDevFolder)
                     pathToCheck = Path.Combine(mods[i].FullName, "Builds");
                 else

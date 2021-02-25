@@ -9,6 +9,7 @@ using System.Security.Permissions;
 using System.Windows;
 using System.Windows.Threading;
 using VTOLVR_ModLoader.Views;
+using Console = VTOLVR_ModLoader.Views.Console;
 
 namespace VTOLVR_ModLoader
 {
@@ -20,7 +21,7 @@ namespace VTOLVR_ModLoader
         public App()
         {
 #if !DEBUG
-            this.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(App_DispatcherUnhandledException);
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
 #endif
         }
 
@@ -40,6 +41,8 @@ namespace VTOLVR_ModLoader
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
+            Console.Log($"Fatal error: {e.Exception}");
+
             string ErrorMessage = $@"Something went wrong!
 
 {e.Exception.Message}

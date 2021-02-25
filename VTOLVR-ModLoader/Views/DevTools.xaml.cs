@@ -1,4 +1,4 @@
-﻿using Valve.Newtonsoft.Json.Linq;
+using Valve.Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -209,7 +209,17 @@ namespace VTOLVR_ModLoader.Views
         private void LoadSettings()
         {
             if (!File.Exists(Program.Root + savePath))
-                return;
+            {
+                Helper.SentryLog("Creating new devtools.json", Helper.SentryLogCategory.DevToos);
+
+                var newDevTools = new Core.Jsons.DevTools()
+                {
+                    Scenario = new Scenario()
+                };
+                
+                newDevTools.SaveFile(Program.Root + savePath);
+            }
+
             Helper.SentryLog("Loading Settings", Helper.SentryLogCategory.DevToos);
 
             Values = Core.Jsons.DevTools.GetDevTools(

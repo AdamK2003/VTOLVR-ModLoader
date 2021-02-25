@@ -51,8 +51,10 @@ namespace VTOLVR_ModLoader.Views
             {
                 Console.Log("Failed Loading dev tool settings\n" + e);
             }
+
             Helper.SentryLog("Created Dev Tools Page", Helper.SentryLogCategory.DevToos);
         }
+
         public void SetUI()
         {
             Helper.SentryLog("Setting UI", Helper.SentryLogCategory.DevToos);
@@ -95,27 +97,29 @@ namespace VTOLVR_ModLoader.Views
         {
             Helper.SentryLog("Finding Pilots", Helper.SentryLogCategory.DevToos);
             if (!Directory.Exists(Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "Boundless Dynamics, LLC",
-                        "VTOLVR",
-                        "SaveData")) ||
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "Boundless Dynamics, LLC",
+                    "VTOLVR",
+                    "SaveData")) ||
                 !File.Exists(Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "Boundless Dynamics, LLC",
-                        "VTOLVR",
-                        "SaveData",
-                        "pilots.cfg")))
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "Boundless Dynamics, LLC",
+                    "VTOLVR",
+                    "SaveData",
+                    "pilots.cfg")))
             {
                 Console.Log($"Couldn't find pilots.cfg at\n" +
-                    Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "Boundless Dynamics, LLC",
-                        "VTOLVR",
-                        "SaveData"));
-                Windows.Notification.Show("Couldn't find pilots.cfg", "Error", closedCallback: delegate { MainWindow.News(); });
+                            Path.Combine(
+                                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                                "Boundless Dynamics, LLC",
+                                "VTOLVR",
+                                "SaveData"));
+                Windows.Notification.Show("Couldn't find pilots.cfg", "Error",
+                    closedCallback: delegate { MainWindow.News(); });
 
                 return false;
             }
+
             if (PilotsCFG == null)
                 PilotsCFG = File.ReadAllLines(
                     Path.Combine(
@@ -125,7 +129,7 @@ namespace VTOLVR_ModLoader.Views
                         "SaveData",
                         "pilots.cfg"));
             string result;
-            List<string> pilots = new List<string>(1) { "No Selection" };
+            List<string> pilots = new List<string>(1) {"No Selection"};
             for (int i = 0; i < PilotsCFG.Length; i++)
             {
                 result = Helper.ClearSpaces(PilotsCFG[i]);
@@ -140,6 +144,7 @@ namespace VTOLVR_ModLoader.Views
                 PilotDropdown.ItemsSource = pilots;
                 PilotDropdown.SelectedIndex = 0;
             }
+
             return true;
         }
 
@@ -155,7 +160,7 @@ namespace VTOLVR_ModLoader.Views
         {
             Helper.SentryLog("Scenario Changed", Helper.SentryLogCategory.DevToos);
             string pilot = Values.Scenario.Pilot;
-            Values.Scenario = (Scenario)ScenarioDropdown.SelectedItem;
+            Values.Scenario = (Scenario) ScenarioDropdown.SelectedItem;
             Values.Scenario.Pilot = pilot;
             SaveSettings();
             IsDevToolsEnabled();
@@ -178,6 +183,7 @@ namespace VTOLVR_ModLoader.Views
                 else
                     mods.Add(new ModItem(items[i].Directory.FullName));
             }
+
             this.mods.ItemsSource = mods;
             Console.Log($"Found {mods.Count} mods");
         }
@@ -185,7 +191,7 @@ namespace VTOLVR_ModLoader.Views
         private void ModChecked(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Mod Checked", Helper.SentryLogCategory.DevToos);
-            CheckBox checkBox = (CheckBox)sender;
+            CheckBox checkBox = (CheckBox) sender;
             if (checkBox.IsChecked == true)
             {
                 Values.PreviousMods.Add(checkBox.ToolTip.ToString());
@@ -196,6 +202,7 @@ namespace VTOLVR_ModLoader.Views
                 Values.PreviousMods.Remove(checkBox.ToolTip.ToString());
                 Console.Log($"Removed {checkBox.ToolTip}");
             }
+
             SaveSettings();
             IsDevToolsEnabled();
         }
@@ -209,7 +216,17 @@ namespace VTOLVR_ModLoader.Views
         private void LoadSettings()
         {
             if (!File.Exists(Program.Root + savePath))
-                return;
+            {
+                Helper.SentryLog("Creating new devtools.json", Helper.SentryLogCategory.DevToos);
+
+                var newDevTools = new Core.Jsons.DevTools()
+                {
+                    Scenario = new Scenario()
+                };
+                
+                newDevTools.SaveFile(Program.Root + savePath);
+            }
+
             Helper.SentryLog("Loading Settings", Helper.SentryLogCategory.DevToos);
 
             Values = Core.Jsons.DevTools.GetDevTools(
@@ -265,6 +282,7 @@ namespace VTOLVR_ModLoader.Views
                 if (e.ToString() != null)
                     Console.Log(e.ToString());
             }
+
             if (json == null)
                 return;
             AddScenarios(json);
@@ -288,7 +306,7 @@ namespace VTOLVR_ModLoader.Views
         private void AddScenarios(JObject json)
         {
             Helper.SentryLog("Adding Scenarios", Helper.SentryLogCategory.DevToos);
-            _scenarios.Add(new Scenario() { ScenarioName = "No Selection" });
+            _scenarios.Add(new Scenario() {ScenarioName = "No Selection"});
             if (json["Campaigns"] != null)
             {
                 JArray campaignJArray = json["Campaigns"] as JArray;
@@ -300,7 +318,8 @@ namespace VTOLVR_ModLoader.Views
                     {
                         _scenarios.Add(new Scenario()
                         {
-                            ScenarioName = campaignJArray[i]["Vehicle"].ToString() + " " + scenariosJArray[s]["Name"].ToString(),
+                            ScenarioName = campaignJArray[i]["Vehicle"].ToString() + " " +
+                                           scenariosJArray[s]["Name"].ToString(),
                             CampaignID = campaignJArray[i]["CampaignID"].ToString(),
                             ScenarioID = scenariosJArray[s]["Id"].ToString()
                         });
@@ -317,11 +336,13 @@ namespace VTOLVR_ModLoader.Views
             {
                 DevToolsEnabled = true;
             }
+
             if (Values.Scenario != null && Values.Scenario.Pilot != "No Selection" &&
                 Values.Scenario.ScenarioName != "No Selection")
             {
                 DevToolsEnabled = true;
             }
+
             MainWindow.DevToolsWarning(DevToolsEnabled);
         }
 
@@ -362,14 +383,14 @@ namespace VTOLVR_ModLoader.Views
                     _modLoadingScrollViewer.Visibility = Visibility.Visible;
                     break;
             }
-
         }
-
     }
+
     public class ModItem
     {
         public string ModName { get; set; }
         public bool LoadMod { get; set; }
+
         public ModItem(string modName)
         {
             ModName = modName;

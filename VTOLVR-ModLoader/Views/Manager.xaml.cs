@@ -193,6 +193,10 @@ namespace VTOLVR_ModLoader.Views
                         lastItem.PopertyChanged("CurrentVersionColour");
                     }
                 }
+                else
+                {
+                    lastItem.AutoUpdateVisibility = Visibility.Hidden;
+                }
                 _items.Add(lastItem);
             }
         }
@@ -500,6 +504,7 @@ namespace VTOLVR_ModLoader.Views
             public string Description { get; set; }
             public Visibility UpdateVisibility { get; set; }
             public Visibility LoadOnStartVisibility { get; set; } = Visibility.Visible;
+            public Visibility AutoUpdateVisibility { get; set; } = Visibility.Visible;
             public Brush CurrentVersionColour { get; set; }
             public string CurrentVersion { get; set; }
             public string WebsiteVersion { get; set; }

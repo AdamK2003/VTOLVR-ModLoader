@@ -104,7 +104,8 @@
                                         Tag="Mod"
                                         ToolTip="{Binding FolderDirectory}"
                                         Unchecked="AutoUpdateChanged"
-                                        Checked="AutoUpdateChanged"/>
+                                        Checked="AutoUpdateChanged"
+                                        Visibility="{Binding AutoUpdateVisibility}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

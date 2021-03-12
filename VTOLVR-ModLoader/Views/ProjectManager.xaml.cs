@@ -67,6 +67,15 @@ namespace VTOLVR_ModLoader.Views
                 FindSkins(ref localMods);
 
                 localMods = SortProjects(localMods);
+
+                for (int i = 0; i < localMods.Count; i++)
+                {
+                    byte alpha = 100;
+                    if (i % 2 == 0)
+                        alpha = 0;
+                    localMods[i].BackgroundColour = new SolidColorBrush(Color.FromArgb(alpha, 46, 46, 46));
+                }
+
                 folders.ItemsSource = localMods.ToArray();
             }
         }
@@ -100,8 +109,7 @@ namespace VTOLVR_ModLoader.Views
                     lastItem.Directory.FullName,
                     openProjectText,
                     lastItem.PublicID == string.Empty ? releaseText : newReleaseText,
-                    new DateTime(lastItem.LastEdit)
-                    ));
+                    new DateTime(lastItem.LastEdit)));
             }
         }
 
@@ -119,8 +127,7 @@ namespace VTOLVR_ModLoader.Views
                     lastItem.Directory.FullName,
                     openFolderText,
                     lastItem.PublicID == string.Empty ? releaseText : newReleaseText,
-                    new DateTime(lastItem.LastEdit)
-                    ));
+                    new DateTime(lastItem.LastEdit)));
             }
         }
 
@@ -139,6 +146,7 @@ namespace VTOLVR_ModLoader.Views
             public string OpenProjectText { get; set; }
             public string NewReleaseText { get; set; }
             public DateTime DateTime { get; set; }
+            public Brush BackgroundColour { get; set; }
 
             public MyProject(string name, string description, string path, string openProjectText, string newReleaseText, DateTime dateTime)
             {

@@ -42,7 +42,7 @@
                     <ItemsControl x:Name="folders" Margin="10,0,10,0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid>
+                                <Grid Background="{Binding BackgroundColour}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="100"/>
@@ -63,12 +63,12 @@
                                             Tag="{Binding Path}" Click="OpenProject" 
                                             Content="{Binding OpenProjectText}" Grid.Column="1" Grid.Row="0"
                                             Grid.RowSpan="2" Foreground="White" />
-                                    
+
                                     <Button Style="{StaticResource transparentButton}"
                                             Tag="{Binding Path}" Click="EditProject" 
                                             Content="Edit Info" Grid.Column="2" Grid.Row="0"
                                             Grid.RowSpan="2" Foreground="White" />
-                                    
+
                                     <Button Style="{StaticResource transparentButton}"
                                             Tag="{Binding Path}" Click="UpdateProject" 
                                             Content="{Binding NewReleaseText}" Grid.Column="3" Grid.Row="0"

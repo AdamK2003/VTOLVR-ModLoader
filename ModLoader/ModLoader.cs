@@ -158,31 +158,8 @@ namespace ModLoader
             if (_currentMods.Count == 0)
             {
                 Log("Finding mods");
-                //The users created mods show at the top, then the downloaded ones.
-                _currentMods = ModReader.GetMods(ModLoaderManager.RootPath + @"\mods");
-                if (!string.IsNullOrEmpty(ModLoaderManager.MyProjectsPath) &&
-                    Directory.Exists(Path.Combine(ModLoaderManager.MyProjectsPath, "My Mods")))
-                {
-                    _currentMods.AddRange(
-                        ModReader.GetMods(
-                            Path.Combine(ModLoaderManager.MyProjectsPath, "My Mods"),
-                            true));
-                }
-
+                _currentMods = ModReader.GetMods();
             }
-            else
-            {
-                Log("Searching for any new mods\nCurrent Count = " + _currentMods.Count);
-                if (ModReader.GetNewMods(ModLoaderManager.RootPath + @"\mods", ref _currentMods))
-                {
-                    Log("Found new mods\nNew count = " + _currentMods.Count);
-                }
-                else
-                {
-                    Log("Didn't find any new mods");
-                }
-            }
-
 
             for (int i = 0; i < _currentMods.Count; i++)
             {
@@ -247,8 +224,10 @@ namespace ModLoader
 
             CheckForDependencies();
 
+            string path = _selectedMod.GetFullDllPath();
+            Log($"Loading from {_selectedMod.GetFullDllPath()}");
             IEnumerable<Type> source =
-                from t in Assembly.Load(File.ReadAllBytes(_selectedMod.GetFullDllPath())).GetTypes()
+                from t in Assembly.Load(File.ReadAllBytes(path)).GetTypes()
                 where t.IsSubclassOf(typeof(VTOLMOD))
                 select t;
             if (source != null && source.Count() == 1)

@@ -30,10 +30,28 @@ namespace ModLoader.Classes.Json
         }
         [JsonIgnore]
         public bool IsDevFolder = false;
-        public string GetFullDllPath() => Path.Combine(Directory.FullName, DllPath);
+        public string GetFullDllPath()
+        {
+            switch (ContentType)
+            {
+                case Core.Enums.ContentType.Mods:
+                    return Path.Combine(Directory.FullName, DllPath);
+                case Core.Enums.ContentType.MyMods:
+                    return Path.Combine(Directory.FullName, "Builds", DllPath);
+                default:
+                    Debug.LogError($"GetFullDllPath was called when contenttype wasn't a mod! ContentType = {ContentType}");
+                    return string.Empty;
+            }
+        }
         public Mod CreateMod()
         {
-            Mod = new Mod(Name, Description, Path.Combine(Directory.FullName, DllPath), Directory.FullName);
+            string modFolder = Directory.FullName;
+            if (ContentType == Core.Enums.ContentType.MyMods)
+            {
+                modFolder = Path.Combine(Directory.FullName, "Builds");
+            }
+
+            Mod = new Mod(Name, Description, Path.Combine(Directory.FullName, DllPath), modFolder);
             return Mod;
         }
         public static BaseItem ToBaseItem(Core.Jsons.BaseItem baseItem)

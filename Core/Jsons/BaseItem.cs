@@ -89,10 +89,13 @@ namespace Core.Jsons
                     return ContentType.MyMods;
                 case "my skins":
                     return ContentType.MySkins;
-                default:
-                    Logger.Error($"Error, couldn't match {Directory.Parent.Name.ToLower()} to a Content Type");
-                    return ContentType.None;
             }
+
+            if (DllPath != string.Empty && DllPath.EndsWith(".dll"))
+                return ContentType.Mods;
+
+            Logger.Error($"Error, couldn't match {Directory.Parent.Name.ToLower()} to a Content Type");
+            return ContentType.None;
         }
 
         public static BaseItem GetItem(string json)

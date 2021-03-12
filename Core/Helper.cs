@@ -12,6 +12,7 @@ namespace Core
 {
     public static class Helper
     {
+        private const string _dllModDescription = "This only a .dll file, please make mods into .zip when releasing the mod.";
         public static JObject JObjectTryParse(string content, out Exception exception)
         {
             try
@@ -102,6 +103,29 @@ namespace Core
             }
 
             return foundSkins;
+        }
+
+        public static List<BaseItem> FindDllMods(string folder)
+        {
+            List<BaseItem> foundMods = new List<BaseItem>();
+            DirectoryInfo modsFolder = new DirectoryInfo(folder);
+
+            FileInfo[] dlls = modsFolder.GetFiles("*.dll");
+
+            BaseItem lastItem;
+            for (int i = 0; i < dlls.Length; i++)
+            {
+                lastItem = new BaseItem();
+                lastItem.Name = dlls[i].Name;
+                lastItem.Description = _dllModDescription;
+                lastItem.Directory = modsFolder;
+                lastItem.DllPath = dlls[i].Name;
+                foundMods.Add(lastItem);
+
+                Logger.Log($"Added DLL mod {lastItem.Name} from {lastItem.DllPath}");
+            }
+
+            return foundMods;
         }
     }
 }

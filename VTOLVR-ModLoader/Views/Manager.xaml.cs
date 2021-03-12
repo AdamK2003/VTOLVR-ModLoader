@@ -181,7 +181,7 @@ namespace VTOLVR_ModLoader.Views
                     RequestItem(items[i].PublicID,
                         items[i].ContentType == ContentType.Mods ? true : false);
                 }
-                else
+                else if (items[i].ContentType != ContentType.MyMods && items[i].ContentType != ContentType.MySkins)
                 {
                     _outdatedItems++;
                     lastItem.CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 107, 113));

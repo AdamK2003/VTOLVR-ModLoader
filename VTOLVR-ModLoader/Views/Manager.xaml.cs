@@ -166,7 +166,7 @@ namespace VTOLVR_ModLoader.Views
                     items[i].Tagline,
                     Visibility.Hidden,
                     items[i].Version,
-                    items[i].PublicID == string.Empty ? "N/A" : "Requesting",
+                    items[i].PublicID == string.Empty || items[i].ContentType == ContentType.MyMods || items[i].ContentType == ContentType.MySkins ? "N/A" : "Requesting",
                     false,
                     false,
                     items[i].Directory.FullName);
@@ -174,21 +174,28 @@ namespace VTOLVR_ModLoader.Views
                 if (!items[i].HasDll())
                     lastItem.LoadOnStartVisibility = Visibility.Hidden;
 
-                if (items[i].PublicID != string.Empty)
+                if (items[i].ContentType != ContentType.MyMods && items[i].ContentType != ContentType.MySkins)
                 {
-                    lastItem.PublicID = items[i].PublicID;
+                    if (items[i].PublicID != string.Empty)
+                    {
+                        lastItem.PublicID = items[i].PublicID;
 
-                    RequestItem(items[i].PublicID,
-                        items[i].ContentType == ContentType.Mods ? true : false);
+                        RequestItem(items[i].PublicID,
+                            items[i].ContentType == ContentType.Mods ? true : false);
+                    }
+                    else
+                    {
+                        _outdatedItems++;
+                        lastItem.CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 107, 113));
+                        lastItem.Font = BoldFont;
+
+                        lastItem.PopertyChanged("Font");
+                        lastItem.PopertyChanged("CurrentVersionColour");
+                    }
                 }
                 else
                 {
-                    _outdatedItems++;
-                    lastItem.CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 107, 113));
-                    lastItem.Font = BoldFont;
-
-                    lastItem.PopertyChanged("Font");
-                    lastItem.PopertyChanged("CurrentVersionColour");
+                    lastItem.AutoUpdateVisibility = Visibility.Hidden;
                 }
                 _items.Add(lastItem);
             }
@@ -497,6 +504,7 @@ namespace VTOLVR_ModLoader.Views
             public string Description { get; set; }
             public Visibility UpdateVisibility { get; set; }
             public Visibility LoadOnStartVisibility { get; set; } = Visibility.Visible;
+            public Visibility AutoUpdateVisibility { get; set; } = Visibility.Visible;
             public Brush CurrentVersionColour { get; set; }
             public string CurrentVersion { get; set; }
             public string WebsiteVersion { get; set; }

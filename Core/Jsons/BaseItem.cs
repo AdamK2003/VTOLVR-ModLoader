@@ -65,7 +65,11 @@ namespace Core.Jsons
         }
         public bool HasDll()
         {
-            return DllPath != string.Empty;
+            if (DllPath == string.Empty)
+                return false;
+            if (ContentType == ContentType.MyMods)
+                return File.Exists(Path.Combine(Directory.FullName, "Builds", DllPath));
+            return File.Exists(Path.Combine(Directory.FullName, DllPath));
         }
         public void SaveFile()
         {
@@ -89,10 +93,13 @@ namespace Core.Jsons
                     return ContentType.MyMods;
                 case "my skins":
                     return ContentType.MySkins;
-                default:
-                    Logger.Error($"Error, couldn't match {Directory.Parent.Name.ToLower()} to a Content Type");
-                    return ContentType.None;
             }
+
+            if (DllPath != string.Empty && DllPath.EndsWith(".dll"))
+                return ContentType.Mods;
+
+            Logger.Error($"Error, couldn't match {Directory.Parent.Name.ToLower()} to a Content Type");
+            return ContentType.None;
         }
 
         public static BaseItem GetItem(string json)

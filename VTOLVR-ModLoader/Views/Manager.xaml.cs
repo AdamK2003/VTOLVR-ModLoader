@@ -160,6 +160,7 @@ namespace VTOLVR_ModLoader.Views
             Item lastItem;
             for (int i = 0; i < items.Count; i++)
             {
+                Console.Log($"On {items[i].Name}");
                 lastItem = new Item(
                     items[i].ContentType,
                     items[i].Name,

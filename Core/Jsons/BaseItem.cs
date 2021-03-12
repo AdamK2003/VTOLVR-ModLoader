@@ -65,7 +65,7 @@ namespace Core.Jsons
         }
         public bool HasDll()
         {
-            if (DllPath == string.Empty)
+            if (string.IsNullOrEmpty(DllPath))
                 return false;
             if (ContentType == ContentType.MyMods)
                 return File.Exists(Path.Combine(Directory.FullName, "Builds", DllPath));

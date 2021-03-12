@@ -193,10 +193,6 @@ namespace VTOLVR_ModLoader.Views
                         lastItem.PopertyChanged("CurrentVersionColour");
                     }
                 }
-                else
-                {
-                    items[i].PublicID = "N/A";
-                }
                 _items.Add(lastItem);
             }
         }

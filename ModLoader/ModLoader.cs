@@ -285,6 +285,12 @@ namespace ModLoader
                 return;
             }
 
+            if (_selectedMod.Dependencies == null)
+            {
+                Log($"{_selectedMod.Name} Dependencies is null.");
+                return;
+            }
+
             FileInfo[] dlls = new DirectoryInfo(path).GetFiles("*.dll");
             for (int i = 0; i < dlls.Length; i++)
             {

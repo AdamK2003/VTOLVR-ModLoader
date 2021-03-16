@@ -282,7 +282,9 @@ namespace VTOLVR_ModLoader.Classes
         }
         private static void GatherExtraInfo(ref StringBuilder builder)
         {
-
+            builder.AppendLine();
+            builder.AppendLine("Mod Loader Path");
+            builder.AppendLine(Program.Root);
             builder.AppendLine();
 
             builder.AppendLine($"## Items ({Program.Items.Count})");

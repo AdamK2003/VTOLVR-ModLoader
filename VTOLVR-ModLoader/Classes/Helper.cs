@@ -282,21 +282,22 @@ namespace VTOLVR_ModLoader.Classes
         }
         private static void GatherExtraInfo(ref StringBuilder builder)
         {
-
             builder.AppendLine();
-            DirectoryInfo[] modFolders = new DirectoryInfo(Program.Root + Program.ModsFolder).GetDirectories();
-            builder.AppendLine($"## Downloaded Mods ({modFolders.Length})");
-            for (int i = 0; i < modFolders.Length; i++)
-            {
-                builder.AppendLine($"- {modFolders[i].Name}");
-            }
-
+            builder.AppendLine("Mod Loader Path");
+            builder.AppendLine(Program.Root);
             builder.AppendLine();
-            DirectoryInfo[] skinFolders = new DirectoryInfo(Program.Root + Program.SkinsFolder).GetDirectories();
-            builder.AppendLine($"## Downloaded Skins ({skinFolders.Length})");
-            for (int i = 0; i < skinFolders.Length; i++)
+
+            builder.AppendLine($"## Items ({Program.Items.Count})");
+            for (int i = 0; i < Program.Items.Count; i++)
             {
-                builder.AppendLine($"- {skinFolders[i].Name}");
+                try
+                {
+                    builder.AppendLine($"{i} - {Program.Items[i].Name} ({Program.Items[i].Version})");
+                }
+                catch (Exception e)
+                {
+                    builder.AppendLine($"{i} - Failed to display ({e.Message})");
+                }
             }
 
             builder.AppendLine();

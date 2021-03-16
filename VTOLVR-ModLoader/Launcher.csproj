@@ -79,9 +79,8 @@
       <HintPath>..\dll\ModLoader.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="Sentry, Version=3.0.7.0, Culture=neutral, PublicKeyToken=fba2ec45388e2af0">
-      <HintPath>..\packages\Sentry.3.0.7\lib\net461\Sentry.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Sentry, Version=3.1.0.0, Culture=neutral, PublicKeyToken=fba2ec45388e2af0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sentry.3.1.0\lib\net461\Sentry.dll</HintPath>
     </Reference>
     <Reference Include="SimpleTCP, Version=1.0.24.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleTCP.1.0.24\lib\net45\SimpleTCP.dll</HintPath>

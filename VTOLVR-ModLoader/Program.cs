@@ -69,6 +69,9 @@ namespace VTOLVR_ModLoader
             CommunicationsManager.CheckAutoUpdate();
             if (CommunicationsManager.CheckSteamVR() && Views.Settings.SteamVR)
                 CheckForSteamVR();
+
+            DisableInternet = !await HttpHelper.CheckForInternet();
+
             GetReleases();
             AutoStart();
             CommunicationsManager.CheckURI();

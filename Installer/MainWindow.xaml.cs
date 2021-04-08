@@ -294,7 +294,6 @@ Restart the installer as an administrator?";
 
         private void NextButotn_Click(object sender, RoutedEventArgs e)
         {
-            throw new Exception("Test");
             if (currentPage == Page.Finished)
                 Quit();
             if (currentPage == Page.Extracting)

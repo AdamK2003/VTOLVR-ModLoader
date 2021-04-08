@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
+using Sentry;
 
 namespace Installer
 {
@@ -15,18 +17,47 @@ namespace Installer
     {
         public App()
         {
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
+#if !DEBUG
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+#endif
         }
-        private static void UnhandledException(object sender, UnhandledExceptionEventArgs args)
+
+        protected override void OnStartup(StartupEventArgs e)
         {
-            Exception e = (Exception)args.ExceptionObject;
-            MessageBox.Show($"Sorry, it seems that we have crashed.\n" +
-                $"If this continues to happen, you can report it in the " +
-                $"modding discord or email support@vtolvr-mods.com by sending " +
-                $"a print screen of this message box with a short description of " +
-                $"what you were trying to do.\n\n" +
-                $"Crash at {DateTime.Now} on Installer\nMessage:{e.Message}\nStackTrack:{e.StackTrace}", $"CRASH",
-                MessageBoxButton.OK, MessageBoxImage.Error);
+            base.OnStartup(e);
+#if !DEBUG
+            SentrySdk.Init(Installer.Properties.Resources.Dns);
+#endif
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            SentrySdk.Close();
+        }
+
+        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            Console.WriteLine($"Fatal error: {e.Exception}");
+
+            string ErrorMessage = $@"Something went wrong!
+
+{e.Exception.Message}
+
+Would you like to share this crash with us? It'd help us tremendously.
+
+The data that will be sent to us won't contain any identifiable information, only what went wrong and what you were trying to do.";
+
+            MessageBoxResult result =
+                MessageBox.Show(ErrorMessage, "Error", MessageBoxButton.YesNo, MessageBoxImage.Error);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                SentrySdk.CaptureException(e.Exception);
+            }
+
+            e.Handled = true;
+            Environment.Exit(0);
         }
     }
 }

@@ -113,7 +113,7 @@ Restart the installer as an administrator?";
 
         private string FindVTOL()
         {
-            string regPath = (string) Registry.GetValue(
+            string regPath = (string)Registry.GetValue(
                 @"HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam",
                 @"InstallPath",
                 @"NULL");
@@ -205,7 +205,7 @@ Restart the installer as an administrator?";
 
         private void CreateURI(string root)
         {
-            string value = (string) Registry.GetValue(
+            string value = (string)Registry.GetValue(
                 uriPath,
                 @"",
                 @"");
@@ -237,7 +237,7 @@ Restart the installer as an administrator?";
         private void CreateShortcut(string shortcutPath, string targetPath)
         {
             WshShell shell = new WshShell();
-            IWshShortcut shortcut = (IWshShortcut) shell.CreateShortcut(shortcutPath);
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutPath);
             shortcut.Description = "Open VTOL VR with mods";
             shortcut.TargetPath = targetPath;
             shortcut.WorkingDirectory = vtFolder + @"VTOLVR_ModLoader\";
@@ -294,6 +294,7 @@ Restart the installer as an administrator?";
 
         private void NextButotn_Click(object sender, RoutedEventArgs e)
         {
+            throw new Exception("Test");
             if (currentPage == Page.Finished)
                 Quit();
             if (currentPage == Page.Extracting)

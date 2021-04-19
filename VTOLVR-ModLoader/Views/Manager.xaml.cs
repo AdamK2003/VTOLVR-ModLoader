@@ -181,8 +181,15 @@ namespace VTOLVR_ModLoader.Views
                     {
                         lastItem.PublicID = items[i].PublicID;
 
-                        RequestItem(items[i].PublicID,
-                            items[i].ContentType == ContentType.Mods ? true : false);
+                        if (!Program.DisableInternet)
+                        {
+                            RequestItem(items[i].PublicID,
+                                items[i].ContentType == ContentType.Mods ? true : false);
+                        }
+                        else
+                        {
+                            lastItem.WebsiteVersion = "No Internet";
+                        }
                     }
                     else
                     {

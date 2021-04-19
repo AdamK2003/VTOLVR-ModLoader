@@ -142,8 +142,11 @@ namespace Build
         private static void BuildInstaller()
         {
             Log("Building Installer.exe");
+            Run($"\"{paths["nuget"]}\"",
+                $"restore -SolutionDirectory \"{dir}\"",
+                @"\Installer");
             Run(paths["msbuild"],
-                "Installer.csproj -property:Configuration=Release;TargetFrameworkVersion=4.6 -tv:14.0",
+                "-p:Configuration=Release -nologo Installer.csproj",
                 @"\Installer");
         }
 

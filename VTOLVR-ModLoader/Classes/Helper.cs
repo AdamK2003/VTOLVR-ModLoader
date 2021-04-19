@@ -19,6 +19,7 @@ using VTOLVR_ModLoader.Windows;
 using Console = VTOLVR_ModLoader.Views.Console;
 using Settings = VTOLVR_ModLoader.Views.Settings;
 using Core.Jsons;
+using System.Security.Permissions;
 
 namespace VTOLVR_ModLoader.Classes
 {
@@ -220,6 +221,10 @@ namespace VTOLVR_ModLoader.Classes
             infoBuilder.AppendLine();
             infoBuilder.AppendLine($"# Version: {Program.ProgramName}");
             GatherExtraInfo(ref infoBuilder);
+
+            Console.Log("Checking Permissions");
+            infoBuilder.AppendLine();
+            CheckPermissions(ref infoBuilder);
             File.WriteAllText(Path.Combine(Program.Root, datetime, "Info.txt"), infoBuilder.ToString());
 
             Console.Log("Zipping up content");
@@ -313,6 +318,31 @@ namespace VTOLVR_ModLoader.Classes
             for (int i = 0; i < files.Length; i++)
             {
                 builder.AppendLine($"/{files[i].Name} (MD5: {CalculateMD5(files[i].Name)})");
+            }
+        }
+
+        private static void CheckPermissions(ref StringBuilder builder)
+        {
+            builder.AppendLine($"This is a test check, I am not 100% sure this will work for people " +
+                $"who have antivirus programs installed. - . Marsh.Mello .");
+            builder.AppendLine("File Permissions Result: ");
+            FileIOPermission file = new FileIOPermission(PermissionState.None);
+
+            FileInfo[] ourFiles = new DirectoryInfo(Program.Root).GetFiles();
+
+            for (int i = 0; i < ourFiles.Length; i++)
+            {
+                file.AddPathList(FileIOPermissionAccess.Read, ourFiles[i].FullName);
+            }
+
+            try
+            {
+                file.Demand();
+                builder.AppendLine($"Check permissions finished fine");
+            }
+            catch (Exception e)
+            {
+                builder.AppendLine($"Error with check permissions {e}");
             }
         }
     }

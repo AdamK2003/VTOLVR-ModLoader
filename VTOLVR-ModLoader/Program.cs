@@ -196,10 +196,30 @@ namespace VTOLVR_ModLoader
         private static void InjectDefaultMod()
         {
             Helper.SentryLog("Injecting Mod", Helper.SentryLogCategory.Program);
-            //Injecting the default mod
             string defaultStart = string.Format("inject -p {0} -a {1} -n {2} -c {3} -m {4}", "vtolvr", "ModLoader.dll", "ModLoader", "Load", "Init");
             Console.Log("Injecting the ModLoader.dll");
-            Process.Start(Root + Injector, defaultStart);
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                Arguments = defaultStart,
+                FileName = Root + Injector,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true
+            };
+
+            Process process = new Process
+            {
+                StartInfo = startInfo
+            };
+
+            process.Start();
+
+            string output = process.StandardOutput.ReadLine();
+            process.WaitForExit();
+            Console.Log($"Injector output = {output}");
         }
 
         public static void Quit(string reason)

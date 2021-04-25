@@ -111,6 +111,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             SetPaths();
             Debug.Log("This is the first mod loader manager");
             _args = Environment.GetCommandLineArgs();
+            SceneManager.sceneLoaded += SceneLoaded;
 
             CreateAPI();
             FindProjectFolder();
@@ -137,8 +138,6 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             SteamAPI.Init();
 
             DevTools.ReadDevTools();
-
-            SceneManager.sceneLoaded += SceneLoaded;
 
             _api.CreateCommand("quit", delegate { Application.Quit(); });
             _api.CreateCommand("print", PrintMessage);

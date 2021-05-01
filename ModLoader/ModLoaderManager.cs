@@ -182,9 +182,10 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                  * just trying to split them in inside the launchers
                  * console.*/
             }
-            catch
+            catch (Exception e)
             {
                 Application.logMessageReceived -= LogMessageReceived;
+                Debug.LogError($"TCP Client failed.\n{e.Message}");
             }
         }
 

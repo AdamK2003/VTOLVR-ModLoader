@@ -174,11 +174,18 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
         }
         private void LogMessageReceived(string condition, string stackTrace, LogType type)
         {
-            _tcpClient.WriteLine($"[{type}]{condition}\n");
-            /* The reason why there is a new line at the end is because
-             * sometimes it sends two log messages at once, so this is me
-             * just trying to split them in inside the launchers
-             * console.*/
+            try
+            {
+                _tcpClient.WriteLine($"[{type}]{condition}\n");
+                /* The reason why there is a new line at the end is because
+                 * sometimes it sends two log messages at once, so this is me
+                 * just trying to split them in inside the launchers
+                 * console.*/
+            }
+            catch
+            {
+                Application.logMessageReceived -= LogMessageReceived;
+            }
         }
 
         private void CreateAPI()

@@ -13,10 +13,10 @@ build_builder:
   script:
    - echo 'Building Builder.exe'
    - cd Builder
-   - dotnet build --configuration Release
+   - dotnet build --configuration Debug
    - echo 'Running Builder.exe'
    - cd ..
-   - MOVE Builder\bin\Release\Builder.exe Builder.exe
+   - MOVE Builder\bin\Debug\Builder.exe Builder.exe
   artifacts:
     paths:
     - Builder.exe
@@ -28,9 +28,9 @@ build_dll:
    - .\Builder.exe builddll dlls=$dlls
   artifacts:
    paths:
-   - ModLoader\bin\Release\ModLoader.dll
-   - ModLoader\bin\Release\ModLoader.xml
-   - Core\bin\Release\Core.dll
+   - ModLoader\bin\Debug\ModLoader.dll
+   - ModLoader\bin\Debug\ModLoader.xml
+   - Core\bin\Debug\Core.dll
    expire_in: 1 day
 
 build_wpf:
@@ -39,7 +39,7 @@ build_wpf:
    - .\Builder.exe buildwpf dlls=$dlls
   artifacts:
    paths:
-   - VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe
+   - VTOLVR-ModLoader\bin\Debug\VTOLVR-ModLoader.exe
    expire_in: 1 day
 
 build_updater:
@@ -48,7 +48,7 @@ build_updater:
    - .\Builder.exe buildupdater dlls=$dlls
   artifacts:
    paths:
-   - Updater\bin\Release\Updater.exe
+   - Updater\bin\Debug\Updater.exe
    expire_in: 1 day
 
 zip:
@@ -66,7 +66,7 @@ build_installer:
    - .\Builder.exe buildinstaller
   artifacts:
    paths:
-   - Installer\bin\Release\Installer.exe
+   - Installer\bin\Debug\Installer.exe
    expire_in: 1 day
 
 autoupdate_zip:

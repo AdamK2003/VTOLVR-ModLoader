@@ -188,7 +188,7 @@ Restart the installer as an administrator?";
             }
             catch (Exception e)
             {
-                errorTextBox.Text = e.ToString();
+                errorTextBox.Text = e.Message;
                 currentPage = Page.Error;
                 backButton.Visibility = Visibility.Hidden;
                 nextButotn.Visibility = Visibility.Hidden;

@@ -15,8 +15,11 @@ namespace AutoUpdater
 {
     static class Updater
     {
+        private static int _previousProgress = 0;
+
         private static Queue<UpdateFile> filesToUpdate = new Queue<UpdateFile>();
         private static UpdateFile currentFile;
+
         public static void CheckForUpdates()
         {
             Console.Log("Checking for updates");
@@ -29,6 +32,7 @@ namespace AutoUpdater
                     Console.Log("Releases.Count == 0");
                 return;
             }
+
             UpdateFile[] updateFiles = Program.Releases[0].files;
 
             if (updateFiles == null)
@@ -45,6 +49,7 @@ namespace AutoUpdater
                     AddFile(updateFiles[i]);
                 }
             }
+
             if (filesToUpdate.Count > 0)
                 UpdateFiles();
             else
@@ -60,6 +65,7 @@ namespace AutoUpdater
             Console.Log("Added " + file.Name);
             filesToUpdate.Enqueue(file);
         }
+
         private static void UpdateFiles()
         {
             currentFile = filesToUpdate.Dequeue();
@@ -69,6 +75,18 @@ namespace AutoUpdater
                 DownloadProgress,
                 DownloadDone);
         }
+
+        private static void DownloadProgress(object sender, DownloadProgressChangedEventArgs e)
+        {
+            if (e.ProgressPercentage == _previousProgress)
+            {
+                return;
+            }
+
+            _previousProgress = e.ProgressPercentage;
+            Program.SetProgress(e.ProgressPercentage, $"Downloading {currentFile.Name}");
+        }
+
         private static void DownloadProgress(object sender, DownloadProgressChangedEventArgs e)
         {
             Program.SetProgress(e.ProgressPercentage, $"Downloading {currentFile.Name}");
@@ -79,7 +97,7 @@ namespace AutoUpdater
             {
                 if (File.Exists($"{Program.VtolFolder}/{currentFile.Location}"))
                     File.Delete($"{Program.VtolFolder}/{currentFile.Location}");
-
+            
                 File.Move($"{Program.VtolFolder}/{currentFile.Location}.temp",
                     $"{Program.VtolFolder}/{currentFile.Location}");
             }
@@ -87,10 +105,10 @@ namespace AutoUpdater
             {
                 Console.Log($"Failed to download {currentFile.Name}\n{e.Error}");
             }
-
+            
             if (File.Exists($"{Program.VtolFolder}/{currentFile.Location}.temp"))
                 File.Delete($"{Program.VtolFolder}/{currentFile.Location}.temp");
-
+            
             if (filesToUpdate.Count > 0)
                 UpdateFiles();
             else
@@ -99,7 +117,6 @@ namespace AutoUpdater
                 Process.Start(Program.Root + "/VTOLVR-ModLoader.exe");
                 Program.Quit();
             }
-
         }
     }
 }

@@ -86,11 +86,7 @@ namespace AutoUpdater
             _previousProgress = e.ProgressPercentage;
             Program.SetProgress(e.ProgressPercentage, $"Downloading {currentFile.Name}");
         }
-
-        private static void DownloadProgress(object sender, DownloadProgressChangedEventArgs e)
-        {
-            Program.SetProgress(e.ProgressPercentage, $"Downloading {currentFile.Name}");
-        }
+        
         private static void DownloadDone(object sender, AsyncCompletedEventArgs e)
         {
             if (!e.Cancelled && e.Error == null)

@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net5.0-windows</TargetFramework>
+        <UseWPF>true</UseWPF>
+        <ApplicationIcon>Logo.ico</ApplicationIcon>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <PublishTrimmed>true</PublishTrimmed>
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <Company>https://vtolvr-mods.com/</Company>
+        <Product>VTOL VR Mod Launcher</Product>
+        <Title>VTOL VR Mod Launcher</Title>
+        <Description>A ModLoader for VTOL VR</Description>
+        <Copyright>Copyright © 2021</Copyright>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
+        <FileVersion>5.0.0.0</FileVersion>
+        <ProductVersion>5.0.0.0</ProductVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Gameloop.Vdf" Version="0.6.1"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="Sentry" Version="3.3.4"/>
+        <PackageReference Include="SharpZipLib" Version="1.3.2"/>
+        <PackageReference Include="SimpleTCP" Version="1.0.24"/>
+        <PackageReference Include="System.Drawing.Common" Version="5.0.2"/>
+        <PackageReference Include="WpfAnimatedGif" Version="2.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Resource Include="Resources\Logo.ico"/>
+        <Resource Include="Resources\LogoSpinning.gif"/>
+        <Resource Include="Resources\LogoHalloweenSpinning.gif"/>
+        <Resource Include="Resources\LogoChristmasSpinning.gif"/>
+        <Resource Include="Resources\Montserrat-Medium.ttf"/>
+        <Resource Include="Resources\Montserrat-ExtraBold.ttf"/>
+        <Resource Include="Resources\Squares Bold Free.otf"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\CoreCore\CoreCore.csproj"/>
+        <ProjectReference Include="..\ModLoader\Mod Loader.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Properties\Resources.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Properties\Resources.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Resources.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,81 @@
+﻿<Window x:Class="LauncherCore.Windows.FolderDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LauncherCore.Windows"
+        mc:Ignorable="d"
+        Title="FolderDialog" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen" Background="#FF4B4B4B" WindowStyle="None"
+        MinWidth="100" MinHeight="100" Topmost="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="29" />
+            <RowDefinition Height="29" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text=" Select a folder" Grid.Row="0" Background="#FF2E2E2E" Foreground="White"
+                   FontSize="20" VerticalAlignment="Center" x:Name="titleText"
+                   MouseDown="TopBarDown" MouseUp="TopBarUp" MouseMove="TopBarMove" MouseLeave="TopBarLeave" />
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Content="←" Click="Back" Style="{StaticResource darkButton}" x:Name="backButton" />
+            <TextBox x:Name="urlBox" Grid.Column="1" />
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Column="0">
+                <ItemsControl x:Name="lFolders" Margin="10,0,0,0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel HorizontalAlignment="Left">
+                                <Button Content="{Binding Name}" Style="{StaticResource transparentButton}"
+                                        Foreground="White" FontSize="20" Margin="0,0,0,5" Tag="{Binding FullName}"
+                                        Click="FolderButton" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Column="1">
+                <ItemsControl x:Name="folders" Margin="10,0,0,0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel HorizontalAlignment="Left">
+                                <Button Content="{Binding Name}" Style="{StaticResource transparentButton}"
+                                        Foreground="White" FontSize="20" Margin="0,0,0,5" Tag="{Binding FullName}"
+                                        Click="FolderButton" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="1" Content="Select" Style="{StaticResource darkButton}" Margin="1"
+                    Click="Selected" />
+            <Button Grid.Column="2" Content="Cancel" Style="{StaticResource darkButton}" Margin="1"
+                    Click="Cancel" />
+        </Grid>
+
+    </Grid>
+</Window>

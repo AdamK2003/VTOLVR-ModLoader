@@ -1,0 +1,129 @@
+﻿<UserControl x:Class="LauncherCore.Views.DevTools"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LauncherCore.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Grid.RowSpan="6" x:Name="_warning">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="1"
+                       VerticalAlignment="Center" TextAlignment="Center"
+                       Foreground="Yellow" FontSize="30" TextWrapping="Wrap">
+                Warning, this page is for mod creators. If you don't know what you're doing here, please head back.
+            </TextBlock>
+            <Button Grid.Row="2" Content="Take me back!" Click="TakeBack"
+                    Style="{StaticResource darkButton}" FontSize="30"
+                    Margin="20" />
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Button Grid.Column="1" Grid.Row="1"
+                        Style="{StaticResource transparentButton}"
+                        Foreground="White"
+                        Content="I know what I am doing." Click="IsModCreator" />
+            </Grid>
+        </Grid>
+
+
+        <TextBlock Grid.Row="0" Text="Mod Development Tools" VerticalAlignment="Center"
+                   HorizontalAlignment="Center" Foreground="White" FontSize="30" Margin="0,0,0,10"
+                   x:Name="_title" />
+
+        <TextBlock Grid.Row="1" Text="Mission Loading" VerticalAlignment="Center"
+                   HorizontalAlignment="Center" Foreground="White" FontSize="20"
+                   x:Name="_missionLoadingTitle" />
+
+        <Grid Grid.Row="2" x:Name="_missionGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="Pilot" VerticalAlignment="Center"
+                       HorizontalAlignment="Center" Foreground="White" FontSize="15" />
+            <TextBlock Grid.Column="1" Text="Scenario" VerticalAlignment="Center"
+                       HorizontalAlignment="Center" Foreground="White" FontSize="15" />
+
+
+        </Grid>
+
+        <Grid Grid.Row="3" Margin="0,0,0,10" x:Name="_missionPilotGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Name="PilotDropdown" Grid.Column="0" DropDownClosed="PilotChanged">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <ComboBox Name="ScenarioDropdown" Grid.Column="1" DropDownClosed="ScenarioChanged">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding ScenarioName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+
+        </Grid>
+
+        <TextBlock Grid.Row="4" Text="Mod Loading" VerticalAlignment="Center"
+                   HorizontalAlignment="Center" Foreground="White" FontSize="20"
+                   x:Name="_modLoadingTitle" />
+
+        <ScrollViewer Grid.Row="5" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      x:Name="_modLoadingScrollViewer">
+            <ItemsControl x:Name="mods">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="0,0,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.1*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <CheckBox IsChecked="{Binding LoadMod, Mode=TwoWay}" Grid.Column="0"
+                                          HorizontalAlignment="Center"
+                                          Checked="ModChecked" Unchecked="ModChecked" ToolTip="{Binding ModName}" />
+                                <TextBlock Grid.Column="1" Text="{Binding ModName}" VerticalAlignment="Center"
+                                           Foreground="White" FontSize="10" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

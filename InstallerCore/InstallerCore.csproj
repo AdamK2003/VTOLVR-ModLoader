@@ -20,7 +20,6 @@
         <ProductVersion>3.0.0</ProductVersion>
     </PropertyGroup>
 
-
     <ItemGroup>
         <Resource Include="Squares Bold Free.otf"/>
         <Resource Include="Logo.png"/>

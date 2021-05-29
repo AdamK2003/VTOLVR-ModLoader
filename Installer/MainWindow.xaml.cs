@@ -19,7 +19,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Reflection;
 using Path = System.IO.Path;
-using IWshRuntimeLibrary;
+// using IWshRuntimeLibrary;
 using File = System.IO.File;
 using System.Security.Principal;
 
@@ -236,12 +236,12 @@ Restart the installer as an administrator?";
 
         private void CreateShortcut(string shortcutPath, string targetPath)
         {
-            WshShell shell = new WshShell();
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutPath);
-            shortcut.Description = "Open VTOL VR with mods";
-            shortcut.TargetPath = targetPath;
-            shortcut.WorkingDirectory = vtFolder + @"VTOLVR_ModLoader\";
-            shortcut.Save();
+            // WshShell shell = new WshShell();
+            // IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutPath);
+            // shortcut.Description = "Open VTOL VR with mods";
+            // shortcut.TargetPath = targetPath;
+            // shortcut.WorkingDirectory = vtFolder + @"VTOLVR_ModLoader\";
+            // shortcut.Save();
         }
 
         private void SwitchPage()

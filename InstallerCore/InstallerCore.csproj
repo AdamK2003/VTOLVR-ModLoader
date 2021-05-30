@@ -5,11 +5,7 @@
         <TargetFramework>net5.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
         <ApplicationIcon>Logo.ico</ApplicationIcon>
-        <PublishSingleFile>true</PublishSingleFile>
-        <SelfContained>true</SelfContained>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-        <PublishTrimmed>true</PublishTrimmed>
-        <PublishReadyToRun>true</PublishReadyToRun>
         <Company>https://vtolvr-mods.com/</Company>
         <Product>Installer</Product>
         <Title>Installer</Title>

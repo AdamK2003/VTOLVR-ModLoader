@@ -41,10 +41,10 @@ namespace LauncherCore.Views
             Helper.SentryLog("Created Manager", Helper.SentryLogCategory.Manager);
 
             DefaultFont = new FontFamily(
-                new Uri("pack://application:,,,/VTOLVR-ModLoader;component/Resources/"),
+                new Uri("pack://application:,,,/LauncherCore;component/Resources/"),
                 "./#Montserrat Medium");
             BoldFont = new FontFamily(
-                new Uri("pack://application:,,,/VTOLVR-ModLoader;component/Resources/"),
+                new Uri("pack://application:,,,/LauncherCore;component/Resources/"),
                 "./#Montserrat ExtraBold");
         }
 

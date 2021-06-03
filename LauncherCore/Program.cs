@@ -110,7 +110,9 @@ namespace LauncherCore
 
             var psi = new ProcessStartInfo
             {
-                FileName = @"steam://run/250820", UseShellExecute = true, WindowStyle = ProcessWindowStyle.Minimized
+                FileName = @"steam://run/250820",
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Minimized
             };
             Process.Start(psi);
             Views.Console.Log("Started SteamVR");
@@ -153,7 +155,9 @@ namespace LauncherCore
 
             var psi = new ProcessStartInfo
             {
-                FileName = @"steam://run/667970", UseShellExecute = true, WindowStyle = ProcessWindowStyle.Minimized
+                FileName = @"steam://run/667970",
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Minimized
             };
             Process.Start(psi);
 
@@ -200,28 +204,32 @@ namespace LauncherCore
         private static void InjectDefaultMod()
         {
             Helper.SentryLog("Injecting Mod", Helper.SentryLogCategory.Program);
-            string defaultStart = string.Format("inject -p {0} -a {1} -n {2} -c {3} -m {4}", "vtolvr", "ModLoader.dll",
-                "ModLoader", "Load", "Init");
             Console.Log("Injecting the ModLoader.dll");
 
-            var startInfo = new ProcessStartInfo
+            SharpMonoInjector.Injector injector = new SharpMonoInjector.Injector("vtolvr");
+            byte[] assembly = File.ReadAllBytes(Path.Combine(Root, "ModLoader.dll"));
+
+            using (injector)
             {
-                Arguments = defaultStart,
-                FileName = Root + Injector,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true
-            };
+                IntPtr remoteAssembly = IntPtr.Zero;
+                try
+                {
+                    remoteAssembly = injector.Inject(
+                        assembly,
+                        nameof(ModLoader),
+                        nameof(ModLoader.Load),
+                        nameof(ModLoader.Load.Init));
+                }
+                catch (Exception e)
+                {
+                    Console.Log($"Failed to inject. Reason: {e.Message}");
+                }
 
-            Process process = new Process {StartInfo = startInfo};
+                if (remoteAssembly == IntPtr.Zero)
+                    return;
+            }
 
-            process.Start();
-
-            string output = process.StandardOutput.ReadLine();
-            process.WaitForExit();
-            Console.Log($"Injector output = {output}");
+            Console.Log($"Injection Finished Okay");
         }
 
         public static void Quit(string reason)

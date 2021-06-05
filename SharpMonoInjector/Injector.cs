@@ -101,18 +101,6 @@ namespace SharpMonoInjector
             _memory = new Memory(_handle);
         }
 
-        public Injector(IntPtr processHandle, IntPtr monoModule)
-        {
-            if ((_handle = processHandle) == IntPtr.Zero)
-                throw new ArgumentException("Argument cannot be zero", nameof(processHandle));
-
-            if ((_mono = monoModule) == IntPtr.Zero)
-                throw new ArgumentException("Argument cannot be zero", nameof(monoModule));
-
-            Is64Bit = ProcessUtils.Is64BitProcess(_handle);
-            _memory = new Memory(_handle);
-        }
-
         public void Dispose()
         {
             _memory.Dispose();
@@ -156,29 +144,6 @@ namespace SharpMonoInjector
             method = GetMethodFromName(@class, methodName);
             RuntimeInvoke(method);
             return assembly;
-        }
-
-        public void Eject(IntPtr assembly, string @namespace, string className, string methodName)
-        {
-            if (assembly == IntPtr.Zero)
-                throw new ArgumentException($"{nameof(assembly)} cannot be zero", nameof(assembly));
-
-            if (className == null)
-                throw new ArgumentNullException(nameof(className));
-
-            if (methodName == null)
-                throw new ArgumentNullException(nameof(methodName));
-
-            IntPtr image, @class, method;
-
-            ObtainMonoExports();
-            _rootDomain = GetRootDomain();
-            _attach = true;
-            image = GetImageFromAssembly(assembly);
-            @class = GetClassFromName(image, @namespace, className);
-            method = GetMethodFromName(@class, methodName);
-            RuntimeInvoke(method);
-            CloseAssembly(assembly);
         }
 
         private static void ThrowIfNull(IntPtr ptr, string methodName)
@@ -280,12 +245,6 @@ namespace SharpMonoInjector
                 string message = ReadMonoString((IntPtr)_memory.ReadInt(exc + (Is64Bit ? 0x20 : 0x10)));
                 throw new InjectorException($"The managed method threw an exception: ({className}) {message}");
             }
-        }
-
-        private void CloseAssembly(IntPtr assembly)
-        {
-            IntPtr result = Execute(Exports[mono_assembly_close], assembly);
-            ThrowIfNull(result, mono_assembly_close);
         }
 
         private IntPtr Execute(IntPtr address, params IntPtr[] args)

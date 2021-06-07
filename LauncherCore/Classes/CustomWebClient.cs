@@ -31,13 +31,13 @@ namespace LauncherCore.Classes
             base.DownloadFileAsync(uri, filePath);
         }
 
-        private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private new void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             Request.Progress = e.ProgressPercentage;
             DownloadProgress?.Invoke(Request);
         }
 
-        private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        private new void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             Request.EventHandler = e;
             DownloadComplete?.Invoke(Request);

@@ -81,9 +81,7 @@ namespace LauncherCore.Views
                     File.AppendAllText(System.IO.Path.Combine(Directory.GetCurrentDirectory(), Program.LogName),
                         $"{message}\n");
                 }
-                catch (Exception e)
-                {
-                }
+                catch {}
             }
         }
 

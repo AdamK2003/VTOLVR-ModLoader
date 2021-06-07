@@ -36,9 +36,7 @@ namespace LauncherCore.Classes
         public static SimpleTcpServer TcpServer { get; private set; }
         public static SimpleTcpClient TcpClient { get; private set; }
         public static TcpClient GameTcpClient { get; private set; }
-        private static TcpListener TcpListener;
         private static string[] args;
-        private static Thread tcpListenerThread;
         private static string currentDownloadFile;
 
         private static void Setup()

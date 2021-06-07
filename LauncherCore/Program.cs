@@ -244,7 +244,6 @@ namespace LauncherCore
         private static void CheckForItems()
         {
             Helper.SentryLog("Checking for items", Helper.SentryLogCategory.Program);
-            bool hasUpdated = false;
             if (!Directory.Exists(Root + ModsFolder))
                 Directory.CreateDirectory(Root + ModsFolder);
             else

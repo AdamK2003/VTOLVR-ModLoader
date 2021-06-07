@@ -225,7 +225,7 @@ namespace LauncherCore.Classes
             }
             catch (Exception e)
             {
-                Console.Log("Can't read player log because the game is open");
+                Console.Log($"Can't read player log because the game is open. Message = {e.Message}");
                 Notification.Show("Please close the game before creating a diagnostics zip.", "Error");
                 Directory.Delete(Path.Combine(Program.Root, datetime));
                 return;

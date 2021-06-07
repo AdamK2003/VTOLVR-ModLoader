@@ -82,25 +82,6 @@ namespace SharpMonoInjector
             _memory = new Memory(_handle);
         }
 
-        public Injector(int processId)
-        {
-            Process process = Process.GetProcesses()
-                .FirstOrDefault(p => p.Id == processId);
-
-            if (process == null)
-                throw new InjectorException($"Could not find a process with the id {processId}");
-
-            if ((_handle = Native.OpenProcess(ProcessAccessRights.PROCESS_ALL_ACCESS, false, process.Id)) == IntPtr.Zero)
-                throw new InjectorException("Failed to open process", new Win32Exception(Marshal.GetLastWin32Error()));
-
-            Is64Bit = ProcessUtils.Is64BitProcess(_handle);
-
-            if (!ProcessUtils.GetMonoModule(_handle, out _mono))
-                throw new InjectorException("Failed to find mono.dll in the target process");
-
-            _memory = new Memory(_handle);
-        }
-
         public void Dispose()
         {
             _memory.Dispose();
@@ -120,18 +101,6 @@ namespace SharpMonoInjector
 
         public IntPtr Inject(byte[] rawAssembly, string @namespace, string className, string methodName)
         {
-            if (rawAssembly == null)
-                throw new ArgumentNullException(nameof(rawAssembly));
-
-            if (rawAssembly.Length == 0)
-                throw new ArgumentException($"{nameof(rawAssembly)} cannot be empty", nameof(rawAssembly));
-
-            if (className == null)
-                throw new ArgumentNullException(nameof(className));
-
-            if (methodName == null)
-                throw new ArgumentNullException(nameof(methodName));
-
             IntPtr rawImage, assembly, image, @class, method;
 
             ObtainMonoExports();

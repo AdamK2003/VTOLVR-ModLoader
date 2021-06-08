@@ -67,6 +67,10 @@ namespace Build
         }
         private static void BuildDLL()
         {
+            Log("Building Core.dll");
+            Run(paths["msbuild"],
+                "-p:Configuration=Release -nologo CoreCore.csproj",
+                @"\CoreCore");
             Log("Building ModLoader.dll\n");
             Run(paths["msbuild"],
                 "-p:Configuration=Release;Documentationfile=bin\\Release\\ModLoader.xml -nologo \"Mod Loader.csproj\"",

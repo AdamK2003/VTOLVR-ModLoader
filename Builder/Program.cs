@@ -72,7 +72,7 @@ namespace Build
                 $"restore",
                 @"");
             Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo CoreCore.csproj /t:Restore",
+                "-p:Configuration=Release -nologo CoreCore.csproj /t:Restore /t:Clean,Build ",
                 @"\CoreCore");
             Log("Building ModLoader.dll\n");
             Run(paths["msbuild"],

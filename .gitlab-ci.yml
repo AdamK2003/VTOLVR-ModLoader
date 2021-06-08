@@ -30,7 +30,7 @@ build_dll:
    paths:
    - ModLoader\bin\Release\ModLoader.dll
    - ModLoader\bin\Release\ModLoader.xml
-   - CoreCore\bin\Release\Core.dll
+   - CoreCore\bin\Release\net5.0\CoreCore.dll
    expire_in: 1 day
 
 build_wpf:
@@ -39,7 +39,7 @@ build_wpf:
    - .\Builder.exe buildwpf dlls=$dlls
   artifacts:
    paths:
-   - LauncherCore\bin\Release\VTOLVR-ModLoader.exe
+   - LauncherCore\bin\Release\net5.0-windows\win-x64\LauncherCore.exe
    expire_in: 1 day
 
 build_updater:
@@ -48,7 +48,7 @@ build_updater:
    - .\Builder.exe buildupdater dlls=$dlls
   artifacts:
    paths:
-   - UpdaterCore\bin\Release\Updater.exe
+   - UpdaterCore\bin\Release\net5.0-windows\UpdaterCore.exe
    expire_in: 1 day
 
 zip:
@@ -66,7 +66,7 @@ build_installer:
    - .\Builder.exe buildinstaller
   artifacts:
    paths:
-   - InstallerCore\bin\Release\Installer.exe
+   - InstallerCore\bin\Release\net5.0-windows\win-x64\InstallerCore.exe
    expire_in: 1 day
 
 autoupdate_zip:

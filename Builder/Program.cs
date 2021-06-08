@@ -86,7 +86,7 @@ namespace Build
                 $"restore",
                 @"");
             Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo LauncherCore.csproj /t:Restore",
+                "-p:Configuration=Release -nologo LauncherCore.csproj /t:Restore /t:Clean,Build",
                 @"\LauncherCore");
         }
 
@@ -105,7 +105,7 @@ namespace Build
                 $"restore",
                 @"");
             Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo UpdaterCore.csproj /t:Restore",
+                "-p:Configuration=Release -nologo UpdaterCore.csproj /t:Restore /t:Clean,Build",
                 @"\UpdaterCore");
         }
 
@@ -153,7 +153,7 @@ namespace Build
                 $"restore",
                 @"");
             Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo InstallerCore.csproj /t:Restore",
+                "-p:Configuration=Release -nologo InstallerCore.csproj /t:Restore /t:Clean,Build",
                 @"\InstallerCore");
         }
 

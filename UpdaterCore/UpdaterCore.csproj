@@ -11,19 +11,19 @@
         <Title>Updater</Title>
         <Description>An auto updater for the VTOL VR ModLoader</Description>
         <Copyright>Copyright © 2021</Copyright>
-        <AssemblyVersion>3.0.0</AssemblyVersion>
-        <FileVersion>3.0.0</FileVersion>
+        <AssemblyVersion>4.0.0</AssemblyVersion>
+        <FileVersion>4.0.0</FileVersion>
         <ProductVersion>3.0.0</ProductVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <Resource Include="Logo.ico"/>
-        <Resource Include="Squares Bold Free.otf"/>
+        <Resource Include="Logo.ico" />
+        <Resource Include="Squares Bold Free.otf" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
-        <PackageReference Include="Sentry" Version="3.3.4"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Sentry" Version="3.3.4" />
     </ItemGroup>
 
     <ItemGroup>

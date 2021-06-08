@@ -77,10 +77,10 @@ namespace Build
             Log("Building VTOLVR-ModLoader.exe\n");
             Run($"\"{paths["nuget"]}\"",
                 $"restore -SolutionDirectory \"{dir}\"",
-                @"\VTOLVR-ModLoader");
+                @"\LauncherCore");
             Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo Launcher.csproj",
-                @"\VTOLVR-ModLoader");
+                "-p:Configuration=Release -nologo LauncherCore.csproj",
+                @"\LauncherCore");
         }
 
         private static void BuildAssetBundle()
@@ -96,10 +96,10 @@ namespace Build
             Log("Building Updater");
             Run($"\"{paths["nuget"]}\"",
                 $"restore -SolutionDirectory \"{dir}\"",
-                @"\Updater");
+                @"\UpdaterCore");
             Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo Updater.csproj",
-                @"\Updater");
+                "-p:Configuration=Release -nologo UpdaterCore.csproj",
+                @"\UpdaterCore");
         }
 
         private static void ZIPContents()
@@ -127,15 +127,15 @@ namespace Build
             Directory.CreateDirectory(dir + @"\temp\VTOLVR_ModLoader\mods");
             Directory.CreateDirectory(dir + @"\temp\VTOLVR_ModLoader\skins");
 
-            TryMove(dir + @"\Core\bin\Release\Core.dll", dir + @"\temp\VTOLVR_Data\Managed\Core.dll");
+            TryMove(dir + @"\CoreCore\bin\Release\Core.dll", dir + @"\temp\VTOLVR_Data\Managed\Core.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\temp\VTOLVR_ModLoader\ModLoader.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\temp\VTOLVR_ModLoader\ModLoader.xml");
-            TryMove(dir + @"\VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe", dir + @"\temp\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
-            TryMove(dir + @"\Updater\bin\Release\Updater.exe", dir + @"\temp\VTOLVR_ModLoader\Updater.exe");
+            TryMove(dir + @"\LauncherCore\bin\Release\VTOLVR-ModLoader.exe", dir + @"\temp\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
+            TryMove(dir + @"\UpdaterCore\bin\Release\Updater.exe", dir + @"\temp\VTOLVR_ModLoader\Updater.exe");
             //TryMove(dir + @"\VTOLVR Unity Project\Assets\_ModLoader\Exported Asset Bundle\modloader.assets", dir + @"\temp\VTOLVR_ModLoader\VTOLVR-modloader.assets");
 
-            TryDelete(dir + @"\Installer\Resources\ModLoader.zip");
-            ZipFile.CreateFromDirectory(dir + @"\temp\", dir + @"\Installer\Resources\ModLoader.zip");
+            TryDelete(dir + @"\InstallerCore\Resources\ModLoader.zip");
+            ZipFile.CreateFromDirectory(dir + @"\temp\", dir + @"\InstallerCore\Resources\ModLoader.zip");
             Directory.Delete(dir + @"\temp", true);
         }
 
@@ -144,10 +144,10 @@ namespace Build
             Log("Building Installer.exe");
             Run($"\"{paths["nuget"]}\"",
                 $"restore -SolutionDirectory \"{dir}\"",
-                @"\Installer");
+                @"\InstallerCore");
             Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo Installer.csproj",
-                @"\Installer");
+                "-p:Configuration=Release -nologo InstallerCore.csproj",
+                @"\InstallerCore");
         }
 
         private static void CreateUpdaterZip()
@@ -184,11 +184,11 @@ namespace Build
             Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_ModLoader\skins");
 
             Log("Moving Applications");
-            TryMove(dir + @"\Core\bin\Release\Core.dll", dir + @"\autoupdate\template\VTOLVR_Data\Managed\Core.dll");
+            TryMove(dir + @"\CoreCore\bin\Release\Core.dll", dir + @"\autoupdate\template\VTOLVR_Data\Managed\Core.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.xml");
-            TryMove(dir + @"\VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
-            TryMove(dir + @"\Updater\bin\Release\Updater.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\Updater.exe");
+            TryMove(dir + @"\LauncherCore\bin\Release\VTOLVR-ModLoader.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
+            TryMove(dir + @"\UpdaterCore\bin\Release\Updater.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\Updater.exe");
 
             Log("Creating zip");
             ZipFile.CreateFromDirectory(dir + @"\autoupdate\", dir + @"\autoupdate.zip");

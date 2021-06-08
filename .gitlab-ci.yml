@@ -30,7 +30,7 @@ build_dll:
    paths:
    - ModLoader\bin\Release\ModLoader.dll
    - ModLoader\bin\Release\ModLoader.xml
-   - Core\bin\Release\Core.dll
+   - CoreCore\bin\Release\Core.dll
    expire_in: 1 day
 
 build_wpf:
@@ -39,7 +39,7 @@ build_wpf:
    - .\Builder.exe buildwpf dlls=$dlls
   artifacts:
    paths:
-   - VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe
+   - LauncherCore\bin\Release\VTOLVR-ModLoader.exe
    expire_in: 1 day
 
 build_updater:
@@ -48,7 +48,7 @@ build_updater:
    - .\Builder.exe buildupdater dlls=$dlls
   artifacts:
    paths:
-   - Updater\bin\Release\Updater.exe
+   - UpdaterCore\bin\Release\Updater.exe
    expire_in: 1 day
 
 zip:
@@ -57,7 +57,7 @@ zip:
    - .\Builder.exe zip template=$template
   artifacts:
    paths:
-   - Installer\Resources\ModLoader.zip
+   - InstallerCore\Resources\ModLoader.zip
    expire_in: 1 day
 
 build_installer:
@@ -66,7 +66,7 @@ build_installer:
    - .\Builder.exe buildinstaller
   artifacts:
    paths:
-   - Installer\bin\Release\Installer.exe
+   - InstallerCore\bin\Release\Installer.exe
    expire_in: 1 day
 
 autoupdate_zip:

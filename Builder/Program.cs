@@ -68,8 +68,11 @@ namespace Build
         private static void BuildDLL()
         {
             Log("Building Core.dll");
+            Run($"\"{paths["nuget"]}\"",
+                $"restore",
+                @"");
             Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo CoreCore.csproj",
+                "-p:Configuration=Release -nologo CoreCore.csproj /t:Restore",
                 @"\CoreCore");
             Log("Building ModLoader.dll\n");
             Run(paths["msbuild"],

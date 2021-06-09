@@ -102,12 +102,13 @@ namespace Build
 
         private static void BuildUpdater()
         {
-            Log("Building Updater");
+            Log("Building Updater\n");
             Run($"\"{paths["nuget"]}\"",
                 $"restore",
                 @"");
-            Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo UpdaterCore.csproj /t:Restore /t:Clean,Build",
+            Log("Publishing Updater\n");
+            Run(paths["dotnet"],
+                "publish -r win-x64 -p:PublishSingleFile=true --self-contained true -c Release",
                 @"\UpdaterCore");
         }
 

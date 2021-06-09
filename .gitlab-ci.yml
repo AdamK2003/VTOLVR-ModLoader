@@ -39,7 +39,7 @@ build_wpf:
    - .\Builder.exe buildwpf dlls=$dlls
   artifacts:
    paths:
-   - LauncherCore\bin\Release\net5.0-windows\win-x64\LauncherCore.exe
+   - LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe
    expire_in: 1 day
 
 build_updater:
@@ -48,7 +48,7 @@ build_updater:
    - .\Builder.exe buildupdater dlls=$dlls
   artifacts:
    paths:
-   - UpdaterCore\bin\Release\net5.0-windows\UpdaterCore.exe
+   - UpdaterCore\bin\Release\net5.0-windows\win-x64\publish\UpdaterCore.exe
    expire_in: 1 day
 
 zip:

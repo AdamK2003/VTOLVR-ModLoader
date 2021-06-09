@@ -17,7 +17,8 @@ namespace Build
         {
             { "msbuild", @"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"},
             { "unity", @"C:\Program Files\Unity\Hub\Editor\2019.1.8f1\Editor\Unity.exe"},
-            { "nuget", @"B:\Gitlab Runner\nuget.exe" }
+            { "nuget", @"B:\Gitlab Runner\nuget.exe" },
+            { "dotnet", @"C:\Program Files\dotnet\dotnet.exe"}
         };
         static void Main(string[] args)
         {
@@ -85,8 +86,9 @@ namespace Build
             Run($"\"{paths["nuget"]}\"",
                 $"restore",
                 @"");
-            Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo LauncherCore.csproj /t:Restore /t:Clean,Build",
+            Log("Publishing VTOLVR-ModLoader.exe\n");
+            Run(paths["dotnet"],
+                "publish -r win-x64 -p:PublishSingleFile=true --self-contained true -c Release",
                 @"\LauncherCore");
         }
 
@@ -137,8 +139,8 @@ namespace Build
             TryMove(dir + @"\CoreCore\bin\Release\net5.0\CoreCore.dll", dir + @"\temp\VTOLVR_Data\Managed\Core.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\temp\VTOLVR_ModLoader\ModLoader.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\temp\VTOLVR_ModLoader\ModLoader.xml");
-            TryMove(dir + @"\LauncherCore\bin\Release\net5.0-windows\win-x64\LauncherCore.exe", dir + @"\temp\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
-            TryMove(dir + @"\UpdaterCore\bin\Release\net5.0-windows\UpdaterCore.exe", dir + @"\temp\VTOLVR_ModLoader\Updater.exe");
+            TryMove(dir + @"\LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe", dir + @"\temp\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
+            TryMove(dir + @"\UpdaterCore\bin\Release\net5.0-windows\win-x64\publish\UpdaterCore.exe", dir + @"\temp\VTOLVR_ModLoader\Updater.exe");
             //TryMove(dir + @"\VTOLVR Unity Project\Assets\_ModLoader\Exported Asset Bundle\modloader.assets", dir + @"\temp\VTOLVR_ModLoader\VTOLVR-modloader.assets");
 
             TryDelete(dir + @"\InstallerCore\Resources\ModLoader.zip");
@@ -194,8 +196,8 @@ namespace Build
             TryMove(dir + @"\CoreCore\bin\Release\net5.0\CoreCore.dll", dir + @"\autoupdate\template\VTOLVR_Data\Managed\Core.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.xml");
-            TryMove(dir + @"\LauncherCore\bin\Release\net5.0-windows\win-x64\LauncherCore.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
-            TryMove(dir + @"\UpdaterCore\bin\Release\net5.0-windows\UpdaterCore.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\Updater.exe");
+            TryMove(dir + @"\LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
+            TryMove(dir + @"\UpdaterCore\bin\Release\net5.0-windows\win-x64\publish\UpdaterCore.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\Updater.exe");
 
             Log("Creating zip");
             ZipFile.CreateFromDirectory(dir + @"\autoupdate\", dir + @"\autoupdate.zip");

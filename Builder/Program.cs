@@ -155,8 +155,9 @@ namespace Build
             Run($"\"{paths["nuget"]}\"",
                 $"restore",
                 @"");
-            Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo InstallerCore.csproj /t:Restore /t:Clean,Build",
+            Log("Publishing Installer\n");
+            Run(paths["dotnet"],
+                "publish -r win-x64 -p:PublishSingleFile=true --self-contained true -c Release",
                 @"\InstallerCore");
         }
 

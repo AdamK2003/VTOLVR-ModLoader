@@ -88,7 +88,7 @@ namespace Build
                 @"");
             Log("Publishing VTOLVR-ModLoader.exe\n");
             Run(paths["dotnet"],
-                "publish -r win-x64 -p:PublishSingleFile=true --self-contained true -c Release",
+                "publish -r win-x64 -p:PublishSingleFile=true;IncludeNativeLibrariesForSelfExtract=true -c Release",
                 @"\LauncherCore");
         }
 
@@ -108,7 +108,7 @@ namespace Build
                 @"");
             Log("Publishing Updater\n");
             Run(paths["dotnet"],
-                "publish -r win-x64 -p:PublishSingleFile=true --self-contained true -c Release",
+                "publish -r win-x64 -p:PublishSingleFile=true;IncludeNativeLibrariesForSelfExtract=true -c Release",
                 @"\UpdaterCore");
         }
 
@@ -157,7 +157,7 @@ namespace Build
                 @"");
             Log("Publishing Installer\n");
             Run(paths["dotnet"],
-                "publish -r win-x64 -p:PublishSingleFile=true --self-contained true -c Release",
+                "publish -r win-x64 -p:PublishSingleFile=true;IncludeNativeLibrariesForSelfExtract=true -c Release",
                 @"\InstallerCore");
         }
 

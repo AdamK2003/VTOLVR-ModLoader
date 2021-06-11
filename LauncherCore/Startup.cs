@@ -37,9 +37,21 @@ namespace LauncherCore
             Restore = 9, ShowDefault = 10, ForceMinimized = 11
         };
 
-        private static readonly string[] needFiles = {"injector.exe", "Updater.exe"};
+        private static readonly string[] needFiles = { "Updater.exe"};
         private static readonly string[] neededDLLFiles = {@"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll"};
-
+        private static readonly string[] _cleanupFiles =
+        {
+            // When Costura got added, these DLLs were merged into 
+            // the launcher.exe, so this function deletes them as 
+            // they're just a waste of space.
+            "WpfAnimatedGif.dll",
+            "Valve.Valve.Newtonsoft.Json.dll",
+            "SimpleTCP.dll",
+            "Gameloop.Vdf.dll",
+            // 5.0.0 .NET Core update removed the need for these files
+            "injector.exe", 
+            "SharpMonoInjector.dll"
+        };
         public static bool RunStartUp()
         {
             Helper.SentryLog("Running Start up", Helper.SentryLogCategory.Startup);
@@ -245,20 +257,19 @@ namespace LauncherCore
 
         private static void ClearOldFiles()
         {
-            // When Costura got added, these DLLs were merged into 
-            // the launcher.exe, so this function deletes them as 
-            // they're just a waste of space.
-            if (File.Exists(Path.Combine(Program.Root, "WpfAnimatedGif.dll")))
-                Helper.TryDelete(Path.Combine(Program.Root, "WpfAnimatedGif.dll"));
+            Helper.SentryLog("Clearing Old Files", Helper.SentryLogCategory.Startup);
 
-            if (File.Exists(Path.Combine(Program.Root, "Valve.Valve.Newtonsoft.Json.dll")))
-                Helper.TryDelete(Path.Combine(Program.Root, "Valve.Valve.Newtonsoft.Json.dll"));
-
-            if (File.Exists(Path.Combine(Program.Root, "SimpleTCP.dll")))
-                Helper.TryDelete(Path.Combine(Program.Root, "SimpleTCP.dll"));
-
-            if (File.Exists(Path.Combine(Program.Root, "Gameloop.Vdf.dll")))
-                Helper.TryDelete(Path.Combine(Program.Root, "Gameloop.Vdf.dll"));
+            string lastPath = string.Empty;
+            for (int i = 0; i < _cleanupFiles.Length; i++)
+            {
+                lastPath = Path.Combine(Program.Root, _cleanupFiles[i]);
+                if (File.Exists(lastPath))
+                {
+                    Views.Console.Log(Helper.TryDelete(lastPath)
+                        ? $"Deleted old file at {lastPath}"
+                        : $"Failed to delete old file at {lastPath}");
+                }
+            }
         }
 
         private static void AttachCoreLogger()

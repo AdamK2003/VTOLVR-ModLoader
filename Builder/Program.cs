@@ -230,7 +230,7 @@ namespace Build
             Log("Moving Installer.exe");
             TryMove(
                 Path.Combine(dir, "InstallerCore", "bin", "Release", "net5.0-windows",
-                    "win-x64", "InstallerCore.exe"),
+                    "win-x64", "publish", "InstallerCore.exe"),
                 Path.Combine(root, "Installer.exe"));
             Log("Finished");
         }

@@ -50,7 +50,10 @@ namespace LauncherCore
             "Gameloop.Vdf.dll",
             // 5.0.0 .NET Core update removed the need for these files
             "injector.exe", 
-            "SharpMonoInjector.dll"
+            "SharpMonoInjector.dll",
+            "Updater.exe",
+            "VTOLVR-ModLoader.old.exe",
+            "Updater Log.txt"
         };
         public static bool RunStartUp()
         {

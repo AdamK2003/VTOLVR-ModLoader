@@ -43,6 +43,7 @@ namespace LauncherCore
         public static bool IsBusy;
         public static List<Release> Releases { get; private set; }
         public static List<BaseItem> Items;
+        public static string ExePath = Process.GetCurrentProcess().MainModule.FileName;
 
         private static bool _uiLoaded = false;
         private static int _itemsToExtract = 0;
@@ -359,6 +360,7 @@ namespace LauncherCore
             {
                 Releases = JsonConvert.DeserializeObject<List<Release>>(await response.Content.ReadAsStringAsync());
                 MainWindow._instance.news.LoadNews();
+                Console.Log($"Checking for updates###");
                 Queue(Updater.CheckForUpdates);
             }
             else

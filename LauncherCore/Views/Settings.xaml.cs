@@ -34,6 +34,7 @@ namespace LauncherCore.Views
 
         private SolidColorBrush _yellowBrush = new SolidColorBrush(Color.FromRgb(241, 241, 39));
         private SolidColorBrush _whiteBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        private bool _finishedSetup = false;
 
         //Settings
         public static UserSettings USettings { get; private set; }
@@ -355,6 +356,8 @@ namespace LauncherCore.Views
                 _branchesBox.SelectedIndex = USettings.ActiveBranch;
                 Program.Branch = USettings.Branches[USettings.ActiveBranch];
             }
+
+            _finishedSetup = true;
         }
 
         private void AddBranch(string branch)
@@ -438,13 +441,18 @@ namespace LauncherCore.Views
 
         private void BranchChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            if (!_finishedSetup)
+                return;
+            
             SaveSettings();
             string oldBranch = Program.Branch;
             Program.Branch = _branches[_branchesBox.SelectedIndex];
             if (Program.Branch == "None")
                 Program.Branch = string.Empty;
             if (oldBranch != Program.Branch)
+            {
                 Program.GetReleases();
+            }
         }
 
         private void ProcessTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)

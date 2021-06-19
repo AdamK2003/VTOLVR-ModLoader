@@ -2,7 +2,6 @@ stages:
   - build_builder
   - build_dll
   - build_wpf
-  - build_updater
   - zip
   - build_installer
   - autoupdate_zip
@@ -40,15 +39,6 @@ build_wpf:
   artifacts:
    paths:
    - LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe
-   expire_in: 1 day
-
-build_updater:
-  stage: build_updater
-  script:
-   - .\Builder.exe buildupdater dlls=$dlls
-  artifacts:
-   paths:
-   - UpdaterCore\bin\Release\net5.0-windows\win-x64\publish\UpdaterCore.exe
    expire_in: 1 day
 
 zip:

@@ -36,8 +36,7 @@ namespace LauncherCore
             Minimize = 6, ShowMinNoActivate = 7, ShowNoActivate = 8,
             Restore = 9, ShowDefault = 10, ForceMinimized = 11
         };
-
-        private static readonly string[] needFiles = { "Updater.exe"};
+        
         private static readonly string[] neededDLLFiles = {@"\Plugins\discord-rpc.dll", @"\Managed\0Harmony.dll"};
         private static readonly string[] _cleanupFiles =
         {
@@ -152,15 +151,6 @@ namespace LauncherCore
         private static bool CheckFolder()
         {
             Helper.SentryLog("Checking folder", Helper.SentryLogCategory.Startup);
-            //Checking if the files we need to run are there
-            foreach (string file in needFiles)
-            {
-                if (!File.Exists(Program.Root + @"\" + file))
-                {
-                    WrongFolder(file);
-                    return false;
-                }
-            }
 
             if (!Directory.Exists(Program.Root + Program.ModsFolder))
             {
@@ -183,17 +173,6 @@ namespace LauncherCore
             }
 
             return true;
-        }
-
-        private static void WrongFolder(string file)
-        {
-            Notification.Show(
-                "I can't seem to find " + file +
-                " in my folder. Make sure you place me in the same folder as this file.",
-                "Missing File",
-                closedCallback: delegate { Program.Quit($"Can't find {file} in my folder"); });
-            Views.Console.Log("I can't seem to find " + file +
-                              " in my folder. Make sure you place me in the same folder as this file.");
         }
 
         private static void MissingManagedFile(string file)

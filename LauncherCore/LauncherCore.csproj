@@ -39,7 +39,6 @@
     <ItemGroup>
         <ProjectReference Include="..\CoreCore\CoreCore.csproj" />
         <ProjectReference Include="..\ModLoader\Mod Loader.csproj" />
-        <ProjectReference Include="..\SharpMonoInjector\SharpMonoInjector.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -163,74 +163,7 @@ namespace LauncherCore
             Process.Start(psi);
 
             MainWindow.SetPlayButton(false);
-            MainWindow.SetProgress(0, "Launching Game");
-
-            WaitForProcess();
-        }
-
-        private static async void WaitForProcess()
-        {
-            Helper.SentryLog("Waiting for process", Helper.SentryLogCategory.Program);
-            Console.Log("Waiting for VTOL VR Process");
-            for (int i = 1; i <= Views.Settings.USettings.MaxProcessAttempts; i++)
-            {
-                MainWindow.SetProgress((50 / Views.Settings.USettings.MaxProcessAttempts) * i,
-                    "Searching for process...   (Attempt " + i + ")");
-                await Task.Delay(5000);
-
-                if (Process.GetProcessesByName("vtolvr").Length == 1)
-                    break;
-
-                if (i == Views.Settings.USettings.MaxProcessAttempts)
-                {
-                    //If we couldn't find it, go back to how it was at the start
-                    MainWindow.GifState(MainWindow.gifStates.Paused);
-                    MainWindow.SetProgress(100, "Couldn't find VTOLVR process.");
-                    MainWindow.SetPlayButton(false);
-                    Console.Log("Failed to find VTOL VR process");
-                    return;
-                }
-            }
-
-            //A delay just to make sure the game has fully launched
-            Console.Log("Found process, waiting a bit");
-            MainWindow.SetProgress(50, "Waiting for game...");
-            await Task.Delay(10000);
-
-            //Injecting Default Mod
-            MainWindow.SetProgress(75, "Injecting Mod Loader...");
-            InjectDefaultMod();
-        }
-
-        private static void InjectDefaultMod()
-        {
-            Helper.SentryLog("Injecting Mod", Helper.SentryLogCategory.Program);
-            Console.Log("Injecting the ModLoader.dll");
-
-            SharpMonoInjector.Injector injector = new SharpMonoInjector.Injector("vtolvr");
-            byte[] assembly = File.ReadAllBytes(Path.Combine(Root, "ModLoader.dll"));
-
-            using (injector)
-            {
-                IntPtr remoteAssembly = IntPtr.Zero;
-                try
-                {
-                    remoteAssembly = injector.Inject(
-                        assembly,
-                        nameof(ModLoader),
-                        nameof(ModLoader.Load),
-                        nameof(ModLoader.Load.Init));
-                }
-                catch (Exception e)
-                {
-                    Console.Log($"Failed to inject. Reason: {e.Message}");
-                }
-
-                if (remoteAssembly == IntPtr.Zero)
-                    return;
-            }
-
-            Console.Log($"Injection Finished Okay");
+            MainWindow.SetProgress(100, "Launching Game");
         }
 
         public static void Quit(string reason)

@@ -216,6 +216,10 @@ namespace VTPatcher
                     typeof(ModLoader.ModLoaderManager),
                     typeof(ModLoader.SkinManager));
             }
+            else
+            {
+                UnityEngine.Debug.Log($"I can't find mod loader.dll at {modloaderPath}");
+            }
 
         }
 

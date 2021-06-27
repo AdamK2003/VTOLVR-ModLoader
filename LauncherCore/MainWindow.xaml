@@ -8,7 +8,7 @@
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
         Title="VTOL VR Modloader" Height="600" Width="1200" Icon="Resources/Logo.ico" MinWidth="970" MinHeight="584"
-        Background="#FF4B4B4B" WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        Background="#FF3d3d3d" WindowStartupLocation="CenterScreen" WindowState="Maximized"
         Style="{StaticResource FontStyle}">
     <Window.Resources>
         <DataTemplate x:Name="settingsViewTemplate" DataType="{x:Type views:Settings}">
@@ -33,7 +33,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0" Background="#696969">
+            <Grid Grid.Column="0" Background="#4b4b4b">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="100" />
                     <RowDefinition Height="45" />
@@ -52,41 +52,41 @@
                        gif:ImageBehavior.AutoStart="False" Margin="11,8" />
                 <Button Grid.Row="1" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Mods" Foreground="White" BorderBrush="{x:Null}" Click="Manager"
-                        Style="{StaticResource darkButton}" x:Name="modsButton" Margin="11,8"
+                        Style="{StaticResource RoundedDarkButton}" x:Name="modsButton" Margin="11,8"
                         Tag="Mods" />
                 <Button Grid.Row="2" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Skins" Foreground="White" BorderBrush="{x:Null}" Click="Manager"
-                        Style="{StaticResource darkButton}" x:Name="skinsButton" Margin="11,8"
+                        Style="{StaticResource RoundedDarkButton}" x:Name="skinsButton" Margin="11,8"
                         Tag="Skins" />
                 <Button Grid.Row="3" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="ChangeLog" Foreground="White" BorderBrush="{x:Null}" Click="News"
-                        Style="{StaticResource darkButton}" x:Name="homeButton" Margin="11,8" />
+                        Style="{StaticResource RoundedDarkButton}" x:Name="homeButton" Margin="11,8" />
                 <Button Grid.Row="4" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Open Folder" Foreground="White" BorderBrush="{x:Null}"
-                        Click="OpenFolder" Style="{StaticResource darkButton}" x:Name="openFButton"
+                        Click="OpenFolder" Style="{StaticResource RoundedDarkButton}" x:Name="openFButton"
                         Margin="11,8" />
                 <Button Grid.Row="5" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Console" Foreground="White" BorderBrush="{x:Null}"
-                        Click="OpenConsole" Style="{StaticResource darkButton}" x:Name="consoleButton"
+                        Click="OpenConsole" Style="{StaticResource RoundedDarkButton}" x:Name="consoleButton"
                         Margin="11,8" />
                 <Button Grid.Row="6" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Mod Creator" Foreground="White" BorderBrush="{x:Null}"
-                        Click="Creator" x:Name="uploadModButton" Style="{StaticResource darkButton}"
+                        Click="Creator" x:Name="uploadModButton" Style="{StaticResource RoundedDarkButton}"
                         Margin="11,8" />
                 <Button Grid.Row="7" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Dev Tools" Foreground="White" BorderBrush="{x:Null}"
-                        Click="OpenTools" Style="{StaticResource darkButton}" x:Name="devTButton"
+                        Click="OpenTools" Style="{StaticResource RoundedDarkButton}" x:Name="devTButton"
                         Margin="11,8" />
                 <Button Grid.Row="8" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Settings" Foreground="White" BorderBrush="{x:Null}"
-                        Click="OpenSettings" Style="{StaticResource darkButton}" x:Name="settingsButton"
+                        Click="OpenSettings" Style="{StaticResource RoundedDarkButton}" x:Name="settingsButton"
                         Margin="11,8" />
             </Grid>
 
             <ContentControl Grid.Column="1" Content="{Binding}" />
         </Grid>
 
-        <Grid Grid.Row="1" Background="#696969">
+        <Grid Grid.Row="1" Background="#4b4b4b">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />
@@ -113,9 +113,9 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <ProgressBar Grid.Row="1" Foreground="#FF3D3D3D"
+                    <ProgressBar Style="{DynamicResource DarkProgressBar}" Grid.Row="1" Foreground="#3d3d3d"
                                  Background="{x:Null}" BorderBrush="{x:Null}" Value="100"
-                                 x:Name="progressBar" />
+                                 x:Name="progressBar"/>
                 </Grid>
 
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="Progress Text..."
@@ -136,10 +136,9 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="1" Grid.Row="1" FontFamily="{StaticResource SquaresBoldFree}"
+                <Button Style="{DynamicResource RoundedDarkButton}" Grid.Column="1" Grid.Row="1" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Play" FontSize="30" Foreground="White"
-                        BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame" BorderThickness="1"
-                        Style="{StaticResource darkButton}" />
+                        BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame"/>
 
                 <TextBlock Grid.Column="1" Grid.Row="2" Text="Dev Tools Enabled" Background="#FFA69700"
                            Foreground="White" TextAlignment="Center" FontSize="10" VerticalAlignment="Center"

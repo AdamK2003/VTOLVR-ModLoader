@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LauncherCore.Windows"
         mc:Ignorable="d"
         Title="FileDialog" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen" Background="#FF4B4B4B" WindowStyle="None"
+        WindowStartupLocation="CenterScreen" Background="#FF3d3d3d" WindowStyle="None"
         MinWidth="100" MinHeight="100" Topmost="True">
     <Grid>
         <Grid.RowDefinitions>

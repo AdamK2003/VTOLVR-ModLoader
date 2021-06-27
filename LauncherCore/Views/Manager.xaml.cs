@@ -52,7 +52,6 @@ namespace LauncherCore.Views
         {
             RefreshColumns();
             GetScrollViewer();
-            _openSiteButton.Content = "Open " + Program.URL;
         }
 
         private void GetScrollViewer()
@@ -201,7 +200,7 @@ namespace LauncherCore.Views
                     else
                     {
                         _outdatedItems++;
-                        lastItem.CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 107, 113));
+                        lastItem.CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 56, 56));
                         lastItem.Font = BoldFont;
 
                         lastItem.PopertyChanged("Font");
@@ -265,7 +264,7 @@ namespace LauncherCore.Views
                     _items[i].SetWebsiteVersion(json["version"].ToString());
                     if (_items[i].UpdateVisibility == Visibility.Visible)
                     {
-                        _items[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(241, 241, 39));
+                        _items[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 250, 101));
                         _items[i].Font = BoldFont;
 
                         _items[i].PopertyChanged("Font");
@@ -300,7 +299,7 @@ namespace LauncherCore.Views
                     _items[i].SetWebsiteVersion(json["version"].ToString());
                     if (_items[i].UpdateVisibility == Visibility.Visible)
                     {
-                        _items[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(241, 241, 39));
+                        _items[i].CurrentVersionColour = new SolidColorBrush(Color.FromRgb(255, 250, 101));
                         _items[i].Font = BoldFont;
 
                         _items[i].PopertyChanged("Font");
@@ -735,11 +734,6 @@ namespace LauncherCore.Views
                     }
                 }
             }
-        }
-
-        private void OpenSite(object sender, RoutedEventArgs e)
-        {
-            Process.Start(Program.URL);
         }
     }
 }

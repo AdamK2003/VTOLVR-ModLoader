@@ -48,7 +48,7 @@
                        FontSize="15" />
                 <PasswordBox Grid.Row="1" Grid.Column="1" x:Name="tokenBox" FontSize="25" />
                 <Button Grid.Row="1" Grid.Column="2" Click="UpdateToken" x:Name="updateButton"
-                        Style="{StaticResource transparentButton}">
+                        Style="{StaticResource RoundedDarkButton}">
                     <TextBlock Text="Update" Foreground="White" TextAlignment="Center" />
                 </Button>
 
@@ -91,7 +91,7 @@
                     My Projects folder not set.
                 </TextBlock>
 
-                <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource darkButton}" Margin="5,10,5,10"
+                <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource RoundedDarkButton}" Margin="5,10,5,10"
                         Content="Set" Click="SetMyProjectsFolder" x:Name="projectsButton" />
             </Grid>
 
@@ -115,14 +115,14 @@
                     If the installer ran without administrator privileges or you are having problems with one-click installing on the website. You can press the reapply button to set it again in your system's registry.
                 </TextBlock>
 
-                <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource darkButton}" Margin="5,10,5,10"
+                <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource RoundedDarkButton}" Margin="5,10,5,10"
                         Content="Reapply" Click="SetOneClickInstall" x:Name="oneclickInstallButton" />
 
                 <TextBlock Grid.Row="2" Grid.Column="0" Foreground="White" FontSize="15" TextWrapping="Wrap">
                     You can create a diagnostics zip to help us find the root of your issue. This will zip up your game log, mod loader log and some information of what mods and skins you have installed.
                 </TextBlock>
 
-                <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource darkButton}" Margin="5,10,5,10"
+                <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource RoundedDarkButton}" Margin="5,10,5,10"
                         Content="Create ZIP" Click="CreateDiagnosticsZip" />
             </Grid>
 
@@ -160,7 +160,7 @@
                 <TextBox Grid.Row="3" Grid.Column="0" Margin="0,0,10,0"
                          x:Name="_newBranchCodeBox" />
                 <Button Grid.Row="3" Grid.Column="1" Content="Check Code"
-                        Style="{StaticResource darkButton}" Margin="10,0"
+                        Style="{StaticResource RoundedDarkButton}" Margin="10,0"
                         Click="CheckBranch" x:Name="_branchCheckButton" />
                 <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
                            x:Name="_branchResultText" Text="This is the result"

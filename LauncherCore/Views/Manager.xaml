@@ -10,15 +10,14 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <ListView
             Grid.Row="0"
             x:Name="_listView"
             Background="{x:Null}"
-            SelectionMode="Single">
+            SelectionMode="Single"
+            BorderThickness="0">
             <ListView.View>
                 <GridView AllowsColumnReorder="False" x:Name="_gridView">
                     <GridView.Columns>
@@ -156,13 +155,13 @@
                     <Style.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Trigger.Setters>
-                                <Setter Property="Background" Value="#FF3D3D3D" />
+                                <Setter Property="Background" Value="#3d3d3d" />
                                 <Setter Property="BorderBrush" Value="#FF2E2E2E" />
                             </Trigger.Setters>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Trigger.Setters>
-                                <Setter Property="Background" Value="#FF3D3D3D " />
+                                <Setter Property="Background" Value="#3d3d3d " />
                                 <Setter Property="BorderBrush" Value="#FF2E2E2E" />
                             </Trigger.Setters>
                         </Trigger>
@@ -183,12 +182,7 @@
             </ListView.GroupStyle>
         </ListView>
 
-        <Label Grid.Row="1" Foreground="#FF6B71" FontSize="15"
+        <Label Grid.Row="1" Foreground="#ff3838" FontSize="15"
                HorizontalAlignment="Center" x:Name="_warningText" />
-        <Label Grid.Row="2" Foreground="White" FontSize="15"
-               Content="You can download mods and skins from the modding website"
-               HorizontalAlignment="Center" />
-        <Button Grid.Row="3" Style="{StaticResource darkButton}"
-                Click="OpenSite" x:Name="_openSiteButton" />
     </Grid>
 </UserControl>

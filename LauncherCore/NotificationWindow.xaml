@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:LauncherCore"
         mc:Ignorable="d"
         Title="Notification" Height="50" Width="300" ResizeMode="NoResize" Icon="Resources/Logo.ico"
-        Background="#FF4B4B4B" WindowStartupLocation="Manual" WindowStyle="None" ShowInTaskbar="False" Topmost="True"
+        Background="#FF3d3d3d" WindowStartupLocation="Manual" WindowStyle="None" ShowInTaskbar="False" Topmost="True"
         AllowsTransparency="True">
     <Grid>
         <Grid.ColumnDefinitions>

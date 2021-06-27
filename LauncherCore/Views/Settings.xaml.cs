@@ -32,7 +32,7 @@ namespace LauncherCore.Views
         private Action<bool, string> callBack;
         private List<string> _branches;
 
-        private SolidColorBrush _yellowBrush = new SolidColorBrush(Color.FromRgb(241, 241, 39));
+        private SolidColorBrush _yellowBrush = new SolidColorBrush(Color.FromRgb(255, 250, 101));
         private SolidColorBrush _whiteBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
         private bool _finishedSetup = false;
 

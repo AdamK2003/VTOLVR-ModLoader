@@ -14,11 +14,11 @@
                         <StackPanel>
                             <TextBlock Text="{Binding Name}" Foreground="White"
                                        FontSize="20" TextWrapping="Wrap"
-                                       Background="#FF3D3D3D" />
+                                       Background="#3d3d3d" />
 
                             <TextBlock Text="{Binding Body}" Foreground="White"
                                        FontSize="10" TextWrapping="Wrap"
-                                       Background="#FF3D3D3D" />
+                                       Background="#3d3d3d" />
                         </StackPanel>
                     </Border>
                 </DataTemplate>

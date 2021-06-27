@@ -44,7 +44,7 @@
                 <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
 
-            <ProgressBar Grid.Column="0" Margin="10" Foreground="#FF3D3D3D" Background="{x:Null}"
+            <ProgressBar Grid.Column="0" Margin="10" Foreground="#3d3d3d" Background="{x:Null}"
                          x:Name="progressBar" Visibility="Hidden" />
             <Button Grid.Column="1" Content="Create" FontSize="25" Margin="0,5" Click="CreateProject"
                     x:Name="createButton" IsEnabled="False" />

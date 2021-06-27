@@ -25,6 +25,7 @@ namespace Build
             dir = Directory.GetCurrentDirectory();
             CheckArgs(args);
         }
+        
         private static void CheckArgs(string[] args)
         {
             for (int i = 0; i < args.Length; i++)
@@ -55,6 +56,7 @@ namespace Build
             else if (args.Contains("move"))
                 MoveToDesktop();
         }
+        
         private static void MoveDeps()
         {
             string[] deps = Directory.GetFiles(dlls, "*.dll", SearchOption.TopDirectoryOnly);
@@ -64,6 +66,7 @@ namespace Build
             }
             Log("Moved " + (deps.Length + 1) + " dependencies");
         }
+        
         private static void BuildDLL()
         {
             Log("Building Core.dll");
@@ -78,6 +81,7 @@ namespace Build
                 "-p:Configuration=Release;Documentationfile=bin\\Release\\ModLoader.xml -nologo \"Mod Loader.csproj\"",
                 @"\ModLoader");
         }
+        
         private static void BuildWPFApp()
         {
             Log("Building VTOLVR-ModLoader.exe\n");
@@ -188,6 +192,7 @@ namespace Build
             Log("Creating zip");
             ZipFile.CreateFromDirectory(dir + @"\autoupdate\", dir + @"\autoupdate.zip");
         }
+        
         private static void MoveToDesktop()
         {
             Log("Moving Files to desktop");
@@ -234,6 +239,7 @@ namespace Build
                 return false;
             }
         }
+        
         private static void TryDelete(string file)
         {
             try

@@ -26,6 +26,7 @@ namespace LauncherCore
         public Console console { get; private set; }
         public ProjectManager pManager { get; private set; }
         public Manager ItemManager { get; private set; }
+        public Downloads Downloads { get; private set; }
 
         public MainWindow()
         {
@@ -47,6 +48,7 @@ namespace LauncherCore
             devTools = new DevTools();
             pManager = new ProjectManager();
             ItemManager = new Manager();
+            Downloads = new Downloads();
             DataContext = ItemManager;
         }
 
@@ -99,6 +101,14 @@ namespace LauncherCore
             Helper.SentryLog("Opened Patreon", Helper.SentryLogCategory.MainWindow);
             Process.Start("https://www.patreon.com/vtolvrmods");
             Console.Log("Patreon Opened!");
+        }
+        
+        private void OpenDownloads(object sender, RoutedEventArgs e)
+        {
+            Helper.SentryLog("Opened Downloads", Helper.SentryLogCategory.MainWindow);
+            if (Downloads == null)
+                Downloads = new Downloads();
+            DataContext = Downloads;
         }
 
         private void OpenFolder(object sender, RoutedEventArgs e)
@@ -170,11 +180,6 @@ namespace LauncherCore
 
         public static void SetBusy(bool isBusy)
         {
-            _instance.homeButton.IsEnabled = !isBusy;
-            _instance.consoleButton.IsEnabled = !isBusy;
-            _instance.uploadModButton.IsEnabled = !isBusy;
-            _instance.devTButton.IsEnabled = !isBusy;
-            _instance.settingsButton.IsEnabled = !isBusy;
             _instance.launchButton.IsEnabled = !isBusy;
             _instance.launchButton.Content = isBusy ? "Busy" : "Play";
         }

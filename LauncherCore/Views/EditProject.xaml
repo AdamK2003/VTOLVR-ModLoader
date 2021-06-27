@@ -83,9 +83,9 @@
                     Select an image
                 </TextBlock>
 
-                <Button Grid.Column="0" Grid.Row="2" Click="PreviewImageButton" Style="{StaticResource darkButton}"
+                <Button Grid.Column="0" Grid.Row="2" Click="PreviewImageButton" Style="{StaticResource RoundedDarkButton}"
                         Content="Select" />
-                <Button Grid.Column="1" Grid.Row="2" Click="WebPageImageButton" Style="{StaticResource darkButton}"
+                <Button Grid.Column="1" Grid.Row="2" Click="WebPageImageButton" Style="{StaticResource RoundedDarkButton}"
                         Content="Select" />
             </Grid>
 
@@ -102,7 +102,7 @@
                           Content="Is Unlisted" Foreground="White" Checked="UnlistedChanged" x:Name="unlisted"
                           ToolTip="Set if your mod should be hidden from the mods list. This should be used if you want to do private testing, your mod must still be marked public to be accessible. Anyone with a link would be able to access your mod." />
             </Grid>
-            <Button Grid.Row="99" x:Name="saveButton" Click="Save" Style="{StaticResource darkButton}"
+            <Button Grid.Row="99" x:Name="saveButton" Click="Save" Style="{StaticResource RoundedDarkButton}"
                     Content="Save" />
 
         </Grid>

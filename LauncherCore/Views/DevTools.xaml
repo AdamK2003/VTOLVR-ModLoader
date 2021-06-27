@@ -30,7 +30,7 @@
                 Warning, this page is for mod creators. If you don't know what you're doing here, please head back.
             </TextBlock>
             <Button Grid.Row="2" Content="Take me back!" Click="TakeBack"
-                    Style="{StaticResource darkButton}" FontSize="30"
+                    Style="{StaticResource RoundedDarkButton}" FontSize="30"
                     Margin="20" />
 
             <Grid Grid.Row="3">

@@ -59,7 +59,7 @@
                 • Don't create or upload mods that unlock unreleased or paid VTOL VR content.
             </TextBlock>
 
-            <Button Grid.Row="99" x:Name="uploadButton" Click="Upload" Style="{StaticResource darkButton}"
+            <Button Grid.Row="99" x:Name="uploadButton" Click="Upload" Style="{StaticResource RoundedDarkButton}"
                     Content="Update" IsEnabled="False" />
         </Grid>
     </ScrollViewer>

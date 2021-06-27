@@ -25,6 +25,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using LauncherCore.Views;
 using LauncherCore.Windows;
 using Console = LauncherCore.Views.Console;
 
@@ -126,10 +127,10 @@ namespace LauncherCore.Classes
                             MainWindow.SetProgress(0, $"Downloading {split[4]}");
                             SetDownloadFile($"mods/{split[4]}");
                             Console.Log($"Downloading {currentDownloadFile}");
-                            HttpHelper.DownloadFile(
+                            Downloads.DownloadFile(
                                 $"{Program.URL}/download/{split[2]}/{split[3]}/",
                                 Path.Combine(Program.Root, "mods", split[4]),
-                                DownloadProgress,
+                                null,
                                 DownloadDone);
                         });
                         break;
@@ -139,10 +140,10 @@ namespace LauncherCore.Classes
                             MainWindow.SetProgress(0, $"Downloading {split[4]}");
                             SetDownloadFile($"skins/{split[4]}");
                             Console.Log($"Downloading {currentDownloadFile}");
-                            HttpHelper.DownloadFile(
+                            Downloads.DownloadFile(
                                 $"{Program.URL}/download/{split[2]}/{split[3]}/",
                                 Path.Combine(Program.Root, "skins", split[4]),
-                                DownloadProgress,
+                                null,
                                 DownloadDone);
                         });
                         break;
@@ -155,15 +156,9 @@ namespace LauncherCore.Classes
             currentDownloadFile = file;
         }
 
-        private static void DownloadProgress(object sender, DownloadProgressChangedEventArgs e)
+        private static void DownloadDone(CustomWebClient.RequestData data)
         {
-            MainWindow._instance.progressBar.Value = e.ProgressPercentage;
-            Console.Log($"Download Process = {e.ProgressPercentage}%");
-        }
-
-        private static void DownloadDone(object sender, AsyncCompletedEventArgs e)
-        {
-            if (!e.Cancelled && e.Error == null)
+            if (!data.Cancelled && data.Error == null)
             {
                 MainWindow.SetProgress(100, $"Ready");
                 Console.Log($"Downloaded {currentDownloadFile}");
@@ -173,11 +168,11 @@ namespace LauncherCore.Classes
             }
             else
             {
-                Helper.SentryLog($"Error when downloading {currentDownloadFile}\n{e.Error.Message}",
+                Helper.SentryLog($"Error when downloading {currentDownloadFile}\n{data.Error.Message}",
                     Helper.SentryLogCategory.CommunicationsManager);
                 MainWindow.SetProgress(100, $"Ready");
-                Notification.Show($"{e.Error.Message}", "Error when downloading file");
-                Console.Log("Error:\n" + e.Error.ToString());
+                Notification.Show($"{data.Error.Message}", "Error when downloading file");
+                Console.Log("Error:\n" + data.Error.ToString());
                 if (File.Exists(Path.Combine(Program.Root, currentDownloadFile)))
                     File.Delete(Path.Combine(Program.Root, currentDownloadFile));
             }

@@ -22,7 +22,7 @@
                     <ColumnDefinition Width="25"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="1" Style="{StaticResource darkButton}" Content="New Project"
+                <Button Grid.Column="1" Style="{StaticResource RoundedDarkButton}" Content="New Project"
                         Margin="5,5,5,5" FontFamily="{StaticResource SquaresBoldFree}"
                         x:Name="newProjectButton" Click="NewProject"/>
 

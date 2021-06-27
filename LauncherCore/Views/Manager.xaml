@@ -114,7 +114,7 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <Button Foreground="White" Click="UpdateItem"
-                                                Style="{StaticResource darkButton}"
+                                                Style="{StaticResource RoundedDarkButton}"
                                                 Visibility="{Binding UpdateVisibility}"
                                                 Tag="{Binding PublicID}" Margin="5,1">
                                             <Button.Content>
@@ -125,7 +125,7 @@
                                             </Button.Content>
                                         </Button>
                                         <Button Content="Delete" Foreground="White" Click="DeleteMod"
-                                                Style="{StaticResource darkButton}"
+                                                Style="{StaticResource RoundedDarkButton}"
                                                 Tag="{Binding FolderDirectory}" Padding="10,1,1,1" />
                                     </StackPanel>
 

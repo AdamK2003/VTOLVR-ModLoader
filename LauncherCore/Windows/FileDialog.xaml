@@ -26,7 +26,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Button Content="←" Click="Back" Style="{StaticResource darkButton}" x:Name="backButton" />
+            <Button Content="←" Click="Back" Style="{StaticResource RoundedDarkButton}" x:Name="backButton" />
             <TextBox x:Name="urlBox" Grid.Column="1" />
         </Grid>
         <Grid Grid.Row="2">
@@ -72,7 +72,7 @@
 
             <TextBlock Grid.Column="0" Foreground="LightGray" FontSize="15" TextAlignment="Right"
                        VerticalAlignment="Center" x:Name="typeText" Text="(.png, .jpeg)" Margin="0,0,10,0" />
-            <Button Grid.Column="1" Content="Cancel" Style="{StaticResource darkButton}" Margin="1"
+            <Button Grid.Column="1" Content="Cancel" Style="{StaticResource RoundedDarkButton}" Margin="1"
                     Click="Cancel" />
         </Grid>
     </Grid>

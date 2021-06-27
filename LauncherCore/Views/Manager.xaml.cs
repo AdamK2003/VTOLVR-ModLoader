@@ -275,10 +275,10 @@ namespace LauncherCore.Views
                             Console.Log($"Auto Updating {_items[i].Name}");
                             MainWindow.SetPlayButton(true);
                             string fileName = GetFileName(json["user_uploaded_file"].ToString());
-                            HttpHelper.DownloadFile(
+                            Downloads.DownloadFile(
                                 json["user_uploaded_file"].ToString(),
                                 $"{Program.Root}{Program.ModsFolder}\\{fileName}",
-                                DownloadProgress, DownloadComplete, new object[] {_items[i].PublicID, _items[i].Name});
+                                null, DownloadComplete, new object[] {_items[i].PublicID, _items[i].Name});
                         }
                     }
 
@@ -310,10 +310,10 @@ namespace LauncherCore.Views
                             Console.Log($"Auto Updating {_items[i].Name}");
                             MainWindow.SetPlayButton(true);
                             string fileName = GetFileName(json["user_uploaded_file"].ToString());
-                            HttpHelper.DownloadFile(
+                            Downloads.DownloadFile(
                                 json["user_uploaded_file"].ToString(),
                                 $"{Program.Root}{Program.ModsFolder}\\{fileName}",
-                                DownloadProgress, DownloadComplete, new object[] {_items[i].PublicID, _items[i].Name});
+                                null, DownloadComplete, new object[] {_items[i].PublicID, _items[i].Name});
                         }
                     }
 
@@ -375,10 +375,10 @@ namespace LauncherCore.Views
             {
                 string fileName = GetFileName(json["user_uploaded_file"].ToString());
                 Console.Log("Downloading " + fileName);
-                HttpHelper.DownloadFile(
+                Downloads.DownloadFile(
                     json["user_uploaded_file"].ToString(),
                     $"{Program.Root}{Program.ModsFolder}\\{fileName}",
-                    DownloadProgress, DownloadComplete,
+                    null, DownloadComplete,
                     new object[] {json["pub_id"].ToString(), json["name"].ToString()});
                 return;
             }
@@ -416,10 +416,10 @@ namespace LauncherCore.Views
             {
                 string fileName = GetFileName(json["user_uploaded_file"].ToString());
                 Console.Log("Downloading " + fileName);
-                HttpHelper.DownloadFile(
+                Downloads.DownloadFile(
                     json["user_uploaded_file"].ToString(),
                     $"{Program.Root}{Program.SkinsFolder}\\{fileName}",
-                    DownloadProgress, DownloadComplete,
+                    null, DownloadComplete,
                     new object[] {json["pub_id"].ToString(), json["name"].ToString()});
                 return;
             }
@@ -431,21 +431,7 @@ namespace LauncherCore.Views
                 "There seems to be no file for this skin on the website. Please contact vtolvr-mods.com staff saying which mod it is.",
                 "Strange Error");
         }
-
-        private void DownloadProgress(CustomWebClient.RequestData requestData)
-        {
-            string name = requestData.ExtraData[1] as string;
-            Console.Log($"[{requestData.Progress}%] Downloading {name}");
-            //The download progress still does get called at 100%, so just added this check
-            //so that ModDownloadComplete gets the last call.
-            if (requestData.Progress != 100)
-            {
-                //If the user downloads multiple updates at once, this progress bar is going
-                //too look glitchy, jumping back and fourth.
-                MainWindow.SetProgress(requestData.Progress, $"Downloading {name}");
-                MainWindow.SetBusy(true);
-            }
-        }
+        
 
         //The zip from the website has finished downloading and is now in their mods folder
         private void DownloadComplete(CustomWebClient.RequestData requestData)

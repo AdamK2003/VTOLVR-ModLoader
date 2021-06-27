@@ -44,6 +44,7 @@
                     <RowDefinition Height="45" />
                     <RowDefinition Height="45" />
                     <RowDefinition Height="45" />
+                    <RowDefinition Height="45" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -66,18 +67,22 @@
                         Click="OpenFolder" Style="{StaticResource RoundedDarkButton}" x:Name="openFButton"
                         Margin="11,8" />
                 <Button Grid.Row="5" FontFamily="{StaticResource SquaresBoldFree}"
+                        Content="Downloads" Foreground="White" BorderBrush="{x:Null}"
+                        Click="OpenDownloads" Style="{StaticResource RoundedDarkButton}" x:Name="downloadsButton"
+                        Margin="11,8" />
+                <Button Grid.Row="6" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Console" Foreground="White" BorderBrush="{x:Null}"
                         Click="OpenConsole" Style="{StaticResource RoundedDarkButton}" x:Name="consoleButton"
                         Margin="11,8" />
-                <Button Grid.Row="6" FontFamily="{StaticResource SquaresBoldFree}"
+                <Button Grid.Row="7" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Mod Creator" Foreground="White" BorderBrush="{x:Null}"
                         Click="Creator" x:Name="uploadModButton" Style="{StaticResource RoundedDarkButton}"
                         Margin="11,8" />
-                <Button Grid.Row="7" FontFamily="{StaticResource SquaresBoldFree}"
+                <Button Grid.Row="8" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Dev Tools" Foreground="White" BorderBrush="{x:Null}"
                         Click="OpenTools" Style="{StaticResource RoundedDarkButton}" x:Name="devTButton"
                         Margin="11,8" />
-                <Button Grid.Row="8" FontFamily="{StaticResource SquaresBoldFree}"
+                <Button Grid.Row="9" FontFamily="{StaticResource SquaresBoldFree}"
                         Content="Settings" Foreground="White" BorderBrush="{x:Null}"
                         Click="OpenSettings" Style="{StaticResource RoundedDarkButton}" x:Name="settingsButton"
                         Margin="11,8" />

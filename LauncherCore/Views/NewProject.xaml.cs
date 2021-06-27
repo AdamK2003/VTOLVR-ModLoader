@@ -130,27 +130,27 @@ namespace LauncherCore.Views
         {
             Helper.SentryLog("Downloading Mod Boilerplate", Helper.SentryLogCategory.NewProject);
             progressBar.Visibility = Visibility.Visible;
-            HttpHelper.DownloadFile(modBoilerplateURL,
+            Downloads.DownloadFile(modBoilerplateURL,
                 currentFolder.FullName + @"\boilerplate.zip",
                 DownloadProgress,
                 DownloadDone);
         }
 
-        private void DownloadProgress(object sender, DownloadProgressChangedEventArgs e)
+        private void DownloadProgress(CustomWebClient.RequestData data)
         {
-            progressBar.Value = e.ProgressPercentage;
+            progressBar.Value = data.Progress;
         }
 
-        private void DownloadDone(object sender, AsyncCompletedEventArgs e)
+        private void DownloadDone(CustomWebClient.RequestData data)
         {
             Helper.SentryLog("Finished downloading boilerplate", Helper.SentryLogCategory.NewProject);
-            if (!e.Cancelled && e.Error == null)
+            if (!data.Cancelled && data.Error == null)
             {
                 ExtractModBoilerplate();
             }
             else
             {
-                Console.Log("Error:\n" + e.Error.ToString());
+                Console.Log("Error:\n" + data.Error.ToString());
                 Console.Log("Using fallback offline version of the mod boiler plate");
                 ExtractModBoilerplate(true); //Using fallback
             }

@@ -13,6 +13,11 @@ namespace LauncherCore.Classes
             public object[] ExtraData;
             public AsyncCompletedEventArgs EventHandler;
             public int Progress = 0;
+            public long BytesReceived;
+            public long TotalBytesToReceived;
+            public bool Cancelled => EventHandler.Cancelled;
+
+            public Exception? Error => EventHandler.Error;
         }
 
         public RequestData Request { get; private set; }
@@ -34,6 +39,8 @@ namespace LauncherCore.Classes
         private new void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             Request.Progress = e.ProgressPercentage;
+            Request.BytesReceived = e.BytesReceived;
+            Request.TotalBytesToReceived = e.TotalBytesToReceive;
             DownloadProgress?.Invoke(Request);
         }
 

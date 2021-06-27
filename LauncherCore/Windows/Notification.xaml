@@ -21,7 +21,7 @@
         <TextBlock Grid.Row="1" Text="" FontSize="20" x:Name="textBlock" TextWrapping="Wrap"
                    VerticalAlignment="Center" Foreground="White" Margin="10" />
 
-        <Button Grid.Row="2" Content="Okay" Style="{StaticResource darkButton}" Margin="1"
+        <Button Grid.Row="2" Content="Okay" Style="{StaticResource RoundedDarkButton}" Margin="1"
                 Click="ButtonClicked" x:Name="OkayButton" Visibility="Hidden" />
 
         <Grid x:Name="YesNoButtons" Visibility="Hidden" Grid.Row="2">
@@ -30,9 +30,9 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Content="Yes" Style="{StaticResource darkButton}" Margin="1"
+            <Button Grid.Column="0" Content="Yes" Style="{StaticResource RoundedDarkButton}" Margin="1"
                     Click="YesClicked" />
-            <Button Grid.Column="1" Content="No" Style="{StaticResource darkButton}" Margin="1"
+            <Button Grid.Column="1" Content="No" Style="{StaticResource RoundedDarkButton}" Margin="1"
                     Click="NoClicked" />
         </Grid>
 

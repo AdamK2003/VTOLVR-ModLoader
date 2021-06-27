@@ -70,21 +70,16 @@ namespace LauncherCore.Classes
         {
             _currentFile = _filesToUpdate.Dequeue();
             Console.Log($"Updating {_currentFile.Name}");
-            HttpHelper.DownloadFile(
+            Downloads.DownloadFile(
                 _currentFile.Url,
                 $"{Program.VTOLFolder}/{_currentFile.Location}.temp",
-                DownloadProgress,
+                null,
                 DownloadDone);
         }
 
-        private static void DownloadProgress(object sender, DownloadProgressChangedEventArgs e)
+        private static void DownloadDone(CustomWebClient.RequestData data)
         {
-            MainWindow.SetProgress(e.ProgressPercentage, $"Downloading {_currentFile.Name}");
-        }
-
-        private static void DownloadDone(object sender, AsyncCompletedEventArgs e)
-        {
-            if (!e.Cancelled && e.Error == null)
+            if (!data.Cancelled && data.Error == null)
             {
                 try
                 {
@@ -128,8 +123,8 @@ namespace LauncherCore.Classes
             }
             else
             {
-                Console.Log($"Failed to download {_currentFile.Name}\n{e.Error}");
-                Notification.Show($"Failed to download {_currentFile.Name}\n{e.Error.Message}",
+                Console.Log($"Failed to download {_currentFile.Name}\n{data.Error}");
+                Notification.Show($"Failed to download {_currentFile.Name}\n{data.Error.Message}",
                     "Error downloading update");
             }
 

@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using LauncherCore.Classes;
 using Console = LauncherCore.Views.Console;
 using CoreCore.Jsons;
+using LauncherCore.Views;
 
 namespace LauncherCore
 {
@@ -43,7 +44,19 @@ namespace LauncherCore
         public static bool IsBusy;
         public static List<Release> Releases { get; private set; }
         public static List<BaseItem> Items;
-        public static string ExePath = Process.GetCurrentProcess().MainModule.FileName;
+
+        private static bool _folderInvalid = false;
+        public static string ExePath
+        {
+            get
+            {
+                if (_exePath.Equals(String.Empty))
+                    _exePath = Process.GetCurrentProcess().MainModule.FileName;
+                return _exePath;
+            }
+        }
+        
+        private static string _exePath = string.Empty;
 
         private static bool _uiLoaded = false;
         private static int _itemsToExtract = 0;
@@ -54,6 +67,15 @@ namespace LauncherCore
         {
             await WaitForUI();
             Helper.SentryLog("Setup after UI", Helper.SentryLogCategory.Program);
+
+            GetReleases();
+            if (!FolderIsValid())
+            {
+                _folderInvalid = true;
+                MainWindow._instance.RunSetup();
+                return;
+            }
+            
             MainWindow._instance.CreatePages();
             CommunicationsManager.CheckNoInternet();
             CommunicationsManager.CheckCustomURL();
@@ -64,7 +86,8 @@ namespace LauncherCore
 
             DisableInternet = !await HttpHelper.CheckForInternet();
 
-            GetReleases();
+            
+            
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
@@ -75,11 +98,20 @@ namespace LauncherCore
             MainWindow._instance.ItemManager.UpdateUI(true);
         }
 
-        public static void SetVariables()
+        private static bool FolderIsValid()
         {
-            Helper.SentryLog("Setting Variables", Helper.SentryLogCategory.Program);
-            Root = Directory.GetCurrentDirectory();
-            VTOLFolder = Root.Replace("VTOLVR_ModLoader", "");
+            if (Startup.Data == null)
+                return false;
+
+            if (Directory.Exists(VTOLFolder))
+            {
+                if (!Directory.Exists(Root))
+                    Directory.CreateDirectory(Root);
+                
+                return true;
+            }
+
+            return false;
         }
 
         private async static Task WaitForUI()
@@ -294,7 +326,8 @@ namespace LauncherCore
                 Releases = JsonConvert.DeserializeObject<List<Release>>(await response.Content.ReadAsStringAsync());
                 MainWindow._instance.news.LoadNews();
                 Console.Log($"Checking for updates###");
-                Queue(Updater.CheckForUpdates);
+                if (!_folderInvalid)
+                    Queue(delegate { Updater.CheckForUpdates(); });
             }
             else
             {

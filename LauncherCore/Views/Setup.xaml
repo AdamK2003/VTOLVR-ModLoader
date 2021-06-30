@@ -1,0 +1,106 @@
+﻿<UserControl x:Class="LauncherCore.Views.Setup"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LauncherCore.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.01*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="0.01*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Style="{DynamicResource HeaderOne}" Grid.Row="0" Grid.Column="1" 
+                   Grid.ColumnSpan="2">
+            First Time Setup
+        </TextBlock>
+        
+        <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+                   Style="{DynamicResource TextNormal}"
+                   TextAlignment="Center">
+            Welcome! <LineBreak/>
+            It seems to be the first time you have used the VTOL Mod Loader 5.0.0 . We need to set up a few things first before we take off.
+        </TextBlock>
+        
+        
+        <TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                   Style="{DynamicResource  HeaderTwo}"
+                   TextAlignment="Left" Margin="0,40,0,0">
+            VTOL VR Path
+        </TextBlock>
+        
+        <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                   Style="{DynamicResource  TextNormal}"
+                   TextAlignment="Left">
+            The mod loader gets installed inside of VTOL VR's game folder so that we can have easy access to modify it to play with mods.
+        </TextBlock>
+        
+        <TextBox Grid.Row="4" Grid.Column="1" Margin="0,0,10,0" x:Name="_pathBox">
+            
+        </TextBox>
+        
+        <Button Grid.Row="4" Grid.Column="2" Style="{DynamicResource RoundedLightButton}"
+                Click="BrowseButtonPressed">
+            Browse
+        </Button>
+        
+        <TextBlock Grid.Row="5" Grid.Column="1" Margin="0,10,0,0"
+                   Style="{DynamicResource TextSmall}">
+            Auto Detect will try and find your VTOL VR's install path by using the common steam files in the registry.
+        </TextBlock>
+        
+        <Button Grid.Row="5" Grid.Column="2" Margin="0,10,0,0"
+                Style="{DynamicResource RoundedLightButton}"
+                Click="AutoDectectButtonPressed">
+            Auto Detect
+        </Button>
+        
+        <TextBlock Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2"
+                   Style="{DynamicResource HeaderTwo}"
+                   Foreground="#ff3838" Margin="0,20,0,0"
+                   x:Name="_ociTitle" Visibility="Hidden">
+            ONE CLICK INSTALL WILL NOT WORK!
+        </TextBlock>
+        
+        <TextBlock Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2"
+                   Style="{DynamicResource TextNormal}"
+                   Foreground="#ff3838" x:Name="_ociText" Visibility="Hidden">
+            One click install requires admin privileges to install. If you would like to use one 
+            click install, please restart the mod loader as admin for the first time setup.
+        </TextBlock>
+        
+        <TextBlock Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2"
+                   Style="{DynamicResource TextSmall}"
+                   Foreground="#ff3838" x:Name="_ociTextSmall" Visibility="Hidden">
+            You can install mods/skins manually by pressing the Download button above the one click 
+            install button on the website and moving the zips into the correct folder without 
+            extracting them.
+        </TextBlock>
+        
+        <Button Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2"
+                Style="{DynamicResource RoundedLightButton}"
+                Click="InstallButtonPressed">
+            Install
+        </Button>
+        
+        
+    </Grid>
+</UserControl>

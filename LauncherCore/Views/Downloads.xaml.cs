@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows.Controls;
 using ByteSizeLib;
 using LauncherCore.Classes;
@@ -46,27 +47,33 @@ namespace LauncherCore.Views
         private void _UpdateProgressBar()
         {
             int totalProgress = 0;
+            int totalInProgress = 0;
             for (int i = 0; i < _downloads.Count; i++)
             {
+                if (!_downloads[i].HasFinished)
+                    totalInProgress++;
                 totalProgress += _downloads[i].Progress;
             }
+            
 
-            string text = $"{_downloads.Count} {(_downloads.Count == 1 ? "download" : "downloads")} left";
+            totalProgress = (int)Math.Floor((totalProgress / (float)(_downloads.Count * 100)) * 100);
+            string text = $"{totalInProgress} {(totalInProgress == 1 ? "download" : "downloads")} left";
             MainWindow.SetProgress(totalProgress, text);
         }
 
         private static void RemoveItem(Item item)
         {
-            _instance._downloads.Remove(item);
-            if (_instance._downloads.Count == 0)
+            for (int i = 0; i < _instance._downloads.Count; i++)
             {
-                MainWindow.SetPlayButton(true);
-                MainWindow.SetProgress(100, "Downloads Complete");
+                if (!_instance._downloads[i].HasFinished)
+                {
+                    return;
+                }
             }
-            else
-            {
-                UpdateProgressBar();
-            }
+
+            _instance._downloads.Clear();
+            MainWindow.SetPlayButton(true);
+            MainWindow.SetProgress(100, "Downloads Complete");
         }
 
         private class Item : INotifyPropertyChanged
@@ -78,6 +85,7 @@ namespace LauncherCore.Views
             public string StartText { get; set; }
             public int Progress { get; set; }
             public string PercentText { get; set; }
+            public bool HasFinished = false;
             
             private string _path;
             private string _url;
@@ -110,6 +118,7 @@ namespace LauncherCore.Views
             {
                 Console.Log($"Finished Downloading {_path}");
                 _downloadComplete?.Invoke(data);
+                HasFinished = true;
                 RemoveItem(this);
             }
 
@@ -124,12 +133,11 @@ namespace LauncherCore.Views
                 UpdateProperty("Progress");
                 _downloadProgress?.Invoke(data);
 
-                if (data.Progress == 50 && !_saidHalfWay)
+                if (data.Progress >= 50 && !_saidHalfWay)
                 {
                     Console.Log($"50% downloaded for {_path}");
                     _saidHalfWay = true;
                 }
-                    
                 UpdateProgressBar();
             }
 

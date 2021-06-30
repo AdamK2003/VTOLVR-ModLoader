@@ -158,7 +158,7 @@ namespace LauncherCore.Classes
         public enum SentryLogCategory
         {
             Console, DevToos, EditProject, Manager, NewProject, News, NewVersion, ProjectManager, Settings, MainWindow,
-            Program, Startup, CommunicationsManager, Helper
+            Program, Startup, CommunicationsManager, Helper, Setup
         }
 
         public static void SentryLog(string message, SentryLogCategory category)

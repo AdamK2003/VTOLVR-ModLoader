@@ -78,7 +78,7 @@ namespace LauncherCore.Views
             {
                 try
                 {
-                    File.AppendAllText(System.IO.Path.Combine(Directory.GetCurrentDirectory(), Program.LogName),
+                    File.AppendAllText(Path.Combine(Program.Root, Program.LogName),
                         $"{message}\n");
                 }
                 catch {}

@@ -16,11 +16,15 @@ using Gameloop.Vdf.Linq;
 using LauncherCore.Windows;
 using System.Reflection;
 using LauncherCore.Classes;
+using LauncherCore.Classes.Json;
+using Newtonsoft.Json;
 
 namespace LauncherCore
 {
     static class Startup
     {
+        public const string AppdataFolder = "VTOL VR Mod Loader";
+        public const string DataFile = "Program Data.json";
         [DllImport("user32.dll")]
         public static extern int SetForegroundWindow(IntPtr hwnd);
 
@@ -54,6 +58,9 @@ namespace LauncherCore
             "VTOLVR-ModLoader.old.exe",
             "Updater Log.txt"
         };
+        private static string _usersPath = string.Empty;
+        public static ProgramData Data;
+        
         public static bool RunStartUp()
         {
             Helper.SentryLog("Running Start up", Helper.SentryLogCategory.Startup);
@@ -68,15 +75,39 @@ namespace LauncherCore
             Program.ProgramName =
                 $"{Program.ProgramNameBase} {version.Major}.{version.Minor}.{version.Build}{devText} {(debug ? "[Development Mode]" : string.Empty)}";
             Views.Console.Log(Program.ProgramName);
+            GetProgramData();
+            SetPaths();
             HttpHelper.SetHeader();
-            Program.SetVariables();
-            if (!CheckBaseFolder())
-                return false;
-            if (!CheckFolder())
-                return false;
-            ClearOldFiles();
+            // ClearOldFiles(); Move To After startup
             AttachCoreLogger();
             return true;
+        }
+
+        private static void GetProgramData()
+        {
+            _usersPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                AppdataFolder);
+            
+            if (Directory.Exists(_usersPath))
+            {
+                _usersPath = Path.Combine(_usersPath, DataFile);
+                if (File.Exists(_usersPath))
+                {
+                    string text = File.ReadAllText(_usersPath);
+                    Data = JsonConvert.DeserializeObject<ProgramData>(text);
+                    
+                }
+            }
+        }
+
+        public static void SetPaths()
+        {
+            if (Data == null)
+                return;
+            
+            Program.VTOLFolder = Data.VTOLPath;
+            Program.Root = Path.Combine(Data.VTOLPath, "VTOLVR_ModLoader");
         }
 
         /// <summary>
@@ -234,7 +265,6 @@ namespace LauncherCore
         {
             Helper.SentryLog("Setting working directory", Helper.SentryLogCategory.Startup);
             Environment.CurrentDirectory = folder + @"\steamapps\common\VTOL VR\VTOLVR_ModLoader";
-            Program.SetVariables();
         }
 
         private static void ClearOldFiles()

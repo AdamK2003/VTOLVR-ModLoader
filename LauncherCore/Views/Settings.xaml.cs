@@ -25,7 +25,7 @@ namespace LauncherCore.Views
 
         public const string SavePath = @"\settings.json";
         private const string userURL = "/get-token";
-        private const string uriPath = @"HKEY_CLASSES_ROOT\VTOLVRML";
+        public const string OCIPath = @"HKEY_CLASSES_ROOT\VTOLVRML";
 
         public static bool tokenValid = false;
         private bool hideResult;
@@ -285,29 +285,29 @@ namespace LauncherCore.Views
             Helper.SentryLog("Creating URL", Helper.SentryLogCategory.Settings);
             Console.Log("Creating Registry entry for one click installing");
             string value = (string)Registry.GetValue(
-                uriPath,
+                OCIPath,
                 @"",
                 @"");
             Console.Log($"Setting Default to URL:VTOLVRML");
             Registry.SetValue(
-                uriPath,
+                OCIPath,
                 @"",
                 @"URL:VTOLVRML");
-            Console.Log($"Setting {uriPath} key to \"URL Protocol\"");
+            Console.Log($"Setting {OCIPath} key to \"URL Protocol\"");
             Registry.SetValue(
-                uriPath,
+                OCIPath,
                 @"URL Protocol",
                 @"");
-            Console.Log($"Setting \"{uriPath}\\DefaultIcon\"" +
+            Console.Log($"Setting \"{OCIPath}\\DefaultIcon\"" +
                         $"to \"{root}\\VTOLVR-ModLoader.exe,1");
             Registry.SetValue(
-                uriPath + @"\DefaultIcon",
+                OCIPath + @"\DefaultIcon",
                 @"",
                 root + @"\VTOLVR-ModLoader.exe,1");
-            Console.Log($"Setting \"{uriPath}\\shell\\open\\command\"" +
+            Console.Log($"Setting \"{OCIPath}\\shell\\open\\command\"" +
                         $"to \"\"{root}\\VTOLVR-ModLoader.exe\" \"%1\"");
             Registry.SetValue(
-                uriPath + @"\shell\open\command",
+                OCIPath + @"\shell\open\command",
                 @"",
                 "\"" + root + @"\VTOLVR-ModLoader.exe" + "\" \"" + @"%1" + "\"");
             Console.Log("Finished!");

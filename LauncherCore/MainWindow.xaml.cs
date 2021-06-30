@@ -27,6 +27,7 @@ namespace LauncherCore
         public ProjectManager pManager { get; private set; }
         public Manager ItemManager { get; private set; }
         public Downloads Downloads { get; private set; }
+        public Setup Setup { get; set; }
 
         public MainWindow()
         {
@@ -43,13 +44,33 @@ namespace LauncherCore
         {
             Helper.SentryLog("Creating Pages", Helper.SentryLogCategory.MainWindow);
             console = new Console();
-            news = new News();
+            if (news == null)
+                news = new News();
             settings = new Views.Settings();
             devTools = new DevTools();
             pManager = new ProjectManager();
             ItemManager = new Manager();
-            Downloads = new Downloads();
+            if (Downloads == null)
+                Downloads = new Downloads();
             DataContext = ItemManager;
+        }
+
+        public void RunSetup()
+        {
+            news = new News();
+            Downloads = new Downloads();
+            Setup = new Setup();
+            DataContext = Setup;
+            modsButton.IsEnabled = false;
+            skinsButton.IsEnabled = false;
+            homeButton.IsEnabled = false;
+            openFButton.IsEnabled = false;
+            uploadModButton.IsEnabled = false;
+            devTButton.IsEnabled = false;
+            settingsButton.IsEnabled = false;
+            launchButton.IsEnabled = false;
+            consoleButton.IsEnabled = false;
+            downloadsButton.IsEnabled = false;
         }
 
         public static void SetProgress(int barValue, string text)

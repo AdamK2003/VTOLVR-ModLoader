@@ -20,7 +20,6 @@ namespace LauncherCore.Views
         private static SolidColorBrush _warningBrush = new SolidColorBrush(Color.FromRgb(255, 255, 0));
         private static SolidColorBrush _errorBrush = new SolidColorBrush(Color.FromRgb(255, 0, 0));
         private static SolidColorBrush _logBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-        private static DateTime _lastTime;
         public List<Feed> ConsoleFeed = new List<Feed>();
         private List<string> _storedMessages = new List<string>();
 
@@ -54,9 +53,8 @@ namespace LauncherCore.Views
         public static void Log(string message, bool isApplication = true)
         {
             System.Console.WriteLine(message);
-            _lastTime = DateTime.Now;
             if (isApplication)
-                message = $"[{_lastTime.Hour}:{_lastTime.Minute}:{_lastTime.Second}]{message}";
+                message = $"[{DateTime.Now}]{message}";
             if (Instance == null)
             {
                 _consoleQueue.Enqueue(new Feed(message));

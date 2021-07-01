@@ -18,7 +18,8 @@ namespace Build
             { "msbuild", @"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"},
             { "unity", @"C:\Program Files\Unity\Hub\Editor\2019.1.8f1\Editor\Unity.exe"},
             { "nuget", @"B:\Gitlab Runner\nuget.exe" },
-            { "dotnet", @"C:\Program Files\dotnet\dotnet.exe"}
+            { "dotnet", @"C:\Program Files\dotnet\dotnet.exe"},
+            { "sign", @"C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\signtool.exe"}
         };
         static void Main(string[] args)
         {
@@ -78,10 +79,17 @@ namespace Build
             Run(paths["msbuild"],
                 "-p:Configuration=Release -nologo CoreCore.csproj /t:Restore /t:Clean,Build ",
                 @"\CoreCore");
+            Run(paths["sign"],
+                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\net5.0\\CoreCore.dll\"",
+                @"CoreCore");
+            
             Log("Building ModLoader.dll\n");
             Run(paths["msbuild"],
                 "-p:Configuration=Release;Documentationfile=bin\\Release\\ModLoader.xml -nologo \"Mod Loader.csproj\"",
                 @"\ModLoader");
+            Run(paths["sign"],
+                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\ModLoader.dll\"",
+                @"ModLoader");
         }
         
         private static void BuildWPFApp()
@@ -94,6 +102,9 @@ namespace Build
             Run(paths["dotnet"],
                 "publish -r win-x64 --self-contained=false /p:PublishSingleFile=true -c Release",
                 @"\LauncherCore");
+            Run(paths["sign"],
+                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\net5.0-windows\\win-x64\\publish\\LauncherCore.exe\"",
+                @"LauncherCore");
         }
 
         private static void BuildAssetBundle()

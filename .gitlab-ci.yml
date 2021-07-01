@@ -11,6 +11,7 @@ stages:
 build_builder:
   stage: build_builder
   script:
+   - whoami 
    - echo 'Building Builder.exe'
    - cd Builder
    - dotnet build --configuration Release

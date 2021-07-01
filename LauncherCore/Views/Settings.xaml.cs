@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using UserControl = System.Windows.Controls.UserControl;
@@ -21,6 +23,25 @@ namespace LauncherCore.Views
     /// </summary>
     public partial class Settings : UserControl
     {
+        private static readonly string[] _modLoaderFiles = new string[]
+        {
+            "winhttp.dll",
+            "doorstop_config.ini",
+            "discord-rpc.dll",
+            "0Harmony.dll",
+            "Core.dll",
+            "SimpleTCP.dll",
+            "Newtonsoft.Json.dll"
+        };
+
+        private struct UninstallResult
+        {
+            public bool IsSusscessful;
+            public string Error;
+        }
+
+        private string _exeTempPath = string.Empty;
+
         public static Settings Instance;
 
         public const string SavePath = @"\settings.json";
@@ -60,6 +81,8 @@ namespace LauncherCore.Views
             {
                 oneclickInstallButton.Content = "(Admin Needed)";
                 oneclickInstallButton.IsEnabled = false;
+                _uninstallButton.Content = "(Admin Needed)";
+                _uninstallButton.IsEnabled = false;
             }
 
             _processTries.TextChanged += ProcessTextChanged;
@@ -474,6 +497,98 @@ namespace LauncherCore.Views
         {
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void UninstallButton(object sender, RoutedEventArgs e)
+        {
+            Notification.Show($"Are you sure you want to uninstall the mod loader?",
+                $"Are you sure? :(",
+                Notification.Buttons.NoYes, yesNoResultCallback: UninstallNotificationResult);
+        }
+
+        private void UninstallNotificationResult(bool result)
+        {
+            if (!result)
+                return;
+
+            Uninstall();
+
+        }
+
+        private void Uninstall()
+        {
+            Helper.SentryLog("Uninstalling", Helper.SentryLogCategory.Settings);
+            Console.Log($"Uninstalling");
+            
+            
+            Console.Log("Deleting Registry Entries");
+            RegistryKey key = Registry.ClassesRoot.OpenSubKey("VTOLVRML");
+            if (key != null)
+            {
+                Registry.ClassesRoot.DeleteSubKeyTree("VTOLVRML");
+                Console.Log("Deleted Keys in Registry");
+            }
+            else
+            {
+                Console.Log($"There was no key in the registry.");
+            }
+            
+            Console.Log("Deleting Files");
+            DirectoryInfo vtolFolder = new(Program.VTOLFolder);
+            SearchForFiles(vtolFolder);
+            
+            FileInfo exe = new(Program.ExePath);
+            if (exe.Directory?.Name is "VTOLVR_ModLoader")
+            {
+                string newPath = Path.Combine(exe.Directory.Parent.FullName, exe.Name);
+                Console.Log("Moving outside of modloader folder.\n" + newPath);
+                Helper.TryMove(exe.FullName, newPath);
+                _exeTempPath = newPath;
+            }
+            else
+            {
+                _exeTempPath = exe.FullName;
+            }
+            
+            Console.Log("Deleting Mod Loader Folder\n" + Program.Root);
+            Directory.Delete(Program.Root, true);
+            
+            UninstallComplete();
+        }
+
+        private void SearchForFiles(DirectoryInfo folder)
+        {
+            FileInfo[] files = folder.GetFiles();
+            for (int i = 0; i < files.Length; i++)
+            {
+                if (_modLoaderFiles.Contains(files[i].Name))
+                {
+                    Console.Log($"Deleting {files[i].Name}");
+                    Helper.TryDelete(files[i].FullName);
+                }
+            } 
+            
+            DirectoryInfo[] folders = folder.GetDirectories();
+
+            for (int i = 0; i < folders.Length; i++)
+            {
+                SearchForFiles(folders[i]);
+            }
+        }
+        
+        private void UninstallComplete()
+        {
+            Notification.Show($"Uninstall Complete.", "Uninstall Complete", 
+                Notification.Buttons.Ok, ClosedCallback);
+        }
+
+        private void ClosedCallback()
+        {
+            Process.Start("cmd.exe", 
+                $"/C echo Deleting the mod loader exe & " +
+                $"choice /C Y /N /D Y /T 3 & Del \"{_exeTempPath}\"");
+            
+            Process.GetCurrentProcess().Kill();
         }
     }
 }

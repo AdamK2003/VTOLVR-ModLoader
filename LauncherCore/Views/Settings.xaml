@@ -181,6 +181,38 @@
                          PreviewTextInput="ValidInput" />
 
             </Grid>
+            
+            <Grid Grid.Row="9" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                    Grid.Column="0" Style="{StaticResource TextNormal}">
+                    Uninstall
+                </TextBlock>
+                
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           Style="{DynamicResource TextSmall}">
+                    This will delete all the files relating to the mod loader and move the application to 
+                    your temp folder. <LineBreak/>
+                    After uninstalling it is highly recommended you verify your game files
+                    and delete your temp folder.
+                </TextBlock>
+                
+                
+
+                <Button Grid.Column="1"  Grid.Row="0" Grid.RowSpan="2"
+                        Style="{StaticResource RoundedDarkButton}" 
+                        Margin="5,10,5,10"
+                        Content="Uninstall" Click="UninstallButton" 
+                        x:Name="_uninstallButton"/>
+            </Grid>
         </Grid>
     </ScrollViewer>
 </UserControl>

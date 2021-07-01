@@ -87,6 +87,8 @@ namespace Build
             Run(paths["msbuild"],
                 "-p:Configuration=Release;Documentationfile=bin\\Release\\ModLoader.xml -nologo \"Mod Loader.csproj\"",
                 @"\ModLoader");
+            Log("Running sign");
+            Log(paths["sign"]);
             Run(paths["sign"],
                 "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\ModLoader.dll\"",
                 @"ModLoader");

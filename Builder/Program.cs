@@ -81,17 +81,15 @@ namespace Build
                 @"\CoreCore");
             Run(paths["sign"],
                 "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\net5.0\\CoreCore.dll\"",
-                @"CoreCore");
+                @"\CoreCore");
             
             Log("Building ModLoader.dll\n");
             Run(paths["msbuild"],
                 "-p:Configuration=Release;Documentationfile=bin\\Release\\ModLoader.xml -nologo \"Mod Loader.csproj\"",
                 @"\ModLoader");
-            Log("Running sign");
-            Log(paths["sign"]);
             Run(paths["sign"],
                 "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\ModLoader.dll\"",
-                @"ModLoader");
+                @"\ModLoader");
         }
         
         private static void BuildWPFApp()
@@ -106,7 +104,7 @@ namespace Build
                 @"\LauncherCore");
             Run(paths["sign"],
                 "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\net5.0-windows\\win-x64\\publish\\LauncherCore.exe\"",
-                @"LauncherCore");
+                @"\LauncherCore");
         }
 
         private static void BuildAssetBundle()

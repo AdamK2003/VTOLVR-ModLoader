@@ -196,10 +196,22 @@ namespace Build
                 Log("Deleting autoupdate.zip");
                 TryDelete(Path.Combine(root, "autoupdate.zip"));
             }
+            
+            if (File.Exists(Path.Combine(root, "VTOLVR-ModLoader.exe")))
+            {
+                Log("Deleting autoupdate.zip");
+                TryDelete(Path.Combine(root, "VTOLVR-ModLoader.exe"));
+            }
 
             Log($"Moving to {root}");
             Log("Moving Autoupdate.zip");
             TryMove(Path.Combine(dir, "autoupdate.zip"), Path.Combine(root, "autoupdate.zip"));
+            Log("Moving VTOLVR-ModLoader.exe");
+            TryMove(
+                Path.Combine(
+                    dir, "LauncherCore", "bin", "Release", "net5.0-windows",
+                    "win-x64", "publish", "LauncherCore.exe"),
+                Path.Combine(root, "VTOLVR-ModLoader.exe"));
             Log("Finished");
         }
 

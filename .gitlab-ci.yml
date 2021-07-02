@@ -11,7 +11,6 @@ stages:
 build_builder:
   stage: build_builder
   script:
-   - whoami 
    - echo 'Building Builder.exe'
    - cd Builder
    - dotnet build --configuration Release
@@ -52,23 +51,22 @@ build_patcher:
       - VTPatcher\bin\Release\VTPatcher.dll
     expire_in: 1 day
     
-zip:
-  stage: zip
+    
+    
+sign_files:
+  stage: sign_files
   script:
-   - .\Builder.exe zip template=$template
+    - .\Builder.exe sign
   artifacts:
-   paths:
-   - InstallerCore\Resources\ModLoader.zip
-   expire_in: 1 day
-
-build_installer:
-  stage: build_installer
-  script:
-   - .\Builder.exe buildinstaller
-  artifacts:
-   paths:
-   - InstallerCore\bin\Release\net5.0-windows\win-x64\publish\InstallerCore.exe
-   expire_in: 1 day
+    paths:
+      - ModLoader\bin\Release\ModLoader.dll
+      - ModLoader\bin\Release\ModLoader.xml
+      - CoreCore\bin\Release\net5.0\CoreCore.dll
+      - LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe
+      - VTPatcher\bin\Release\VTPatcher.dll
+    expire_in: 1 day
+  allow_failure: true
+  
 
 autoupdate_zip:
   stage: autoupdate_zip

@@ -50,10 +50,8 @@ namespace Build
                 BuildAssetBundle();
             else if (args.Contains("buildpatcher"))
                 BuildPatcher();
-            else if (args.Contains("zip"))
-                ZIPContents();
-            else if (args.Contains("buildinstaller"))
-                BuildInstaller();
+            else if (args.Contains("sign"))
+                SignFiles();
             else if (args.Contains("autoupdatezip"))
                 CreateUpdaterZip();
             else if (args.Contains("move"))
@@ -79,17 +77,13 @@ namespace Build
             Run(paths["msbuild"],
                 "-p:Configuration=Release -nologo CoreCore.csproj /t:Restore /t:Clean,Build ",
                 @"\CoreCore");
-            Run(paths["sign"],
-                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\net5.0\\CoreCore.dll\"",
-                @"\CoreCore");
+            
             
             Log("Building ModLoader.dll\n");
             Run(paths["msbuild"],
                 "-p:Configuration=Release;Documentationfile=bin\\Release\\ModLoader.xml -nologo \"Mod Loader.csproj\"",
                 @"\ModLoader");
-            Run(paths["sign"],
-                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\ModLoader.dll\"",
-                @"\ModLoader");
+            
         }
         
         private static void BuildWPFApp()
@@ -101,9 +95,6 @@ namespace Build
             Log("Publishing VTOLVR-ModLoader.exe\n");
             Run(paths["dotnet"],
                 "publish -r win-x64 --self-contained=false /p:PublishSingleFile=true -c Release",
-                @"\LauncherCore");
-            Run(paths["sign"],
-                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\net5.0-windows\\win-x64\\publish\\LauncherCore.exe\"",
                 @"\LauncherCore");
         }
 
@@ -126,54 +117,25 @@ namespace Build
                 "-p:Configuration=Release -nologo \"VTPatcher.csproj\"",
                 @"\VTPatcher");
         }
-
-        private static void ZIPContents()
+        
+        private static void SignFiles()
         {
-            Log("Zipping Contents");
-
-            if (string.IsNullOrEmpty(templateFolder))
-            {
-                Log("ERROR: 'template' arg missing");
-                Environment.Exit(1);
-                return;
-            }
-
-            //Copy all folders
-            foreach (string dirPath in Directory.GetDirectories(templateFolder, "*",
-                SearchOption.AllDirectories))
-                Directory.CreateDirectory(dirPath.Replace(templateFolder, dir + @"\temp"));
-            //Copy all files
-            foreach (string newPath in Directory.GetFiles(templateFolder, "*.*",
-                SearchOption.AllDirectories))
-                File.Copy(newPath, newPath.Replace(templateFolder, dir + @"\temp"), true);
-
-            Directory.CreateDirectory(dir + @"\temp\VTOLVR_Data\Managed");
-            Directory.CreateDirectory(dir + @"\temp\VTOLVR_Data\Plugins");
-            Directory.CreateDirectory(dir + @"\temp\VTOLVR_ModLoader\mods");
-            Directory.CreateDirectory(dir + @"\temp\VTOLVR_ModLoader\skins");
-
-            TryMove(dir + @"\CoreCore\bin\Release\net5.0\CoreCore.dll", dir + @"\temp\VTOLVR_Data\Managed\Core.dll");
-            TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\temp\VTOLVR_ModLoader\ModLoader.dll");
-            TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\temp\VTOLVR_ModLoader\ModLoader.xml");
-            TryMove(dir + @"\VTPatcher\bin\Release\VTPatcher.dll", dir + @"\temp\VTOLVR_ModLoader\VTPatcher.dll");
-            TryMove(dir + @"\LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe", dir + @"\temp\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
-            //TryMove(dir + @"\VTOLVR Unity Project\Assets\_ModLoader\Exported Asset Bundle\modloader.assets", dir + @"\temp\VTOLVR_ModLoader\VTOLVR-modloader.assets");
-
-            TryDelete(dir + @"\InstallerCore\Resources\ModLoader.zip");
-            ZipFile.CreateFromDirectory(dir + @"\temp\", dir + @"\InstallerCore\Resources\ModLoader.zip");
-            Directory.Delete(dir + @"\temp", true);
-        }
-
-        private static void BuildInstaller()
-        {
-            Log("Building Installer.exe");
-            Run($"\"{paths["nuget"]}\"",
-                $"restore",
-                @"");
-            Log("Publishing Installer\n");
-            Run(paths["dotnet"],
-                "publish -r win-x64 --self-contained=false /p:PublishSingleFile=true -c Release",
-                @"\InstallerCore");
+            Log("Signing Core.dll");
+            Run(paths["sign"],
+                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\net5.0\\CoreCore.dll\"",
+                @"\CoreCore");
+            Log("Signing ModLoader.dll");
+            Run(paths["sign"],
+                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\ModLoader.dll\"",
+                @"\ModLoader");
+            Log("Signing Launcher");
+            Run(paths["sign"],
+                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\net5.0-windows\\win-x64\\publish\\LauncherCore.exe\"",
+                @"\LauncherCore");
+            Log("Signing Patcher");
+            Run(paths["sign"],
+                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\VTPatcher.dll\"",
+                @"\VTPatcher");
         }
 
         private static void CreateUpdaterZip()
@@ -234,20 +196,10 @@ namespace Build
                 Log("Deleting autoupdate.zip");
                 TryDelete(Path.Combine(root, "autoupdate.zip"));
             }
-            if (File.Exists(Path.Combine(root, "Installer.exe")))
-            {
-                Log("Deleting Installer.zip");
-                TryDelete(Path.Combine(root, "Installer.exe"));
-            }
 
             Log($"Moving to {root}");
             Log("Moving Autoupdate.zip");
             TryMove(Path.Combine(dir, "autoupdate.zip"), Path.Combine(root, "autoupdate.zip"));
-            Log("Moving Installer.exe");
-            TryMove(
-                Path.Combine(dir, "InstallerCore", "bin", "Release", "net5.0-windows",
-                    "win-x64", "publish", "InstallerCore.exe"),
-                Path.Combine(root, "Installer.exe"));
             Log("Finished");
         }
 
@@ -275,8 +227,7 @@ namespace Build
             }
             catch { }
         }
-
-
+        
         private static void Run(string file, string args, string workingDirectory)
         {
             Process process = new Process();

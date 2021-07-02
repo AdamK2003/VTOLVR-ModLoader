@@ -64,7 +64,6 @@ sign_files:
       - LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe
       - VTPatcher\bin\Release\VTPatcher.dll
     expire_in: 1 day
-  allow_failure: true
   
 
 autoupdate_zip:

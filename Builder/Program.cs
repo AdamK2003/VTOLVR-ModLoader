@@ -199,7 +199,7 @@ namespace Build
             
             if (File.Exists(Path.Combine(root, "VTOLVR-ModLoader.exe")))
             {
-                Log("Deleting autoupdate.zip");
+                Log("Deleting VTOLVR-ModLoader.exe");
                 TryDelete(Path.Combine(root, "VTOLVR-ModLoader.exe"));
             }
 

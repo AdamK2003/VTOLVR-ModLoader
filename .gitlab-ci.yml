@@ -3,8 +3,6 @@ stages:
   - build_dll
   - build_wpf
   - build_patcher
-  - zip
-  - build_installer
   - autoupdate_zip
   - move_files
 

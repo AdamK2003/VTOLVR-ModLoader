@@ -121,20 +121,27 @@ namespace Build
         private static void SignFiles()
         {
             Log("Signing Core.dll");
+            FileInfo file = new FileInfo(@"CoreCore\bin\Release\net5.0\CoreCore.dll");
             Run(paths["sign"],
-                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\net5.0\\CoreCore.dll\"",
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"{file.FullName}\"",
                 @"\CoreCore");
+            
             Log("Signing ModLoader.dll");
+            file = new FileInfo(@"ModLoader\bin\Release\ModLoader.dll");
             Run(paths["sign"],
-                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\ModLoader.dll\"",
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"{file.FullName}\"",
                 @"\ModLoader");
+            
             Log("Signing Launcher");
+            file = new FileInfo(@"LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe");
             Run(paths["sign"],
-                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\net5.0-windows\\win-x64\\publish\\LauncherCore.exe\"",
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"{file.FullName}\"",
                 @"\LauncherCore");
+            
             Log("Signing Patcher");
+            file = new FileInfo(@"VTPatcher\bin\Release\VTPatcher.dll");
             Run(paths["sign"],
-                "sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"\\bin\\Release\\VTPatcher.dll\"",
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"{file.FullName}\"",
                 @"\VTPatcher");
         }
 

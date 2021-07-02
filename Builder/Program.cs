@@ -123,25 +123,25 @@ namespace Build
             Log("Signing Core.dll");
             FileInfo file = new FileInfo(@"CoreCore\bin\Release\net5.0\CoreCore.dll");
             Run(paths["sign"],
-                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"{file.FullName}\"",
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
                 @"\CoreCore");
             
             Log("Signing ModLoader.dll");
             file = new FileInfo(@"ModLoader\bin\Release\ModLoader.dll");
             Run(paths["sign"],
-                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"{file.FullName}\"",
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
                 @"\ModLoader");
             
             Log("Signing Launcher");
             file = new FileInfo(@"LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe");
             Run(paths["sign"],
-                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"{file.FullName}\"",
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
                 @"\LauncherCore");
             
             Log("Signing Patcher");
             file = new FileInfo(@"VTPatcher\bin\Release\VTPatcher.dll");
             Run(paths["sign"],
-                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 \"{file.FullName}\"",
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
                 @"\VTPatcher");
         }
 

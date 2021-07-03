@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using LauncherCore.Classes;
 using Console = LauncherCore.Views.Console;
 using CoreCore.Jsons;
+using LauncherCore.Classes.Json;
 using LauncherCore.Views;
 
 namespace LauncherCore
@@ -71,9 +72,28 @@ namespace LauncherCore
             GetReleases();
             if (!FolderIsValid())
             {
-                _folderInvalid = true;
-                MainWindow._instance.RunSetup();
-                return;
+                if (IsOldUser(out DirectoryInfo currentDirectory))
+                {
+                    // Pre 5.X user shouldn't need to do the setup
+                    ProgramData data = new(){VTOLPath = currentDirectory.Parent.FullName};
+            
+                    string usersPath = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        Startup.AppdataFolder);
+                    Directory.CreateDirectory(usersPath);
+                    usersPath = Path.Combine(usersPath, Startup.DataFile);
+                    ProgramData.Save(data, usersPath);
+
+                    Root = currentDirectory.FullName;
+                    VTOLFolder = currentDirectory.Parent.FullName;
+                }
+                else
+                {
+                    _folderInvalid = true;
+                    MainWindow._instance.RunSetup();
+                    return; 
+                }
+                
             }
             
             MainWindow._instance.CreatePages();
@@ -112,6 +132,12 @@ namespace LauncherCore
             }
 
             return false;
+        }
+
+        private static bool IsOldUser(out DirectoryInfo currentDirectory)
+        {
+            currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
+            return currentDirectory.Name.Equals("VTOLVR_ModLoader");
         }
 
         private async static Task WaitForUI()

@@ -179,7 +179,7 @@ namespace Build
             Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_ModLoader\skins");
 
             Log("Moving Applications");
-            TryMove(dir + @"\Core\bin\Release\net5.0\Core.dll", dir + @"\autoupdate\template\VTOLVR_Data\Managed\Core.dll");
+            TryMove(dir + @"\Core\bin\Release\netstandard2.0\Core.dll", dir + @"\autoupdate\template\VTOLVR_Data\Managed\Core.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.xml");
             TryMove(dir + @"\VTPatcher\bin\Release\VTPatcher.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTPatcher.dll");

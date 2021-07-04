@@ -39,7 +39,7 @@ namespace AutoUpdater
         }
         public static void Start()
         {
-            SentryLog("Program start", SentryLogCategory.Program);
+            SentryLog("Program Start", SentryLogCategory.Program);
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             bool debug = false;
 #if DEBUG

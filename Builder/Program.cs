@@ -17,13 +17,16 @@ namespace Build
         {
             { "msbuild", @"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"},
             { "unity", @"C:\Program Files\Unity\Hub\Editor\2019.1.8f1\Editor\Unity.exe"},
-            { "nuget", @"B:\Gitlab Runner\nuget.exe" }
+            { "nuget", @"B:\Gitlab Runner\nuget.exe" },
+            { "dotnet", @"C:\Program Files\dotnet\dotnet.exe"},
+            { "sign", @"C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\signtool.exe"}
         };
         static void Main(string[] args)
         {
             dir = Directory.GetCurrentDirectory();
             CheckArgs(args);
         }
+        
         private static void CheckArgs(string[] args)
         {
             for (int i = 0; i < args.Length; i++)
@@ -45,17 +48,16 @@ namespace Build
                 BuildWPFApp();
             else if (args.Contains("buildassets"))
                 BuildAssetBundle();
-            else if (args.Contains("buildupdater"))
-                BuildUpdater();
-            else if (args.Contains("zip"))
-                ZIPContents();
-            else if (args.Contains("buildinstaller"))
-                BuildInstaller();
+            else if (args.Contains("buildpatcher"))
+                BuildPatcher();
+            else if (args.Contains("sign"))
+                SignFiles();
             else if (args.Contains("autoupdatezip"))
                 CreateUpdaterZip();
             else if (args.Contains("move"))
                 MoveToDesktop();
         }
+        
         private static void MoveDeps()
         {
             string[] deps = Directory.GetFiles(dlls, "*.dll", SearchOption.TopDirectoryOnly);
@@ -65,22 +67,35 @@ namespace Build
             }
             Log("Moved " + (deps.Length + 1) + " dependencies");
         }
+        
         private static void BuildDLL()
         {
+            Log("Building Core.dll");
+            Run($"\"{paths["nuget"]}\"",
+                $"restore",
+                @"");
+            Run(paths["msbuild"],
+                "-p:Configuration=Release -nologo CoreCore.csproj /t:Restore /t:Clean,Build ",
+                @"\CoreCore");
+            
+            
             Log("Building ModLoader.dll\n");
             Run(paths["msbuild"],
                 "-p:Configuration=Release;Documentationfile=bin\\Release\\ModLoader.xml -nologo \"Mod Loader.csproj\"",
                 @"\ModLoader");
+            
         }
+        
         private static void BuildWPFApp()
         {
             Log("Building VTOLVR-ModLoader.exe\n");
             Run($"\"{paths["nuget"]}\"",
-                $"restore -SolutionDirectory \"{dir}\"",
-                @"\VTOLVR-ModLoader");
-            Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo Launcher.csproj",
-                @"\VTOLVR-ModLoader");
+                $"restore",
+                @"");
+            Log("Publishing VTOLVR-ModLoader.exe\n");
+            Run(paths["dotnet"],
+                "publish -r win-x64 --self-contained=false /p:PublishSingleFile=true -c Release",
+                @"\LauncherCore");
         }
 
         private static void BuildAssetBundle()
@@ -91,63 +106,43 @@ namespace Build
                 @"\VTOLVR Unity Project");
         }
 
-        private static void BuildUpdater()
+        private static void BuildPatcher()
         {
-            Log("Building Updater");
+            Log("VTPatcher.dll");
             Run($"\"{paths["nuget"]}\"",
-                $"restore -SolutionDirectory \"{dir}\"",
-                @"\Updater");
+                $"restore",
+                @"");
+            Log("Building VTPatcher.dll\n");
             Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo Updater.csproj",
-                @"\Updater");
+                "-p:Configuration=Release -nologo \"VTPatcher.csproj\"",
+                @"\VTPatcher");
         }
-
-        private static void ZIPContents()
+        
+        private static void SignFiles()
         {
-            Log("Zipping Contents");
-
-            if (string.IsNullOrEmpty(templateFolder))
-            {
-                Log("ERROR: 'template' arg missing");
-                Environment.Exit(1);
-                return;
-            }
-
-            //Copy all folders
-            foreach (string dirPath in Directory.GetDirectories(templateFolder, "*",
-                SearchOption.AllDirectories))
-                Directory.CreateDirectory(dirPath.Replace(templateFolder, dir + @"\temp"));
-            //Copy all files
-            foreach (string newPath in Directory.GetFiles(templateFolder, "*.*",
-                SearchOption.AllDirectories))
-                File.Copy(newPath, newPath.Replace(templateFolder, dir + @"\temp"), true);
-
-            Directory.CreateDirectory(dir + @"\temp\VTOLVR_Data\Managed");
-            Directory.CreateDirectory(dir + @"\temp\VTOLVR_Data\Plugins");
-            Directory.CreateDirectory(dir + @"\temp\VTOLVR_ModLoader\mods");
-            Directory.CreateDirectory(dir + @"\temp\VTOLVR_ModLoader\skins");
-
-            TryMove(dir + @"\Core\bin\Release\Core.dll", dir + @"\temp\VTOLVR_Data\Managed\Core.dll");
-            TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\temp\VTOLVR_ModLoader\ModLoader.dll");
-            TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\temp\VTOLVR_ModLoader\ModLoader.xml");
-            TryMove(dir + @"\VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe", dir + @"\temp\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
-            TryMove(dir + @"\Updater\bin\Release\Updater.exe", dir + @"\temp\VTOLVR_ModLoader\Updater.exe");
-            //TryMove(dir + @"\VTOLVR Unity Project\Assets\_ModLoader\Exported Asset Bundle\modloader.assets", dir + @"\temp\VTOLVR_ModLoader\VTOLVR-modloader.assets");
-
-            TryDelete(dir + @"\Installer\Resources\ModLoader.zip");
-            ZipFile.CreateFromDirectory(dir + @"\temp\", dir + @"\Installer\Resources\ModLoader.zip");
-            Directory.Delete(dir + @"\temp", true);
-        }
-
-        private static void BuildInstaller()
-        {
-            Log("Building Installer.exe");
-            Run($"\"{paths["nuget"]}\"",
-                $"restore -SolutionDirectory \"{dir}\"",
-                @"\Installer");
-            Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo Installer.csproj",
-                @"\Installer");
+            Log("Signing Core.dll");
+            FileInfo file = new FileInfo(@"CoreCore\bin\Release\net5.0\CoreCore.dll");
+            Run(paths["sign"],
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
+                @"\CoreCore");
+            
+            Log("Signing ModLoader.dll");
+            file = new FileInfo(@"ModLoader\bin\Release\ModLoader.dll");
+            Run(paths["sign"],
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
+                @"\ModLoader");
+            
+            Log("Signing Launcher");
+            file = new FileInfo(@"LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe");
+            Run(paths["sign"],
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
+                @"\LauncherCore");
+            
+            Log("Signing Patcher");
+            file = new FileInfo(@"VTPatcher\bin\Release\VTPatcher.dll");
+            Run(paths["sign"],
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
+                @"\VTPatcher");
         }
 
         private static void CreateUpdaterZip()
@@ -184,15 +179,16 @@ namespace Build
             Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_ModLoader\skins");
 
             Log("Moving Applications");
-            TryMove(dir + @"\Core\bin\Release\Core.dll", dir + @"\autoupdate\template\VTOLVR_Data\Managed\Core.dll");
+            TryMove(dir + @"\CoreCore\bin\Release\net5.0\CoreCore.dll", dir + @"\autoupdate\template\VTOLVR_Data\Managed\Core.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.xml");
-            TryMove(dir + @"\VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
-            TryMove(dir + @"\Updater\bin\Release\Updater.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\Updater.exe");
+            TryMove(dir + @"\VTPatcher\bin\Release\VTPatcher.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTPatcher.dll");
+            TryMove(dir + @"\LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
 
             Log("Creating zip");
             ZipFile.CreateFromDirectory(dir + @"\autoupdate\", dir + @"\autoupdate.zip");
         }
+        
         private static void MoveToDesktop()
         {
             Log("Moving Files to desktop");
@@ -207,19 +203,22 @@ namespace Build
                 Log("Deleting autoupdate.zip");
                 TryDelete(Path.Combine(root, "autoupdate.zip"));
             }
-            if (File.Exists(Path.Combine(root, "Installer.exe")))
+            
+            if (File.Exists(Path.Combine(root, "VTOLVR-ModLoader.exe")))
             {
-                Log("Deleting Installer.zip");
-                TryDelete(Path.Combine(root, "Installer.exe"));
+                Log("Deleting VTOLVR-ModLoader.exe");
+                TryDelete(Path.Combine(root, "VTOLVR-ModLoader.exe"));
             }
 
             Log($"Moving to {root}");
             Log("Moving Autoupdate.zip");
             TryMove(Path.Combine(dir, "autoupdate.zip"), Path.Combine(root, "autoupdate.zip"));
-            Log("Moving Installer.exe");
+            Log("Moving VTOLVR-ModLoader.exe");
             TryMove(
-                Path.Combine(dir, "Installer", "bin", "Release", "Installer.exe"),
-                Path.Combine(root, "Installer.exe"));
+                Path.Combine(
+                    dir, "LauncherCore", "bin", "Release", "net5.0-windows",
+                    "win-x64", "publish", "LauncherCore.exe"),
+                Path.Combine(root, "VTOLVR-ModLoader.exe"));
             Log("Finished");
         }
 
@@ -238,6 +237,7 @@ namespace Build
                 return false;
             }
         }
+        
         private static void TryDelete(string file)
         {
             try
@@ -246,8 +246,7 @@ namespace Build
             }
             catch { }
         }
-
-
+        
         private static void Run(string file, string args, string workingDirectory)
         {
             Process process = new Process();

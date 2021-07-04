@@ -2,9 +2,8 @@ stages:
   - build_builder
   - build_dll
   - build_wpf
-  - build_updater
-  - zip
-  - build_installer
+  - build_patcher
+  - sign_files
   - autoupdate_zip
   - move_files
 
@@ -30,7 +29,7 @@ build_dll:
    paths:
    - ModLoader\bin\Release\ModLoader.dll
    - ModLoader\bin\Release\ModLoader.xml
-   - Core\bin\Release\Core.dll
+   - CoreCore\bin\Release\net5.0\CoreCore.dll
    expire_in: 1 day
 
 build_wpf:
@@ -39,35 +38,33 @@ build_wpf:
    - .\Builder.exe buildwpf dlls=$dlls
   artifacts:
    paths:
-   - VTOLVR-ModLoader\bin\Release\VTOLVR-ModLoader.exe
+   - LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe
    expire_in: 1 day
 
-build_updater:
-  stage: build_updater
+build_patcher:
+  stage: build_patcher
   script:
-   - .\Builder.exe buildupdater dlls=$dlls
+    - .\Builder.exe buildpatcher dlls=$dlls
   artifacts:
-   paths:
-   - Updater\bin\Release\Updater.exe
-   expire_in: 1 day
-
-zip:
-  stage: zip
+    paths:
+      - VTPatcher\bin\Release\VTPatcher.dll
+    expire_in: 1 day
+    
+    
+    
+sign_files:
+  stage: sign_files
   script:
-   - .\Builder.exe zip template=$template
+    - .\Builder.exe sign
   artifacts:
-   paths:
-   - Installer\Resources\ModLoader.zip
-   expire_in: 1 day
-
-build_installer:
-  stage: build_installer
-  script:
-   - .\Builder.exe buildinstaller
-  artifacts:
-   paths:
-   - Installer\bin\Release\Installer.exe
-   expire_in: 1 day
+    paths:
+      - ModLoader\bin\Release\ModLoader.dll
+      - ModLoader\bin\Release\ModLoader.xml
+      - CoreCore\bin\Release\net5.0\CoreCore.dll
+      - LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe
+      - VTPatcher\bin\Release\VTPatcher.dll
+    expire_in: 1 day
+  
 
 autoupdate_zip:
   stage: autoupdate_zip

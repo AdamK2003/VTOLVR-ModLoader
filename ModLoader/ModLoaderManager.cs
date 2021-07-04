@@ -77,12 +77,18 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 ";
             Debug.Log(playerLogMessage);
         }
+
+        public static void Main()
+        {
+            PlayerLogText();
+            new GameObject("Mod Loader Manager", typeof(ModLoaderManager), typeof(SkinManager));
+        }
     }
 
     /// <summary>
     /// This class is to handle the changes between scenes
     /// </summary>
-    class ModLoaderManager : MonoBehaviour
+    public class ModLoaderManager : MonoBehaviour
     {
         private const int TCPPORT = 12000;
         public static ModLoaderManager Instance { get; private set; }

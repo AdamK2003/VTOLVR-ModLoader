@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="LauncherCore.Views.NewVersion"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LauncherCore.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid x:Name="grid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="120" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="30" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="Version Number:" Foreground="LightGray" FontSize="20" />
+            <TextBox Grid.Row="1" x:Name="versionNumber" Text="1.0.0" FontSize="20"
+                     Background="Transparent" Foreground="White" TextWrapping="Wrap" MaxLength="40"
+                     TextChanged="VersionNumberChanged" />
+
+            <TextBlock Grid.Row="2" Text="Changelog" Foreground="LightGray" FontSize="30"
+                       x:Name="changeLogTitle" />
+            <TextBlock Grid.Row="3" Text="Title:" Foreground="LightGray" FontSize="20"
+                       x:Name="titleHeader" />
+
+            <TextBox Grid.Row="4" x:Name="title" FontSize="20"
+                     Background="Transparent" Foreground="White" TextWrapping="Wrap"
+                     TextChanged="TextChanged" />
+            <TextBlock Grid.Row="5" Text="Description:" Foreground="LightGray" FontSize="20"
+                       x:Name="descriptionHeader" />
+            <TextBox Grid.Row="6" x:Name="description" FontSize="20"
+                     Background="Transparent" Foreground="White" TextWrapping="Wrap"
+                     TextChanged="TextChanged" />
+
+            <TextBlock Grid.Row="7" Foreground="White" FontSize="15" TextAlignment="Center"
+                       x:Name="approvalWarning">
+                Please note, all mods and skins must be approved prior to being made accessible.<LineBreak />
+                VTOLVR-Mods.com administrators reserve the right to reject any mods and skins for any reason.
+            </TextBlock>
+
+            <TextBlock Grid.Row="8" Foreground="White" FontSize="15" TextWrapping="Wrap"
+                       x:Name="contentGuidelines">
+                By pressing release or update you agree to these Content Guidelines: <LineBreak />
+                • Only upload mods and skins that you created yourself. Do not upload any copyrighted material such as VTOL VR game files, music, images, etc.
+                <LineBreak />
+                • No offensive, excessively violent, or inappropriate content. This includes but is not limited to, pornography, nudity or sexually explicit content, hate speech or symbology.
+                <LineBreak />
+                • No content that is distasteful or irrelevant to VTOL VR modding.<LineBreak />
+                • Mods and skins must have a clear name and description. Misleading content will not be accepted.
+                <LineBreak />
+                • Don't create or upload mods that unlock unreleased or paid VTOL VR content.
+            </TextBlock>
+
+            <Button Grid.Row="99" x:Name="uploadButton" Click="Upload" Style="{StaticResource RoundedDarkButton}"
+                    Content="Update" IsEnabled="False" />
+        </Grid>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,13 @@
+﻿<Application x:Class="InstallerCore.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:InstallerCore"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <FontFamily x:Key="SquaresBoldFree">pack://Application:,,,/#Squares Bold Free</FontFamily>
+        <SolidColorBrush x:Key="BackgroundDarkGray" Color="#FF2E2E2E" />
+        <SolidColorBrush x:Key="BackgroundGray" Color="#FF3D3D3D" />
+        <SolidColorBrush x:Key="BackgroundLightGray" Color="#696969" />
+        <SolidColorBrush x:Key="ErrorRed" Color="#FFD50000" />
+    </Application.Resources>
+</Application>

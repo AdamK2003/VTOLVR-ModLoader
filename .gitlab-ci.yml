@@ -29,7 +29,7 @@ build_dll:
    paths:
    - ModLoader\bin\Release\ModLoader.dll
    - ModLoader\bin\Release\ModLoader.xml
-   - CoreCore\bin\Release\net5.0\CoreCore.dll
+   - Core\bin\Release\net5.0\Core.dll
    expire_in: 1 day
 
 build_wpf:
@@ -38,7 +38,7 @@ build_wpf:
    - .\Builder.exe buildwpf dlls=$dlls
   artifacts:
    paths:
-   - LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe
+   - Launcher\bin\Release\net5.0-windows\win-x64\publish\Launcher.exe
    expire_in: 1 day
 
 build_patcher:
@@ -60,8 +60,8 @@ sign_files:
     paths:
       - ModLoader\bin\Release\ModLoader.dll
       - ModLoader\bin\Release\ModLoader.xml
-      - CoreCore\bin\Release\net5.0\CoreCore.dll
-      - LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe
+      - Core\bin\Release\net5.0\Core.dll
+      - Launcher\bin\Release\net5.0-windows\win-x64\publish\Launcher.exe
       - VTPatcher\bin\Release\VTPatcher.dll
     expire_in: 1 day
   

@@ -121,7 +121,7 @@ namespace Build
         private static void SignFiles()
         {
             Log("Signing Core.dll");
-            FileInfo file = new FileInfo(@"Core\bin\Release\net5.0\Core.dll");
+            FileInfo file = new FileInfo(@"Core\bin\Release\netstandard2.0\Core.dll");
             Run(paths["sign"],
                 $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
                 @"\Core");

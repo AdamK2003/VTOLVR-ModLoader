@@ -29,7 +29,7 @@ build_dll:
    paths:
    - ModLoader\bin\Release\ModLoader.dll
    - ModLoader\bin\Release\ModLoader.xml
-   - Core\bin\Release\net5.0\Core.dll
+   - Core\bin\Release\netstandard2.0\Core.dll
    expire_in: 1 day
 
 build_wpf:
@@ -60,7 +60,7 @@ sign_files:
     paths:
       - ModLoader\bin\Release\ModLoader.dll
       - ModLoader\bin\Release\ModLoader.xml
-      - Core\bin\Release\net5.0\Core.dll
+      - Core\bin\Release\netstandard2.0\Core.dll
       - Launcher\bin\Release\net5.0-windows\win-x64\publish\Launcher.exe
       - VTPatcher\bin\Release\VTPatcher.dll
     expire_in: 1 day

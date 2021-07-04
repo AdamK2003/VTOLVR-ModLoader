@@ -12,13 +12,13 @@ using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sentry;
-using LauncherCore.Views;
-using LauncherCore.Windows;
-using Console = LauncherCore.Views.Console;
+using Console = Launcher.Views.Console;
 using Core.Jsons;
 using System.Security.Permissions;
+using Launcher.Views;
+using Launcher.Windows;
 
-namespace LauncherCore.Classes
+namespace Launcher.Classes
 {
     static class Helper
     {
@@ -97,7 +97,7 @@ namespace LauncherCore.Classes
             }
             catch (Exception e)
             {
-                Console.Log($"Failed to move file: {sourceFileName}\n{e}");
+                Views.Console.Log($"Failed to move file: {sourceFileName}\n{e}");
                 return false;
             }
 
@@ -112,7 +112,7 @@ namespace LauncherCore.Classes
             }
             catch (Exception e)
             {
-                Console.Log($"Failed to delete: {filePath}\n{e}");
+                Views.Console.Log($"Failed to delete: {filePath}\n{e}");
                 return false;
             }
 
@@ -127,7 +127,7 @@ namespace LauncherCore.Classes
             }
             catch (Exception e)
             {
-                Console.Log($"Failed to move: {sourceFileName} to {destFileName}\n{e}");
+                Views.Console.Log($"Failed to move: {sourceFileName} to {destFileName}\n{e}");
                 return false;
             }
 

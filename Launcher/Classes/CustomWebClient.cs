@@ -3,7 +3,7 @@ using System.Net;
 using System.ComponentModel;
 using System.IO;
 
-namespace LauncherCore.Classes
+namespace Launcher.Classes
 {
     public class CustomWebClient : WebClient
     {

@@ -2,9 +2,9 @@
 using System;
 using System.Windows;
 using System.Windows.Threading;
-using Console = LauncherCore.Views.Console;
+using Console = Launcher.Views.Console;
 
-namespace LauncherCore
+namespace Launcher
 {
     /// <summary>
     /// Interaction logic for App.xaml

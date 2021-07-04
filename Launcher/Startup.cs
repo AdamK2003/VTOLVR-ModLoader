@@ -13,13 +13,13 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Gameloop.Vdf;
 using Gameloop.Vdf.Linq;
-using LauncherCore.Windows;
 using System.Reflection;
-using LauncherCore.Classes;
-using LauncherCore.Classes.Json;
+using Launcher.Classes;
+using Launcher.Classes.Json;
+using Launcher.Windows;
 using Newtonsoft.Json;
 
-namespace LauncherCore
+namespace Launcher
 {
     static class Startup
     {

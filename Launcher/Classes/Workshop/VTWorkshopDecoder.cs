@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using LauncherCore.Views;
+using Launcher.Views;
 
-namespace LauncherCore.Classes.Workshop
+namespace Launcher.Classes.Workshop
 {
     static class VTWorkshopDecoder
     {

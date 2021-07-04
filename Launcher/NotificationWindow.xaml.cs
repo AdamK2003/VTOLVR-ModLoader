@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Threading;
 
-namespace LauncherCore
+namespace Launcher
 {
     /// <summary>
     /// Interaction logic for NotificationWindow.xaml

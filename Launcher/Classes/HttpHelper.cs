@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace LauncherCore.Classes
+namespace Launcher.Classes
 {
     public class HttpHelper
     {

@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using LauncherCore.Classes;
 using Core.Jsons;
 using Core.Enums;
-using LauncherCore.Classes.Workshop;
+using Launcher.Classes;
+using Launcher.Classes.Workshop;
 
-namespace LauncherCore.Views
+namespace Launcher.Views
 {
     /// <summary>
     /// Interaction logic for DevTools.xaml

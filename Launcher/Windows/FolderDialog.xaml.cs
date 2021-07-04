@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace LauncherCore.Windows
+namespace Launcher.Windows
 {
     /// <summary>
     /// Interaction logic for FolderDialog.xaml

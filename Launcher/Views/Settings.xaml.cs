@@ -6,17 +6,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using UserControl = System.Windows.Controls.UserControl;
-using LauncherCore.Windows;
-using LauncherCore.Classes;
 using System.Net.Http;
 using System.Security.Principal;
 using Microsoft.Win32;
-using LauncherCore.Classes.Json;
 using Newtonsoft.Json;
 using System.Windows.Media;
 using System.Text.RegularExpressions;
+using Launcher.Classes;
+using Launcher.Classes.Json;
+using Launcher.Windows;
 
-namespace LauncherCore.Views
+namespace Launcher.Views
 {
     /// <summary>
     /// Interaction logic for Settings.xaml

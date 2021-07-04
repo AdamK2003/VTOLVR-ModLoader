@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LauncherCore.Classes
+namespace Launcher.Classes
 {
     [Serializable]
     public class SettingsSave

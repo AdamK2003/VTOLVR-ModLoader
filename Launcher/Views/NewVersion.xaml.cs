@@ -10,11 +10,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using LauncherCore.Classes;
-using LauncherCore.Windows;
 using Core.Jsons;
+using Launcher.Classes;
+using Launcher.Windows;
 
-namespace LauncherCore.Views
+namespace Launcher.Views
 {
     /// <summary>
     /// Interaction logic for NewVersion.xaml

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace LauncherCore.Properties {
+namespace Launcher.Properties {
     using System;
     
     

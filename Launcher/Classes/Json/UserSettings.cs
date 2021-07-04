@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using Launcher.Views;
 using Newtonsoft.Json;
-using LauncherCore.Views;
-using Console = LauncherCore.Views.Console;
+using Console = Launcher.Views.Console;
 
-namespace LauncherCore.Classes.Json
+namespace Launcher.Classes.Json
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class UserSettings

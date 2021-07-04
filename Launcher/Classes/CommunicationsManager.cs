@@ -25,11 +25,11 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows;
-using LauncherCore.Views;
-using LauncherCore.Windows;
-using Console = LauncherCore.Views.Console;
+using Launcher.Views;
+using Launcher.Windows;
+using Console = Launcher.Views.Console;
 
-namespace LauncherCore.Classes
+namespace Launcher.Classes
 {
     static class CommunicationsManager
     {
@@ -50,7 +50,7 @@ namespace LauncherCore.Classes
             }
 
             builder.Append("\"");
-            Console.Log(builder.ToString());
+            Views.Console.Log(builder.ToString());
         }
 
         public static void CheckNoInternet()
@@ -92,7 +92,7 @@ namespace LauncherCore.Classes
                 }
                 else
                 {
-                    Console.Log($"Failed to convert {line} to bool");
+                    Views.Console.Log($"Failed to convert {line} to bool");
                 }
             }
         }
@@ -126,7 +126,7 @@ namespace LauncherCore.Classes
                         {
                             MainWindow.SetProgress(0, $"Downloading {split[4]}");
                             SetDownloadFile($"mods/{split[4]}");
-                            Console.Log($"Downloading {currentDownloadFile}");
+                            Views.Console.Log($"Downloading {currentDownloadFile}");
                             Downloads.DownloadFile(
                                 $"{Program.URL}/download/{split[2]}/{split[3]}/",
                                 Path.Combine(Program.Root, "mods", split[4]),

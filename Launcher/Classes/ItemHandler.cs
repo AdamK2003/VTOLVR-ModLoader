@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using System.Windows;
 
-namespace LauncherCore.Classes
+namespace Launcher.Classes
 {
     class ItemHandler
     {

@@ -11,13 +11,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using LauncherCore.Classes;
-using Console = LauncherCore.Views.Console;
+using Console = Launcher.Views.Console;
 using Core.Jsons;
-using LauncherCore.Classes.Json;
-using LauncherCore.Views;
+using Launcher.Classes;
+using Launcher.Classes.Json;
+using Launcher.Views;
 
-namespace LauncherCore
+namespace Launcher
 {
     public static class Program
     {
@@ -192,7 +192,7 @@ namespace LauncherCore
         public static void FindItems()
         {
             Helper.SentryLog("Finding Items", Helper.SentryLogCategory.Program);
-            Console.Log("Finding items");
+            Views.Console.Log("Finding items");
             Items = Helper.FindDownloadMods();
             Items.AddRange(Helper.FindDownloadedSkins());
             Items.AddRange(Helper.FindMyMods());
@@ -210,7 +210,7 @@ namespace LauncherCore
         private static void LaunchProcess()
         {
             Helper.SentryLog("Starting process", Helper.SentryLogCategory.Program);
-            Console.Log("Launching VTOL VR");
+            Views.Console.Log("Launching VTOL VR");
 
             var psi = new ProcessStartInfo
             {
@@ -227,7 +227,7 @@ namespace LauncherCore
         public static void Quit(string reason)
         {
             Helper.SentryLog("Quitting " + reason, Helper.SentryLogCategory.Program);
-            Console.Log($"Closing Application\nReason:{reason}");
+            Views.Console.Log($"Closing Application\nReason:{reason}");
             Process.GetCurrentProcess().Kill();
         }
 
@@ -250,14 +250,14 @@ namespace LauncherCore
         private static void ExtractItems(string folderPath)
         {
             Helper.SentryLog("Extracting Items", Helper.SentryLogCategory.Program);
-            Console.Log("Extracting Items in " + folderPath);
+            Views.Console.Log("Extracting Items in " + folderPath);
 
             DirectoryInfo folder = new DirectoryInfo(folderPath);
             FileInfo[] files = folder.GetFiles("*.zip");
 
             if (files.Length == 0)
             {
-                Console.Log("No zips to extract in " + folderPath);
+                Views.Console.Log("No zips to extract in " + folderPath);
                 return;
             }
 
@@ -271,7 +271,7 @@ namespace LauncherCore
         public static void ExtractItem(string zipPath, bool overideItemsToExtract = false, int overideAmount = -1)
         {
             Helper.SentryLog("Extracting Item", Helper.SentryLogCategory.Program);
-            Console.Log("Extracting " + zipPath);
+            Views.Console.Log("Extracting " + zipPath);
 
             if (overideItemsToExtract)
                 _itemsToExtract = overideAmount;
@@ -288,19 +288,19 @@ namespace LauncherCore
         {
             if (e.IsSuccessful)
             {
-                Console.Log("Extracted " + e.ZipPath);
+                Views.Console.Log("Extracted " + e.ZipPath);
                 Helper.TryDelete(e.ZipPath);
             }
             else
             {
-                Console.Log($"Failed to extract {e.ZipPath}\nError:{e.ErrorMessage}");
+                Views.Console.Log($"Failed to extract {e.ZipPath}\nError:{e.ErrorMessage}");
             }
 
             _itemsExtracted++;
 
             if (_itemsExtracted == _itemsToExtract)
             {
-                Console.Log("Finished extracting all items");
+                Views.Console.Log("Finished extracting all items");
                 MainWindow._instance.ItemManager.PopulateList();
                 _itemsExtracted = 0;
                 _itemsToExtract = -1;
@@ -338,7 +338,7 @@ namespace LauncherCore
             if (!await HttpHelper.CheckForInternet())
                 return;
             Helper.SentryLog("Getting Releases", Helper.SentryLogCategory.Program);
-            Console.Log($"Connecting to API for latest releases");
+            Views.Console.Log($"Connecting to API for latest releases");
             HttpHelper.DownloadStringAsync(
                 URL + ApiURL + ReleasesURL + "/" + (Branch == string.Empty ? string.Empty : $"?branch={Branch}"),
                 NewsDone);
@@ -351,14 +351,14 @@ namespace LauncherCore
             {
                 Releases = JsonConvert.DeserializeObject<List<Release>>(await response.Content.ReadAsStringAsync());
                 MainWindow._instance.news.LoadNews();
-                Console.Log($"Checking for updates###");
+                Views.Console.Log($"Checking for updates###");
                 if (!_folderInvalid)
                     Queue(delegate { Updater.CheckForUpdates(); });
             }
             else
             {
                 //Failed
-                Console.Log("Error:\n" + response.StatusCode);
+                Views.Console.Log("Error:\n" + response.StatusCode);
             }
 
             if (!string.IsNullOrEmpty(Views.Settings.Token))

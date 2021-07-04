@@ -4,11 +4,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using LauncherCore.Views;
-using LauncherCore.Windows;
-using Console = LauncherCore.Views.Console;
+using Launcher.Views;
+using Launcher.Windows;
+using Console = Launcher.Views.Console;
 
-namespace LauncherCore.Classes
+namespace Launcher.Classes
 {
     static class Updater
     {
@@ -23,10 +23,10 @@ namespace LauncherCore.Classes
             if (!skipChecks && !Views.Settings.AutoUpdate)
                 return;
             _onComplete = onComplete;
-            Console.Log("Checking for updates");
+            Views.Console.Log("Checking for updates");
             if (Program.Releases == null || Program.Releases.Count == 0)
             {
-                Console.Log("Couldn't find any releases");
+                Views.Console.Log("Couldn't find any releases");
                 return;
             }
 
@@ -41,7 +41,7 @@ namespace LauncherCore.Classes
                 lastPath = Program.VTOLFolder + "/" + updateFiles[i].Location;
                 if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(updateFiles[i].Hash))
                 {
-                    Console.Log($"Need to update {updateFiles[i].Location}");
+                    Views.Console.Log($"Need to update {updateFiles[i].Location}");
                     if (updateFiles[i].Name.Equals("VTOLVR-ModLoader"))
                     {
                         if (!MoveLauncher())
@@ -54,7 +54,7 @@ namespace LauncherCore.Classes
 
             if (_updateFiles.Count == 0)
             {
-                Console.Log("All fines are up to date");
+                Views.Console.Log("All fines are up to date");
                 MainWindow.SetPlayButton(false);
                 _onComplete?.Invoke();
             }
@@ -62,7 +62,7 @@ namespace LauncherCore.Classes
 
         private static void AddFile(UpdateFile file)
         {
-            Console.Log("Updating " + file.Name);
+            Views.Console.Log("Updating " + file.Name);
             _updateFiles.Add(file);
             
             Downloads.DownloadFile(

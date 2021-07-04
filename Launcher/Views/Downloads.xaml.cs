@@ -10,9 +10,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Controls;
 using ByteSizeLib;
-using LauncherCore.Classes;
+using Launcher.Classes;
 
-namespace LauncherCore.Views
+namespace Launcher.Views
 {
     public partial class Downloads : UserControl
     {

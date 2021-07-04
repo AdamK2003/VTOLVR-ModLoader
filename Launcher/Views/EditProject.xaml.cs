@@ -9,11 +9,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using LauncherCore.Classes;
-using LauncherCore.Windows;
 using Core.Jsons;
+using Launcher.Classes;
+using Launcher.Windows;
 
-namespace LauncherCore.Views
+namespace Launcher.Views
 {
     /// <summary>
     /// Interaction logic for EditProject.xaml

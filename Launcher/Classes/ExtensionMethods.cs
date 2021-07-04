@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows.Media.Imaging;
 using Core.Jsons;
 
-namespace LauncherCore.Classes
+namespace Launcher.Classes
 {
     public static class ExtensionMethods
     {

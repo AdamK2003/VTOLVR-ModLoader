@@ -2,13 +2,13 @@
 using System.Windows;
 using System.Diagnostics;
 using WpfAnimatedGif;
-using LauncherCore.Views;
-using LauncherCore.Classes;
-using Console = LauncherCore.Views.Console;
+using Console = Launcher.Views.Console;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Launcher.Classes;
+using Launcher.Views;
 
-namespace LauncherCore
+namespace Launcher
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -23,7 +23,7 @@ namespace LauncherCore
         public News news { get; private set; }
         public Views.Settings settings { get; private set; }
         public DevTools devTools { get; private set; }
-        public Console console { get; private set; }
+        public Views.Console console { get; private set; }
         public ProjectManager pManager { get; private set; }
         public Manager ItemManager { get; private set; }
         public Downloads Downloads { get; private set; }
@@ -43,7 +43,7 @@ namespace LauncherCore
         public void CreatePages()
         {
             Helper.SentryLog("Creating Pages", Helper.SentryLogCategory.MainWindow);
-            console = new Console();
+            console = new Views.Console();
             if (news == null)
                 news = new News();
             settings = new Views.Settings();

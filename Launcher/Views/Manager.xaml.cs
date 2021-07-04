@@ -13,13 +13,13 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Core.Enums;
 using Core.Jsons;
+using Launcher.Classes;
+using Launcher.Classes.Json;
+using Launcher.Windows;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using LauncherCore.Classes;
-using LauncherCore.Classes.Json;
-using LauncherCore.Windows;
 
-namespace LauncherCore.Views
+namespace Launcher.Views
 {
     /// <summary>
     /// Interaction logic for Manager.xaml

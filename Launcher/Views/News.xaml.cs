@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
-using LauncherCore.Classes;
+using Launcher.Classes;
 
-namespace LauncherCore.Views
+namespace Launcher.Views
 {
     public partial class News : UserControl
     {

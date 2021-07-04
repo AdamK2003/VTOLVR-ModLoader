@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace LauncherCore.Classes
+namespace Launcher.Classes
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class UpdateFile

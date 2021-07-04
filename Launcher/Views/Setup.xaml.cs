@@ -6,13 +6,13 @@ using System.IO;
 using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
-using LauncherCore.Classes;
-using LauncherCore.Classes.Json;
-using LauncherCore.Windows;
+using Launcher.Classes;
+using Launcher.Classes.Json;
+using Launcher.Windows;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
-namespace LauncherCore.Views
+namespace Launcher.Views
 {
     public partial class Setup : UserControl
     {

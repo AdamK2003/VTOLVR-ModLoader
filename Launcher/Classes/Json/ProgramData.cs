@@ -3,7 +3,7 @@
 using System.IO;
 using Newtonsoft.Json;
 
-namespace LauncherCore.Classes.Json
+namespace Launcher.Classes.Json
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class ProgramData

@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Core.Jsons;
-using Valve.Newtonsoft.Json;
-using Valve.Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Core
 {
     public static class Helper
     {
-        private const string _dllModDescription = "This only a .dll file, please make mods into .zip when releasing the mod.";
+        private const string _dllModDescription =
+            "This only a .dll file, please make mods into .zip when releasing the mod.";
+
         public static JObject JObjectTryParse(string content, out Exception exception)
         {
             try
@@ -50,6 +49,7 @@ namespace Core
                 Logger.Error("Couldn't find folder " + folder);
                 return foundMods;
             }
+
             DirectoryInfo folders = new DirectoryInfo(folder);
             DirectoryInfo[] mods = folders.GetDirectories();
 
@@ -67,10 +67,12 @@ namespace Core
                     Logger.Log($"Mod: {mods[i].Name} doesn't have a info.json file");
                     continue;
                 }
+
                 lastMod = JsonConvert.DeserializeObject<BaseItem>(File.ReadAllText(pathToCheck));
                 lastMod.Directory = mods[i];
                 foundMods.Add(lastMod);
             }
+
             return foundMods;
         }
 
@@ -95,9 +97,10 @@ namespace Core
                     Logger.Log($"Skin: {skins[i].Name} doesn't have a info.json file");
                     continue;
                 }
+
                 lastSkin = JsonConvert.DeserializeObject<BaseItem>(
-                            File.ReadAllText(
-                                Path.Combine(skins[i].FullName, "info.json")));
+                    File.ReadAllText(
+                        Path.Combine(skins[i].FullName, "info.json")));
                 lastSkin.Directory = skins[i];
                 foundSkins.Add(lastSkin);
             }

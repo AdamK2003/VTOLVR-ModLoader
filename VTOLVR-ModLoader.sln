@@ -3,13 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "VTOLVR-ModLoader\Launcher.csproj", "{4D9D2F10-E1AE-4980-AAAF-37B78DF081E7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mod Loader", "ModLoader\Mod Loader.csproj", "{6954C277-7D91-4274-B54B-FDDAD7738790}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{1EE40772-7545-473D-A2C9-DBE790F36BF3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{C9D851F2-6414-4A28-9154-06DD800FF534}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Builder", "Builder\Builder.csproj", "{D65B2E1B-93D1-4839-8517-8538978C07F2}"
 EndProject
@@ -19,17 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitlab-ci.yml = .gitlab-ci.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{260BF2D3-DD28-4DB5-80C3-B137E350930D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "Launcher\Launcher.csproj", "{4689BB4D-8F89-4DF2-83C2-F357D6CC3894}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstallerCore", "InstallerCore\InstallerCore.csproj", "{B9A83717-657C-46A0-A1F4-024AAC11FB56}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LauncherCore", "LauncherCore\LauncherCore.csproj", "{4689BB4D-8F89-4DF2-83C2-F357D6CC3894}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreCore", "CoreCore\CoreCore.csproj", "{F740C545-528C-42B6-AF8A-C1469555CEAD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdaterCore", "UpdaterCore\UpdaterCore.csproj", "{70D11B40-D698-4C7D-A727-4A62EE079F0A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpMonoInjector", "SharpMonoInjector\SharpMonoInjector.csproj", "{A0B4352A-3F47-4CB5-8F7E-909BCE336702}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{F740C545-528C-42B6-AF8A-C1469555CEAD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTPatcher", "VTPatcher\VTPatcher.csproj", "{ACF68D01-295F-456F-AE81-A57F7B6B6174}"
 EndProject
@@ -39,34 +25,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4D9D2F10-E1AE-4980-AAAF-37B78DF081E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D9D2F10-E1AE-4980-AAAF-37B78DF081E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D9D2F10-E1AE-4980-AAAF-37B78DF081E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D9D2F10-E1AE-4980-AAAF-37B78DF081E7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6954C277-7D91-4274-B54B-FDDAD7738790}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6954C277-7D91-4274-B54B-FDDAD7738790}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6954C277-7D91-4274-B54B-FDDAD7738790}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6954C277-7D91-4274-B54B-FDDAD7738790}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1EE40772-7545-473D-A2C9-DBE790F36BF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1EE40772-7545-473D-A2C9-DBE790F36BF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1EE40772-7545-473D-A2C9-DBE790F36BF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1EE40772-7545-473D-A2C9-DBE790F36BF3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C9D851F2-6414-4A28-9154-06DD800FF534}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9D851F2-6414-4A28-9154-06DD800FF534}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9D851F2-6414-4A28-9154-06DD800FF534}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9D851F2-6414-4A28-9154-06DD800FF534}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D65B2E1B-93D1-4839-8517-8538978C07F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D65B2E1B-93D1-4839-8517-8538978C07F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D65B2E1B-93D1-4839-8517-8538978C07F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D65B2E1B-93D1-4839-8517-8538978C07F2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{260BF2D3-DD28-4DB5-80C3-B137E350930D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{260BF2D3-DD28-4DB5-80C3-B137E350930D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{260BF2D3-DD28-4DB5-80C3-B137E350930D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{260BF2D3-DD28-4DB5-80C3-B137E350930D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B9A83717-657C-46A0-A1F4-024AAC11FB56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B9A83717-657C-46A0-A1F4-024AAC11FB56}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B9A83717-657C-46A0-A1F4-024AAC11FB56}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B9A83717-657C-46A0-A1F4-024AAC11FB56}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4689BB4D-8F89-4DF2-83C2-F357D6CC3894}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4689BB4D-8F89-4DF2-83C2-F357D6CC3894}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4689BB4D-8F89-4DF2-83C2-F357D6CC3894}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -75,14 +41,6 @@ Global
 		{F740C545-528C-42B6-AF8A-C1469555CEAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F740C545-528C-42B6-AF8A-C1469555CEAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F740C545-528C-42B6-AF8A-C1469555CEAD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{70D11B40-D698-4C7D-A727-4A62EE079F0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{70D11B40-D698-4C7D-A727-4A62EE079F0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{70D11B40-D698-4C7D-A727-4A62EE079F0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{70D11B40-D698-4C7D-A727-4A62EE079F0A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A0B4352A-3F47-4CB5-8F7E-909BCE336702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0B4352A-3F47-4CB5-8F7E-909BCE336702}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0B4352A-3F47-4CB5-8F7E-909BCE336702}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0B4352A-3F47-4CB5-8F7E-909BCE336702}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ACF68D01-295F-456F-AE81-A57F7B6B6174}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ACF68D01-295F-456F-AE81-A57F7B6B6174}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACF68D01-295F-456F-AE81-A57F7B6B6174}.Release|Any CPU.ActiveCfg = Release|Any CPU

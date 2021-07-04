@@ -1,13 +1,10 @@
 ﻿// This is the current json format as of 4.0.0
+
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Valve.Newtonsoft.Json;
-using Valve.Newtonsoft.Json.Linq;
 using Core.Enums;
+using Newtonsoft.Json;
 
 namespace Core.Jsons
 {
@@ -59,10 +56,12 @@ namespace Core.Jsons
         }
 
         [JsonIgnore] private ContentType _contentType;
+
         public bool HasPublicID()
         {
             return PublicID != string.Empty;
         }
+
         public bool HasDll()
         {
             if (string.IsNullOrEmpty(DllPath))
@@ -71,6 +70,7 @@ namespace Core.Jsons
                 return File.Exists(Path.Combine(Directory.FullName, "Builds", DllPath));
             return File.Exists(Path.Combine(Directory.FullName, DllPath));
         }
+
         public void SaveFile()
         {
             using (TextWriter tw = new StreamWriter(Path.Combine(Directory.FullName, "info.json")))
@@ -113,6 +113,7 @@ namespace Core.Jsons
             {
                 return item;
             }
+
             Logger.Error("Failed to get base item.\nError:" + error);
             return null;
         }

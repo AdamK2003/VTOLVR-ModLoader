@@ -75,8 +75,8 @@ namespace Build
                 $"restore",
                 @"");
             Run(paths["msbuild"],
-                "-p:Configuration=Release -nologo CoreCore.csproj /t:Restore /t:Clean,Build ",
-                @"\CoreCore");
+                "-p:Configuration=Release -nologo Core.csproj /t:Restore /t:Clean,Build ",
+                @"\Core");
             
             
             Log("Building ModLoader.dll\n");
@@ -95,7 +95,7 @@ namespace Build
             Log("Publishing VTOLVR-ModLoader.exe\n");
             Run(paths["dotnet"],
                 "publish -r win-x64 --self-contained=false /p:PublishSingleFile=true -c Release",
-                @"\LauncherCore");
+                @"\Launcher");
         }
 
         private static void BuildAssetBundle()
@@ -121,10 +121,10 @@ namespace Build
         private static void SignFiles()
         {
             Log("Signing Core.dll");
-            FileInfo file = new FileInfo(@"CoreCore\bin\Release\net5.0\CoreCore.dll");
+            FileInfo file = new FileInfo(@"Core\bin\Release\net5.0\Core.dll");
             Run(paths["sign"],
                 $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
-                @"\CoreCore");
+                @"\Core");
             
             Log("Signing ModLoader.dll");
             file = new FileInfo(@"ModLoader\bin\Release\ModLoader.dll");
@@ -133,10 +133,10 @@ namespace Build
                 @"\ModLoader");
             
             Log("Signing Launcher");
-            file = new FileInfo(@"LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe");
+            file = new FileInfo(@"Launcher\bin\Release\net5.0-windows\win-x64\publish\Launcher.exe");
             Run(paths["sign"],
                 $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
-                @"\LauncherCore");
+                @"\Launcher");
             
             Log("Signing Patcher");
             file = new FileInfo(@"VTPatcher\bin\Release\VTPatcher.dll");
@@ -179,11 +179,11 @@ namespace Build
             Directory.CreateDirectory(dir + @"\autoupdate\template\VTOLVR_ModLoader\skins");
 
             Log("Moving Applications");
-            TryMove(dir + @"\CoreCore\bin\Release\net5.0\CoreCore.dll", dir + @"\autoupdate\template\VTOLVR_Data\Managed\Core.dll");
+            TryMove(dir + @"\Core\bin\Release\net5.0\Core.dll", dir + @"\autoupdate\template\VTOLVR_Data\Managed\Core.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.xml");
             TryMove(dir + @"\VTPatcher\bin\Release\VTPatcher.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTPatcher.dll");
-            TryMove(dir + @"\LauncherCore\bin\Release\net5.0-windows\win-x64\publish\LauncherCore.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
+            TryMove(dir + @"\Launcher\bin\Release\net5.0-windows\win-x64\publish\Launcher.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
 
             Log("Creating zip");
             ZipFile.CreateFromDirectory(dir + @"\autoupdate\", dir + @"\autoupdate.zip");
@@ -216,8 +216,8 @@ namespace Build
             Log("Moving VTOLVR-ModLoader.exe");
             TryMove(
                 Path.Combine(
-                    dir, "LauncherCore", "bin", "Release", "net5.0-windows",
-                    "win-x64", "publish", "LauncherCore.exe"),
+                    dir, "Launcher", "bin", "Release", "net5.0-windows",
+                    "win-x64", "publish", "Launcher.exe"),
                 Path.Combine(root, "VTOLVR-ModLoader.exe"));
             Log("Finished");
         }

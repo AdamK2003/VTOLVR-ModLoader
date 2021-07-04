@@ -1,9 +1,0 @@
-﻿<Application x:Class="UpdaterCore.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:UpdaterCore"
-             StartupUri="MainWindow.xaml">
-    <Application.Resources>
-        <FontFamily x:Key="SquaresBoldFree">pack://Application:,,,/#Squares Bold Free</FontFamily>
-    </Application.Resources>
-</Application>

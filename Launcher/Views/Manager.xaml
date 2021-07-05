@@ -27,7 +27,7 @@
                                     <TextBlock
                                         Text="{Binding Name, NotifyOnTargetUpdated=True}"
                                         Foreground="{Binding CurrentVersionColour}"
-                                        FontFamily="{Binding Font}" />
+                                        FontFamily="{Binding Font}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                             <GridViewColumn.Header>Name</GridViewColumn.Header>
@@ -159,6 +159,8 @@
             </ListView.View>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                    <Setter Property="Background" Value="{Binding BackgroundColour}"></Setter>
                     <Style.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Trigger.Setters>

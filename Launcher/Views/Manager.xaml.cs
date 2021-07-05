@@ -33,6 +33,8 @@ namespace Launcher.Views
         private ScrollViewer _scrollViewer;
 
         private int _outdatedItems = 0;
+        private readonly Brush _darkBackground = new SolidColorBrush(Color.FromRgb(61, 61, 61));
+        private readonly Brush _lightBackground = new SolidColorBrush(Color.FromRgb(75, 75, 75));
 
         public Manager()
         {
@@ -94,6 +96,7 @@ namespace Launcher.Views
             _items = new ObservableCollection<Item>();
             Program.FindItems();
             ConvertItems();
+            SetBackgroundColours();
             _listView.ItemsSource = _items;
 
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(_listView.ItemsSource);
@@ -567,6 +570,7 @@ namespace Launcher.Views
             public string PublicID { get; set; }
             public bool HasPublicID { get { return PublicID == string.Empty; } }
             public FontFamily Font { get; set; }
+            public Brush BackgroundColour { get; set; }
 
             public Item(ContentType contentType, string name, string description, Visibility updateVisibility,
                 string currentVersion, string websiteVersion, bool loadOnStartCheck, bool autoUpdateCheck,
@@ -733,6 +737,21 @@ namespace Launcher.Views
                         _items[i].LoadValue(savedValues[j]);
                         break;
                     }
+                }
+            }
+        }
+
+        private void SetBackgroundColours()
+        {
+            for (int i = 0; i < _items.Count; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    _items[i].BackgroundColour = _darkBackground;
+                }
+                else
+                {
+                    _items[i].BackgroundColour = _lightBackground;
                 }
             }
         }

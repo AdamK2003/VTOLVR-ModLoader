@@ -84,8 +84,6 @@ namespace Launcher.Views
                 _uninstallButton.Content = "(Admin Needed)";
                 _uninstallButton.IsEnabled = false;
             }
-
-            _processTries.TextChanged += ProcessTextChanged;
             Helper.SentryLog("Created Settings Page", Helper.SentryLogCategory.Settings);
         }
 
@@ -192,11 +190,6 @@ namespace Launcher.Views
                 projectsText.Text = $"Projects Folder Set:\n{ProjectsFolder}";
             autoUpdateCheckbox.IsChecked = AutoUpdate;
             steamvrCheckbox.IsChecked = SteamVR;
-
-            if (USettings.MaxProcessAttempts <= 0)
-                USettings.MaxProcessAttempts = 1;
-
-            _processTries.Text = USettings.MaxProcessAttempts.ToString();
 
             SetupBranchesFromSettings();
             SaveSettings();
@@ -476,27 +469,6 @@ namespace Launcher.Views
             {
                 Program.GetReleases();
             }
-        }
-
-        private void ProcessTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            if (int.TryParse(_processTries.Text, out int result))
-            {
-                if (result <= 0)
-                    result = 1;
-                USettings.MaxProcessAttempts = result;
-
-                SaveSettings();
-            }
-
-            _processTries.Text = USettings.MaxProcessAttempts.ToString();
-            _processTries.CaretIndex = _processTries.Text.Length;
-        }
-
-        private void ValidInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9]+");
-            e.Handled = regex.IsMatch(e.Text);
         }
 
         private void UninstallButton(object sender, RoutedEventArgs e)

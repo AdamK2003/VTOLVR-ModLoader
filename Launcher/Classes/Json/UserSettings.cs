@@ -19,9 +19,6 @@ namespace Launcher.Classes.Json
         [JsonProperty("Active Branch")] public int ActiveBranch = 0;
         [JsonProperty("Accepted Devtools")] public bool AcceptedDevtools = false;
 
-        [JsonProperty("Max Find Process Attempts")]
-        public int MaxProcessAttempts = 5;
-
         [JsonProperty] public ObservableCollection<Manager.Item> Items = new ObservableCollection<Manager.Item>();
 
         private static UserSettings _settings;
@@ -80,7 +77,6 @@ namespace Launcher.Classes.Json
                    $"Branches = {Branches}|" +
                    $"ActiveBranch = {ActiveBranch}|" +
                    $"AcceptedDevtools = {AcceptedDevtools}|" +
-                   $"MaxProcessAttempts = {MaxProcessAttempts}|" +
                    $"Items count = {Items.Count}";
         }
     }

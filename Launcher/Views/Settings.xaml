@@ -166,23 +166,8 @@
                            x:Name="_branchResultText" Text="This is the result"
                            Foreground="White" HorizontalAlignment="Center" Visibility="Hidden" />
             </Grid>
-
-            <Grid Grid.Row="8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="200" />
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Column="0" Text="Maximum attempts to find the VTOLVR process. Default is 5"
-                           Foreground="White" FontSize="15" />
-
-                <TextBox Grid.Column="1" Text="5" x:Name="_processTries"
-                         HorizontalAlignment="Stretch"
-                         PreviewTextInput="ValidInput" />
-
-            </Grid>
             
-            <Grid Grid.Row="9" Margin="0,10,0,0">
+            <Grid Grid.Row="8" Margin="0,10,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="100" />

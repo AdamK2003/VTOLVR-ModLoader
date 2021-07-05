@@ -220,7 +220,7 @@ namespace Launcher.Views
         {
             HttpHelper.DownloadStringAsync(
                 $"{Program.URL}{Program.ApiURL}{(isMod ? Program.ModsURL : Program.SkinsURL)}/{publicID}",
-                RequestItemCallback, extraData: new object[] {isMod});
+                RequestItemCallback, extraData: new object[] {isMod, publicID});
         }
 
         private async void RequestItemCallback(HttpResponseMessage response, object[] extraData)
@@ -229,7 +229,8 @@ namespace Launcher.Views
             if (!response.IsSuccessStatusCode)
             {
                 Console.Log(
-                    "Failed to received info on item\nError Code from website:" + response.StatusCode.ToString());
+                    $"Failed to received info on item\nError Code from website:{response.StatusCode}");
+                ReceivedError((string)extraData[1]);
                 return;
             }
 
@@ -319,6 +320,20 @@ namespace Launcher.Views
 
                     return;
                 }
+            }
+        }
+
+        private void ReceivedError(string publicID)
+        {
+            for (int i = 0; i < _items.Count; i++)
+            {
+                if (string.IsNullOrEmpty(_items[i].PublicID) ||
+                    !_items[i].PublicID.Equals(publicID))
+                    continue;
+
+                _items[i].WebsiteVersion = "Error";
+                _items[i].PopertyChanged("WebsiteVersion");
+                return;
             }
         }
 

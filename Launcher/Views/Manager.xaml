@@ -113,8 +113,8 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Foreground="White" Click="UpdateItem"
-                                                Style="{StaticResource RoundedDarkButton}"
+                                        <Button Click="UpdateItem"
+                                                Style="{DynamicResource RoundedLightButton}"
                                                 Visibility="{Binding UpdateVisibility}"
                                                 Tag="{Binding PublicID}" Margin="5,1">
                                             <Button.Content>
@@ -124,9 +124,16 @@
                                                 </TextBlock>
                                             </Button.Content>
                                         </Button>
-                                        <Button Content="Delete" Foreground="White" Click="DeleteMod"
-                                                Style="{StaticResource RoundedDarkButton}"
-                                                Tag="{Binding FolderDirectory}" Padding="10,1,1,1" />
+                                        
+                                        <Button Click="DeleteMod"
+                                                Style="{DynamicResource RoundedLightButton}"
+                                                Tag="{Binding FolderDirectory}">
+                                            <Button.Content>
+                                                <TextBlock Margin="5,1">
+                                                    Delete
+                                                </TextBlock>
+                                            </Button.Content>
+                                        </Button>
                                     </StackPanel>
 
                                 </DataTemplate>

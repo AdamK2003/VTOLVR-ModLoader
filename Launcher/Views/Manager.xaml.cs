@@ -754,6 +754,8 @@ namespace Launcher.Views
                     _items[i].BackgroundColour = _lightBackground;
                 }
             }
+            
         }
+        
     }
 }

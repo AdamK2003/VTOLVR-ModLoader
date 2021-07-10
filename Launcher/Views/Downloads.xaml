@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="Launcher.Views.Downloads"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Launcher.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Style="{DynamicResource HeaderOne}" Grid.Row="0" Grid.Column="0">
+            Current Downloads
+        </TextBlock>
+        
+        <ItemsControl Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch"
+                      x:Name="_listBox">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                
+                        <TextBlock Style="{DynamicResource TextNormal}" 
+                                   Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                   Margin="10,0" Text="{Binding FilePath}"/>
+                        <ProgressBar Style="{DynamicResource LightProgressBar}" 
+                                     Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                                     Background="{x:Null}" Value="{Binding Progress}"
+                                     Margin="10,0"/>
+                
+                        <TextBlock Style="{DynamicResource TextNormal}" TextAlignment="Center"
+                                   Grid.Row="2" Grid.Column="0" Text="{Binding BytesText}"/>
+                
+                        <TextBlock Style="{DynamicResource TextNormal}" TextAlignment="Center"
+                                   Grid.Row="2" Grid.Column="1" Text="{Binding StartText}"/>
+                
+                        <TextBlock Style="{DynamicResource TextNormal}" TextAlignment="Center"
+                                   Grid.Row="2" Grid.Column="2" Text="{Binding PercentText}"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+
+    </Grid>
+</UserControl>

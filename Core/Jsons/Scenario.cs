@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Valve.Newtonsoft.Json;
-using Valve.Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Core.Enums;
 
 namespace Core.Jsons
@@ -22,8 +22,9 @@ namespace Core.Jsons
         public override string ToString()
         {
             return $"pilot={Pilot},scenario_name={ScenarioName},scenario_id={ScenarioID}," +
-                $"campaign_id={CampaignID},is_custom={IsCustom},is_workshop={IsWorkshop}";
+                   $"campaign_id={CampaignID},is_custom={IsCustom},is_workshop={IsWorkshop}";
         }
+
         public override bool Equals(object obj)
         {
             Scenario scenario = (Scenario)obj;

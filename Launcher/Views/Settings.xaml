@@ -1,0 +1,203 @@
+﻿<UserControl x:Class="Launcher.Views.Settings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Launcher.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="900" d:DesignWidth="800">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Settings" Foreground="White" FontSize="30"
+                       HorizontalAlignment="Center" Margin="0,0,0,10" />
+
+            <!-- User Settings -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Grid.Column="0" Foreground="White"
+                           FontSize="20" TextWrapping="Wrap" Style="{StaticResource BoldText}">
+                    User
+                </TextBlock>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Token:" VerticalAlignment="Center" Foreground="White"
+                       FontSize="15" />
+                <PasswordBox Grid.Row="1" Grid.Column="1" x:Name="tokenBox" FontSize="25" />
+                <Button Grid.Row="1" Grid.Column="2" Click="UpdateToken" x:Name="updateButton"
+                        Style="{StaticResource RoundedDarkButton}">
+                    <TextBlock Text="Update" Foreground="White" TextAlignment="Center" />
+                </Button>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Foreground="White" FontSize="15"
+                           TextWrapping="Wrap" Padding="0,0,0,10">
+                    User tokens are currently only for mod/skin creators. It gives them access to uploading mods from the mod loader.
+                    <LineBreak />
+                    To apply this code, you can press this button or paste it manually in the settings page of the mod loader.
+                    <LineBreak /><LineBreak />
+                    Make sure you don't share this token otherwise others will be able to upload/update mods and skins on your account.
+                </TextBlock>
+
+                <CheckBox Content="Auto Update Mod Loader Files" IsChecked="True" Grid.Row="3"
+                          Foreground="White" Grid.Column="0" Grid.ColumnSpan="3"
+                          Margin="10,10,0,0" FontSize="15" x:Name="autoUpdateCheckbox"
+                          Click="AutoUpdateChanged" />
+                <CheckBox Content="Launch Steam VR when launcher is open" IsChecked="True" Grid.Row="4"
+                          Foreground="White" Grid.Column="0" Grid.ColumnSpan="3"
+                          Margin="10,10,0,0" FontSize="15" x:Name="steamvrCheckbox"
+                          Click="SteamVRChanged" />
+            </Grid>
+
+            <!-- Development -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Grid.Column="0" Foreground="White"
+                           FontSize="20" TextWrapping="Wrap" Style="{StaticResource BoldText}">
+                    Development
+                </TextBlock>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Foreground="White" FontSize="15" x:Name="projectsText">
+                    My Projects folder not set.
+                </TextBlock>
+
+                <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource RoundedDarkButton}" Margin="5,10,5,10"
+                        Content="Set" Click="SetMyProjectsFolder" x:Name="projectsButton" />
+            </Grid>
+
+            <Grid Grid.Row="6" Margin="0,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="200" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Foreground="White"
+                           FontSize="20" TextWrapping="Wrap" Style="{StaticResource BoldText}">
+                    Diagnostics
+                </TextBlock>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Foreground="White" FontSize="15" TextWrapping="Wrap">
+                    If the installer ran without administrator privileges or you are having problems with one-click installing on the website. You can press the reapply button to set it again in your system's registry.
+                </TextBlock>
+
+                <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource RoundedDarkButton}" Margin="5,10,5,10"
+                        Content="Reapply" Click="SetOneClickInstall" x:Name="oneclickInstallButton" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Foreground="White" FontSize="15" TextWrapping="Wrap">
+                    You can create a diagnostics zip to help us find the root of your issue. This will zip up your game log, mod loader log and some information of what mods and skins you have installed.
+                </TextBlock>
+
+                <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource RoundedDarkButton}" Margin="5,10,5,10"
+                        Content="Create ZIP" Click="CreateDiagnosticsZip" />
+            </Grid>
+
+            <Grid Grid.Row="7" Margin="0,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="200" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Foreground="White"
+                           FontSize="20" TextWrapping="Wrap" Style="{StaticResource BoldText}">
+                    Advanced
+                </TextBlock>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Foreground="White" FontSize="15"
+                           TextWrapping="Wrap" Visibility="Visible">
+                    Select a branch you which to switch to:
+                </TextBlock>
+                <ComboBox Grid.Row="1" Grid.Column="1" x:Name="_branchesBox" Margin="10,0"
+                          SelectionChanged="BranchChanged" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Foreground="White" FontSize="15"
+                           TextWrapping="Wrap" Margin="0,10,0,5">
+                    Enter branch access code to unlock private branches:
+                </TextBlock>
+
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0,0,10,0"
+                         x:Name="_newBranchCodeBox" />
+                <Button Grid.Row="3" Grid.Column="1" Content="Check Code"
+                        Style="{StaticResource RoundedDarkButton}" Margin="10,0"
+                        Click="CheckBranch" x:Name="_branchCheckButton" />
+                <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                           x:Name="_branchResultText" Text="This is the result"
+                           Foreground="White" HorizontalAlignment="Center" Visibility="Hidden" />
+            </Grid>
+            
+            <Grid Grid.Row="8" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                    Grid.Column="0" Style="{StaticResource TextNormal}">
+                    Uninstall
+                </TextBlock>
+                
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           Style="{DynamicResource TextSmall}">
+                    This will delete all the files relating to the mod loader and move the application to 
+                    your temp folder. <LineBreak/>
+                    After uninstalling it is highly recommended you verify your game files
+                    and delete your temp folder.
+                </TextBlock>
+                
+                
+
+                <Button Grid.Column="1"  Grid.Row="0" Grid.RowSpan="2"
+                        Style="{StaticResource RoundedDarkButton}" 
+                        Margin="5,10,5,10"
+                        Content="Uninstall" Click="UninstallButton" 
+                        x:Name="_uninstallButton"/>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

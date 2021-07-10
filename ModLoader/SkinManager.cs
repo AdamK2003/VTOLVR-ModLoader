@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace ModLoader
 {
-    class SkinManager : VTOLMOD
+    public class SkinManager : VTOLMOD
     {
         //This variables are used on different scenes
         private List<Skin> installedSkins = new List<Skin>();

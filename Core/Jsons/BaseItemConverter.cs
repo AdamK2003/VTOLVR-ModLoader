@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Valve.Newtonsoft.Json;
-using Valve.Newtonsoft.Json.Linq;
-using Valve.Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Core.Jsons
 {
@@ -18,28 +16,27 @@ namespace Core.Jsons
             // old | new
 
             // 3.2.8
-            { "dll file", BaseItem.JDllFile},
-            { "public id", BaseItem.JPublicID},
-            { "is public", BaseItem.JIsPublic},
-            { "last edit", BaseItem.JLastEdit },
-            { "preview image", BaseItem.JPreviewImage},
-            { "web preview image", BaseItem.JWebPreviewImage },
+            {"dll file", BaseItem.JDllFile},
+            {"public id", BaseItem.JPublicID},
+            {"is public", BaseItem.JIsPublic},
+            {"last edit", BaseItem.JLastEdit},
+            {"preview image", BaseItem.JPreviewImage},
+            {"web preview image", BaseItem.JWebPreviewImage},
 
             // Some older version
-            { "Name", BaseItem.JName },
-            { "Description", BaseItem.JDescription },
-            { "Tagline", BaseItem.JTagline },
-            { "Version", BaseItem.JVersion },
-            { "Dll File", BaseItem.JDllFile },
-            { "Last Edit", BaseItem.JLastEdit },
-            { "Source", BaseItem.JRepository },
-            { "Preview Image", BaseItem.JPreviewImage },
-            { "Web Preview Image", BaseItem.JWebPreviewImage },
-            { "Dependencies", BaseItem.JDependencies },
-            { "Public ID", BaseItem.JPublicID },
-            { "Is Public", BaseItem.JIsPublic },
-            { "Unlisted", BaseItem.JUnlisted }
-
+            {"Name", BaseItem.JName},
+            {"Description", BaseItem.JDescription},
+            {"Tagline", BaseItem.JTagline},
+            {"Version", BaseItem.JVersion},
+            {"Dll File", BaseItem.JDllFile},
+            {"Last Edit", BaseItem.JLastEdit},
+            {"Source", BaseItem.JRepository},
+            {"Preview Image", BaseItem.JPreviewImage},
+            {"Web Preview Image", BaseItem.JWebPreviewImage},
+            {"Dependencies", BaseItem.JDependencies},
+            {"Public ID", BaseItem.JPublicID},
+            {"Is Public", BaseItem.JIsPublic},
+            {"Unlisted", BaseItem.JUnlisted}
         };
 
         public override bool CanConvert(Type objectType)
@@ -47,7 +44,8 @@ namespace Core.Jsons
             throw new NotImplementedException();
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
             object instance = Activator.CreateInstance(objectType);
             var props = objectType.GetTypeInfo().DeclaredProperties.ToList();
@@ -80,7 +78,8 @@ namespace Core.Jsons
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            JsonObjectContract contract = (JsonObjectContract)serializer.ContractResolver.ResolveContract(value.GetType());
+            JsonObjectContract contract =
+                (JsonObjectContract)serializer.ContractResolver.ResolveContract(value.GetType());
 
             writer.WriteStartObject();
             foreach (var property in contract.Properties)
@@ -104,12 +103,14 @@ namespace Core.Jsons
                     {
                         writer.WriteValue(list[i]);
                     }
+
                     writer.WriteEndArray();
                     continue;
                 }
 
                 writer.WriteValue(property.ValueProvider.GetValue(value));
             }
+
             writer.WriteEndObject();
         }
     }

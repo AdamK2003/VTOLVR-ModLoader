@@ -166,17 +166,18 @@ namespace Launcher.Views
             {
                 try
                 {
-                    Process.Start(slns[0].FullName);
+                    OpenFile(new FileInfo(slns[0].FullName));
                 }
                 catch (Exception error)
                 {
                     Notification.Show($"Error when opening .sln file\n{error.Message}", "Error");
-                    Process.Start(projectPath);
+
+                    OpenFileExplorer(new DirectoryInfo(projectPath));
                 }
             }
             else
             {
-                Process.Start(projectPath);
+                OpenFileExplorer(new DirectoryInfo(projectPath));
             }
         }
 
@@ -184,6 +185,35 @@ namespace Launcher.Views
         {
             Button button = (Button)sender;
             MainWindow.OpenPage(new NewVersion(button.Tag.ToString()));
+        }
+
+        private static bool OpenFileExplorer(DirectoryInfo folder)
+        {
+            if (folder.Exists)
+            {
+                ProcessStartInfo startInfo = new()
+                {
+                    Arguments = folder.FullName,
+                    FileName = "explorer.exe"
+                };
+
+                Process.Start(startInfo);
+            }
+
+            return folder.Exists;
+        }
+
+        private static bool OpenFile(FileInfo file)
+        {
+            if (file.Exists)
+            {
+                using Process process = new ();
+                process.StartInfo.FileName = "explorer";
+                process.StartInfo.Arguments = $"\"{file.FullName}\"";
+                process.Start();
+            }
+
+            return file.Exists;
         }
     }
 }

@@ -38,16 +38,22 @@ namespace Launcher.Classes
             string lastPath;
             for (int i = 0; i < updateFiles.Length; i++)
             {
-                lastPath = Program.VTOLFolder + "/" + updateFiles[i].Location;
-                if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(updateFiles[i].Hash))
+                if (updateFiles[i].Name.Equals("VTOLVR-ModLoader"))
                 {
-                    Console.Log($"Need to update {updateFiles[i].Location}");
-                    if (updateFiles[i].Name.Equals("VTOLVR-ModLoader"))
+                    if (!Helper.CalculateMD5(Program.ExePath).Equals(updateFiles[i].Hash))
                     {
                         if (!MoveLauncher())
                             return;
                         _oldPath = Program.ExePath;
+                        AddFile(updateFiles[i]);
                     }
+                    continue;
+                }
+                
+                lastPath = Program.VTOLFolder + "/" + updateFiles[i].Location;
+                if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(updateFiles[i].Hash))
+                {
+                    Console.Log($"Need to update {updateFiles[i].Location}");
 
                     AddFile(updateFiles[i]);
                 }

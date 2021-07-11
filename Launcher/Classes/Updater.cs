@@ -23,10 +23,10 @@ namespace Launcher.Classes
             if (!skipChecks && !Views.Settings.AutoUpdate)
                 return;
             _onComplete = onComplete;
-            Views.Console.Log("Checking for updates");
+            Console.Log("Checking for updates");
             if (Program.Releases == null || Program.Releases.Count == 0)
             {
-                Views.Console.Log("Couldn't find any releases");
+                Console.Log("Couldn't find any releases");
                 return;
             }
 
@@ -41,11 +41,12 @@ namespace Launcher.Classes
                 lastPath = Program.VTOLFolder + "/" + updateFiles[i].Location;
                 if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(updateFiles[i].Hash))
                 {
-                    Views.Console.Log($"Need to update {updateFiles[i].Location}");
+                    Console.Log($"Need to update {updateFiles[i].Location}");
                     if (updateFiles[i].Name.Equals("VTOLVR-ModLoader"))
                     {
                         if (!MoveLauncher())
                             return;
+                        _oldPath = Program.ExePath;
                     }
 
                     AddFile(updateFiles[i]);
@@ -54,7 +55,7 @@ namespace Launcher.Classes
 
             if (_updateFiles.Count == 0)
             {
-                Views.Console.Log("All fines are up to date");
+                Console.Log("All fines are up to date");
                 MainWindow.SetPlayButton(false);
                 _onComplete?.Invoke();
             }
@@ -62,7 +63,7 @@ namespace Launcher.Classes
 
         private static void AddFile(UpdateFile file)
         {
-            Views.Console.Log("Updating " + file.Name);
+            Console.Log("Updating " + file.Name);
             _updateFiles.Add(file);
             
             Downloads.DownloadFile(
@@ -165,14 +166,11 @@ namespace Launcher.Classes
             DirectoryInfo folder = currentPath.Directory;
             
             string oldPath = Path.Combine(folder.FullName, _oldLauncherName);
-            if (File.Exists(oldPath))
+            if (File.Exists(oldPath) && !Helper.TryDelete(oldPath))
             {
-                if (!Helper.TryDelete(oldPath))
-                {
-                    Console.Log($"Failed to delete the old exe");
-                    Notification.Show($"Failed to delete {oldPath}", "Failed to Auto Update");
-                    return false;
-                }
+                Console.Log($"Failed to delete the old exe");
+                Notification.Show($"Failed to delete {oldPath}", "Failed to Auto Update");
+                return false;
             }
             
             File.Move(Program.ExePath, oldPath);

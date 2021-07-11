@@ -46,9 +46,6 @@
                                      Margin="10,0"/>
                 
                         <TextBlock Style="{DynamicResource TextNormal}" TextAlignment="Center"
-                                   Grid.Row="2" Grid.Column="0" Text="{Binding BytesText}"/>
-                
-                        <TextBlock Style="{DynamicResource TextNormal}" TextAlignment="Center"
                                    Grid.Row="2" Grid.Column="1" Text="{Binding StartText}"/>
                 
                         <TextBlock Style="{DynamicResource TextNormal}" TextAlignment="Center"

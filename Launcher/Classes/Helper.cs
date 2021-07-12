@@ -259,13 +259,13 @@ namespace Launcher.Classes
             CheckPermissions(ref infoBuilder);
             File.WriteAllText(Path.Combine(Program.Root, datetime, "Info.txt"), infoBuilder.ToString());
 
-            Console.Log("Zipping up content");
-            string zipName = $"DiagnosticsZip [{datetime}].zip";
+            Console.Log("Zipping up content to ");
+            string zipName = Path.Combine(Program.Root, $"DiagnosticsZip [{datetime}].zip");
             FastZip zip = new FastZip();
             zip.CreateZip(zipName, Path.Combine(Program.Root, datetime), false, null);
 
             Directory.Delete(Path.Combine(Program.Root, datetime), true);
-            Process.Start("explorer.exe", string.Format("/select,\"{0}\\{1}\"", Program.Root, zipName));
+            Process.Start("explorer.exe", string.Format("/select,\"{0}\"", zipName));
         }
 
         public static string PlayerLogPath()

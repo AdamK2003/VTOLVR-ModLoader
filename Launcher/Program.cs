@@ -76,13 +76,7 @@ namespace Launcher
                 {
                     // Pre 5.X user shouldn't need to do the setup
                     ProgramData data = new(){VTOLPath = currentDirectory.Parent.FullName};
-            
-                    string usersPath = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        Startup.AppdataFolder);
-                    Directory.CreateDirectory(usersPath);
-                    usersPath = Path.Combine(usersPath, Startup.DataFile);
-                    ProgramData.Save(data, usersPath);
+                    ProgramData.Save(data);
 
                     Root = currentDirectory.FullName;
                     VTOLFolder = currentDirectory.Parent.FullName;

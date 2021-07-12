@@ -238,6 +238,15 @@ namespace Launcher.Classes
             File.Copy(
                 Path.Combine(Program.Root, Program.LogName),
                 Path.Combine(Program.Root, datetime, Program.LogName));
+            
+            
+            string vtpatherlog = Path.Combine(Program.Root, "Log VTPatcher.txt");
+            if (File.Exists(vtpatherlog))
+            {
+                Console.Log("Copying VTPatcher Log");
+                File.Copy(vtpatherlog,
+                    Path.Combine(Program.Root, datetime, "Log VTPatcher.txt"));
+            }
 
             Console.Log("Gathering Extra Info");
             StringBuilder infoBuilder = new StringBuilder("# Created: " + DateTime.Now.ToString());
@@ -250,13 +259,13 @@ namespace Launcher.Classes
             CheckPermissions(ref infoBuilder);
             File.WriteAllText(Path.Combine(Program.Root, datetime, "Info.txt"), infoBuilder.ToString());
 
-            Console.Log("Zipping up content");
-            string zipName = $"DiagnosticsZip [{datetime}].zip";
+            Console.Log("Zipping up content to ");
+            string zipName = Path.Combine(Program.Root, $"DiagnosticsZip [{datetime}].zip");
             FastZip zip = new FastZip();
             zip.CreateZip(zipName, Path.Combine(Program.Root, datetime), false, null);
 
             Directory.Delete(Path.Combine(Program.Root, datetime), true);
-            Process.Start("explorer.exe", string.Format("/select,\"{0}\\{1}\"", Program.Root, zipName));
+            Process.Start("explorer.exe", string.Format("/select,\"{0}\"", zipName));
         }
 
         public static string PlayerLogPath()
@@ -342,7 +351,7 @@ namespace Launcher.Classes
             FileInfo[] files = new DirectoryInfo(Program.Root).GetFiles();
             for (int i = 0; i < files.Length; i++)
             {
-                builder.AppendLine($"/{files[i].Name} (MD5: {CalculateMD5(files[i].Name)})");
+                builder.AppendLine($"/{files[i].Name} (MD5: {CalculateMD5(files[i].FullName)})");
             }
         }
 

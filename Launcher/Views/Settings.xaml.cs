@@ -282,7 +282,11 @@ namespace Launcher.Views
         private void SetOneClickInstall(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Setting one click install", Helper.SentryLogCategory.Settings);
-            CreateURI(Program.Root);
+            Console.Log("Creating Registry entry for one click installing");
+            Setup.SetupOCI(Program.ExePath);
+            Console.Log("Finished!");
+            Notification.Show("Finished setting registry values for one click install", "Finished",
+                Notification.Buttons.Ok);
         }
 
         /// <summary>
@@ -294,41 +298,6 @@ namespace Launcher.Views
             Helper.SentryLog("Checking for admin", Helper.SentryLogCategory.Settings);
             return new WindowsPrincipal(WindowsIdentity.GetCurrent())
                 .IsInRole(WindowsBuiltInRole.Administrator);
-        }
-
-        private void CreateURI(string root)
-        {
-            Helper.SentryLog("Creating URL", Helper.SentryLogCategory.Settings);
-            Console.Log("Creating Registry entry for one click installing");
-            string value = (string)Registry.GetValue(
-                OCIPath,
-                @"",
-                @"");
-            Console.Log($"Setting Default to URL:VTOLVRML");
-            Registry.SetValue(
-                OCIPath,
-                @"",
-                @"URL:VTOLVRML");
-            Console.Log($"Setting {OCIPath} key to \"URL Protocol\"");
-            Registry.SetValue(
-                OCIPath,
-                @"URL Protocol",
-                @"");
-            Console.Log($"Setting \"{OCIPath}\\DefaultIcon\"" +
-                        $"to \"{root}\\VTOLVR-ModLoader.exe,1");
-            Registry.SetValue(
-                OCIPath + @"\DefaultIcon",
-                @"",
-                root + @"\VTOLVR-ModLoader.exe,1");
-            Console.Log($"Setting \"{OCIPath}\\shell\\open\\command\"" +
-                        $"to \"\"{root}\\VTOLVR-ModLoader.exe\" \"%1\"");
-            Registry.SetValue(
-                OCIPath + @"\shell\open\command",
-                @"",
-                "\"" + root + @"\VTOLVR-ModLoader.exe" + "\" \"" + @"%1" + "\"");
-            Console.Log("Finished!");
-            Notification.Show("Finished setting registry values for one click install", "Finished",
-                Notification.Buttons.Ok);
         }
 
         private void CreateDiagnosticsZip(object sender, RoutedEventArgs e)
@@ -524,6 +493,9 @@ namespace Launcher.Views
             
             Console.Log("Deleting Mod Loader Folder\n" + Program.Root);
             Directory.Delete(Program.Root, true);
+            
+            Console.Log("Deleting Appdata files");
+            ProgramData.Delete();
             
             UninstallComplete();
         }

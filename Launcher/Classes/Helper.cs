@@ -238,6 +238,15 @@ namespace Launcher.Classes
             File.Copy(
                 Path.Combine(Program.Root, Program.LogName),
                 Path.Combine(Program.Root, datetime, Program.LogName));
+            
+            
+            string vtpatherlog = Path.Combine(Program.Root, "Log VTPatcher.txt");
+            if (File.Exists(vtpatherlog))
+            {
+                Console.Log("Copying VTPatcher Log");
+                File.Copy(vtpatherlog,
+                    Path.Combine(Program.Root, datetime, "Log VTPatcher.txt"));
+            }
 
             Console.Log("Gathering Extra Info");
             StringBuilder infoBuilder = new StringBuilder("# Created: " + DateTime.Now.ToString());

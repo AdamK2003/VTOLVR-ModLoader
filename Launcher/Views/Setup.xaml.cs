@@ -187,15 +187,8 @@ Restart the Mod Loader as an administrator?";
             Helper.SentryLog("Creating Program Data", Helper.SentryLogCategory.Setup);
 
             ProgramData data = new(){VTOLPath = _pathBox.Text};
+            ProgramData.Save(data);
             
-            string usersPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                Startup.AppdataFolder);
-            
-            Directory.CreateDirectory(usersPath);
-            usersPath = Path.Combine(usersPath, Startup.DataFile);
-            
-            ProgramData.Save(data, usersPath);
             Startup.Data = data;
             Startup.SetPaths();
             

@@ -525,6 +525,9 @@ namespace Launcher.Views
             Console.Log("Deleting Mod Loader Folder\n" + Program.Root);
             Directory.Delete(Program.Root, true);
             
+            Console.Log("Deleting Appdata files");
+            ProgramData.Delete();
+            
             UninstallComplete();
         }
 

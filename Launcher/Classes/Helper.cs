@@ -342,7 +342,7 @@ namespace Launcher.Classes
             FileInfo[] files = new DirectoryInfo(Program.Root).GetFiles();
             for (int i = 0; i < files.Length; i++)
             {
-                builder.AppendLine($"/{files[i].Name} (MD5: {CalculateMD5(files[i].Name)})");
+                builder.AppendLine($"/{files[i].Name} (MD5: {CalculateMD5(files[i].FullName)})");
             }
         }
 

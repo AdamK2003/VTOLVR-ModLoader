@@ -158,13 +158,14 @@ namespace Launcher.Classes
 
         private static void DownloadDone(CustomWebClient.RequestData data)
         {
+            string path = Path.Combine(Program.Root, currentDownloadFile);
             if (!data.Cancelled && data.Error == null)
             {
                 MainWindow.SetProgress(100, $"Ready");
                 Console.Log($"Downloaded {currentDownloadFile}");
                 Helper.SentryLog($"Finished downloading {currentDownloadFile}",
                     Helper.SentryLogCategory.CommunicationsManager);
-                Program.ExtractItem(currentDownloadFile, true, 1);
+                Program.ExtractItem(path, true, 1);
             }
             else
             {
@@ -173,8 +174,8 @@ namespace Launcher.Classes
                 MainWindow.SetProgress(100, $"Ready");
                 Notification.Show($"{data.Error.Message}", "Error when downloading file");
                 Console.Log("Error:\n" + data.Error.ToString());
-                if (File.Exists(Path.Combine(Program.Root, currentDownloadFile)))
-                    File.Delete(Path.Combine(Program.Root, currentDownloadFile));
+                if (File.Exists(path))
+                    File.Delete(path);
             }
         }
 

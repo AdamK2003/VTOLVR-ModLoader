@@ -9,7 +9,6 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Controls;
-using ByteSizeLib;
 using Launcher.Classes;
 
 namespace Launcher.Views
@@ -81,7 +80,6 @@ namespace Launcher.Views
             public event PropertyChangedEventHandler PropertyChanged;
             
             public string FilePath { get; set; }
-            public string BytesText { get; set; }
             public string StartText { get; set; }
             public int Progress { get; set; }
             public string PercentText { get; set; }
@@ -93,6 +91,7 @@ namespace Launcher.Views
             private Action<CustomWebClient.RequestData> _downloadComplete;
             private object[] _extraData;
             private bool _saidHalfWay;
+            private bool _bytesFailed = false;
 
             public Item(string path, string url, Action<CustomWebClient.RequestData> downloadProgress, Action<CustomWebClient.RequestData> downloadComplete, object[] extraData = null)
             {
@@ -125,11 +124,8 @@ namespace Launcher.Views
             private void DownloadProgress(CustomWebClient.RequestData data)
             {
                 PercentText = $"Percent: {data.Progress}%";
-                BytesText = $"{ByteSize.FromBytes(data.BytesReceived).ToString()}/" +
-                            $"{ByteSize.FromBytes(data.TotalBytesToReceived).ToString()}";
                 Progress = data.Progress;
                 UpdateProperty("PercentText");
-                UpdateProperty("BytesText");
                 UpdateProperty("Progress");
                 _downloadProgress?.Invoke(data);
 

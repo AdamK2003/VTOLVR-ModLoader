@@ -71,7 +71,7 @@ namespace Launcher.Views
             }
 
             _instance._downloads.Clear();
-            MainWindow.SetPlayButton(true);
+            MainWindow.SetPlayButton(false);
             MainWindow.SetProgress(100, "Downloads Complete");
         }
 

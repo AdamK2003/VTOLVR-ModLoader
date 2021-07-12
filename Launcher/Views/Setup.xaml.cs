@@ -195,7 +195,7 @@ Restart the Mod Loader as an administrator?";
             if (_inAdminMode)
             {
                 Helper.SentryLog("SetupOCI", Helper.SentryLogCategory.Setup);
-                SetupOCI(modLoaderFolder.FullName);
+                SetupOCI(Program.ExePath);
             }
             
             MainWindow.SetProgress(10, "Downloading Files");
@@ -221,35 +221,28 @@ Restart the Mod Loader as an administrator?";
             MainWindow.SetProgress(100, "Finished Installing");
         }
 
-        private void SetupOCI(string root)
+        public static void SetupOCI(string root)
         {
-            string value = (string)Registry.GetValue(
+            //Setting Default
+            Registry.SetValue(
                 Settings.OCIPath,
                 @"",
+                @"URL:VTOLVRML");
+            //Setting URL Protocol
+            Registry.SetValue(
+                Settings.OCIPath,
+                @"URL Protocol",
                 @"");
-            if (value == null)
-            {
-                //Setting Default
-                Registry.SetValue(
-                    Settings.OCIPath,
-                    @"",
-                    @"URL:VTOLVRML");
-                //Setting URL Protocol
-                Registry.SetValue(
-                    Settings.OCIPath,
-                    @"URL Protocol",
-                    @"");
-                //Setting Default Icon
-                Registry.SetValue(
-                    Settings.OCIPath + @"\DefaultIcon",
-                    @"",
-                    root + @"\VTOLVR-ModLoader.exe,1");
-                //Setting Command
-                Registry.SetValue(
-                    Settings.OCIPath + @"\shell\open\command",
-                    @"",
-                    "\"" + root + @"\VTOLVR-ModLoader.exe" + "\" \"" + @"%1" + "\"");
-            }
+            //Setting Default Icon
+            Registry.SetValue(
+                Settings.OCIPath + @"\DefaultIcon",
+                @"",
+                root + @",1");
+            //Setting Command
+            Registry.SetValue(
+                Settings.OCIPath + @"\shell\open\command",
+                @"",
+                "\"" + root + "\" \"" + @"%1" + "\"");
         }
     }
 }

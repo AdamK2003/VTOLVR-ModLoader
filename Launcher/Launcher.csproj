@@ -15,6 +15,7 @@
         <FileVersion>5.0.2</FileVersion>
         <ProductVersion>5.0.1.0</ProductVersion>
         <RootNamespace>Launcher</RootNamespace>
+        <PublishSingleFile>true</PublishSingleFile>
     </PropertyGroup>
 
     <ItemGroup>

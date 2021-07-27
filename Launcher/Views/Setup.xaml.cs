@@ -6,23 +6,26 @@ using System.IO;
 using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
+using Core;
 using Launcher.Classes;
 using Launcher.Classes.Json;
 using Launcher.Windows;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using Helper = Launcher.Classes.Helper;
 
 namespace Launcher.Views
 {
     public partial class Setup : UserControl
     {
         private bool _inAdminMode = false;
+
         public Setup()
         {
             InitializeComponent();
             CheckForAdmin();
         }
-        
+
         private void CheckForAdmin()
         {
             if (!(new WindowsPrincipal(WindowsIdentity.GetCurrent()))
@@ -74,7 +77,7 @@ Restart the Mod Loader as an administrator?";
         {
             _pathBox.Text = FindVTOL();
         }
-        
+
         private string FindVTOL()
         {
             string steamInstallPath;
@@ -111,7 +114,7 @@ Restart the Mod Loader as an administrator?";
             }
 
             string path = gameFolder + "\\steamapps\\common\\VTOL VR\\";
-            if (!Directory.Exists(path)) 
+            if (!Directory.Exists(path))
                 //Throws an error if the game can't be found
             {
                 return $"Error, can not find VTOL VR. (Folder doesn't exist at {path})";
@@ -128,7 +131,7 @@ Restart the Mod Loader as an administrator?";
             result += @"steamapps\common\VTOL VR\";
             return result;
         }
-        
+
         private void OpenFileBrowser()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -163,13 +166,23 @@ Restart the Mod Loader as an administrator?";
                 return;
             }
 
-            vtolPath = Path.Combine(vtolPath, "VTOLVR.exe");
-            if (!File.Exists(vtolPath))
+            string vtolPathWithExecutable = Path.Combine(vtolPath, "VTOLVR.exe");
+            if (!File.Exists(vtolPathWithExecutable))
             {
-                Notification.Show($"Could not find the VTOL VR exe at:\n{vtolPath}");
+                Notification.Show($"Could not find the VTOL VR exe at:\n{vtolPathWithExecutable}");
                 return;
             }
-            
+
+            if (!SteamAuthentication.IsTrusted(Path.Combine(
+                vtolPath,
+                "VTOLVR_Data",
+                "Plugins",
+                "steam_api64.dll")))
+            {
+                Notification.Show("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
+                return;
+            }
+
             Install();
         }
 
@@ -178,26 +191,26 @@ Restart the Mod Loader as an administrator?";
             Helper.SentryLog("Creating Directories", Helper.SentryLogCategory.Setup);
             MainWindow.SetProgress(0, "Creating Directories");
 
-            DirectoryInfo modLoaderFolder = 
+            DirectoryInfo modLoaderFolder =
                 Directory.CreateDirectory(Path.Combine(_pathBox.Text, "VTOLVR_ModLoader"));
 
             modLoaderFolder.CreateSubdirectory("mods");
             modLoaderFolder.CreateSubdirectory("skins");
-            
+
             Helper.SentryLog("Creating Program Data", Helper.SentryLogCategory.Setup);
 
-            ProgramData data = new(){VTOLPath = _pathBox.Text};
+            ProgramData data = new() {VTOLPath = _pathBox.Text};
             ProgramData.Save(data);
-            
+
             Startup.Data = data;
             Startup.SetPaths();
-            
+
             if (_inAdminMode)
             {
                 Helper.SentryLog("SetupOCI", Helper.SentryLogCategory.Setup);
                 SetupOCI(Program.ExePath);
             }
-            
+
             MainWindow.SetProgress(10, "Downloading Files");
             Helper.SentryLog("Downloading Files", Helper.SentryLogCategory.Setup);
             Updater.CheckForUpdates(true, FinishedUpdating);

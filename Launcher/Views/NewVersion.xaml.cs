@@ -228,48 +228,19 @@ namespace Launcher.Views
 
         private void APIResult(JObject json)
         {
-            if (json["name"] != null)
+            if (json["Error"] != null)
             {
-                if (json["name"].ToString().Equals("Mod with this name already exists.") ||
-                    json["name"].ToString().Equals("Invalid Mod Name."))
-                {
-                    Notification.Show(json["name"].ToString(), "Failed");
-                    Console.Log($"Failed to upload project\n{json["name"]}");
-                }
+                var error_string = json["Error"].First?.First?.First?.ToString() ?? "Unknown error";
+                Notification.Show(error_string, "Failed");
+                Console.Log($"Failed to upload project\n{error_string}");
             }
-
-            if (json["version"] != null)
-            {
-                if (json["version"].ToString().StartsWith("Invalid version number"))
-                {
-                    Notification.Show(json["version"].ToString(), "Failed");
-                    Console.Log($"Failed to upload project\n{json["version"]}");
-                }
-            }
-
-            if (json["header_image"] != null)
-            {
-                if (json["header_image"].ToString().Equals("Mod image file too large ( > 2mb )") ||
-                    json["header_image"].ToString().Equals("Incorrect format (png or jpg)") ||
-                    json["header_image"].ToString().Equals("Couldn't read uploaded image"))
-                {
-                    Notification.Show(json["header_image"].ToString(), "Failed");
-                    Console.Log($"Failed to upload project\n{json["header_image"]}");
-                }
-            }
-
-            if (json["user_uploaded_file"] != null)
-            {
-                if (!json["user_uploaded_file"].ToString().Contains(Program.URL))
-                {
-                    Notification.Show(json["user_uploaded_file"].ToString(), "Failed");
-                    Console.Log($"Failed to upload project\n{json["user_uploaded_file"]}");
-                }
-            }
-
+            
             if (json["pub_id"] != null)
             {
-                Process.Start($"{Program.URL}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
+                var url = $"{Program.URL}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/";
+                url = url.Replace("&", "^&");
+                Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                
                 Notification.Show("Uploaded!", "Success");
                 Console.Log($"Uploaded new project at {Program.URL}/{(_isMod ? "mod" : "skin")}/{json["pub_id"]}/");
                 MainWindow._instance.Creator(null, null);

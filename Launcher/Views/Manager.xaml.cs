@@ -54,6 +54,7 @@ namespace Launcher.Views
         {
             RefreshColumns();
             GetScrollViewer();
+            _openSiteButton.Content = "Open " + Program.URL;
         }
 
         private void GetScrollViewer()
@@ -449,7 +450,7 @@ namespace Launcher.Views
                 "There seems to be no file for this skin on the website. Please contact vtolvr-mods.com staff saying which mod it is.",
                 "Strange Error");
         }
-        
+
 
         //The zip from the website has finished downloading and is now in their mods folder
         private void DownloadComplete(CustomWebClient.RequestData requestData)
@@ -754,8 +755,13 @@ namespace Launcher.Views
                     _items[i].BackgroundColour = _lightBackground;
                 }
             }
-            
         }
-        
+
+        private void OpenSite(object sender, RoutedEventArgs e)
+        {
+            var url = Program.URL;
+            url = url.Replace("&", "^&");
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+        }
     }
 }

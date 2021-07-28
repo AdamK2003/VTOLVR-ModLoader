@@ -101,7 +101,6 @@
     <Compile Include="Classes\Item.cs" />
     <Compile Include="Classes\Json\Item.cs" />
     <Compile Include="Classes\Json\LauncherSettings.cs" />
-    <Compile Include="Classes\SteamAuthentication.cs" />
     <Compile Include="DataCollector.cs" />
     <Compile Include="DevTools.cs" />
     <Compile Include="DiscordController.cs" />

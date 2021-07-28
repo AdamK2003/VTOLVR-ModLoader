@@ -35,6 +35,15 @@ namespace Launcher
             _instance = this;
             if (!Startup.RunStartUp())
                 return;
+
+            if (CommunicationsManager.CheckArgs("uninstall", out string result))
+            {
+                Console.Log("Found uninstall argument");
+                OpenSettings(null, null);
+                settings.Uninstall();
+                return;
+            }
+
             CommunicationsManager.StartTCP(!Startup.SearchForProcess());
             Program.SetupAfterUI();
             InitializeComponent();
@@ -123,7 +132,7 @@ namespace Launcher
             Process.Start("https://www.patreon.com/vtolvrmods");
             Console.Log("Patreon Opened!");
         }
-        
+
         private void OpenDownloads(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Opened Downloads", Helper.SentryLogCategory.MainWindow);

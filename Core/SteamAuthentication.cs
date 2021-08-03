@@ -5,9 +5,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace ModLoader.Classes
+namespace Core
 {
-    static class SteamAuthentication
+    public static class SteamAuthentication
     {
         [DllImport("wintrust.dll", ExactSpelling = true, SetLastError = false, CharSet = CharSet.Unicode)]
         private static extern uint WinVerifyTrust(IntPtr hWnd, IntPtr pgActionID, IntPtr pWinTrustData);

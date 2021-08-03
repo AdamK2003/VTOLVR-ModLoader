@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Core.Jsons;
 using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ModLoader
 {
@@ -47,12 +48,16 @@ namespace ModLoader
 
             if (devTools == null)
                 return;
-
+            
             if (devTools.PreviousMods != null)
                 LoadMods(devTools.PreviousMods);
 
             Scenario = devTools.Scenario;
             Log("This is scenario: " + devTools.Scenario);
+            
+            // Skipping the Splash Scene
+            Log("Loading SamplerScene");
+            SceneManager.LoadScene("SamplerScene");
         }
 
         private static void LoadMods(List<string> mods)

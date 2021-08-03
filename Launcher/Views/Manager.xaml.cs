@@ -54,6 +54,7 @@ namespace Launcher.Views
         {
             RefreshColumns();
             GetScrollViewer();
+            _openSiteButton.Content = "Open " + Program.URL;
         }
 
         private void GetScrollViewer()
@@ -99,8 +100,7 @@ namespace Launcher.Views
             SetBackgroundColours();
             _listView.ItemsSource = _items;
 
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(_listView.ItemsSource);
-            view.GroupDescriptions.Add(new PropertyGroupDescription("ItemType"));
+            CreateListSections();
 
             LoadValues();
 
@@ -114,6 +114,12 @@ namespace Launcher.Views
                 _listView.Visibility = Visibility.Visible;
                 _grid.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
             }
+        }
+
+        private void CreateListSections()
+        {
+            CollectionView view = (CollectionView) CollectionViewSource.GetDefaultView(_listView.ItemsSource);
+            view.GroupDescriptions.Add(new PropertyGroupDescription("ItemType"));
         }
 
         private void OnRename(object sender, RenamedEventArgs e)
@@ -449,7 +455,7 @@ namespace Launcher.Views
                 "There seems to be no file for this skin on the website. Please contact vtolvr-mods.com staff saying which mod it is.",
                 "Strange Error");
         }
-        
+
 
         //The zip from the website has finished downloading and is now in their mods folder
         private void DownloadComplete(CustomWebClient.RequestData requestData)
@@ -549,6 +555,8 @@ namespace Launcher.Views
                     _listView.ItemsSource = _items.ToArray();
                     break;
                 }
+                
+                CreateListSections();
             }
         }
 
@@ -754,8 +762,13 @@ namespace Launcher.Views
                     _items[i].BackgroundColour = _lightBackground;
                 }
             }
-            
         }
-        
+
+        private void OpenSite(object sender, RoutedEventArgs e)
+        {
+            var url = Program.URL;
+            url = url.Replace("&", "^&");
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+        }
     }
 }

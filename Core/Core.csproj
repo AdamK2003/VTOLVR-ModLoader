@@ -6,7 +6,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <Reference Include="Valve.Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\dll\Valve.Newtonsoft.Json.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="IF EXIST &quot;C:\Program Files (x86)\Steam\steamapps\common\VTOL VR\VTOLVR.exe&quot; (&#xD;&#xA;            copy &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\VTOL VR\VTOLVR_Data\Managed\Core.dll&quot;&#xD;&#xA;            )" />
+    </Target>
 </Project>

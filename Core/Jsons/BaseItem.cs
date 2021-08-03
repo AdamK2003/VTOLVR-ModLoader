@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Core.Enums;
-using Newtonsoft.Json;
+using Valve.Newtonsoft.Json;
 
 namespace Core.Jsons
 {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
+using Valve.Newtonsoft.Json;
+using Valve.Newtonsoft.Json.Linq;
+using Valve.Newtonsoft.Json.Serialization;
 
 namespace Core.Jsons
 {

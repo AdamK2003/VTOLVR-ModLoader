@@ -218,21 +218,20 @@ namespace Launcher.Classes
             Directory.CreateDirectory(Path.Combine(Program.Root, datetime));
 
             Console.Log("Copying Game Log");
-            string[] lines = null;
-            try
+            List<string> lines = new List<string>();
+            using (var fileStream = new FileStream(PlayerLogPath(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var streamReader = new StreamReader(fileStream, Encoding.Default))
             {
-                lines = File.ReadAllLines(PlayerLogPath());
+                while (streamReader.Peek() >= 0)
+                {
+                    string line = streamReader.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line) || line.StartsWith("(Filename:") )
+                        continue;
+                    lines.Add(line);
+                }
             }
-            catch (Exception e)
-            {
-                Console.Log($"Can't read player log because the game is open. Message = {e.Message}");
-                Notification.Show("Please close the game before creating a diagnostics zip.", "Error");
-                Directory.Delete(Path.Combine(Program.Root, datetime));
-                return;
-            }
-
-            string[] shortLines = ShortenPlayerLog(lines);
-            File.WriteAllLines(Path.Combine(Program.Root, datetime, "Player.log"), shortLines);
+            
+            File.WriteAllLines(Path.Combine(Program.Root, datetime, "Player.log"), lines);
 
             Console.Log("Copying Mod Loader Log");
             File.Copy(
@@ -310,13 +309,6 @@ namespace Launcher.Classes
             }
 
             return playerLog.FullName;
-        }
-
-        public static string[] ShortenPlayerLog(string[] linesArray)
-        {
-            List<string> lines = linesArray.ToList();
-            lines.RemoveAll(line => string.IsNullOrWhiteSpace(line) | line.StartsWith("(Filename:"));
-            return lines.ToArray();
         }
 
         private static void GatherExtraInfo(ref StringBuilder builder)

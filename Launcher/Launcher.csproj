@@ -11,10 +11,11 @@
         <Title>VTOL VR Mod Launcher</Title>
         <Description>A ModLoader for VTOL VR</Description>
         <Copyright>Copyright © 2021</Copyright>
-        <AssemblyVersion>5.0.2</AssemblyVersion>
-        <FileVersion>5.0.2</FileVersion>
+        <AssemblyVersion>5.0.3</AssemblyVersion>
+        <FileVersion>5.0.3</FileVersion>
         <ProductVersion>5.0.1.0</ProductVersion>
         <RootNamespace>Launcher</RootNamespace>
+        <PublishSingleFile>true</PublishSingleFile>
     </PropertyGroup>
 
     <ItemGroup>

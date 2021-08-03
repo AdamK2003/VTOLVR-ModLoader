@@ -17,6 +17,7 @@ namespace Launcher.Classes
         private static bool _updatingLauncher;
         private static Action _onComplete;
         private static List<UpdateFile> _updateFiles = new ();
+        private static UpdateFile[] _files;
 
         public static void CheckForUpdates(bool skipChecks = false, Action onComplete = null)
         {
@@ -31,31 +32,64 @@ namespace Launcher.Classes
             }
 
             MainWindow.SetPlayButton(true);
-            UpdateFile[] updateFiles = Program.Releases[0].Files;
+            _files = Program.Releases[0].Files;
 
-            if (updateFiles == null)
+            if (_files == null)
                 return;
+            int totalCount = 0;
             string lastPath;
-            for (int i = 0; i < updateFiles.Length; i++)
+            for (int i = 0; i < _files.Length; i++)
             {
-                if (updateFiles[i].Name.Equals("VTOLVR-ModLoader"))
+                if (_files[i].Name.Equals("VTOLVR-ModLoader") &&
+                    !Helper.CalculateMD5(Program.ExePath).Equals(_files[i].Hash))
                 {
-                    if (!Helper.CalculateMD5(Program.ExePath).Equals(updateFiles[i].Hash))
+                    totalCount++;
+                    continue;
+                }
+                lastPath = $"{Program.VTOLFolder}/{_files[i].Location}" ;
+                if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(_files[i].Hash))
+                {
+                    totalCount++;
+                }
+            }
+
+            string message = $"There are {totalCount} {(totalCount == 1 ? "file" : "files")} to update.\n" +
+                             $"Would you like to update?";
+            Notification.Show(message, "Update Available", Notification.Buttons.NoYes,
+                yesNoResultCallback: UpdateCallback);
+        }
+
+        private static void UpdateCallback(bool result)
+        {
+            if (!result)
+            {
+                Console.Log("User Rejected Update");
+                MainWindow.SetPlayButton(false);
+                _onComplete?.Invoke();
+                return;
+            }
+            
+            string lastPath;
+            for (int i = 0; i < _files.Length; i++)
+            {
+                if (_files[i].Name.Equals("VTOLVR-ModLoader"))
+                {
+                    if (!Helper.CalculateMD5(Program.ExePath).Equals(_files[i].Hash))
                     {
                         if (!MoveLauncher())
                             return;
                         _oldPath = Program.ExePath;
-                        AddFile(updateFiles[i]);
+                        AddFile(_files[i]);
                     }
                     continue;
                 }
                 
-                lastPath = Program.VTOLFolder + "/" + updateFiles[i].Location;
-                if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(updateFiles[i].Hash))
+                lastPath = Program.VTOLFolder + "/" + _files[i].Location;
+                if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(_files[i].Hash))
                 {
-                    Console.Log($"Need to update {updateFiles[i].Location}");
+                    Console.Log($"Need to update {_files[i].Location}");
 
-                    AddFile(updateFiles[i]);
+                    AddFile(_files[i]);
                 }
             }
 

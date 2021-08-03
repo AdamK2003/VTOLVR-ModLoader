@@ -40,11 +40,13 @@ namespace Launcher.Classes
             string lastPath;
             for (int i = 0; i < _files.Length; i++)
             {
-                if (_files[i].Name.Equals("VTOLVR-ModLoader") &&
-                    !Helper.CalculateMD5(Program.ExePath).Equals(_files[i].Hash))
+                if (_files[i].Name.Equals("VTOLVR-ModLoader"))
                 {
-                    Console.Log($"{Program.ExePath} needs updating");
-                    totalCount++;
+                    if (!Helper.CalculateMD5(Program.ExePath).Equals(_files[i].Hash))
+                    {
+                        Console.Log($"{Program.ExePath} needs updating");
+                        totalCount++;
+                    }
                     continue;
                 }
                 lastPath = $"{Program.VTOLFolder}/{_files[i].Location}" ;
@@ -53,6 +55,12 @@ namespace Launcher.Classes
                     Console.Log($"{lastPath} needs updating");
                     totalCount++;
                 }
+            }
+
+            if (totalCount == 0)
+            {
+                Console.Log("All files are upto date");
+                return;
             }
 
             string message = $"There are {totalCount} {(totalCount == 1 ? "file" : "files")} to update.\n" +

@@ -155,6 +155,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             LoadLauncherSettings();
         }
+        
         private void TcpDataReceived(object sender, Message e)
         {
             lock (_pending)
@@ -162,6 +163,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                 _pending.Add(delegate { VTOLAPI.instance.CheckConsoleCommand(e.MessageString.Remove(e.MessageString.Length - 1)); });
             }
         }
+        
         private void InvokePending()
         {
             lock (_pending)
@@ -174,10 +176,12 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                 _pending.Clear();
             }
         }
+        
         private void Update()
         {
             InvokePending();
         }
+        
         private void LogMessageReceived(string condition, string stackTrace, LogType type)
         {
             try
@@ -199,10 +203,12 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
         {
             _api = gameObject.AddComponent<VTOLAPI>();
         }
+        
         private void SetPaths()
         {
             RootPath = Directory.GetCurrentDirectory() + @"\VTOLVR_Modloader";
         }
+        
         private void SceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
             string sceneName = arg0.name;
@@ -271,11 +277,13 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             }
             UpdateDiscord();
         }
+        
         public void UpdateDiscord()
         {
             Debug.Log("Updating Discord...");
             _discord.UpdatePresence(LoadedModsCount, _discordDetail, _discordState);
         }
+        
         private IEnumerator CreateModLoader()
         {
             Debug.Log("Creating Mod Loader");
@@ -294,6 +302,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             obj.Remove(0, 5);
             Debug.Log(obj);
         }
+        
         public static void VRInteract(string message)
         {
             message = message.Replace("vrinteract ", "");
@@ -313,6 +322,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             Harmony.Traverse.Create(interactable).Method("StartInteraction").GetValue();
             Debug.Log($"Invoked OnInteract on GameObject {message}");
         }
+        
         public void LoadMod(Core.Jsons.BaseItem item)
         {
             try
@@ -389,6 +399,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                 Debug.LogWarning($"Couldn't find projects folder in settings.json");
             }
         }
+        
         private static void ListInteractables(string message)
         {
             VRInteractable[] interactables = GameObject.FindObjectsOfType<VRInteractable>();
@@ -399,6 +410,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             }
             Debug.Log(builder.ToString());
         }
+        
         /*
          * This check should always return true but I've left it in as a backup
          * incase people get passed the first check
@@ -435,6 +447,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             }
             return true;
         }
+        
         private static void LoadLauncherSettings()
         {
             string path = Path.Combine(
@@ -451,10 +464,12 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
             LauncherSettings.LoadSettings(path);
         }
+        
         private static void AttachCoreLogger()
         {
             Core.Logger.OnMessageLogged += CoreLog;
         }
+        
         private static void CoreLog(object message, Core.Logger.LogType type)
         {
             switch (type)

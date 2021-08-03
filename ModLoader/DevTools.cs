@@ -50,8 +50,6 @@ namespace ModLoader
             if (devTools == null)
                 return;
 
-            IsEnabled = true;
-            
             if (devTools.PreviousMods != null)
                 LoadMods(devTools.PreviousMods);
 
@@ -72,6 +70,7 @@ namespace ModLoader
                     if (mods[i].ToString() == ModReader.Items[j].Directory.FullName)
                     {
                         ModLoaderManager.Instance.LoadMod(ModReader.Items[j]);
+                        IsEnabled = true;
                         break;
                     }
                 }
@@ -121,6 +120,7 @@ namespace ModLoader
             PilotSaveManager.current.lastVehicleUsed = vehicle.vehicleName;
 
             VTScenario.LaunchScenario(scenarioInfo);
+            IsEnabled = true;
         }
 
         public static async void LoadBuiltInMission()
@@ -162,6 +162,7 @@ namespace ModLoader
                 PilotSaveManager.currentVehicle.vehicleName, DevTools.Scenario.Pilot));
 
             VTScenario.LaunchScenario(VTScenario.currentScenarioInfo);
+            IsEnabled = true;
         }
 
         private static void Log(object message) => Debug.Log($"[Dev Tools]{message}");

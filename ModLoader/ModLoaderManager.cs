@@ -155,7 +155,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             LoadLauncherSettings();
         }
-        
+
         private void TcpDataReceived(object sender, Message e)
         {
             lock (_pending)

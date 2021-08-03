@@ -33,6 +33,7 @@ namespace ModLoader
             }
         }
         private static Scenario _scenario;
+        public static bool IsEnabled { get; private set; }
 
         public static void ReadDevTools()
         {
@@ -48,6 +49,8 @@ namespace ModLoader
 
             if (devTools == null)
                 return;
+
+            IsEnabled = true;
             
             if (devTools.PreviousMods != null)
                 LoadMods(devTools.PreviousMods);
@@ -56,7 +59,6 @@ namespace ModLoader
             Log("This is scenario: " + devTools.Scenario);
             
             // Skipping the Splash Scene
-            Log("Loading SamplerScene");
             SceneManager.LoadScene("SamplerScene");
         }
 
@@ -119,9 +121,6 @@ namespace ModLoader
             PilotSaveManager.current.lastVehicleUsed = vehicle.vehicleName;
 
             VTScenario.LaunchScenario(scenarioInfo);
-            await Task.Delay(TimeSpan.FromSeconds(5));
-            ReadyUp();
-            Log("Player is ready");
         }
 
         public static async void LoadBuiltInMission()
@@ -163,13 +162,7 @@ namespace ModLoader
                 PilotSaveManager.currentVehicle.vehicleName, DevTools.Scenario.Pilot));
 
             VTScenario.LaunchScenario(VTScenario.currentScenarioInfo);
-
-            await Task.Delay(TimeSpan.FromSeconds(5));
-            ReadyUp();
-            Log("Player Ready");
         }
-
-        private static void ReadyUp() => LoadingSceneController.instance.PlayerReady();
 
         private static void Log(object message) => Debug.Log($"[Dev Tools]{message}");
 

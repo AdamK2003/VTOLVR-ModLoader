@@ -43,12 +43,14 @@ namespace Launcher.Classes
                 if (_files[i].Name.Equals("VTOLVR-ModLoader") &&
                     !Helper.CalculateMD5(Program.ExePath).Equals(_files[i].Hash))
                 {
+                    Console.Log($"{Program.ExePath} needs updating");
                     totalCount++;
                     continue;
                 }
                 lastPath = $"{Program.VTOLFolder}/{_files[i].Location}" ;
                 if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(_files[i].Hash))
                 {
+                    Console.Log($"{lastPath} needs updating");
                     totalCount++;
                 }
             }

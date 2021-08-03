@@ -100,8 +100,7 @@ namespace Launcher.Views
             SetBackgroundColours();
             _listView.ItemsSource = _items;
 
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(_listView.ItemsSource);
-            view.GroupDescriptions.Add(new PropertyGroupDescription("ItemType"));
+            CreateListSections();
 
             LoadValues();
 
@@ -115,6 +114,12 @@ namespace Launcher.Views
                 _listView.Visibility = Visibility.Visible;
                 _grid.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
             }
+        }
+
+        private void CreateListSections()
+        {
+            CollectionView view = (CollectionView) CollectionViewSource.GetDefaultView(_listView.ItemsSource);
+            view.GroupDescriptions.Add(new PropertyGroupDescription("ItemType"));
         }
 
         private void OnRename(object sender, RenamedEventArgs e)
@@ -550,6 +555,8 @@ namespace Launcher.Views
                     _listView.ItemsSource = _items.ToArray();
                     break;
                 }
+                
+                CreateListSections();
             }
         }
 

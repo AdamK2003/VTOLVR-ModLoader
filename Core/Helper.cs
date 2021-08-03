@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using Core.Jsons;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Valve.Newtonsoft.Json;
+using Valve.Newtonsoft.Json.Linq;
 
 namespace Core
 {

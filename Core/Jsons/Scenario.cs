@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Valve.Newtonsoft.Json;
+using Valve.Newtonsoft.Json.Linq;
 using Core.Enums;
 
 namespace Core.Jsons

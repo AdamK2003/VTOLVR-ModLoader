@@ -94,7 +94,7 @@ namespace Build
                 @"");
             Log("Publishing VTOLVR-ModLoader.exe\n");
             Run(paths["dotnet"],
-                "publish -r win-x64 --self-contained=false /p:PublishSingleFile=true -c Release",
+                "publish -r win-x64 --self-contained=true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -c Release",
                 @"\Launcher");
         }
 

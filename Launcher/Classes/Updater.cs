@@ -62,7 +62,8 @@ namespace Launcher.Classes
                 Console.Log("All files are upto date");
                 return;
             }
-
+            
+            MainWindow.SetPlayButton(false);
             string message = $"There are {totalCount} {(totalCount == 1 ? "file" : "files")} to update.\n" +
                              $"Would you like to update?";
             Notification.Show(message, "Update Available", Notification.Buttons.NoYes,
@@ -78,6 +79,7 @@ namespace Launcher.Classes
                 _onComplete?.Invoke();
                 return;
             }
+            MainWindow.SetPlayButton(true);
             
             string lastPath;
             for (int i = 0; i < _files.Length; i++)

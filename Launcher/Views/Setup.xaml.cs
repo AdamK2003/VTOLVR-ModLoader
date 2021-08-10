@@ -173,17 +173,44 @@ Restart the Mod Loader as an administrator?";
                 return;
             }
 
-            if (!SteamAuthentication.IsTrusted(Path.Combine(
-                vtolPath,
-                "VTOLVR_Data",
-                "Plugins",
-                "steam_api64.dll")))
+            if (Directory.Exists(Path.Combine(
+                vtolPath, "VTOLVR_Data", "Plugins", "x86_64")))
             {
-                Notification.Show("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
-                return;
+                if (!SteamAuthentication.IsTrusted(Path.Combine(
+                    vtolPath, "VTOLVR_Data", "Plugins", "x86_64", "steam_api64.dll")))
+                {
+                    WrongPlatform();
+                    return;
+                }
             }
-
+            else
+            {
+                if (!SteamAuthentication.IsTrusted(Path.Combine(
+                    vtolPath,
+                    "VTOLVR_Data",
+                    "Plugins",
+                    "steam_api64.dll")))
+                {
+                    WrongPlatform();
+                    return;
+                }
+            }
+            
             Install();
+        }
+
+        private void WrongPlatform()
+        {
+            Notification.Show(
+                "This version is not compatible with the Mod Loader.\n" +
+                "Please use the Steam version of VTOL VR.\n" +
+                "If you think this is incorrect, please contact vtolvr-mods.com staff.", 
+                "Wrong Game Version", 
+                Notification.Buttons.Ok,
+                delegate
+                {
+                    Process.Start("https://store.steampowered.com/app/667970/VTOL_VR/");
+                });
         }
 
         private void Install()

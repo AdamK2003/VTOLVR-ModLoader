@@ -11,10 +11,10 @@ using System.Security.Principal;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System.Windows.Media;
-using System.Text.RegularExpressions;
 using Launcher.Classes;
 using Launcher.Classes.Json;
 using Launcher.Windows;
+using Salaros.Configuration;
 
 namespace Launcher.Views
 {
@@ -58,6 +58,7 @@ namespace Launcher.Views
         public static string ProjectsFolder;
         public static bool AutoUpdate = true;
         public static bool SteamVR = true;
+        public static bool ModLoaderEnabled = true;
 
         public Settings()
         {
@@ -185,6 +186,7 @@ namespace Launcher.Views
             autoUpdateCheckbox.IsChecked = AutoUpdate;
             steamvrCheckbox.IsChecked = SteamVR;
 
+            CheckDoorstepConfig();
             SetupBranchesFromSettings();
             SaveSettings();
         }
@@ -574,6 +576,43 @@ Do you want to restart the Mod Loader as an administrator?";
 
         private void DisableButtonClicked(object sender, RoutedEventArgs e)
         {
+            string filePath = Path.Combine(Program.VTOLFolder, "doorstop_config.ini");
+            if (!File.Exists(filePath))
+            {
+                Notification.Show($"Could not find doorstop_config.ini in games root.", "Missing File");
+                Console.Log($"Couldn't find doorstep config file at {filePath}");
+                ModLoaderEnabled = true;
+                return;
+            }
+            
+            ConfigParser config = new (filePath);
+            bool result = config.GetValue("UnityDoorstop", "enabled", true);  
+
+            ModLoaderEnabled = !ModLoaderEnabled;
+
+            if (result != ModLoaderEnabled)
+            {
+                config.SetValue("UnityDoorstop", "enabled", ModLoaderEnabled);
+                config.Save();
+            }
+
+            _disableButton.Content = ModLoaderEnabled ? "Disable" : "Enable";
+            Console.Log($"Changed doorstep config to {ModLoaderEnabled}");
+            SaveSettings();
+        }
+
+        private void CheckDoorstepConfig()
+        {
+            string filePath = Path.Combine(Program.VTOLFolder, "doorstop_config.ini");
+            if (!File.Exists(filePath))
+            {
+                Console.Log($"Couldn't find doorstep config file at {filePath}");
+                return;
+            }
+            
+            ConfigParser config = new (filePath);
+            ModLoaderEnabled = config.GetValue("UnityDoorstop", "enabled", true);  
+            _disableButton.Content = ModLoaderEnabled ? "Disable" : "Enable";
             
         }
     }

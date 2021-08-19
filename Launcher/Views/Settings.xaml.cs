@@ -571,5 +571,10 @@ Do you want to restart the Mod Loader as an administrator?";
 
             Process.GetCurrentProcess().Kill();
         }
+
+        private void DisableButtonClicked(object sender, RoutedEventArgs e)
+        {
+            
+        }
     }
 }

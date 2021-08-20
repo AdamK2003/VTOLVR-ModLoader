@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Launcher"
         xmlns:views="clr-namespace:Launcher.Views"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
@@ -11,144 +10,138 @@
         Background="#FF3d3d3d" WindowStartupLocation="CenterScreen" WindowState="Maximized"
         Style="{StaticResource FontStyle}">
     <Window.Resources>
-        <DataTemplate x:Name="settingsViewTemplate" DataType="{x:Type views:Settings}">
+        <DataTemplate DataType="{x:Type views:Settings}">
             <views:Settings DataContext="{Binding}" />
         </DataTemplate>
-        <DataTemplate x:Name="newsViewTemplate" DataType="{x:Type views:News}">
+        <DataTemplate DataType="{x:Type views:News}">
             <views:News DataContext="{Binding}" />
         </DataTemplate>
-        <DataTemplate x:Name="consoleViewTemplate" DataType="{x:Type views:Console}">
+        <DataTemplate DataType="{x:Type views:Console}">
             <views:Console DataContext="{Binding}" />
         </DataTemplate>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="45" />
+            <RowDefinition Height="45" />
+            <RowDefinition Height="45" />
+            <RowDefinition Height="45" />
+            <RowDefinition Height="45" />
+            <RowDefinition Height="45" />
+            <RowDefinition Height="45" />
+            <RowDefinition Height="45" />
+            <RowDefinition Height="45" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="86" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="125" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="10" />
+        </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0">
+        <!-- Background Colours -->
+        <Rectangle Grid.Row="0" Grid.RowSpan="12" Grid.Column="0" Grid.ColumnSpan="2"
+                   Fill="#4b4b4b"></Rectangle>
+        <Rectangle Grid.Row="12" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="6"
+                   Fill="#4b4b4b"></Rectangle>
+        
+        <!-- Top Warning Message -->
+        <Grid Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4"
+                    Background="#fffa65" ZIndex="99999" x:Name="WarningMessage"
+                    Visibility="Hidden">
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="5"/>
+            </Grid.RowDefinitions>
+            
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="135" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
-
-            <Grid Grid.Column="0" Background="#4b4b4b">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="100" />
-                    <RowDefinition Height="45" />
-                    <RowDefinition Height="45" />
-                    <RowDefinition Height="45" />
-                    <RowDefinition Height="45" />
-                    <RowDefinition Height="45" />
-                    <RowDefinition Height="45" />
-                    <RowDefinition Height="45" />
-                    <RowDefinition Height="45" />
-                    <RowDefinition Height="45" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <Image Grid.Row="0" gif:ImageBehavior.RepeatBehavior="0x"
-                       gif:ImageBehavior.AnimatedSource="Resources/LogoSpinning.gif" x:Name="LogoGif"
-                       gif:ImageBehavior.AutoStart="False" Margin="11,8" />
-                <Button Grid.Row="1" FontFamily="{StaticResource SquaresBoldFree}"
-                        Content="Mods" Foreground="White" BorderBrush="{x:Null}" Click="Manager"
-                        Style="{StaticResource RoundedDarkButton}" x:Name="modsButton" Margin="11,8"
-                        Tag="Mods" />
-                <Button Grid.Row="2" FontFamily="{StaticResource SquaresBoldFree}"
-                        Content="Skins" Foreground="White" BorderBrush="{x:Null}" Click="Manager"
-                        Style="{StaticResource RoundedDarkButton}" x:Name="skinsButton" Margin="11,8"
-                        Tag="Skins" />
-                <Button Grid.Row="3" FontFamily="{StaticResource SquaresBoldFree}"
-                        Content="ChangeLog" Foreground="White" BorderBrush="{x:Null}" Click="News"
-                        Style="{StaticResource RoundedDarkButton}" x:Name="homeButton" Margin="11,8" />
-                <Button Grid.Row="4" FontFamily="{StaticResource SquaresBoldFree}"
-                        Content="Open Folder" Foreground="White" BorderBrush="{x:Null}"
-                        Click="OpenFolder" Style="{StaticResource RoundedDarkButton}" x:Name="openFButton"
-                        Margin="11,8" />
-                <Button Grid.Row="5" FontFamily="{StaticResource SquaresBoldFree}"
-                        Content="Downloads" Foreground="White" BorderBrush="{x:Null}"
-                        Click="OpenDownloads" Style="{StaticResource RoundedDarkButton}" x:Name="downloadsButton"
-                        Margin="11,8" />
-                <Button Grid.Row="6" FontFamily="{StaticResource SquaresBoldFree}"
-                        Content="Console" Foreground="White" BorderBrush="{x:Null}"
-                        Click="OpenConsole" Style="{StaticResource RoundedDarkButton}" x:Name="consoleButton"
-                        Margin="11,8" />
-                <Button Grid.Row="7" FontFamily="{StaticResource SquaresBoldFree}"
-                        Content="Mod Creator" Foreground="White" BorderBrush="{x:Null}"
-                        Click="Creator" x:Name="uploadModButton" Style="{StaticResource RoundedDarkButton}"
-                        Margin="11,8" />
-                <Button Grid.Row="8" FontFamily="{StaticResource SquaresBoldFree}"
-                        Content="Dev Tools" Foreground="White" BorderBrush="{x:Null}"
-                        Click="OpenTools" Style="{StaticResource RoundedDarkButton}" x:Name="devTButton"
-                        Margin="11,8" />
-                <Button Grid.Row="9" FontFamily="{StaticResource SquaresBoldFree}"
-                        Content="Settings" Foreground="White" BorderBrush="{x:Null}"
-                        Click="OpenSettings" Style="{StaticResource RoundedDarkButton}" x:Name="settingsButton"
-                        Margin="11,8" />
-            </Grid>
-
-            <ContentControl Grid.Column="1" Content="{Binding}" />
+            
+            <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"
+                Text="Mod Loader is Disabled" Style="{StaticResource HeaderTwo}"
+                       HorizontalAlignment="Center" Foreground="#4b4b4b" />
+            
+            <Button Grid.Row="1" Grid.Column="1"
+                Content="Enable" 
+                Style="{StaticResource RoundedDarkButton}" 
+                Click="ModLoaderEnableButton"></Button>
         </Grid>
+        
+        <!-- Elements -->
+        <Image Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" gif:ImageBehavior.RepeatBehavior="0x"
+               gif:ImageBehavior.AnimatedSource="Resources/LogoSpinning.gif" x:Name="LogoGif"
+               gif:ImageBehavior.AutoStart="False" Margin="11,8" />
+        <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+                Content="Mods" BorderBrush="{x:Null}" Click="Manager"
+                Style="{StaticResource RoundedDarkButton}" x:Name="modsButton" Margin="11,8"
+                Tag="Mods" />
+        <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+                Content="Skins" BorderBrush="{x:Null}" Click="Manager"
+                Style="{StaticResource RoundedDarkButton}" x:Name="skinsButton" Margin="11,8"
+                Tag="Skins" />
+        <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+                Content="ChangeLog" BorderBrush="{x:Null}" Click="News"
+                Style="{StaticResource RoundedDarkButton}" x:Name="homeButton" Margin="11,8" />
+        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+                Content="Open Folder" BorderBrush="{x:Null}"
+                Click="OpenFolder" Style="{StaticResource RoundedDarkButton}" x:Name="openFButton"
+                Margin="11,8" />
+        <Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+                Content="Downloads" BorderBrush="{x:Null}"
+                Click="OpenDownloads" Style="{StaticResource RoundedDarkButton}" x:Name="downloadsButton"
+                Margin="11,8" />
+        <Button Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+                Content="Console" BorderBrush="{x:Null}"
+                Click="OpenConsole" Style="{StaticResource RoundedDarkButton}" x:Name="consoleButton"
+                Margin="11,8" />
+        <Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+                Content="Mod Creator" BorderBrush="{x:Null}"
+                Click="Creator" x:Name="uploadModButton" Style="{StaticResource RoundedDarkButton}"
+                Margin="11,8" />
+        <Button Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+                Content="Dev Tools" BorderBrush="{x:Null}"
+                Click="OpenTools" Style="{StaticResource RoundedDarkButton}" x:Name="devTButton"
+                Margin="11,8" />
+        <Button Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+                Content="Settings" BorderBrush="{x:Null}"
+                Click="OpenSettings" Style="{StaticResource RoundedDarkButton}" x:Name="settingsButton"
+                Margin="11,8" />
+        
+        <ContentControl Grid.Row="0" Grid.RowSpan="12" Grid.Column="2" Grid.ColumnSpan="4"  Content="{Binding}" />
 
-        <Grid Grid.Row="1" Background="#4b4b4b">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="120" />
-            </Grid.ColumnDefinitions>
+        
+        <ProgressBar  Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2"
+                      Style="{DynamicResource DarkProgressBar}" Foreground="#3d3d3d"
+                      Background="{x:Null}" BorderBrush="{x:Null}" Value="100"
+                      x:Name="progressBar" />
+        
+        <TextBlock Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2" Text="Progress Text..."
+                   Style="{StaticResource TextSmall}" VerticalAlignment="Center" 
+                   x:Name="progressText" />
+        
+        <Button Grid.Row="13" Grid.Column="4"  
+                Style="{DynamicResource RoundedDarkButton}"
+                FontFamily="{StaticResource SquaresBoldFree}"
+                Content="Play" FontSize="30"
+                BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame" />
 
-            <Grid Grid.Column="1">
-                <!-- Progress Bar & Progress Text -->
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="0.1*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="0.5*" />
-                    <RowDefinition Height="0.1*" />
-                </Grid.RowDefinitions>
-
-                <Grid Grid.Row="1" Grid.Column="1">
-                    <!-- Progress Bar -->
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="0.3*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="0.3*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <ProgressBar Style="{DynamicResource DarkProgressBar}" Grid.Row="1" Foreground="#3d3d3d"
-                                 Background="{x:Null}" BorderBrush="{x:Null}" Value="100"
-                                 x:Name="progressBar"/>
-                </Grid>
-
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="Progress Text..."
-                           FontFamily="{StaticResource SquaresBoldFree}" Foreground="White"
-                           VerticalAlignment="Center" x:Name="progressText" />
-            </Grid>
-
-            <Grid Grid.Column="2">
-                <!-- Play Button -->
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="40" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <Button Style="{DynamicResource RoundedDarkButton}" Grid.Column="1" Grid.Row="1" FontFamily="{StaticResource SquaresBoldFree}"
-                        Content="Play" FontSize="30" Foreground="White"
-                        BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame"/>
-
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="Dev Tools Enabled" Background="#FFA69700"
-                           Foreground="White" TextAlignment="Center" FontSize="10" VerticalAlignment="Center"
-                           x:Name="DevToolsText" Visibility="Hidden" />
-            </Grid>
-        </Grid>
+        <TextBlock Grid.Row="14" Grid.Column="4" Text="Dev Tools Enabled" Background="#FFA69700"
+                   Foreground="White" TextAlignment="Center" FontSize="10" VerticalAlignment="Center"
+                   x:Name="DevToolsText" Visibility="Hidden" />
+        
     </Grid>
 </Window>

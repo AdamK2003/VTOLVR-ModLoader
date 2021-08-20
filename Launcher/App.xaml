@@ -50,6 +50,11 @@
                     Value="pack://Application:,,,/Resources/#Montserrat ExtraBold" />
             <Setter Property="TextAlignment" Value="Center" />
         </Style>
+        
+        <Style x:Key="CheckboxSmall" TargetType="{x:Type CheckBox}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
 
         <Style TargetType="Button" x:Key="transparentButton">
             <Setter Property="Background" Value="#00DDDDDD" />

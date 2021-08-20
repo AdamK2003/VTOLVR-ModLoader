@@ -210,5 +210,10 @@ namespace Launcher.Views
                 Log("Failed to open Launcher Log. " + error.Message);
             }
         }
+
+        public static void LogThreadSafe(string message)
+        {
+            Application.Current.Dispatcher.Invoke(() => Log(message));
+        }
     }
 }

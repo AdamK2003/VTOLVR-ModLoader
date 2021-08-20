@@ -15,6 +15,7 @@ using Sentry;
 using Console = Launcher.Views.Console;
 using Core.Jsons;
 using System.Security.Permissions;
+using System.Windows.Threading;
 using Launcher.Views;
 using Launcher.Windows;
 
@@ -33,8 +34,10 @@ namespace Launcher.Classes
         {
             string result = await Task.Run(() =>
             {
-                try
-                {
+                string logMessage = String.Empty;
+                //try
+                //{
+                    StringBuilder builder = new StringBuilder("Zip Extract Output:");
                     // This is mostly just the example code from here:
                     // https://github.com/icsharpcode/SharpZipLib/wiki/Unpack-a-Zip-with-full-control-over-the-operation#c
                     using (ZipFile zip = new ZipFile(zipPath))
@@ -63,15 +66,19 @@ namespace Launcher.Classes
                             {
                                 StreamUtils.Copy(zipStream, fsOutput, buffer);
                             }
+                            
+                            builder.AppendLine($"{zipEntry} has been extracted to {fullZipToPath}");
                         }
                     }
 
+                    string message = builder.ToString();
+                    Console.LogThreadSafe(message);
                     return "Success";
-                }
-                catch (Exception e)
-                {
-                    return e.Message;
-                }
+                //}
+                // catch (Exception e)
+                // {
+                //     return e.Message;
+                // }
             });
             completed?.Invoke(zipPath, extractPath, result);
             completedWithArgs?.Invoke(zipPath, extractPath, result, extraData);

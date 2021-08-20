@@ -22,7 +22,8 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="45" />
             <RowDefinition Height="45" />
             <RowDefinition Height="45" />
@@ -48,71 +49,80 @@
         </Grid.ColumnDefinitions>
 
         <!-- Background Colours -->
-        <Rectangle Grid.Row="0" Grid.RowSpan="11" Grid.Column="0" Grid.ColumnSpan="2"
+        <Rectangle Grid.Row="0" Grid.RowSpan="12" Grid.Column="0" Grid.ColumnSpan="2"
                    Fill="#4b4b4b"></Rectangle>
-        <Rectangle Grid.Row="11" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="6"
+        <Rectangle Grid.Row="12" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="6"
                    Fill="#4b4b4b"></Rectangle>
         
+        <!-- Top Warning Message -->
+        <StackPanel Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4"
+                    Background="#fffa65" ZIndex="9999" x:Name="WarningMessage"
+                    Visibility="Hidden">
+            <TextBlock Text="Mod Loader is Disabled" Margin="10" Style="{StaticResource HeaderTwo}"
+                       HorizontalAlignment="Center" Foreground="#4b4b4b"/>
+        </StackPanel>
+        
         <!-- Elements -->
-        <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" gif:ImageBehavior.RepeatBehavior="0x"
+        <Image Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" gif:ImageBehavior.RepeatBehavior="0x"
                gif:ImageBehavior.AnimatedSource="Resources/LogoSpinning.gif" x:Name="LogoGif"
                gif:ImageBehavior.AutoStart="False" Margin="11,8" />
-        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+        <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
                 Content="Mods" BorderBrush="{x:Null}" Click="Manager"
                 Style="{StaticResource RoundedDarkButton}" x:Name="modsButton" Margin="11,8"
                 Tag="Mods" />
-        <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+        <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
                 Content="Skins" BorderBrush="{x:Null}" Click="Manager"
                 Style="{StaticResource RoundedDarkButton}" x:Name="skinsButton" Margin="11,8"
                 Tag="Skins" />
-        <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+        <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
                 Content="ChangeLog" BorderBrush="{x:Null}" Click="News"
                 Style="{StaticResource RoundedDarkButton}" x:Name="homeButton" Margin="11,8" />
-        <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
                 Content="Open Folder" BorderBrush="{x:Null}"
                 Click="OpenFolder" Style="{StaticResource RoundedDarkButton}" x:Name="openFButton"
                 Margin="11,8" />
-        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+        <Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
                 Content="Downloads" BorderBrush="{x:Null}"
                 Click="OpenDownloads" Style="{StaticResource RoundedDarkButton}" x:Name="downloadsButton"
                 Margin="11,8" />
-        <Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+        <Button Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
                 Content="Console" BorderBrush="{x:Null}"
                 Click="OpenConsole" Style="{StaticResource RoundedDarkButton}" x:Name="consoleButton"
                 Margin="11,8" />
-        <Button Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+        <Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
                 Content="Mod Creator" BorderBrush="{x:Null}"
                 Click="Creator" x:Name="uploadModButton" Style="{StaticResource RoundedDarkButton}"
                 Margin="11,8" />
-        <Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+        <Button Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
                 Content="Dev Tools" BorderBrush="{x:Null}"
                 Click="OpenTools" Style="{StaticResource RoundedDarkButton}" x:Name="devTButton"
                 Margin="11,8" />
-        <Button Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+        <Button Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
                 Content="Settings" BorderBrush="{x:Null}"
                 Click="OpenSettings" Style="{StaticResource RoundedDarkButton}" x:Name="settingsButton"
                 Margin="11,8" />
         
-        <ContentControl Grid.Row="0" Grid.RowSpan="11" Grid.Column="2" Grid.ColumnSpan="4"  Content="{Binding}" />
+        <ContentControl Grid.Row="0" Grid.RowSpan="12" Grid.Column="2" Grid.ColumnSpan="4"  Content="{Binding}" />
 
         
-        <ProgressBar  Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2"
+        <ProgressBar  Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2"
                       Style="{DynamicResource DarkProgressBar}" Foreground="#3d3d3d"
                       Background="{x:Null}" BorderBrush="{x:Null}" Value="100"
                       x:Name="progressBar" />
         
-        <TextBlock Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2" Text="Progress Text..."
+        <TextBlock Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2" Text="Progress Text..."
                    Style="{StaticResource TextSmall}" VerticalAlignment="Center" 
                    x:Name="progressText" />
         
-        <Button Grid.Row="12" Grid.Column="4"  
+        <Button Grid.Row="13" Grid.Column="4"  
                 Style="{DynamicResource RoundedDarkButton}"
                 FontFamily="{StaticResource SquaresBoldFree}"
                 Content="Play" FontSize="30"
                 BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame" />
 
-        <TextBlock Grid.Row="13" Grid.Column="4" Text="Dev Tools Enabled" Background="#FFA69700"
+        <TextBlock Grid.Row="14" Grid.Column="4" Text="Dev Tools Enabled" Background="#FFA69700"
                    Foreground="White" TextAlignment="Center" FontSize="10" VerticalAlignment="Center"
                    x:Name="DevToolsText" Visibility="Hidden" />
+        
     </Grid>
 </Window>

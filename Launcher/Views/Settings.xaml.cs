@@ -598,6 +598,7 @@ Do you want to restart the Mod Loader as an administrator?";
 
             _disableButton.Content = ModLoaderEnabled ? "Disable" : "Enable";
             Console.Log($"Changed doorstep config to {ModLoaderEnabled}");
+            MainWindow._instance.WarningMessage.Visibility = ModLoaderEnabled ? Visibility.Hidden : Visibility.Visible;
             SaveSettings();
         }
 
@@ -613,7 +614,7 @@ Do you want to restart the Mod Loader as an administrator?";
             ConfigParser config = new (filePath);
             ModLoaderEnabled = config.GetValue("UnityDoorstop", "enabled", true);  
             _disableButton.Content = ModLoaderEnabled ? "Disable" : "Enable";
-            
+            MainWindow._instance.WarningMessage.Visibility = ModLoaderEnabled ? Visibility.Hidden : Visibility.Visible;
         }
     }
 }

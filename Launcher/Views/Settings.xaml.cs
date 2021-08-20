@@ -576,6 +576,11 @@ Do you want to restart the Mod Loader as an administrator?";
 
         private void DisableButtonClicked(object sender, RoutedEventArgs e)
         {
+            ToggleModLoader();
+        }
+
+        public void ToggleModLoader()
+        {
             string filePath = Path.Combine(Program.VTOLFolder, "doorstop_config.ini");
             if (!File.Exists(filePath))
             {
@@ -584,9 +589,9 @@ Do you want to restart the Mod Loader as an administrator?";
                 ModLoaderEnabled = true;
                 return;
             }
-            
-            ConfigParser config = new (filePath);
-            bool result = config.GetValue("UnityDoorstop", "enabled", true);  
+
+            ConfigParser config = new(filePath);
+            bool result = config.GetValue("UnityDoorstop", "enabled", true);
 
             ModLoaderEnabled = !ModLoaderEnabled;
 

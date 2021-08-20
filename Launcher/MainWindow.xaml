@@ -55,12 +55,31 @@
                    Fill="#4b4b4b"></Rectangle>
         
         <!-- Top Warning Message -->
-        <StackPanel Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4"
-                    Background="#fffa65" ZIndex="9999" x:Name="WarningMessage"
+        <Grid Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4"
+                    Background="#fffa65" ZIndex="99999" x:Name="WarningMessage"
                     Visibility="Hidden">
-            <TextBlock Text="Mod Loader is Disabled" Margin="10" Style="{StaticResource HeaderTwo}"
-                       HorizontalAlignment="Center" Foreground="#4b4b4b"/>
-        </StackPanel>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="5"/>
+            </Grid.RowDefinitions>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2"
+                Text="Mod Loader is Disabled" Style="{StaticResource HeaderTwo}"
+                       HorizontalAlignment="Center" Foreground="#4b4b4b" />
+            
+            <Button Grid.Row="1" Grid.Column="1"
+                Content="Enable" 
+                Style="{StaticResource RoundedDarkButton}" 
+                Click="ModLoaderEnableButton"></Button>
+        </Grid>
         
         <!-- Elements -->
         <Image Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" gif:ImageBehavior.RepeatBehavior="0x"

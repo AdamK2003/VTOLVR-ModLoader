@@ -266,5 +266,10 @@ namespace Launcher
                 Console.Log("Set Christmas Logo");
             }
         }
+
+        private void ModLoaderEnableButton(object sender, RoutedEventArgs e)
+        {
+            settings.ToggleModLoader();
+        }
     }
 }

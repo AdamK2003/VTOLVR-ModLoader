@@ -22,12 +22,16 @@ namespace Launcher.Classes
         public static void CheckForUpdates(bool skipChecks = false, Action onComplete = null)
         {
             if (!skipChecks && !Views.Settings.AutoUpdate)
+            {
+                MainWindow.SetPlayButton(false);
                 return;
+            }
             _onComplete = onComplete;
             Console.Log("Checking for updates");
             if (Program.Releases == null || Program.Releases.Count == 0)
             {
                 Console.Log("Couldn't find any releases");
+                MainWindow.SetPlayButton(false);
                 return;
             }
 
@@ -35,7 +39,10 @@ namespace Launcher.Classes
             _files = Program.Releases[0].Files;
 
             if (_files == null)
+            {
+                MainWindow.SetPlayButton(false);
                 return;
+            }
             int totalCount = 0;
             string lastPath;
             for (int i = 0; i < _files.Length; i++)
@@ -60,6 +67,7 @@ namespace Launcher.Classes
             if (totalCount == 0)
             {
                 Console.Log("All files are upto date");
+                MainWindow.SetPlayButton(false);
                 return;
             }
             

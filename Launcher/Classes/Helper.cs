@@ -377,5 +377,12 @@ namespace Launcher.Classes
                 builder.AppendLine($"Error with check permissions {e}");
             }
         }
+
+        public static void OpenURL(string url)
+        {
+            // Why: https://github.com/dotnet/runtime/issues/17938
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
+        }
+        
     }
 }

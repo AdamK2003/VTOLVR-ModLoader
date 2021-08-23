@@ -6,7 +6,7 @@
         xmlns:views="clr-namespace:Launcher.Views"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
-        Title="VTOL VR Modloader" Height="600" Width="1200" Icon="Resources/Logo.ico" MinWidth="970" MinHeight="584"
+        Title="VTOL VR Mod Loader" Height="700" Width="1200" Icon="Resources/Logo.ico" MinWidth="970" MinHeight="700"
         Background="#FF3d3d3d" WindowStartupLocation="CenterScreen" WindowState="Maximized"
         Style="{StaticResource FontStyle}">
     <Window.Resources>
@@ -33,6 +33,7 @@
             <RowDefinition Height="45" />
             <RowDefinition Height="45" />
             <RowDefinition Height="45" />
+            <RowDefinition Height="45" />
             <RowDefinition Height="*" />
             <RowDefinition Height="5" />
             <RowDefinition Height="40" />
@@ -49,9 +50,9 @@
         </Grid.ColumnDefinitions>
 
         <!-- Background Colours -->
-        <Rectangle Grid.Row="0" Grid.RowSpan="12" Grid.Column="0" Grid.ColumnSpan="2"
+        <Rectangle Grid.Row="0" Grid.RowSpan="13" Grid.Column="0" Grid.ColumnSpan="2"
                    Fill="#4b4b4b"></Rectangle>
-        <Rectangle Grid.Row="12" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="6"
+        <Rectangle Grid.Row="13" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="6"
                    Fill="#4b4b4b"></Rectangle>
         
         <!-- Top Warning Message -->
@@ -117,29 +118,33 @@
                 Click="OpenTools" Style="{StaticResource RoundedDarkButton}" x:Name="devTButton"
                 Margin="11,8" />
         <Button Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
+                Content="Help!" BorderBrush="{x:Null}"
+                Click="OpenDocs" Style="{StaticResource RoundedDarkButton}" x:Name="helpButton"
+                Margin="11,8" />
+        <Button Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" FontFamily="{StaticResource SquaresBoldFree}"
                 Content="Settings" BorderBrush="{x:Null}"
                 Click="OpenSettings" Style="{StaticResource RoundedDarkButton}" x:Name="settingsButton"
                 Margin="11,8" />
         
-        <ContentControl Grid.Row="0" Grid.RowSpan="12" Grid.Column="2" Grid.ColumnSpan="4"  Content="{Binding}" />
+        <ContentControl Grid.Row="0" Grid.RowSpan="13" Grid.Column="2" Grid.ColumnSpan="4"  Content="{Binding}" />
 
         
-        <ProgressBar  Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2"
+        <ProgressBar  Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2"
                       Style="{DynamicResource DarkProgressBar}" Foreground="#3d3d3d"
                       Background="{x:Null}" BorderBrush="{x:Null}" Value="100"
                       x:Name="progressBar" />
         
-        <TextBlock Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2" Text="Progress Text..."
+        <TextBlock Grid.Row="15" Grid.Column="1" Grid.ColumnSpan="2" Text="Progress Text..."
                    Style="{StaticResource TextSmall}" VerticalAlignment="Center" 
                    x:Name="progressText" />
         
-        <Button Grid.Row="13" Grid.Column="4"  
+        <Button Grid.Row="14" Grid.Column="4"  
                 Style="{DynamicResource RoundedDarkButton}"
                 FontFamily="{StaticResource SquaresBoldFree}"
                 Content="Play" FontSize="30"
                 BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame" />
 
-        <TextBlock Grid.Row="14" Grid.Column="4" Text="Dev Tools Enabled" Background="#FFA69700"
+        <TextBlock Grid.Row="15" Grid.Column="4" Text="Dev Tools Enabled" Background="#FFA69700"
                    Foreground="White" TextAlignment="Center" FontSize="10" VerticalAlignment="Center"
                    x:Name="DevToolsText" Visibility="Hidden" />
         

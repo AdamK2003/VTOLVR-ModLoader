@@ -271,5 +271,12 @@ namespace Launcher
         {
             settings.ToggleModLoader();
         }
+
+        private void OpenDocs(object sender, RoutedEventArgs e)
+        {
+            Console.Log($"Opening Docs");
+            Helper.SentryLog("Opening Docs", Helper.SentryLogCategory.MainWindow);
+            Helper.OpenURL("https://docs.vtolvr-mods.com");
+        }
     }
 }

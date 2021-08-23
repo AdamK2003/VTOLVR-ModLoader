@@ -78,7 +78,6 @@ namespace Launcher
             GetProgramData();
             SetPaths();
             HttpHelper.SetHeader();
-            // ClearOldFiles(); Move To After startup
             AttachCoreLogger();
             return true;
         }
@@ -267,7 +266,7 @@ namespace Launcher
             Environment.CurrentDirectory = folder + @"\steamapps\common\VTOL VR\VTOLVR_ModLoader";
         }
 
-        private static void ClearOldFiles()
+        public static void ClearOldFiles()
         {
             Helper.SentryLog("Clearing Old Files", Helper.SentryLogCategory.Startup);
 

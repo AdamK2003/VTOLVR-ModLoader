@@ -99,12 +99,11 @@ namespace Launcher
                 CheckForSteamVR();
 
             DisableInternet = !await HttpHelper.CheckForInternet();
-
-            
             
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
+            Startup.ClearOldFiles();
             MainWindow._instance.CheckForEvent();
             MainWindow.SetProgress(100, "Ready");
             CheckForItems();

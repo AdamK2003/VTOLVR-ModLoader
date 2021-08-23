@@ -35,8 +35,8 @@ namespace Launcher.Classes
             string result = await Task.Run(() =>
             {
                 string logMessage = String.Empty;
-                //try
-                //{
+                try
+                {
                     StringBuilder builder = new StringBuilder("Zip Extract Output:");
                     // This is mostly just the example code from here:
                     // https://github.com/icsharpcode/SharpZipLib/wiki/Unpack-a-Zip-with-full-control-over-the-operation#c
@@ -74,11 +74,10 @@ namespace Launcher.Classes
                     string message = builder.ToString();
                     Console.LogThreadSafe(message);
                     return "Success";
-                //}
-                // catch (Exception e)
-                // {
-                //     return e.Message;
-                // }
+                }
+                catch (Exception e) {
+                     return e.Message;
+                }
             });
             completed?.Invoke(zipPath, extractPath, result);
             completedWithArgs?.Invoke(zipPath, extractPath, result, extraData);
@@ -378,5 +377,12 @@ namespace Launcher.Classes
                 builder.AppendLine($"Error with check permissions {e}");
             }
         }
+
+        public static void OpenURL(string url)
+        {
+            // Why: https://github.com/dotnet/runtime/issues/17938
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
+        }
+        
     }
 }

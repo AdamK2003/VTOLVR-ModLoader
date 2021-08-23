@@ -96,7 +96,7 @@ namespace Launcher.Views
             public Item(string path, string url, Action<CustomWebClient.RequestData> downloadProgress, Action<CustomWebClient.RequestData> downloadComplete, object[] extraData = null)
             {
                 _path = path;
-                FilePath = _path.Replace(Program.Root, String.Empty);
+                FilePath = _path.Replace('/','\\');
                 StartText = $"Started: {DateTime.Now}";
                 UpdateProperty("StartText");
                 UpdateProperty("FilePath");

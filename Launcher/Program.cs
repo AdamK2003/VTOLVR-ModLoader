@@ -99,12 +99,11 @@ namespace Launcher
                 CheckForSteamVR();
 
             DisableInternet = !await HttpHelper.CheckForInternet();
-
-            
             
             AutoStart();
             CommunicationsManager.CheckURI();
             MainWindow._instance.Title = $"{ProgramName}";
+            Startup.ClearOldFiles();
             MainWindow._instance.CheckForEvent();
             MainWindow.SetProgress(100, "Ready");
             CheckForItems();
@@ -270,7 +269,9 @@ namespace Launcher
             if (overideItemsToExtract)
                 _itemsToExtract = overideAmount;
 
-            string currentFolder = zipPath.Split('.')[0];
+
+            // Removing the .zip at the end of this path to create the folder
+            string currentFolder = zipPath.Remove(zipPath.Length - 4);
             Directory.CreateDirectory(currentFolder);
 
             ItemHandler handler = new ItemHandler();

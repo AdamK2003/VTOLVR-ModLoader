@@ -364,13 +364,21 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                     
                     // It was hard coded because I couldn't figure out when adding a new line 
                     // how to set the value type in IL Code
+
+                    try
+                    {
+                        var ilp = method.Body.GetILProcessor();
+                        Instruction instruction = method.Body.Instructions[66];
+                        Instruction newInstruction  = Instruction.Create(OpCodes.Ldc_I4_2);
+                        ilp.Replace(instruction, newInstruction);
+                        instruction = method.Body.Instructions[68];
+                        ilp.Replace(instruction, newInstruction);
+                    }
+                    catch
+                    {
+                        Logger.Log($"This game version isn't the public testing version");
+                    }
                     
-                    var ilp = method.Body.GetILProcessor();
-                    Instruction instruction = method.Body.Instructions[66];
-                    Instruction newInstruction  = Instruction.Create(OpCodes.Ldc_I4_2);
-                    ilp.Replace(instruction, newInstruction);
-                    instruction = method.Body.Instructions[68];
-                    ilp.Replace(instruction, newInstruction);
                 }
             }
 

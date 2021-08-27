@@ -91,7 +91,8 @@ namespace ModLoader
         public static async void LoadWorkshopMission()
         {
             await SelectPilot();
-
+            // TODO: Fix Loading workshop missions
+            /*
             VTResources.SteamWorkshopItemRequest<VTScenarioInfo> result =
                 VTResources.LoadSteamWorkshopScenarios();
 
@@ -121,6 +122,7 @@ namespace ModLoader
 
             VTScenario.LaunchScenario(scenarioInfo);
             IsEnabled = true;
+            */
         }
 
         public static async void LoadBuiltInMission()

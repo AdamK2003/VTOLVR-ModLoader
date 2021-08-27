@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Core;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
@@ -210,8 +211,49 @@ namespace VTPatcher
                 File.Exists(modloaderPath))
             {
                 CrashReportHandler.enableCaptureExceptions = false;
+
+                string oldPath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "VTOLVR_Data",
+                    "Plugins",
+                    "x86_64");
+                if (!Directory.Exists(oldPath))
+                {
+                    oldPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "VTOLVR_Data",
+                        "Plugins",
+                        "steam_api64.dll");
+                }
+                else
+                {
+                    oldPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "VTOLVR_Data",
+                        "Plugins",
+                        "x86_64",
+                        "steam_api64.dll");
+                }
+                
+                if (!SteamAuthentication.IsTrusted(oldPath))
+                {
+                    Debug.LogError("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
+                    Debug.Log(oldPath);
+                    Application.Quit();
+                    return;
+                }
+                
+                
+                
                 Assembly.LoadFile(modloaderPath);
                 PlayerLogText();
+                
+                if (GameStartup.version.releaseType == GameVersion.ReleaseTypes.Testing)
+                {
+                    Debug.Log($"This user is running modified game on the public testing branch. The Mod Loader has stopped running but is still technically loaded.");
+                    return;
+                }
+                
                 new GameObject("Mod Loader Manager",
                     typeof(ModLoader.ModLoaderManager),
                     typeof(ModLoader.SkinManager));

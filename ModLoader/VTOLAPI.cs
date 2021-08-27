@@ -129,19 +129,13 @@ public class VTOLAPI : MonoBehaviour
     /// Returns the steam ID of the player which is using this mod.
     /// </summary>
     /// <returns></returns>
-    public ulong GetSteamID()
-    {
-        return SteamUser.GetSteamID().m_SteamID;
-    }
+    public ulong GetSteamID() => SteamClient.SteamId;
 
     /// <summary>
     /// Returns the current name of the steam user, if they change their name during play session, this doesn't update.
     /// </summary>
     /// <returns></returns>
-    public string GetSteamName()
-    {
-        return SteamFriends.GetPersonaName();
-    }
+    public string GetSteamName() => SteamClient.Name;
 
     /// <summary>
     /// Returns the parent gameobject of what vehicle the player is currently flying, it will return null if nothing is found.

@@ -32,6 +32,9 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\dll\Assembly-CSharp.dll</HintPath>
+        </Reference>
         <Reference Include="Mono.Cecil, Version=0.11.3.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
           <HintPath>..\packages\Mono.Cecil.0.11.3\lib\net40\Mono.Cecil.dll</HintPath>
           <Private>True</Private>
@@ -71,6 +74,10 @@
       <None Include="packages.config" />
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\Core\Core.csproj">
+        <Project>{f740c545-528c-42b6-af8a-c1469555cead}</Project>
+        <Name>Core</Name>
+      </ProjectReference>
       <ProjectReference Include="..\ModLoader\Mod Loader.csproj">
         <Project>{6954c277-7d91-4274-b54b-fddad7738790}</Project>
         <Name>Mod Loader</Name>

@@ -66,6 +66,16 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Classes\WINTRUST_DATA.cs" />
+        <Compile Include="Classes\WINTRUST_FILE_INFO.cs" />
+        <Compile Include="Enums\AllocMethod.cs" />
+        <Compile Include="Enums\RevocationCheckFlags.cs" />
+        <Compile Include="Enums\StateAction.cs" />
+        <Compile Include="Enums\TrustProviderFlags.cs" />
+        <Compile Include="Enums\UiChoice.cs" />
+        <Compile Include="Enums\UIContext.cs" />
+        <Compile Include="Enums\UnionChoice.cs" />
+        <Compile Include="Enums\UnmanagedPointer.cs" />
         <Compile Include="Injector.cs" />
         <Compile Include="Logger.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

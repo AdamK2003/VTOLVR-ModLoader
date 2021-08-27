@@ -243,17 +243,14 @@ namespace VTPatcher
                     return;
                 }
                 
-                
-                
-                Assembly.LoadFile(modloaderPath);
                 PlayerLogText();
-                
                 if (GameStartup.version.releaseType == GameVersion.ReleaseTypes.Testing)
                 {
                     Debug.Log($"This user is running modified game on the public testing branch. The Mod Loader has stopped running but is still technically loaded.");
                     return;
                 }
                 
+                Assembly.LoadFile(modloaderPath);
                 new GameObject("Mod Loader Manager",
                     typeof(ModLoader.ModLoaderManager),
                     typeof(ModLoader.SkinManager));

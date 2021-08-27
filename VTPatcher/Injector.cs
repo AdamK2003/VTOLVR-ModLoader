@@ -62,7 +62,7 @@ namespace VTPatcher
             }
             catch (Exception e)
             {
-                Logger.Error($"Failed to Patch VTOL VRs Code\n{e.Message}");
+                Logger.Error($"Failed to Patch VTOL VRs Code\n{e}");
                 return;
             }
 
@@ -359,6 +359,23 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                     method.IsPrivate = false;
                     method.IsNewSlot = true;
                     method.IsHideBySig = true;
+                }
+
+                if (type.Name.Equals(nameof(GameVersion)) && method.Name.Equals(nameof(GameVersion.ConstructFromValue)))
+                {
+                    // As of the official multiplayer we need to make sure modded players do not join
+                    // non modded players. BD added GameVersion.ReleaseType.Modded. This section of code
+                    // is hard coded to change everyone to that release type.
+                    
+                    // It was hard coded because I couldn't figure out when adding a new line 
+                    // how to set the value type in IL Code
+                    
+                    var ilp = method.Body.GetILProcessor();
+                    Instruction instruction = method.Body.Instructions[66];
+                    Instruction newInstruction  = Instruction.Create(OpCodes.Ldc_I4_2);
+                    ilp.Replace(instruction, newInstruction);
+                    instruction = method.Body.Instructions[68];
+                    ilp.Replace(instruction, newInstruction);
                 }
             }
 

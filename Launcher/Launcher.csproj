@@ -16,6 +16,8 @@
         <ProductVersion>5.0.1.0</ProductVersion>
         <RootNamespace>Launcher</RootNamespace>
         <PublishSingleFile>true</PublishSingleFile>
+        <PackageProjectUrl>https://vtolvr-mods.com</PackageProjectUrl>
+        <RepositoryUrl>https://gitlab.com/vtolvr-mods/ModLoader</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>

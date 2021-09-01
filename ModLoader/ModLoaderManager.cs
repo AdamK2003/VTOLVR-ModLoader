@@ -57,6 +57,9 @@ namespace ModLoader
             _args = Environment.GetCommandLineArgs();
             SceneManager.sceneLoaded += SceneLoaded;
 
+            // UIManager uiManager = gameObject.AddComponent<UIManager>();
+            // uiManager.LoadAssetBundle(uiManager.SplashScene);
+            
             CreateAPI();
             FindProjectFolder();
             AttachCoreLogger();

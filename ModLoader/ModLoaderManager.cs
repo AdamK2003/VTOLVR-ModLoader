@@ -5,7 +5,6 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.CrashReportHandler;
-using Steamworks;
 using System.Collections;
 using System.IO;
 using System.Reflection;
@@ -24,72 +23,6 @@ using ModLoader.Classes.Json;
 using Core;
 namespace ModLoader
 {
-    public class Load
-    {
-        public static void Init()
-        {
-            CrashReportHandler.enableCaptureExceptions = false;
-            if (!SteamAuthentication.IsTrusted(Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "VTOLVR_Data",
-                "Plugins",
-                "steam_api64.dll")))
-            {
-                Debug.LogError("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
-                Application.Quit();
-                return;
-            }
-            PlayerLogText();
-            if (GameStartup.version.releaseType == GameVersion.ReleaseTypes.Testing)
-            {
-                Debug.Log($"This user is running modified game on the public testing branch. The Mod Loader has stopped running but is still technically loaded.");
-                return;
-            }
-            new GameObject("Mod Loader Manager", typeof(ModLoaderManager), typeof(SkinManager));
-        }
-        private static void PlayerLogText()
-        {
-            string playerLogMessage = @" 
-                                                                                                         
-                                                                                                         
- #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  ##### 
-                                                                                                         
- #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  ##### 
-                                                                                                         
- #     #                                              #     #                                            
- ##   ##   ####   #####   #####   ######  #####       #     #  ######  #####    ####   #   ####   #    # 
- # # # #  #    #  #    #  #    #  #       #    #      #     #  #       #    #  #       #  #    #  ##   # 
- #  #  #  #    #  #    #  #    #  #####   #    #      #     #  #####   #    #   ####   #  #    #  # #  # 
- #     #  #    #  #    #  #    #  #       #    #       #   #   #       #####        #  #  #    #  #  # # 
- #     #  #    #  #    #  #    #  #       #    #        # #    #       #   #   #    #  #  #    #  #   ## 
- #     #   ####   #####   #####   ######  #####          #     ######  #    #   ####   #   ####   #    # 
-
-Thank you for download VTOL VR Mod loader by . Marsh.Mello .
-
-Please don't report bugs unless you can reproduce them without any mods loaded
-if you are having any issues with mods and would like to report a bug, please contact @. Marsh.Mello .#0001 
-on the offical VTOL VR Discord or post an issue on gitlab. 
-
-VTOL VR Modding Discord Server: https://discord.gg/XZeeafp
-Mod Loader Gitlab: https://gitlab.com/vtolvr-mods/ModLoader
-Mod Loader Website: https://vtolvr-mods.com/
-
-Special Thanks to Ketkev and Nebriv for their continuous support to the mod loader and the website.
-
- #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  ##### 
-                                                                                                         
- #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  #####  ##### 
-";
-            Debug.Log(playerLogMessage);
-        }
-
-        public static void Main()
-        {
-            PlayerLogText();
-            new GameObject("Mod Loader Manager", typeof(ModLoaderManager), typeof(SkinManager));
-        }
-    }
-
     /// <summary>
     /// This class is to handle the changes between scenes
     /// </summary>
@@ -124,6 +57,9 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             _args = Environment.GetCommandLineArgs();
             SceneManager.sceneLoaded += SceneLoaded;
 
+            // UIManager uiManager = gameObject.AddComponent<UIManager>();
+            // uiManager.LoadAssetBundle(uiManager.SplashScene);
+            
             CreateAPI();
             FindProjectFolder();
             AttachCoreLogger();
@@ -145,8 +81,6 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             _discordDetail = "Launching Game";
             _discordState = ". Marsh.Mello .'s Mod Loader";
             UpdateDiscord();
-
-            SteamAPI.Init();
 
             DevTools.ReadDevTools();
 

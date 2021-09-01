@@ -4,11 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Core;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 using UnityEngine;
 using UnityEngine.CrashReportHandler;
+using VTPatcher.Classes;
+using VTPatcher.Enums;
 using Debug = UnityEngine.Debug;
 using MethodAttributes = Mono.Cecil.MethodAttributes;
 
@@ -59,7 +62,7 @@ namespace VTPatcher
             }
             catch (Exception e)
             {
-                Logger.Error($"Failed to Patch VTOL VRs Code\n{e.Message}");
+                Logger.Error($"Failed to Patch VTOL VRs Code\n{e}");
                 return;
             }
 
@@ -210,8 +213,41 @@ namespace VTPatcher
                 File.Exists(modloaderPath))
             {
                 CrashReportHandler.enableCaptureExceptions = false;
-                Assembly.LoadFile(modloaderPath);
+
+                string oldPath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "VTOLVR_Data",
+                    "Plugins",
+                    "x86_64");
+                if (!Directory.Exists(oldPath))
+                {
+                    oldPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "VTOLVR_Data",
+                        "Plugins",
+                        "steam_api64.dll");
+                }
+                else
+                {
+                    oldPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "VTOLVR_Data",
+                        "Plugins",
+                        "x86_64",
+                        "steam_api64.dll");
+                }
+                
+                if (!SteamAuthentication.IsTrusted(oldPath))
+                {
+                    Debug.LogError("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
+                    Debug.Log(oldPath);
+                    Application.Quit();
+                    return;
+                }
+                
                 PlayerLogText();
+                
+                Assembly.LoadFile(modloaderPath);
                 new GameObject("Mod Loader Manager",
                     typeof(ModLoader.ModLoaderManager),
                     typeof(ModLoader.SkinManager));
@@ -319,6 +355,31 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                     method.IsNewSlot = true;
                     method.IsHideBySig = true;
                 }
+
+                if (type.Name.Equals(nameof(GameVersion)) && method.Name.Equals(nameof(GameVersion.ConstructFromValue)))
+                {
+                    // As of the official multiplayer we need to make sure modded players do not join
+                    // non modded players. BD added GameVersion.ReleaseType.Modded. This section of code
+                    // is hard coded to change everyone to that release type.
+                    
+                    // It was hard coded because I couldn't figure out when adding a new line 
+                    // how to set the value type in IL Code
+
+                    try
+                    {
+                        var ilp = method.Body.GetILProcessor();
+                        Instruction instruction = method.Body.Instructions[66];
+                        Instruction newInstruction  = Instruction.Create(OpCodes.Ldc_I4_2);
+                        ilp.Replace(instruction, newInstruction);
+                        instruction = method.Body.Instructions[68];
+                        ilp.Replace(instruction, newInstruction);
+                    }
+                    catch
+                    {
+                        Logger.Log($"This game version isn't the public testing version");
+                    }
+                    
+                }
             }
 
             foreach (var field in type.Fields)
@@ -366,333 +427,4 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
             return WinVerifyTrust(fileName) == 0;
         }
     }
-}
-
-internal struct WINTRUST_FILE_INFO : IDisposable
-{
-
-    public WINTRUST_FILE_INFO(string fileName, Guid subject)
-    {
-
-        cbStruct = (uint)Marshal.SizeOf(typeof(WINTRUST_FILE_INFO));
-
-        pcwszFilePath = fileName;
-
-
-
-        if (subject != Guid.Empty)
-        {
-
-            pgKnownSubject = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Guid)));
-
-            Marshal.StructureToPtr(subject, pgKnownSubject, true);
-
-        }
-
-        else
-        {
-
-            pgKnownSubject = IntPtr.Zero;
-
-        }
-
-        hFile = IntPtr.Zero;
-
-    }
-
-    public uint cbStruct;
-
-    [MarshalAs(UnmanagedType.LPTStr)]
-
-    public string pcwszFilePath;
-
-    public IntPtr hFile;
-
-    public IntPtr pgKnownSubject;
-
-
-
-    #region IDisposable Members
-
-
-
-    public void Dispose()
-    {
-
-        Dispose(true);
-
-    }
-
-
-
-    private void Dispose(bool disposing)
-    {
-
-        if (pgKnownSubject != IntPtr.Zero)
-        {
-
-            Marshal.DestroyStructure(this.pgKnownSubject, typeof(Guid));
-
-            Marshal.FreeHGlobal(this.pgKnownSubject);
-
-        }
-
-    }
-
-
-
-    #endregion
-
-}
-
-enum AllocMethod
-{
-    HGlobal,
-    CoTaskMem
-};
-enum UnionChoice
-{
-    File = 1,
-    Catalog,
-    Blob,
-    Signer,
-    Cert
-};
-enum UiChoice
-{
-    All = 1,
-    NoUI,
-    NoBad,
-    NoGood
-};
-enum RevocationCheckFlags
-{
-    None = 0,
-    WholeChain
-};
-enum StateAction
-{
-    Ignore = 0,
-    Verify,
-    Close,
-    AutoCache,
-    AutoCacheFlush
-};
-enum TrustProviderFlags
-{
-    UseIE4Trust = 1,
-    NoIE4Chain = 2,
-    NoPolicyUsage = 4,
-    RevocationCheckNone = 16,
-    RevocationCheckEndCert = 32,
-    RevocationCheckChain = 64,
-    RecovationCheckChainExcludeRoot = 128,
-    Safer = 256,
-    HashOnly = 512,
-    UseDefaultOSVerCheck = 1024,
-    LifetimeSigning = 2048
-};
-enum UIContext
-{
-    Execute = 0,
-    Install
-};
-
-[StructLayout(LayoutKind.Sequential)]
-
-internal struct WINTRUST_DATA : IDisposable
-{
-
-    public WINTRUST_DATA(WINTRUST_FILE_INFO fileInfo)
-    {
-
-        this.cbStruct = (uint)Marshal.SizeOf(typeof(WINTRUST_DATA));
-
-        pInfoStruct = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(WINTRUST_FILE_INFO)));
-
-        Marshal.StructureToPtr(fileInfo, pInfoStruct, false);
-
-        this.dwUnionChoice = UnionChoice.File;
-
-
-
-        pPolicyCallbackData = IntPtr.Zero;
-
-        pSIPCallbackData = IntPtr.Zero;
-
-
-
-        dwUIChoice = UiChoice.NoUI;
-
-        fdwRevocationChecks = RevocationCheckFlags.None;
-
-        dwStateAction = StateAction.Ignore;
-
-        hWVTStateData = IntPtr.Zero;
-
-        pwszURLReference = IntPtr.Zero;
-
-        dwProvFlags = TrustProviderFlags.Safer;
-
-
-
-        dwUIContext = UIContext.Execute;
-
-    }
-
-
-
-    public uint cbStruct;
-
-    public IntPtr pPolicyCallbackData;
-
-    public IntPtr pSIPCallbackData;
-
-    public UiChoice dwUIChoice;
-
-    public RevocationCheckFlags fdwRevocationChecks;
-
-    public UnionChoice dwUnionChoice;
-
-    public IntPtr pInfoStruct;
-
-    public StateAction dwStateAction;
-
-    public IntPtr hWVTStateData;
-
-    private IntPtr pwszURLReference;
-
-    public TrustProviderFlags dwProvFlags;
-
-    public UIContext dwUIContext;
-
-
-
-    #region IDisposable Members
-
-
-
-    public void Dispose()
-    {
-
-        Dispose(true);
-
-    }
-
-
-
-    private void Dispose(bool disposing)
-    {
-
-        if (dwUnionChoice == UnionChoice.File)
-        {
-
-            WINTRUST_FILE_INFO info = new WINTRUST_FILE_INFO();
-
-            Marshal.PtrToStructure(pInfoStruct, info);
-
-            info.Dispose();
-
-            Marshal.DestroyStructure(pInfoStruct, typeof(WINTRUST_FILE_INFO));
-
-        }
-
-
-
-        Marshal.FreeHGlobal(pInfoStruct);
-
-    }
-
-
-
-    #endregion
-
-}
-
-internal sealed class UnmanagedPointer : IDisposable
-{
-
-    private IntPtr m_ptr;
-
-    private AllocMethod m_meth;
-
-    internal UnmanagedPointer(IntPtr ptr, AllocMethod method)
-    {
-
-        m_meth = method;
-
-        m_ptr = ptr;
-
-    }
-
-
-
-    ~UnmanagedPointer()
-    {
-
-        Dispose(false);
-
-    }
-
-
-
-    #region IDisposable Members
-
-    private void Dispose(bool disposing)
-    {
-
-        if (m_ptr != IntPtr.Zero)
-        {
-
-            if (m_meth == AllocMethod.HGlobal)
-            {
-
-                Marshal.FreeHGlobal(m_ptr);
-
-            }
-
-            else if (m_meth == AllocMethod.CoTaskMem)
-            {
-
-                Marshal.FreeCoTaskMem(m_ptr);
-
-            }
-
-            m_ptr = IntPtr.Zero;
-
-        }
-
-
-
-        if (disposing)
-        {
-
-            GC.SuppressFinalize(this);
-
-        }
-
-    }
-
-
-
-    public void Dispose()
-    {
-
-        Dispose(true);
-
-    }
-
-
-
-    #endregion
-
-
-
-    public static implicit operator IntPtr(UnmanagedPointer ptr)
-    {
-
-        return ptr.m_ptr;
-
-    }
-
 }

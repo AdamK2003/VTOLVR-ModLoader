@@ -45,6 +45,9 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\dll\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="Facepunch.Steamworks.Win64, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\dll\Facepunch.Steamworks.Win64.dll</HintPath>
+    </Reference>
     <Reference Include="netstandard">
       <HintPath>..\dll\netstandard.dll</HintPath>
     </Reference>
@@ -113,6 +116,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsMenu.cs" />
     <Compile Include="SkinManager.cs" />
+    <Compile Include="UIManager.cs" />
     <Compile Include="UI\ListItemTemplate.cs" />
     <Compile Include="VTOLAPI.cs" />
     <Compile Include="VTOLMOD.cs" />

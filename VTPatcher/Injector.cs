@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Core;
+using ModLoader;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
@@ -46,7 +47,7 @@ namespace VTPatcher
 
             try
             {
-                PatchCameraClass();
+                RemoveCameraPatch();
             }
             catch (Exception e)
             {
@@ -118,7 +119,7 @@ namespace VTPatcher
             return true;
         }
 
-        private static void PatchCameraClass()
+        private static void RemoveCameraPatch()
         {
             string coreModulePath = Path.Combine(
                 Directory.GetCurrentDirectory(),
@@ -145,54 +146,22 @@ namespace VTPatcher
                 if (method.IsRuntimeSpecialName && method.Name == ".cctor")
                     cctor = method;
             }
-
-            MethodReference cbs = module.ImportReference(((Action)LoadModLoader).Method);
+            
             bool changed = false;
-            if (cctor == null)
+            if (cctor != null)
             {
-                Logger.Log("There was no cctor method. Creating a new one");
-
-                cctor = new MethodDefinition(".cctor",
-                    MethodAttributes.RTSpecialName | MethodAttributes.Static | MethodAttributes.SpecialName,
-                    module.TypeSystem.Void);
-                type.Methods.Add(cctor);
-
-                // Unsure what this is
-                var ilp = cctor.Body.GetILProcessor();
-                ilp.Emit(OpCodes.Call, cbs);
-                ilp.Emit(OpCodes.Ret);
-
-                changed = true;
-            }
-            else
-            {
-                // If the constructor method already exsits,
-                // we want to change the first two IL codes to call and return
+                // The old version used to patch the camera constructor. 
+                // This caused issues later on so I moved it to splash screen
                 Logger.Log("There was a cctor method. Checking it");
 
-                var ilp = cctor.Body.GetILProcessor();
-                for (int i = 0; i < Math.Min(2, cctor.Body.Instructions.Count); i++)
+                for (int i = 0; i < type.Methods.Count; i++)
                 {
-                    Instruction ins = cctor.Body.Instructions[i];
-                    switch (i)
+                    MethodDefinition method = type.Methods[i];
+                    if (method.IsRuntimeSpecialName && method.Name == ".cctor")
                     {
-                        case 0 when ins.OpCode != OpCodes.Call:
-                            ilp.Replace(ins, ilp.Create(OpCodes.Call, cbs));
-                            changed = true;
-                            break;
-                        case 0:
-                            var methodRef = ins.Operand as MethodReference;
-                            if (methodRef?.FullName != cbs.FullName)
-                            {
-                                ilp.Replace(ins, ilp.Create(OpCodes.Call, cbs));
-                                changed = true;
-                            }
-
-                            break;
-                        case 1 when ins.OpCode != OpCodes.Ret:
-                            ilp.Replace(ins, ilp.Create(OpCodes.Ret));
-                            changed = true;
-                            break;
+                        type.Methods.RemoveAt(i);
+                        changed = true;
+                        continue;
                     }
                 }
             }
@@ -206,14 +175,20 @@ namespace VTPatcher
             unityAD.Dispose();
         }
 
-        private static void LoadModLoader()
+        private static void PatchSplashScreen()
+        {
+            
+        }
+
+        public static void LoadModLoader()
         {
             string modloaderPath = Path.Combine("VTOLVR_ModLoader", "ModLoader.dll");
             if (Directory.Exists("VTOLVR_ModLoader") &&
                 File.Exists(modloaderPath))
             {
+                
                 CrashReportHandler.enableCaptureExceptions = false;
-
+                
                 string oldPath = Path.Combine(
                     Directory.GetCurrentDirectory(),
                     "VTOLVR_Data",
@@ -236,6 +211,7 @@ namespace VTPatcher
                         "x86_64",
                         "steam_api64.dll");
                 }
+                
                 
                 if (!SteamAuthentication.IsTrusted(oldPath))
                 {
@@ -308,14 +284,14 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
             foreach (var type in module.Types)
             {
-                VirtualizeType(type);
+                VirtualizeType(type, ref module);
             }
 
             module.Write(assemlycsharp);
             module.Dispose();
         }
 
-        private static void VirtualizeType(TypeDefinition type)
+        private static void VirtualizeType(TypeDefinition type, ref ModuleDefinition module)
         {
             if (type.IsSealed)
                 type.IsSealed = false;
@@ -331,10 +307,10 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
             foreach (var nestedType in type.NestedTypes)
             {
-                VirtualizeType(nestedType);
+                VirtualizeType(nestedType, ref module);
             }
 
-            foreach (var method in type.Methods)
+            foreach (MethodDefinition method in type.Methods)
             {
                 if (method.IsManaged
                     && method.IsIL
@@ -379,6 +355,26 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
                         Logger.Log($"This game version isn't the public testing version");
                     }
                     
+                }
+
+                // Patching Splashscreen instead of Camera Constructor so it doesn't run every scene
+                if (type.Name.Equals(nameof(SplashSceneController)) &&
+                    method.Name.Equals(nameof(SplashSceneController.Start)))
+                {
+                    Logger.Log($"{type.Name}|{method.Name}");
+                    MethodReference cbs = module.ImportReference(((Action)LoadModLoader).Method);
+                    ILProcessor ilp = method.Body.GetILProcessor();
+                    for (int i = 0; i < method.Body.Instructions.Count; i++)
+                    {
+                        Instruction ins = method.Body.Instructions[i];
+                        Logger.Log($"{i}|{ins.OpCode}");
+                        if (ins.OpCode == OpCodes.Ret)
+                        {
+                            Logger.Log("Added Method before OpCode.Pop");
+                            ilp.InsertBefore(ins, ilp.Create(OpCodes.Call, cbs));
+                            break;
+                        }
+                    }
                 }
             }
 

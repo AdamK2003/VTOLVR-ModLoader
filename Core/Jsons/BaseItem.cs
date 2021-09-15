@@ -83,7 +83,9 @@ namespace Core.Jsons
 
         private ContentType GetContentType()
         {
-            switch (Directory.Parent.Name.ToLower())
+            var projectDir = Directory.Name.ToLower() == "builds" ? Directory.Parent : Directory;
+
+            switch (projectDir.Parent.Name.ToLower())
             {
                 case "mods":
                     return ContentType.Mods;
@@ -98,7 +100,7 @@ namespace Core.Jsons
             if (DllPath != string.Empty && DllPath.EndsWith(".dll"))
                 return ContentType.Mods;
 
-            Logger.Error($"Error, couldn't match {Directory.Parent.Name.ToLower()} to a Content Type");
+            Logger.Error($"Error, couldn't match {projectDir.Parent.Name.ToLower()} to a Content Type");
             return ContentType.None;
         }
 

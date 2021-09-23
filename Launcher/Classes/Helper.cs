@@ -381,7 +381,7 @@ namespace Launcher.Classes
         public static void OpenURL(string url)
         {
             // Why: https://github.com/dotnet/runtime/issues/17938
-            Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
         
     }

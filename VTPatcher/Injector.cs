@@ -20,6 +20,7 @@ namespace VTPatcher
 {
     public static class Injector
     {
+        private static bool _loadedModLoader = false;
         public static DirectoryInfo ModLoaderFolder;
 
         /// <summary>
@@ -174,14 +175,13 @@ namespace VTPatcher
 
             unityAD.Dispose();
         }
-
-        private static void PatchSplashScreen()
-        {
-            
-        }
-
+        
         public static void LoadModLoader()
         {
+            if (_loadedModLoader)
+                return;
+            
+            _loadedModLoader = true;
             string modloaderPath = Path.Combine("VTOLVR_ModLoader", "ModLoader.dll");
             if (Directory.Exists("VTOLVR_ModLoader") &&
                 File.Exists(modloaderPath))

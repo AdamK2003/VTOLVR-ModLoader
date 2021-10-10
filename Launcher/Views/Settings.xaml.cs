@@ -14,8 +14,6 @@ using System.Windows.Media;
 using Launcher.Classes;
 using Launcher.Classes.Json;
 using Launcher.Windows;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
 using Salaros.Configuration;
 
 namespace Launcher.Views

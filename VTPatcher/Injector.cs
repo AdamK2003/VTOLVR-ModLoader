@@ -29,18 +29,9 @@ namespace VTPatcher
         public static void Main(string[] args)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            SetFolder();
-            Logger.CreateLogs();
-
-            if (!LoadAssemblies())
+            
+            if (!Startup())
             {
-                Logger.Error($"Failed to load Assemblies!");
-                return;
-            }
-
-            if (!IsValidGame())
-            {
-                Logger.Log("Please use the steam version of VTOL to play with mods");
                 return;
             }
 
@@ -70,6 +61,26 @@ namespace VTPatcher
 
             stopwatch.Stop();
             Logger.Log($"Finished in {stopwatch.Elapsed}");
+        }
+
+        private static bool Startup()
+        {
+            SetFolder();
+            Logger.CreateLogs();
+
+            if (!LoadAssemblies())
+            {
+                Logger.Error($"Failed to load Assemblies!");
+                return false;
+            }
+
+            if (!IsValidGame())
+            {
+                Logger.Log("Please use the steam version of VTOL to play with mods");
+                return false;
+            }
+
+            return true;
         }
 
         private static void SetFolder()
@@ -422,5 +433,8 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
         {
             return WinVerifyTrust(fileName) == 0;
         }
+        
+        // This is the entry point for the console and unpatching
+        
     }
 }

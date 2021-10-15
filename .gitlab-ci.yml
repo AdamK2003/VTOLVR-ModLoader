@@ -65,15 +65,15 @@ build_patcher:
 
 build_unpatcher:
   stage: build_unpatcher
-    script:
-      - .\Builder.exe buildunpatcher dlls=$dlls
-    artifacts:
-      paths:
-        - UnPatcher\bin\Release\UnPatcher.exe
-      expire_in: 1 day
-    only:
-      - dev
-      - release
+  script:
+    - .\Builder.exe buildunpatcher dlls=$dlls
+  artifacts:
+    paths:
+      - UnPatcher\bin\Release\UnPatcher.exe
+    expire_in: 1 day
+  only:
+    - dev
+    - release
 
 sign_files:
   stage: sign_files

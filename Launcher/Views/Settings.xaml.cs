@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using System.Windows.Media;
 using Launcher.Classes;
+using Launcher.Classes.Config;
 using Launcher.Classes.Json;
 using Launcher.Windows;
 using Salaros.Configuration;
@@ -582,24 +583,14 @@ Do you want to restart the Mod Loader as an administrator?";
 
         public void ToggleModLoader()
         {
-            string filePath = Path.Combine(Program.VTOLFolder, "doorstop_config.ini");
-            if (!File.Exists(filePath))
-            {
-                Notification.Show($"Could not find doorstop_config.ini in games root.", "Missing File");
-                Console.Log($"Couldn't find doorstep config file at {filePath}");
-                ModLoaderEnabled = true;
-                return;
-            }
-
-            ConfigParser config = new(filePath);
-            bool result = config.GetValue("UnityDoorstop", "enabled", true);
-
             ModLoaderEnabled = !ModLoaderEnabled;
-
-            if (result != ModLoaderEnabled)
+            if (ModLoaderEnabled)
             {
-                config.SetValue("UnityDoorstop", "enabled", ModLoaderEnabled);
-                config.Save();
+                Doorstop.Enable();
+            }
+            else
+            {
+                Doorstop.Disable();
             }
 
             _disableButton.Content = ModLoaderEnabled ? "Disable" : "Enable";

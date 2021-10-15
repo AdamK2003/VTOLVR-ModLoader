@@ -203,6 +203,7 @@ namespace Build
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.dll");
             TryMove(dir + @"\ModLoader\bin\Release\ModLoader.xml", dir + @"\autoupdate\template\VTOLVR_ModLoader\ModLoader.xml");
             TryMove(dir + @"\VTPatcher\bin\Release\VTPatcher.dll", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTPatcher.dll");
+            TryMove(dir + @"\UnPatcher\bin\Release\UnPatcher.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\UnPatcher.exe");
             TryMove(dir + @"\Launcher\bin\Release\net5.0-windows\win-x64\publish\Launcher.exe", dir + @"\autoupdate\template\VTOLVR_ModLoader\VTOLVR-ModLoader.exe");
 
             Log("Creating zip");

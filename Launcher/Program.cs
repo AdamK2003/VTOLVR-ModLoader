@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using Console = Launcher.Views.Console;
 using Core.Jsons;
 using Launcher.Classes;
+using Launcher.Classes.Config;
 using Launcher.Classes.Json;
 using Launcher.Views;
 
@@ -109,6 +110,11 @@ namespace Launcher
             CheckForItems();
             FindItems();
             MainWindow._instance.ItemManager.UpdateUI(true);
+            
+            if (!Doorstop.FileExists())
+            {
+                Doorstop.CreateDefaultFile();
+            }
         }
 
         private static bool FolderIsValid()

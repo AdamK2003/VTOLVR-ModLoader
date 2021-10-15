@@ -50,6 +50,8 @@ namespace Build
                 BuildAssetBundle();
             else if (args.Contains("buildpatcher"))
                 BuildPatcher();
+            else if (args.Contains("buildunpatcher"))
+                BuildUnPatcher();
             else if (args.Contains("sign"))
                 SignFiles();
             else if (args.Contains("autoupdatezip"))
@@ -117,6 +119,18 @@ namespace Build
                 "-p:Configuration=Release -nologo \"VTPatcher.csproj\"",
                 @"\VTPatcher");
         }
+
+        private static void BuildUnPatcher()
+        {
+            Log("UnPatcher.exe");
+            Run($"\"{paths["nuget"]}\"",
+                $"restore",
+                @"");
+            Log("Building UnPatcher.exe\n");
+            Run(paths["msbuild"],
+                "-p:Configuration=Release -nologo \"UnPatcher.csproj\"",
+                @"\UnPatcher");
+        }
         
         private static void SignFiles()
         {
@@ -143,6 +157,12 @@ namespace Build
             Run(paths["sign"],
                 $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
                 @"\VTPatcher");
+            
+            Log("Signing UnPatcher");
+            file = new FileInfo(@"UnPatcher\bin\Release\UnPatcher.exe");
+            Run(paths["sign"],
+                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
+                @"\UnPatcher");
         }
 
         private static void CreateUpdaterZip()

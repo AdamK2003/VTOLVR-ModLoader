@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Core;
 using Launcher.Classes;
+using Launcher.Classes.Config;
 using Launcher.Classes.Json;
 using Launcher.Windows;
 using Microsoft.Win32;
@@ -245,6 +246,11 @@ Restart the Mod Loader as an administrator?";
 
         private void FinishedUpdating()
         {
+            if (!Doorstop.FileExists())
+            {
+                Doorstop.CreateDefaultFile();
+            }
+            
             MainWindow._instance.CreatePages();
             MainWindow._instance.modsButton.IsEnabled = true;
             MainWindow._instance.skinsButton.IsEnabled = true;

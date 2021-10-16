@@ -346,10 +346,29 @@ namespace Launcher.Classes
 
             builder.AppendLine();
             builder.AppendLine("## Mod Loader Folder Files");
-            FileInfo[] files = new DirectoryInfo(Program.Root).GetFiles();
-            for (int i = 0; i < files.Length; i++)
+            AddFolderFiles(new DirectoryInfo(Program.Root), ref builder);
+
+            builder.AppendLine();
+            builder.AppendLine("## Root Game Files");
+            AddFolderFiles(new DirectoryInfo(Program.VTOLFolder), ref builder);
+            
+            builder.AppendLine();
+            builder.AppendLine("## Game Plugin Files");
+            AddFolderFiles(new DirectoryInfo(Path.Combine(Program.VTOLFolder, "VTOLVR_Data", "Plugins")), ref builder);
+        }
+
+        private static void AddFolderFiles(DirectoryInfo folder, ref StringBuilder builder)
+        {
+            DirectoryInfo[] folders = folder.GetDirectories();
+            foreach (DirectoryInfo directoryInfo in folders)
             {
-                builder.AppendLine($"/{files[i].Name} (MD5: {CalculateMD5(files[i].FullName)})");
+                builder.AppendLine($"/{directoryInfo.Name}/");
+            }
+            
+            FileInfo[] files = folder.GetFiles();
+            foreach (var file in files)
+            {
+                builder.AppendLine($"/{file.Name} (MD5: {CalculateMD5(file.FullName)})");
             }
         }
 

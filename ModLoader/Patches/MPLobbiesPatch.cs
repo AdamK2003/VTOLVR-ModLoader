@@ -21,6 +21,7 @@ namespace ModLoader.Patches
         {
 
             VTOLMPLobbyManager.currentLobby.SetData("lMods", VTOLAPI.GetUsersOrderedMods());
+            VTOLMPLobbyManager.currentLobby.SetData("lModCount", VTOLAPI.GetUsersMods().Count.ToString());
 
         }
 

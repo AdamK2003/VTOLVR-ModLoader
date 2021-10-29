@@ -243,6 +243,25 @@ public class VTOLAPI : MonoBehaviour
         return ModLoader.ModLoader.instance.ModsLoaded;
     }
 
+
+    /// <summary>
+    /// Returns an ordered string of mods which are currently loaded
+    /// </summary>
+    /// <returns></returns>
+    public static string GetUsersOrderedMods()
+    {
+        List<Mod> mods = VTOLAPI.GetUsersMods();
+        var sortedMods = mods.OrderBy(x => x.name);
+
+        string loadedMods = "";
+        foreach (Mod m in sortedMods)
+        {
+            loadedMods += m.name.ToLower() + ", ";
+        }
+
+        return loadedMods;
+
+    }
     /// <summary>
     /// Please don't use this, this is for the mod loader only.
     /// </summary>

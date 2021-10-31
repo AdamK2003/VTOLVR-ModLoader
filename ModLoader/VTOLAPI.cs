@@ -250,16 +250,22 @@ public class VTOLAPI : MonoBehaviour
     /// <returns></returns>
     public static string GetUsersOrderedMods()
     {
-        List<Mod> mods = VTOLAPI.GetUsersMods();
+        List<Mod> mods = GetUsersMods();
+
+        if(mods.Count == 0)
+        {
+            return "";
+        }
+
         var sortedMods = mods.OrderBy(x => x.name);
 
         string loadedMods = "";
         foreach (Mod m in sortedMods)
         {
-            loadedMods += m.name.ToLower() + ", ";
+            loadedMods += m.name.ToLower() + ",";
         }
 
-        return loadedMods;
+        return loadedMods.Remove(loadedMods.Length - 1);
 
     }
     /// <summary>

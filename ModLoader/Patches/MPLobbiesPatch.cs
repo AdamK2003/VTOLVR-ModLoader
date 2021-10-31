@@ -14,35 +14,39 @@ namespace ModLoader.Patches
 {
 
     //Patches the create lobby function to add the host's loaded mods to the lobby info
-    [HarmonyPatch(typeof(VTOLMPLobbyManager), nameof(VTOLMPLobbyManager.CreateLobby))]
+    [HarmonyPatch(typeof(VTMPMainMenu), nameof(VTMPMainMenu.LaunchMPGameForScenario))]
     class LobbyManagerPatch
     {
-        static void Postfix(VTOLMPLobbyManager __instance, ref VTOLMPLobbyManager.LobbyTask __result)
+        static void Prefix()
         {
+            if (VTOLMPLobbyManager.isLobbyHost)
+            {
+                Debug.Log("Setting mod data: " + VTOLAPI.GetUsersOrderedMods());
+                VTOLMPLobbyManager.currentLobby.SetData("lMods", VTOLAPI.GetUsersOrderedMods());
+                VTOLMPLobbyManager.currentLobby.SetData("lModCount", VTOLAPI.GetUsersMods().Count.ToString());
 
-            VTOLMPLobbyManager.currentLobby.SetData("lMods", VTOLAPI.GetUsersOrderedMods());
-            VTOLMPLobbyManager.currentLobby.SetData("lModCount", VTOLAPI.GetUsersMods().Count.ToString());
+            }
 
         }
 
     }
 
     //Patches the join lobby button to check if the user has the same mods as the lobby
-    [HarmonyPatch(typeof(VTMPLobbyListItem), nameof(VTMPLobbyListItem.JoinButton))]
+    [HarmonyPatch(typeof(VTMPMainMenu), nameof(VTMPMainMenu.JoinLobby))]
     class JoinLobbyPatch
     {
-        private static VTUIErrorWindow errorUi = null;
-        static bool Prefix(VTMPLobbyListItem __instance)
-        {
-            if (!errorUi)
-            {
-                errorUi = UnityEngine.Object.FindObjectOfType<VTUIErrorWindow>(true);
-            }
 
+        static bool Prefix(VTMPMainMenu __instance, Lobby l)
+        {
+
+            string loadedMods = l.GetData("lMods");
             //TODO: Parse the lobby mods to display which mods you need to load
-            if(UpdateLobbyPatch.lobbyMods != VTOLAPI.GetUsersOrderedMods())
+            Debug.Log("Trying to join lobby, here are its mods: " + loadedMods);
+            if (loadedMods != VTOLAPI.GetUsersOrderedMods())
             {
-                errorUi.DisplayError("Required mods for lobby: ", null);
+                Debug.Log("Unable to join because of mismatched mods: " + loadedMods);
+                __instance.ShowError("Required mods for lobby: " + loadedMods);
+                
                 return false;
             }
 
@@ -51,16 +55,5 @@ namespace ModLoader.Patches
         }
     }
 
-    //Stores the lobby mods in a static string so another patch can have access to it
-    [HarmonyPatch(typeof(VTMPLobbyListItem), nameof(VTMPLobbyListItem.UpdateForLobby))]
-    class UpdateLobbyPatch
-    {
-        public static string lobbyMods = "";
-        static void Postfix(Lobby l)
-        {
 
-            lobbyMods = l.GetData("lMods");
-
-        }
-    }
 }

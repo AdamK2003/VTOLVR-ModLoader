@@ -53,16 +53,7 @@
       <HintPath>..\dll\Facepunch.Steamworks.Win64.dll</HintPath>
     </Reference>
     <Reference Include="ModLoader">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VTOL VR\VTOLVR_ModLoader\ModLoader.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VTOL VR\VTOLVR_ModLoader\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="ModLoader">
       <HintPath>..\dll\ModLoader.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>..\dll\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>..\dll\netstandard.dll</HintPath>

@@ -370,7 +370,7 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
 
                 // Patching Splashscreen instead of Camera Constructor so it doesn't run every scene
                 if (type.Name.Equals(nameof(SplashSceneController)) &&
-                    method.Name.Equals(nameof(SplashSceneController.Start)))
+                    method.Name.Equals("Start"))
                 {
                     Logger.Log($"{type.Name}|{method.Name}");
                     MethodReference cbs = module.ImportReference(((Action)LoadModLoader).Method);

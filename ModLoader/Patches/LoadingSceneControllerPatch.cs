@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ModLoader.Patches
 {
-    [HarmonyPatch(typeof(LoadingSceneController), "Start")]
+    [HarmonyPatch(typeof(LoadingSceneController), nameof(LoadingSceneController.Start))]
     public class LoadingSceneControllerPatch
     {
         static void Postfix(LoadingSceneController __instance)

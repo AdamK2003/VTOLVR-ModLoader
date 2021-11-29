@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Harmony;
-using VTOLVR.Multiplayer;
+// using VTOLVR.Multiplayer;
 using UnityEngine;
 using System.Collections;
 using Steamworks;
@@ -12,7 +12,8 @@ using Steamworks.Data;
 
 namespace ModLoader.Patches
 {
-
+    /*
+     
     //Patches the create lobby function to add the host's loaded mods to the lobby info
     [HarmonyPatch(typeof(VTMPMainMenu), nameof(VTMPMainMenu.LaunchMPGameForScenario))]
     class LobbyManagerPatch
@@ -54,6 +55,6 @@ namespace ModLoader.Patches
 
         }
     }
-
-
+    
+    */
 }

@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Core.Enums;
+using Core.Jsons;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,6 +15,7 @@ namespace ModLoader
     public class SkinManager : VTOLMOD
     {
         //This variables are used on different scenes
+        private List<BaseItem> _skins = new List<BaseItem>();
         private List<Skin> installedSkins = new List<Skin>();
         private int selectedSkin = -1;
 
@@ -134,6 +137,9 @@ namespace ModLoader
         }
         private void FindSkins(string path)
         {
+            _skins.AddRange(ModReader.Items.Where(
+                x => x.ContentType == ContentType.Skins || x.ContentType == ContentType.MySkins));
+            
             Log("Searching for Skins in " + path);
             foreach (string folder in Directory.GetDirectories(path))
             {
@@ -227,6 +233,7 @@ namespace ModLoader
                     LogError($"Tried to get material {materials[i].name} but it wasn't in the default dictonary");
             }
         }
+        
         private void Apply()
         {
             Log("Applying Skin Number " + selectedSkin);
@@ -236,6 +243,47 @@ namespace ModLoader
                 return;
             }
 
+            BaseItem skin = _skins[currentSkin];
+            Log($"Skin = {skin.Name}|Path = {skin.Directory.FullName}");
+
+            foreach (Core.Classes.Material material in skin.SkinMaterials)
+            {
+                for (int i = 0; i < materials.Count; i++)
+                {
+                    if (!material.Name.Equals(materials[i].material.name))
+                        continue;
+                    StartCoroutine(SetTextures(material.Textures, materials[i].material, skin.Directory.FullName));
+                    break;
+                }
+            }
+
+            if (skin.SkinMaterials.Count != 0)
+            {
+                Log($"{skin.Name} is an up to date skin");
+                return;
+            }
+            
+            // This section is to keep old skins still working.
+            
+            LogWarning($"{skin.Name} is a legacy skin.");
+
+            string lastPath = string.Empty;
+            for (int i = 0; i < materials.Count; i++)
+            {
+                lastPath = Path.Combine(skin.Directory.FullName, $"{materials[i].name}.png");
+                if (File.Exists(lastPath))
+                {
+                    StartCoroutine(UpdateTexture(lastPath, materials[i].material));
+                    continue;
+                }
+                lastPath = Path.Combine(skin.Directory.FullName, "mat_aFighterExt2.png");
+                if (materials[i].name.Equals("mat_afighterExt2_livery") && File.Exists(lastPath))
+                {
+                    StartCoroutine(UpdateTexture(lastPath, materials[i].material));
+                }
+            }
+
+            /*
             Skin selected = installedSkins[selectedSkin];
 
             Log("\nSkin: " + selected.name + " \nPath: " + selected.folderPath);
@@ -253,7 +301,25 @@ namespace ModLoader
                     StartCoroutine(UpdateTexture(selected.folderPath + @"\mat_aFighterExt2.png", materials[i].material));
                 }
             }
+            */
+
         }
+
+        private IEnumerator SetTextures(Dictionary<string, string> textures, Material material, string folder)
+        {
+            string lastPath = string.Empty;
+            foreach (KeyValuePair<string,string> pair in textures)
+            {
+                lastPath = Path.Combine(folder, pair.Value);
+                using (WWW www = new WWW($"file:///{lastPath}"))
+                {
+                    while (!www.isDone)
+                        yield return null;
+                    material.SetTexture(pair.Key, www.texture);
+                }
+            }
+        }
+        
         private IEnumerator UpdateTexture(string path, Material material)
         {
             Log("Updating Texture from path: " + path);
@@ -271,9 +337,7 @@ namespace ModLoader
                 Log($"Set Material for {material.name} to texture located at {path}");
             }
         }
-
-
-
+        
         private void ClampCount()
         {
             if (currentSkin < 0)
@@ -287,6 +351,7 @@ namespace ModLoader
                 currentSkin = 0;
             }
         }
+        
         private void UpdateUI()
         {
             if (installedSkins.Count == 0)
@@ -294,8 +359,48 @@ namespace ModLoader
             StartCoroutine(UpdateUIEnumerator());
             Log("Current Skin = " + currentSkin);
         }
+        
         private IEnumerator UpdateUIEnumerator()
         {
+            BaseItem skin = _skins[currentSkin];
+            string previewImagePath = String.Empty;
+
+            if (!string.IsNullOrEmpty(skin.PreviewImage))
+            {
+                previewImagePath = skin.PreviewImage;
+            }
+            else
+            {
+                // This is for old skins before this update
+                
+                string preview = @"";
+                switch (VTOLAPI.GetPlayersVehicleEnum())
+                {
+                    case VTOLVehicles.AV42C:
+                        preview = @"\0.png";
+                        break;
+                    case VTOLVehicles.FA26B:
+                        preview = @"\1.png";
+                        break;
+                    case VTOLVehicles.F45A:
+                        preview = @"\2.png";
+                        break;
+                }
+
+                previewImagePath = Path.Combine(skin.Directory.FullName, preview);
+            }
+
+            using (WWW www = new WWW($"file://{previewImagePath}"))
+            {
+                while (!www.isDone)
+                    yield return null;
+
+                scenarioName.text = skin.Name;
+                scenarioDescription.text = skin.Tagline;
+                skinPreview.texture = www.texture;
+            }
+            
+            /*
             string preview = @"";
             switch (VTOLAPI.GetPlayersVehicleEnum())
             {
@@ -314,6 +419,7 @@ namespace ModLoader
                 yield return null;
             scenarioName.text = installedSkins[currentSkin].name;
             skinPreview.texture = www.texture;
+            */
         }
         private void OnDestroy()
         {

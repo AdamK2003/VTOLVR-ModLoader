@@ -37,6 +37,11 @@ namespace ModLoader
         private Dictionary<string, Texture> _defaultTextures;
         private readonly string[] _matsNotToTouch = new string[] { "Font Material", "Font Material_0", "Font Material_1", "Font Material_2", "Font Material_3", "Font Material_4", "Font Material_5", "Font Material_6" };
         
+        /// <summary>
+        /// A dictionary of all the already loaded textures. Their full path as the key.
+        /// </summary>
+        private Dictionary<string, Texture2D> _loadedTextures = new Dictionary<string, Texture2D>();
+        
         private struct Mat
         {
             public string name;
@@ -317,15 +322,31 @@ namespace ModLoader
             foreach (KeyValuePair<string,string> pair in textures)
             {
                 lastPath = Path.Combine(folder, pair.Value);
+                
+                // Checking if we have already loaded it
+                if (_loadedTextures.ContainsKey(lastPath))
+                {
+                    material.SetTexture(pair.Key, _loadedTextures[lastPath]);
+                    Log($"Found {lastPath} cached");
+                    yield break;
+                }
+                
+                Log($"Loading {lastPath} as it isn't in the cache");
                 using (WWW www = new WWW($"file:///{lastPath}"))
                 {
                     while (!www.isDone)
                         yield return null;
                     material.SetTexture(pair.Key, www.texture);
+                    
+                    // This check is here in case the same texture gets loaded twice
+                    // in two different materials. 
+                    if (!_loadedTextures.ContainsKey(lastPath))
+                        _loadedTextures.Add(lastPath, www.texture);
                 }
             }
         }
         
+        // Legacy skins loading method
         private IEnumerator UpdateTexture(string path, Material material)
         {
             Log("Updating Texture from path: " + path);

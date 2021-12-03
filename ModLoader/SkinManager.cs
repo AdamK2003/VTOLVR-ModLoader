@@ -16,25 +16,27 @@ namespace ModLoader
     {
         //This variables are used on different scenes
         private List<BaseItem> _skins = new List<BaseItem>();
-        private List<Skin> installedSkins = new List<Skin>();
-        private int selectedSkin = -1;
+        private List<Skin> _installedSkins = new List<Skin>();
+        private int _selectedSkin = -1;
 
         //Vehicle Config scene only
-        private int currentSkin;
-        private Text scenarioName, scenarioDescription;
-        private RawImage skinPreview;
+        private int _currentSkin;
+        private Text _scenarioName;
+        private Text _scenarioDescription;
+        private RawImage _skinPreview;
 
-        private static GameObject prefab;
+        private static GameObject _prefab;
 
         /// <summary>
         /// All the materials in the game
         /// </summary>
-        private List<Mat> materials;
+        private List<Mat> _materials;
         /// <summary>
         /// The default textures so we can revert back
         /// </summary>
-        private Dictionary<string, Texture> defaultTextures;
-        private string[] matsNotToTouch = new string[] { "Font Material", "Font Material_0", "Font Material_1", "Font Material_2", "Font Material_3", "Font Material_4", "Font Material_5", "Font Material_6" };
+        private Dictionary<string, Texture> _defaultTextures;
+        private readonly string[] _matsNotToTouch = new string[] { "Font Material", "Font Material_0", "Font Material_1", "Font Material_2", "Font Material_3", "Font Material_4", "Font Material_5", "Font Material_6" };
+        
         private struct Mat
         {
             public string name;
@@ -46,6 +48,7 @@ namespace ModLoader
                 this.material = material;
             }
         }
+        
         private void Start()
         {
             Mod mod = new Mod();
@@ -60,13 +63,13 @@ namespace ModLoader
             yield return new WaitForSeconds(0.5f);
             Log("Getting Default Textures");
             Material[] materials = Resources.FindObjectsOfTypeAll(typeof(Material)) as Material[];
-            defaultTextures = new Dictionary<string, Texture>(materials.Length);
+            _defaultTextures = new Dictionary<string, Texture>(materials.Length);
 
 
             for (int i = 0; i < materials.Length; i++)
             {
-                if (!matsNotToTouch.Contains(materials[i].name) && !defaultTextures.ContainsKey(materials[i].name))
-                    defaultTextures.Add(materials[i].name, materials[i].GetTexture("_MainTex"));
+                if (!_matsNotToTouch.Contains(materials[i].name) && !_defaultTextures.ContainsKey(materials[i].name))
+                    _defaultTextures.Add(materials[i].name, materials[i].GetTexture("_MainTex"));
             }
 
             Log($"Got {materials.Length} default textures stored");
@@ -100,22 +103,23 @@ namespace ModLoader
                     break;
             }
         }
+        
         private void SpawnMenu()
         {
-            if (prefab == null)
-                prefab = ModLoader.assetBundle.LoadAsset<GameObject>("SkinLoaderMenu");
+            if (_prefab == null)
+                _prefab = ModLoader.assetBundle.LoadAsset<GameObject>("SkinLoaderMenu");
 
             //Setting Position
-            GameObject pannel = Instantiate(prefab);
+            GameObject pannel = Instantiate(_prefab);
             pannel.transform.position = new Vector3(-83.822f, -15.68818f, 5.774f);
             pannel.transform.rotation = Quaternion.Euler(-180, 62.145f, 180);
 
             Transform scenarioDisplayObject = pannel.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(1);
 
             //Storing Objects for later use
-            scenarioName = scenarioDisplayObject.GetChild(1).GetChild(3).GetComponent<Text>();
-            scenarioDescription = scenarioDisplayObject.GetChild(1).GetChild(2).GetComponent<Text>();
-            skinPreview = scenarioDisplayObject.GetChild(1).GetChild(1).GetComponent<RawImage>();
+            _scenarioName = scenarioDisplayObject.GetChild(1).GetChild(3).GetComponent<Text>();
+            _scenarioDescription = scenarioDisplayObject.GetChild(1).GetChild(2).GetComponent<Text>();
+            _skinPreview = scenarioDisplayObject.GetChild(1).GetChild(1).GetComponent<RawImage>();
 
             //Linking buttons with methods
             VRInteractable NextENVButton = scenarioDisplayObject.GetChild(1).GetChild(5).GetComponent<VRInteractable>();
@@ -135,6 +139,7 @@ namespace ModLoader
             UpdateUI();
 
         }
+        
         private void FindSkins(string path)
         {
             _skins.AddRange(ModReader.Items.Where(
@@ -167,19 +172,19 @@ namespace ModLoader
                 if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.AV42C && currentSkin.hasAv42c)
                 {
                     currentSkin.folderPath = folder;
-                    installedSkins.Add(currentSkin);
+                    _installedSkins.Add(currentSkin);
                     Log("Added that skin to the list");
                 }
                 else if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.FA26B && currentSkin.hasFA26B)
                 {
                     currentSkin.folderPath = folder;
-                    installedSkins.Add(currentSkin);
+                    _installedSkins.Add(currentSkin);
                     Log("Added that skin to the list");
                 }
                 else if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.F45A && currentSkin.hasF45A)
                 {
                     currentSkin.folderPath = folder;
-                    installedSkins.Add(currentSkin);
+                    _installedSkins.Add(currentSkin);
                     Log("Added that skin to the list");
                 }
                 else if (!currentSkin.hasAv42c && !currentSkin.hasF45A && !currentSkin.hasF45A)
@@ -189,70 +194,71 @@ namespace ModLoader
 
             }
         }
+        
         public void Next()
         {
-            currentSkin += 1;
+            _currentSkin += 1;
             ClampCount();
             UpdateUI();
         }
+        
         public void Previous()
         {
-            currentSkin -= 1;
+            _currentSkin -= 1;
             ClampCount();
             UpdateUI();
 
         }
+        
         public void SelectSkin()
         {
-            Debug.Log("Changed selected skin to " + currentSkin);
-            selectedSkin = currentSkin;
+            Debug.Log("Changed selected skin to " + _currentSkin);
+            _selectedSkin = _currentSkin;
         }
-
-
-
+        
         private void FindMaterials(Material[] mats)
         {
             if (mats == null)
                 mats = Resources.FindObjectsOfTypeAll<Material>();
-            materials = new List<Mat>(mats.Length);
+            _materials = new List<Mat>(mats.Length);
 
             //We now add every texture into the dictionary which gives more things to change for the skin creators
             for (int i = 0; i < mats.Length; i++)
             {
-                materials.Add(new Mat(mats[i].name, mats[i]));
+                _materials.Add(new Mat(mats[i].name, mats[i]));
             }
         }
         public void RevertTextures()
         {
             Log("Reverting Textures");
-            for (int i = 0; i < materials.Count; i++)
+            for (int i = 0; i < _materials.Count; i++)
             {
-                if (defaultTextures.ContainsKey(materials[i].name))
-                    materials[i].material.SetTexture("_MainTex", defaultTextures[materials[i].name]);
+                if (_defaultTextures.ContainsKey(_materials[i].name))
+                    _materials[i].material.SetTexture("_MainTex", _defaultTextures[_materials[i].name]);
                 else
-                    LogError($"Tried to get material {materials[i].name} but it wasn't in the default dictonary");
+                    LogError($"Tried to get material {_materials[i].name} but it wasn't in the default dictonary");
             }
         }
         
         private void Apply()
         {
-            Log("Applying Skin Number " + selectedSkin);
-            if (selectedSkin < 0)
+            Log("Applying Skin Number " + _selectedSkin);
+            if (_selectedSkin < 0)
             {
                 Debug.Log("Selected Skin was below 0");
                 return;
             }
 
-            BaseItem skin = _skins[currentSkin];
+            BaseItem skin = _skins[_currentSkin];
             Log($"Skin = {skin.Name}|Path = {skin.Directory.FullName}");
 
             foreach (Core.Classes.Material material in skin.SkinMaterials)
             {
-                for (int i = 0; i < materials.Count; i++)
+                for (int i = 0; i < _materials.Count; i++)
                 {
-                    if (!material.Name.Equals(materials[i].material.name))
+                    if (!material.Name.Equals(_materials[i].material.name))
                         continue;
-                    StartCoroutine(SetTextures(material.Textures, materials[i].material, skin.Directory.FullName));
+                    StartCoroutine(SetTextures(material.Textures, _materials[i].material, skin.Directory.FullName));
                     break;
                 }
             }
@@ -268,18 +274,18 @@ namespace ModLoader
             LogWarning($"{skin.Name} is a legacy skin.");
 
             string lastPath = string.Empty;
-            for (int i = 0; i < materials.Count; i++)
+            for (int i = 0; i < _materials.Count; i++)
             {
-                lastPath = Path.Combine(skin.Directory.FullName, $"{materials[i].name}.png");
+                lastPath = Path.Combine(skin.Directory.FullName, $"{_materials[i].name}.png");
                 if (File.Exists(lastPath))
                 {
-                    StartCoroutine(UpdateTexture(lastPath, materials[i].material));
+                    StartCoroutine(UpdateTexture(lastPath, _materials[i].material));
                     continue;
                 }
                 lastPath = Path.Combine(skin.Directory.FullName, "mat_aFighterExt2.png");
-                if (materials[i].name.Equals("mat_afighterExt2_livery") && File.Exists(lastPath))
+                if (_materials[i].name.Equals("mat_afighterExt2_livery") && File.Exists(lastPath))
                 {
-                    StartCoroutine(UpdateTexture(lastPath, materials[i].material));
+                    StartCoroutine(UpdateTexture(lastPath, _materials[i].material));
                 }
             }
 
@@ -340,29 +346,29 @@ namespace ModLoader
         
         private void ClampCount()
         {
-            if (currentSkin < 0)
+            if (_currentSkin < 0)
             {
-                Debug.Log("Current Skin was below 0, moving to max amount which is " + (installedSkins.Count - 1));
-                currentSkin = installedSkins.Count - 1;
+                Debug.Log("Current Skin was below 0, moving to max amount which is " + (_installedSkins.Count - 1));
+                _currentSkin = _installedSkins.Count - 1;
             }
-            else if (currentSkin > installedSkins.Count - 1)
+            else if (_currentSkin > _installedSkins.Count - 1)
             {
                 Debug.Log("Current Skin was higher than the max amount of skins, reseting to 0");
-                currentSkin = 0;
+                _currentSkin = 0;
             }
         }
         
         private void UpdateUI()
         {
-            if (installedSkins.Count == 0)
+            if (_installedSkins.Count == 0)
                 return;
             StartCoroutine(UpdateUIEnumerator());
-            Log("Current Skin = " + currentSkin);
+            Log("Current Skin = " + _currentSkin);
         }
         
         private IEnumerator UpdateUIEnumerator()
         {
-            BaseItem skin = _skins[currentSkin];
+            BaseItem skin = _skins[_currentSkin];
             string previewImagePath = String.Empty;
 
             if (!string.IsNullOrEmpty(skin.PreviewImage))
@@ -395,9 +401,9 @@ namespace ModLoader
                 while (!www.isDone)
                     yield return null;
 
-                scenarioName.text = skin.Name;
-                scenarioDescription.text = skin.Tagline;
-                skinPreview.texture = www.texture;
+                _scenarioName.text = skin.Name;
+                _scenarioDescription.text = skin.Tagline;
+                _skinPreview.texture = www.texture;
             }
             
             /*

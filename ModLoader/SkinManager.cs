@@ -125,6 +125,8 @@ namespace ModLoader
             _scenarioName = scenarioDisplayObject.GetChild(1).GetChild(3).GetComponent<Text>();
             _scenarioDescription = scenarioDisplayObject.GetChild(1).GetChild(2).GetComponent<Text>();
             _skinPreview = scenarioDisplayObject.GetChild(1).GetChild(1).GetComponent<RawImage>();
+            
+            _scenarioDescription.gameObject.SetActive(true);
 
             //Linking buttons with methods
             VRInteractable NextENVButton = scenarioDisplayObject.GetChild(1).GetChild(5).GetComponent<VRInteractable>();
@@ -138,66 +140,15 @@ namespace ModLoader
             VRInteractable ApplyButton = scenarioDisplayObject.GetChild(1).GetChild(4).GetComponent<VRInteractable>();
             ApplyButton.OnInteract.AddListener(delegate { SelectSkin(); Apply(); });
 
-            FindSkins(Path.Combine(ModLoaderManager.RootPath, "skins"));
-            if (!string.IsNullOrEmpty(ModLoaderManager.MyProjectsPath))
-                FindSkins(Path.Combine(ModLoaderManager.MyProjectsPath, "My Skins"));
+            FindSkins();
             UpdateUI();
 
         }
         
-        private void FindSkins(string path)
+        private void FindSkins()
         {
-            _skins.AddRange(ModReader.Items.Where(
-                x => x.ContentType == ContentType.Skins || x.ContentType == ContentType.MySkins));
-            
-            Log("Searching for Skins in " + path);
-            foreach (string folder in Directory.GetDirectories(path))
-            {
-                Skin currentSkin = new Skin();
-                string[] split = folder.Split('\\');
-                currentSkin.name = split[split.Length - 1];
-                if (File.Exists(folder + @"\0.png")) //AV-42C
-                {
-                    currentSkin.hasAv42c = true;
-                    Log($"[{folder}] has a skin for the AV-42C");
-                }
-
-                if (File.Exists(folder + @"\1.png")) //FA26B
-                {
-                    currentSkin.hasFA26B = true;
-                    Log($"[{folder}] has a skin for the FA-26B");
-                }
-
-                if (File.Exists(folder + @"\2.png")) //F45A
-                {
-                    currentSkin.hasF45A = true;
-                    Log($"[{folder}] has a skin for the F-45A");
-                }
-
-                if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.AV42C && currentSkin.hasAv42c)
-                {
-                    currentSkin.folderPath = folder;
-                    _installedSkins.Add(currentSkin);
-                    Log("Added that skin to the list");
-                }
-                else if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.FA26B && currentSkin.hasFA26B)
-                {
-                    currentSkin.folderPath = folder;
-                    _installedSkins.Add(currentSkin);
-                    Log("Added that skin to the list");
-                }
-                else if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.F45A && currentSkin.hasF45A)
-                {
-                    currentSkin.folderPath = folder;
-                    _installedSkins.Add(currentSkin);
-                    Log("Added that skin to the list");
-                }
-                else if (!currentSkin.hasAv42c && !currentSkin.hasF45A && !currentSkin.hasF45A)
-                {
-                    LogError($"It seems that a folder doesn't have any skins in it. Folder: {folder}");
-                }
-
-            }
+            _skins = ModReader.Items.Where(
+                x => x.ContentType == ContentType.Skins || x.ContentType == ContentType.MySkins).ToList();
         }
         
         public void Next()
@@ -369,10 +320,10 @@ namespace ModLoader
         {
             if (_currentSkin < 0)
             {
-                Debug.Log("Current Skin was below 0, moving to max amount which is " + (_installedSkins.Count - 1));
-                _currentSkin = _installedSkins.Count - 1;
+                Debug.Log("Current Skin was below 0, moving to max amount which is " + (_skins.Count - 1));
+                _currentSkin = _skins.Count - 1;
             }
-            else if (_currentSkin > _installedSkins.Count - 1)
+            else if (_currentSkin > _skins.Count - 1)
             {
                 Debug.Log("Current Skin was higher than the max amount of skins, reseting to 0");
                 _currentSkin = 0;
@@ -381,7 +332,7 @@ namespace ModLoader
         
         private void UpdateUI()
         {
-            if (_installedSkins.Count == 0)
+            if (_skins.Count == 0)
                 return;
             StartCoroutine(UpdateUIEnumerator());
             Log("Current Skin = " + _currentSkin);
@@ -398,55 +349,44 @@ namespace ModLoader
             }
             else
             {
-                // This is for old skins before this update
+                // This is for old skins before 5.2.0
                 
                 string preview = @"";
                 switch (VTOLAPI.GetPlayersVehicleEnum())
                 {
                     case VTOLVehicles.AV42C:
-                        preview = @"\0.png";
+                        preview = @"0.png";
                         break;
                     case VTOLVehicles.FA26B:
-                        preview = @"\1.png";
+                        preview = @"1.png";
                         break;
                     case VTOLVehicles.F45A:
-                        preview = @"\2.png";
+                        preview = @"2.png";
                         break;
                 }
-
+                Log($"{skin.Directory} + {preview} = {Path.Combine(skin.Directory.FullName, preview)}");
                 previewImagePath = Path.Combine(skin.Directory.FullName, preview);
+                LogWarning($"Using legacy image path of \"{previewImagePath}\" for {skin.Name}");
             }
 
-            using (WWW www = new WWW($"file://{previewImagePath}"))
+            Texture2D previewImage;
+            if (_loadedTextures.ContainsKey(previewImagePath))
             {
-                while (!www.isDone)
-                    yield return null;
-
-                _scenarioName.text = skin.Name;
-                _scenarioDescription.text = skin.Tagline;
-                _skinPreview.texture = www.texture;
+                previewImage = _loadedTextures[previewImagePath];
+            }
+            else
+            {
+                using (WWW www = new WWW($"file://{previewImagePath}"))
+                {
+                    while (!www.isDone)
+                        yield return null;
+                    previewImage = www.texture;
+                }
             }
             
-            /*
-            string preview = @"";
-            switch (VTOLAPI.GetPlayersVehicleEnum())
-            {
-                case VTOLVehicles.AV42C:
-                    preview = @"\0.png";
-                    break;
-                case VTOLVehicles.FA26B:
-                    preview = @"\1.png";
-                    break;
-                case VTOLVehicles.F45A:
-                    preview = @"\2.png";
-                    break;
-            }
-            WWW www = new WWW("file:///" + installedSkins[currentSkin].folderPath + preview);
-            while (!www.isDone)
-                yield return null;
-            scenarioName.text = installedSkins[currentSkin].name;
-            skinPreview.texture = www.texture;
-            */
+            _scenarioName.text = skin.Name;
+            _scenarioDescription.text = skin.Tagline;
+            _skinPreview.texture = previewImage;
         }
         private void OnDestroy()
         {

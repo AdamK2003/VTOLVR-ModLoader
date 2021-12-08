@@ -30,6 +30,7 @@
 
     <ItemGroup>
         <PackageReference Include="Gameloop.Vdf" Version="0.6.1" />
+        <PackageReference Include="MdXaml" Version="1.12.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Salaros.ConfigParser" Version="0.3.8" />
         <PackageReference Include="Sentry" Version="3.9.4" />

@@ -7,11 +7,13 @@ using System.Net;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Core.Jsons;
 using Launcher.Classes;
 using Launcher.Windows;
+using MdXaml;
 
 namespace Launcher.Views
 {
@@ -338,6 +340,13 @@ namespace Launcher.Views
             }
 
             _item.Dependencies = newDependencies;
+        }
+
+        private void ProjectDescription_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (MarkdownViewer == null)
+                return;
+            MarkdownViewer.Markdown = projectDescription.Text;
         }
     }
 }

@@ -42,6 +42,15 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="10"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -49,7 +58,7 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="1.6*"/>
                 <ColumnDefinition Width="1.6*"/>
-                <ColumnDefinition Width="1.6*"/>
+                <ColumnDefinition Width="128"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
@@ -179,8 +188,10 @@
             <Button 
                 Grid.Row="13" 
                 Grid.Column="4" 
-                Margin="0,10,0,0"
-                Style="{StaticResource RoundedDarkButton}"
+                Margin="10,10,10,0"
+                Height="29"
+                Style="{StaticResource RoundedLightButton}"
+                FontFamily="{StaticResource Medium}"
                 Content="Private"/>
             <TextBlock 
                 Grid.Row="14" 
@@ -188,7 +199,8 @@
                 Grid.ColumnSpan="3"
                 Margin="0,10,0,0"
                 Text="⚠️ Warning this will only this item will only be accessible by your account. " 
-                Style="{StaticResource TextSmall}" 
+                Style="{StaticResource TextSmall}"
+                FontFamily="{StaticResource Medium}"
                 Background="#E1B12C" 
                 Foreground="Black"
                 TextAlignment="Center" 
@@ -210,8 +222,10 @@
             <Button 
                 Grid.Row="16"
                 Grid.Column="4"
-                Margin="0,10,0,0"
-                Style="{StaticResource RoundedDarkButton}"
+                Margin="10,0,10,0"
+                Height="29"
+                Style="{StaticResource RoundedLightButton}"
+                FontFamily="{StaticResource Medium}"
                 Content="Unlisted"/>
             <TextBlock 
                 Grid.Row="17"
@@ -244,7 +258,7 @@
                 Grid.Row="20"
                 Grid.Column="1"
                 Grid.ColumnSpan="4"
-                Fill="#C4C4C4"
+                Fill="#4b4b4b"
                 Height="5"
                 Margin="0,20,0,20"/>
             <!-- # Divider # -->
@@ -269,7 +283,84 @@
                 Margin="0,10,0,0"
                 Style="{StaticResource TextSmall}"
                 Text="This will be the image shown on the mods list on the website. Must be an image file (PNG ) and less than 2MB."/>
+            <Rectangle
+                Grid.Row="24"
+                Grid.Column="4"
+                Fill="#4b4b4b"
+                Height="72"
+                Width="128"/>
+            <Image 
+                Grid.Row="24" 
+                Grid.Column="4" 
+                x:Name="HeaderImage"
+                Height="72"
+                Width="128"/>
+            <Button 
+                Grid.Row="25" 
+                Grid.Column="4" 
+                Margin="10,10,10,0"
+                Height="29"
+                Style="{StaticResource RoundedLightButton}"
+                FontFamily="{StaticResource Medium}"
+                Content="Change"/>
+            <TextBlock 
+                Grid.Row="26"
+                Grid.Column="1"
+                Grid.ColumnSpan="4"
+                Text="Preview Image" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextNormal}"/>
+            <TextBlock 
+                Grid.Row="27"
+                Grid.Column="1"
+                Grid.ColumnSpan="3"
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}"
+                Text="This will be the image shown on the mods list in game. Must be an image file (PNG ) and less than 2MB."/>
+            <Rectangle
+                Grid.Row="28"
+                Grid.Column="4"
+                Fill="#4b4b4b"
+                Height="72"
+                Width="128"/>
+            <Image 
+                Grid.Row="28" 
+                Grid.Column="4" 
+                x:Name="PreviewImage"
+                Height="72"
+                Width="128"/>
+            <Button 
+                Grid.Row="29" 
+                Grid.Column="4" 
+                Margin="10,10,10,0"
+                Height="29"
+                Style="{StaticResource RoundedLightButton}"
+                FontFamily="{StaticResource Medium}"
+                Content="Change"/>
             
+            <!-- # Divider # -->
+            <Rectangle
+                Grid.Row="30"
+                Grid.Column="1"
+                Grid.ColumnSpan="4"
+                Fill="#4b4b4b"
+                Height="5"
+                Margin="0,20,0,20"/>
+            <!-- # Divider # -->
+            
+            <TextBlock 
+                Grid.Row="31"
+                Grid.Column="1"
+                Grid.ColumnSpan="4"
+                Text="Skin Materials" 
+                Style="{StaticResource TextSmall}"/>
+            <Button
+                Grid.Row="32"
+                Grid.Column="4"
+                Content="Add Material"
+                Height="29"
+                Style="{StaticResource RoundedGreenButton}"
+                FontFamily="{StaticResource Medium}"/>
             
             <Grid x:Name="grid" Grid.Column="1" Visibility="Hidden">
             <Grid.RowDefinitions>
@@ -326,9 +417,7 @@
                            TextAlignment="Center">
                     Web Page Image
                 </TextBlock>
-
-                <Image Grid.Row="1" Grid.Column="0" x:Name="previewImage" />
-                <Image Grid.Row="1" Grid.Column="1" x:Name="webPageImage" />
+                
 
                 <TextBlock Grid.Row="1" Grid.Column="0" Foreground="LightGray" FontSize="20" TextAlignment="Center"
                            VerticalAlignment="Center" x:Name="previewImageText">

@@ -48,14 +48,14 @@ namespace Launcher.Views
 
             if (File.Exists(_currentPath + (_isMod ? @"\Builds\" : @"\") + _item.PreviewImage))
             {
-                previewImage.Source = new BitmapImage().LoadImage(
+                PreviewImage.Source = new BitmapImage().LoadImage(
                     _currentPath + (_isMod ? @"\Builds\" : @"\") + _item.PreviewImage);
                 previewImageText.Visibility = Visibility.Hidden;
             }
 
             if (File.Exists(_currentPath + @"\" + _item.WebPreviewImage))
             {
-                webPageImage.Source = new BitmapImage().LoadImage(
+                HeaderImage.Source = new BitmapImage().LoadImage(
                     _currentPath + @"\" + _item.WebPreviewImage);
                 webPageImageText.Visibility = Visibility.Hidden;
             }
@@ -234,7 +234,7 @@ namespace Launcher.Views
 
             previewImageText.Visibility = Visibility.Hidden;
 
-            previewImage.Source = new BitmapImage().LoadImage(filePath);
+            PreviewImage.Source = new BitmapImage().LoadImage(filePath);
             SaveProject();
         }
 
@@ -255,7 +255,7 @@ namespace Launcher.Views
 
             webPageImageText.Visibility = Visibility.Hidden;
 
-            webPageImage.Source = new BitmapImage().LoadImage(filePath);
+            HeaderImage.Source = new BitmapImage().LoadImage(filePath);
             SaveProject();
         }
 

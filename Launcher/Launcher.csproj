@@ -41,13 +41,29 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Resource Include="Resources\Logo.ico" />
-        <Resource Include="Resources\LogoSpinning.gif" />
-        <Resource Include="Resources\LogoHalloweenSpinning.gif" />
-        <Resource Include="Resources\LogoChristmasSpinning.gif" />
-        <Resource Include="Resources\Montserrat-Medium.ttf" />
-        <Resource Include="Resources\Montserrat-ExtraBold.ttf" />
-        <Resource Include="Resources\Squares Bold Free.otf" />
+        <Resource Include="Resources\Logo.ico"/>
+        <Resource Include="Resources\LogoSpinning.gif"/>
+        <Resource Include="Resources\LogoHalloweenSpinning.gif"/>
+        <Resource Include="Resources\LogoChristmasSpinning.gif"/>
+        <Resource Include="Resources\Fonts\Montserrat-Black.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-BlackItalic.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-Bold.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-BoldItalic.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-ExtraBold.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-ExtraBoldItalic.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-ExtraLight.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-ExtraLightItalic.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-Italic.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-Light.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-LightItalic.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-Medium.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-MediumItalic.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-Regular.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-SemiBold.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-SemiBoldItalic.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-Thin.ttf"/>
+        <Resource Include="Resources\Fonts\Montserrat-ThinItalic.ttf"/>
+        <Resource Include="Resources\Fonts\Squares Bold Free.otf"/>
     </ItemGroup>
 
     <ItemGroup>

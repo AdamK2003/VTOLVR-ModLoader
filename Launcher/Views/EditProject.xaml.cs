@@ -72,6 +72,7 @@ namespace Launcher.Views
             webImageCallBack += WebImageCallBack;
             CheckForInternet();
             Helper.SentryLog("Created Edit Page", Helper.SentryLogCategory.EditProject);
+            Title.Text = $"Editing {_item.Name}";
         }
 
         public async void CheckForInternet()

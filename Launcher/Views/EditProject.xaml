@@ -374,6 +374,7 @@
                 Grid.Column="6"
                 Content="Add Material"
                 Height="29"
+                Margin="10,10,10,0"
                 Style="{StaticResource RoundedGreenButton}"
                 FontFamily="{StaticResource Medium}"/>
             <WrapPanel
@@ -419,6 +420,7 @@
                 Grid.Column="1"
                 Content="Cancel Changes"
                 Height="29"
+                Margin="10,10,10,0"
                 Style="{StaticResource RoundedRedButton}"
                 FontFamily="{StaticResource Medium}"/>
             <Button
@@ -426,6 +428,7 @@
                 Grid.Column="6"
                 Content="Save Changes"
                 Height="29"
+                Margin="10,10,10,0"
                 Style="{StaticResource RoundedGreenButton}"
                 FontFamily="{StaticResource Medium}"/>
             

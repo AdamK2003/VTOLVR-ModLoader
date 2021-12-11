@@ -349,5 +349,10 @@ namespace Launcher.Views
                 return;
             MarkdownViewer.Markdown = projectDescription.Text;
         }
+
+        private void SkinMaterialClicked(object sender, RoutedEventArgs e)
+        {
+            Notification.Show("Hello World");
+        }
     }
 }

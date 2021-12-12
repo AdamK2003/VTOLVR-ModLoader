@@ -4,18 +4,82 @@
              xmlns:local="clr-namespace:Launcher"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <FontFamily x:Key="SquaresBoldFree">pack://Application:,,,/Resources/Fonts/#Squares Bold Free</FontFamily>
-        <FontFamily x:Key="Medium">pack://Application:,,,/Resources/Fonts/#Montserrat Medium</FontFamily>
-        <FontFamily x:Key="Extra Bold">pack://Application:,,,/Resources/Fonts/#Montserrat ExtraBold</FontFamily>
-        <FontFamily x:Key="Bold">pack://Application:,,,/Resources/Fonts/#Montserrat Bold</FontFamily>
-        <FontFamily x:Key="Thin">pack://Application:,,,/Resources/Fonts/#Montserrat Thin</FontFamily>
-        <FontFamily x:Key="Regular">pack://Application:,,,/Resources/Fonts/#Montserrat Regular</FontFamily>
+        
+        <FontFamily 
+            x:Key="SquaresBoldFree">pack://Application:,,,/Resources/Fonts/#Squares Bold Free</FontFamily>
+        
+        <FontFamily 
+            x:Key="Medium">pack://Application:,,,/Resources/Fonts/#Montserrat Medium</FontFamily>
+        
+        <FontFamily 
+            x:Key="Extra Bold">pack://Application:,,,/Resources/Fonts/#Montserrat ExtraBold</FontFamily>
+        
+        <FontFamily 
+            x:Key="Bold">pack://Application:,,,/Resources/Fonts/#Montserrat Bold</FontFamily>
+        
+        <FontFamily 
+            x:Key="Thin">pack://Application:,,,/Resources/Fonts/#Montserrat Thin</FontFamily>
+        
+        <FontFamily 
+            x:Key="Regular">pack://Application:,,,/Resources/Fonts/#Montserrat Regular</FontFamily>
 
+        <SolidColorBrush 
+            x:Key="Button.Dark.Static.Background" 
+            Color="#3d3d3d"/>
+        
+        <SolidColorBrush 
+            x:Key="Button.Light.Static.Background" 
+            Color="#4b4b4b"/>
+        
+        <SolidColorBrush 
+            x:Key="Button.Static.Border" 
+            Color="#FFFFFFFF"/>
+        
+        <SolidColorBrush 
+            x:Key="Button.MouseOver.Background" 
+            Color="#FF292929"/>
+        
+        <SolidColorBrush 
+            x:Key="Button.MouseOver.Border" 
+            Color="#FFFFFFFF"/>
+        
+        <SolidColorBrush 
+            x:Key="Button.Pressed.Background" 
+            Color="#3d3d3d"/>
+        
+        <SolidColorBrush 
+            x:Key="Button.Pressed.Border" 
+            Color="#FFFFFFFF"/>
+        
+        <SolidColorBrush 
+            x:Key="Button.Disabled.Background" 
+            Color="#FFF4F4F4"/>
+        
+        <SolidColorBrush 
+            x:Key="Button.Disabled.Border" 
+            Color="#FFADB2B5"/>
+        
+        <SolidColorBrush 
+            x:Key="Button.Disabled.Foreground" 
+            Color="#FF838383"/>
+        
+        <SolidColorBrush 
+            x:Key="ProgressBar.Progress" 
+            Color="#FF06B025"/>
+        
+        <SolidColorBrush 
+            x:Key="ProgressBar.Background" 
+            Color="#FFE6E6E6"/>
+        
+        <SolidColorBrush 
+            x:Key="ProgressBar.Border" 
+            Color="#FFBCBCBC"/>
 
         <Style x:Key="FontStyle" TargetType="{x:Type Window}">
             <Setter Property="FontFamily"
                     Value="{StaticResource Medium}" />
         </Style>
+        
         <Style x:Key="HeaderOne" TargetType="{x:Type TextBlock}">
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property="TextTrimming" Value="None"/>
@@ -60,7 +124,7 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="12"/>
         </Style>
-
+        
         <Style TargetType="Button" x:Key="transparentButton">
             <Setter Property="Background" Value="#00DDDDDD" />
             <Setter Property="Template">
@@ -78,6 +142,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -87,19 +152,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <SolidColorBrush x:Key="Button.Dark.Static.Background" Color="#3d3d3d"/>
-        <SolidColorBrush x:Key="Button.Light.Static.Background" Color="#4b4b4b"/>
-        <SolidColorBrush x:Key="Button.Static.Border" Color="#FFFFFFFF"/>
-        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FF292929"/>
-        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FFFFFFFF"/>
-        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#3d3d3d"/>
-        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FFFFFFFF"/>
-        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
-        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
-        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
-        <SolidColorBrush x:Key="ProgressBar.Progress" Color="#FF06B025"/>
-        <SolidColorBrush x:Key="ProgressBar.Background" Color="#FFE6E6E6"/>
-        <SolidColorBrush x:Key="ProgressBar.Border" Color="#FFBCBCBC"/>
+        
         <Style x:Key="DarkProgressBar" TargetType="{x:Type ProgressBar}">
             <Setter Property="Foreground" Value="{StaticResource ProgressBar.Progress}"/>
             <Setter Property="Background" Value="{StaticResource ProgressBar.Background}"/>

@@ -34,7 +34,7 @@
             Text="Editing {Material Name}"
             Style="{StaticResource HeaderOne}" 
             TextAlignment="Left"
-            x:Name="Title"/>
+            Name="Title"/>
         
         <Button
             Grid.Row="1"
@@ -43,81 +43,87 @@
             Height="29"
             Margin="10,10,10,0"
             Style="{StaticResource RoundedGreenButton}"
-            FontFamily="{StaticResource Medium}"/>
+            FontFamily="{StaticResource Medium}"
+            Click="AddProperty"/>
         
         <ScrollViewer
             Grid.Row="2"
             Grid.Column="1"
             Grid.ColumnSpan="3"
             VerticalScrollBarVisibility="Hidden">
-            <StackPanel>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width=".25*"/>
-                        <ColumnDefinition Width="128"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <TextBlock 
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Text="Property Name" 
-                        Margin="0,10,0,0"
-                        Style="{StaticResource TextNormal}"/>
-                    <TextBox
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        FontSize="12"
-                        Background="Transparent" 
-                        Foreground="White" 
-                        TextWrapping="Wrap"
-                        Margin="0,10,0,0">
-                        
-                    </TextBox>
-                    
-                    
-                    <TextBlock 
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        Text="File Name" 
-                        Margin="0,10,0,0"
-                        Style="{StaticResource TextNormal}"/>
-                    <ComboBox
-                        Grid.Row="3"
-                        Grid.Column="0"
-                        Margin="0, 10,10,0">
-                        
-                    </ComboBox>
-                    
-                    <Rectangle
-                        Grid.Row="0"
-                        Grid.RowSpan="4"
-                        Grid.Column="2"
-                        Fill="#4b4b4b"
-                        Height="128"
-                        Width="128"/>
-                    <Image 
-                        Grid.Row="0"
-                        Grid.RowSpan="4"
-                        Grid.Column="2"
-                        Height="128"
-                        Width="128"/>
-                </Grid>
-                
-                <!-- # Divider # -->
-                <Rectangle
-                    Fill="#4b4b4b"
-                    Height="5"
-                    Margin="0,20,0,20"/>
-                <!-- # Divider # -->
-            </StackPanel>
+            <ItemsControl 
+                Background="Transparent"
+                Name="List">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width=".25*"/>
+                                <ColumnDefinition Width="128"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock 
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Text="Property Name" 
+                                Margin="0,10,0,0"
+                                Style="{StaticResource TextNormal}"/>
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                FontSize="12"
+                                Background="Transparent" 
+                                Foreground="White" 
+                                TextWrapping="Wrap"
+                                Margin="0,10,0,0"
+                                Text="{Binding PropertyName}"/>
+                            
+                            
+                            <TextBlock 
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Text="File Name" 
+                                Margin="0,10,0,0"
+                                Style="{StaticResource TextNormal}"/>
+                            <ComboBox
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Margin="0, 10,0,0"
+                                ItemsSource="{Binding FilesList}"
+                                SelectedItem="{Binding FileName}"
+                                SelectionChanged="FileSelectionChanged"/>
+                            
+                            <Rectangle
+                                Grid.Row="0"
+                                Grid.RowSpan="4"
+                                Grid.Column="2"
+                                Fill="#4b4b4b"
+                                Height="128"
+                                Width="128"/>
+                            <Image 
+                                Grid.Row="0"
+                                Grid.RowSpan="4"
+                                Grid.Column="2"
+                                Height="128"
+                                Width="128"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </ScrollViewer>
+        <!-- # Divider # -->
+        <Rectangle
+            Fill="#4b4b4b"
+            Height="5"
+            Margin="0,20,0,20"/>
+        <!-- # Divider # -->
         
     </Grid>
 </Window>

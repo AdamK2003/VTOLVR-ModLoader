@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Core.Jsons;
@@ -42,27 +43,9 @@ namespace Launcher.Views
             }
 
             _item = Helper.GetBaseItem(_currentPath + (_isMod ? @"\Builds" : string.Empty));
-            projectName.Text = _item.Name;
-            tagline.Text = _item.Tagline;
-            projectDescription.Text = _item.Description;
-
-            if (File.Exists(_currentPath + (_isMod ? @"\Builds\" : @"\") + _item.PreviewImage))
-            {
-                PreviewImage.Source = new BitmapImage().LoadImage(
-                    _currentPath + (_isMod ? @"\Builds\" : @"\") + _item.PreviewImage);
-                previewImageText.Visibility = Visibility.Hidden;
-            }
-
-            if (File.Exists(_currentPath + @"\" + _item.WebPreviewImage))
-            {
-                HeaderImage.Source = new BitmapImage().LoadImage(
-                    _currentPath + @"\" + _item.WebPreviewImage);
-                webPageImageText.Visibility = Visibility.Hidden;
-            }
-
-            isPublic.IsChecked = _item.IsPublic;
-            unlisted.IsChecked = _item.Unlisted;
-
+            Console.Log(_item.ToString());
+            SetValues();
+            
             if (_isMod)
                 LoadMod();
             else
@@ -75,12 +58,38 @@ namespace Launcher.Views
             Title.Text = $"Editing {_item.Name}";
         }
 
+        private void SetValues()
+        {
+            NameInputBox.Text = _item.Name;
+            TaglineInputBox.Text = _item.Tagline;
+            DescriptionInputBox.Text = _item.Description;
+            string path = Path.Combine(_item.Directory.FullName, _item.PreviewImage);
+            Console.Log($"Searching for preview image ({_item.PreviewImage}) at {path}");
+            if (File.Exists(path))
+            {
+                PreviewImage.Source = new BitmapImage().LoadImage(path);
+            }
+
+            path = Path.Combine(_currentPath, _item.WebPreviewImage);
+            Console.Log($"Searching for web preview image ({_item.WebPreviewImage}) at {path}");
+            if (File.Exists(path))
+            {
+                HeaderImage.Source = new BitmapImage().LoadImage(
+                    _currentPath + @"\" + _item.WebPreviewImage);
+            }
+
+            PublicButton.Content = _item.IsPublic ? "Private" : "Public";
+            UnlistedButton.Content = _item.Unlisted ? "Unlisted" : "Listed";
+            SourceCodeInputBox.Text = _item.Source;
+            VersionInputBox.Text = _item.Version;
+        }
+
         public async void CheckForInternet()
         {
             Helper.SentryLog("Checking for internet", Helper.SentryLogCategory.EditProject);
             if (!await HttpHelper.CheckForInternet())
             {
-                saveButton.Content = "Save Locally (Can't connect to server)";
+                SaveButton.Content = "Save Locally (Can't connect to server)";
             }
         }
 
@@ -91,19 +100,26 @@ namespace Launcher.Views
             modSource.Visibility = Visibility.Visible;
 
             modSource.Text = _item.Source;
+            
+            SkinsTitle.Visibility = Visibility.Collapsed;
+            AddMaterialButton.Visibility = Visibility.Collapsed;
+            MaterialsControl.Visibility = Visibility.Collapsed;
+            SkinDivider.Visibility = Visibility.Collapsed;
         }
 
         private void LoadSkin()
         {
             Helper.SentryLog("Loading Skin", Helper.SentryLogCategory.EditProject);
-            grid.RowDefinitions[6].Height = new GridLength(0);
-            grid.RowDefinitions[7].Height = new GridLength(0);
+
+            SourceCodeTitle.Visibility = Visibility.Collapsed;
+            SourceCodeDescription.Visibility = Visibility.Collapsed;
+            SourceCodeInputBox.Visibility = Visibility.Collapsed;
         }
 
         private void ProjectNameChanged(object sender, TextChangedEventArgs e)
         {
-            projectName.Text = projectName.Text.RemoveSpecialCharacters();
-            projectName.CaretIndex = projectName.Text.Length;
+            NameInputBox.Text = NameInputBox.Text.RemoveSpecialCharacters();
+            NameInputBox.CaretIndex = NameInputBox.Text.Length;
         }
 
         private void Save(object sender, RoutedEventArgs e)
@@ -129,12 +145,12 @@ namespace Launcher.Views
         private void SaveProject()
         {
             Helper.SentryLog("Saving Project", Helper.SentryLogCategory.EditProject);
-            saveButton.IsEnabled = false;
-            saveButton.Content = "Saving...";
-            _item.Name = projectName.Text;
-            _item.Tagline = tagline.Text;
-            _item.Description = projectDescription.Text;
-            _item.Version = projectVersion.Text;
+            SaveButton.IsEnabled = false;
+            SaveButton.Content = "Saving...";
+            _item.Name = NameInputBox.Text;
+            _item.Tagline = TaglineInputBox.Text;
+            _item.Description = DescriptionInputBox.Text;
+            _item.Version = VersionInputBox.Text;
             if (_isMod)
                 _item.Source = modSource.Text;
             _item.LastEdit = DateTime.Now.Ticks;
@@ -170,14 +186,15 @@ namespace Launcher.Views
             }
 
             Console.Log("Saved Project!");
-            saveButton.Content = "Saved (Locally)";
             var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(2)};
             timer.Start();
             timer.Tick += (sender, args) =>
             {
-                saveButton.Content = "Save";
-                saveButton.IsEnabled = true;
+                SaveButton.Content = "Save Changes";
+                SaveButton.IsEnabled = true;
+                PopupStoryboard(false);
             };
+            PopupStoryboard(true);
         }
 
         private async void UpdateSent(HttpResponseMessage response)
@@ -191,18 +208,18 @@ namespace Launcher.Views
                             $"Error Code: {response.StatusCode}\n" +
                             $"URL: {Program.URL + Program.ApiURL + (_isMod ? Program.ModsURL : Program.SkinsURL)}/{_item.PublicID}/\n" +
                             $"Raw Response: {await response.Content.ReadAsStringAsync()}");
-                saveButton.Content = "Save";
+                SaveButton.Content = "Save";
                 return;
             }
 
             Console.Log("Project has been synced with vtolvr-mods.com");
-            saveButton.Content = "Saved and Updated on vtolvr-mods.com";
+            SaveButton.Content = "Saved and Updated on vtolvr-mods.com";
             var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(2)};
             timer.Start();
             timer.Tick += (sender, args) =>
             {
-                saveButton.Content = "Save";
-                saveButton.IsEnabled = true;
+                SaveButton.Content = "Save";
+                SaveButton.IsEnabled = true;
             };
         }
 
@@ -347,12 +364,26 @@ namespace Launcher.Views
         {
             if (MarkdownViewer == null)
                 return;
-            MarkdownViewer.Markdown = projectDescription.Text;
+            MarkdownViewer.Markdown = DescriptionInputBox.Text;
         }
 
         private void SkinMaterialClicked(object sender, RoutedEventArgs e)
         {
-            Notification.Show("Hello World");
+            MaterialWindow window = new (new DirectoryInfo(_currentPath), "Test Material",ref _item);
+            window.Show();
+        }
+
+        private void SaveProject(object sender, RoutedEventArgs e) => SaveProject();
+
+        private void PopupStoryboard(bool open)
+        {
+            DoubleAnimation animation = new DoubleAnimation(
+                0f,
+                60f, 
+                TimeSpan.FromSeconds((open ? 0.3f : 0)));
+            
+            PopupRectangle.BeginAnimation(HeightProperty, animation);
+            PopupText.BeginAnimation(HeightProperty, animation);
         }
     }
 }

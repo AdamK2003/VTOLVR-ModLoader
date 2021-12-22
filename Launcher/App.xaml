@@ -426,7 +426,67 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-
+        
+        <ControlTemplate
+            x:Key="MaterialProperty">
+             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width=".25*"/>
+                    <ColumnDefinition Width="128"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock 
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Text="Property Name" 
+                    Margin="0,10,0,0"
+                    Style="{StaticResource TextNormal}"/>
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    FontSize="12"
+                    Background="Transparent" 
+                    Foreground="White" 
+                    TextWrapping="Wrap"
+                    Margin="0,10,0,0">
+                    
+                </TextBox>
+                
+                
+                <TextBlock 
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Text="File Name" 
+                    Margin="0,10,0,0"
+                    Style="{StaticResource TextNormal}"/>
+                <ComboBox
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Margin="0, 10,0,0">
+                    
+                </ComboBox>
+                
+                <Rectangle
+                    Grid.Row="0"
+                    Grid.RowSpan="4"
+                    Grid.Column="2"
+                    Fill="#4b4b4b"
+                    Height="128"
+                    Width="128"/>
+                <Image 
+                    Grid.Row="0"
+                    Grid.RowSpan="4"
+                    Grid.Column="2"
+                    Height="128"
+                    Width="128"/>
+                </Grid>
+        </ControlTemplate>
     </Application.Resources>
 </Application>

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using Core.Classes;
 using Core.Enums;
+using Core.JsonConverters;
 using Valve.Newtonsoft.Json;
 
 namespace Core.Jsons
@@ -123,6 +124,12 @@ namespace Core.Jsons
 
             Logger.Error("Failed to get base item.\nError:" + error);
             return null;
+        }
+
+        public override string ToString()
+        {
+
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
     }
 }

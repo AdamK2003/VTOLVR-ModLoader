@@ -186,15 +186,18 @@ namespace Launcher.Views
             }
 
             Console.Log("Saved Project!");
-            var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(2)};
+            TimeSpan delay = TimeSpan.FromSeconds(2);
+            var timer = new DispatcherTimer
+            {
+                Interval = delay
+            };
             timer.Start();
             timer.Tick += (sender, args) =>
             {
                 SaveButton.Content = "Save Changes";
                 SaveButton.IsEnabled = true;
-                PopupStoryboard(false);
             };
-            PopupStoryboard(true);
+            MainWindow.ShowNotification("Saved Changes", delay);
         }
 
         private async void UpdateSent(HttpResponseMessage response)
@@ -374,16 +377,5 @@ namespace Launcher.Views
         }
 
         private void SaveProject(object sender, RoutedEventArgs e) => SaveProject();
-
-        private void PopupStoryboard(bool open)
-        {
-            DoubleAnimation animation = new DoubleAnimation(
-                0f,
-                60f, 
-                TimeSpan.FromSeconds((open ? 0.3f : 0)));
-            
-            PopupRectangle.BeginAnimation(HeightProperty, animation);
-            PopupText.BeginAnimation(HeightProperty, animation);
-        }
     }
 }

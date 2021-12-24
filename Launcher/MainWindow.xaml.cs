@@ -4,7 +4,9 @@ using System.Diagnostics;
 using WpfAnimatedGif;
 using Console = Launcher.Views.Console;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Launcher.Classes;
 using Launcher.Views;
 
@@ -47,6 +49,7 @@ namespace Launcher
             CommunicationsManager.StartTCP(!Startup.SearchForProcess());
             Program.SetupAfterUI();
             InitializeComponent();
+            HideNotification(true);
         }
 
         public void CreatePages()
@@ -277,6 +280,66 @@ namespace Launcher
             Console.Log($"Opening Docs");
             Helper.SentryLog("Opening Docs", Helper.SentryLogCategory.MainWindow);
             Helper.OpenURL("https://docs.vtolvr-mods.com");
+        }
+
+        public static void ShowNotification(string message, TimeSpan time)
+        {
+            _instance.NotificationBackground.Visibility = Visibility.Visible;
+            _instance.NotificationButtons.Visibility = Visibility.Collapsed;
+            _instance.NotificationText.Visibility = Visibility.Visible;
+            _instance.NotificationText.Text = message;
+            
+            DoubleAnimation animation = new DoubleAnimation(
+                0f,
+                85f, 
+                TimeSpan.FromSeconds(0.3f));
+
+            _instance.NotificationBackground.BeginAnimation(HeightProperty, animation);
+            _instance.NotificationButtons.BeginAnimation(HeightProperty, animation);
+            _instance.NotificationText.BeginAnimation(HeightProperty, animation);
+            
+            var timer = new DispatcherTimer
+            {
+                Interval = time
+            };
+            timer.Start();
+            timer.Tick += (sender, args) => _instance.HideNotification();
+        }
+
+        private void HideNotification(bool skipAnimation = false)
+        {
+            if (skipAnimation)
+            {
+                _instance.NotificationBackground.Visibility = Visibility.Collapsed;
+                _instance.NotificationButtons.Visibility = Visibility.Collapsed;
+                _instance.NotificationText.Visibility = Visibility.Collapsed;
+                _instance.NotificationButtonTop.Visibility = Visibility.Collapsed;
+                _instance.NotificationButtonMiddle.Visibility = Visibility.Collapsed;
+                _instance.NotificationButtonBottom.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            DoubleAnimation animation = new DoubleAnimation(
+                85f,
+                0f,
+                TimeSpan.FromSeconds(0.3f));
+
+            _instance.NotificationBackground.BeginAnimation(HeightProperty, animation);
+            _instance.NotificationButtons.BeginAnimation(HeightProperty, animation);
+            _instance.NotificationText.BeginAnimation(HeightProperty, animation);
+
+            var timer = new DispatcherTimer { Interval = animation.Duration.TimeSpan };
+            timer.Start();
+            timer.Tick += (sender, args) =>
+            {
+                _instance.NotificationBackground.Visibility = Visibility.Collapsed;
+                _instance.NotificationButtons.Visibility = Visibility.Collapsed;
+                _instance.NotificationText.Visibility = Visibility.Collapsed;
+                _instance.NotificationButtonTop.Visibility = Visibility.Collapsed;
+                _instance.NotificationButtonMiddle.Visibility = Visibility.Collapsed;
+                _instance.NotificationButtonBottom.Visibility = Visibility.Collapsed;
+            };
+
         }
     }
 }

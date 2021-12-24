@@ -196,6 +196,7 @@ namespace Launcher.Views
             {
                 SaveButton.Content = "Save Changes";
                 SaveButton.IsEnabled = true;
+                timer.Stop();
             };
             MainWindow.ShowNotification("Saved Changes", delay);
         }

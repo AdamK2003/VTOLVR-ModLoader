@@ -303,7 +303,11 @@ namespace Launcher
                 Interval = time
             };
             timer.Start();
-            timer.Tick += (sender, args) => _instance.HideNotification();
+            timer.Tick += (sender, args) =>
+            {
+                _instance.HideNotification();
+                timer.Stop();
+            };
         }
 
         private void HideNotification(bool skipAnimation = false)
@@ -338,6 +342,7 @@ namespace Launcher
                 _instance.NotificationButtonTop.Visibility = Visibility.Collapsed;
                 _instance.NotificationButtonMiddle.Visibility = Visibility.Collapsed;
                 _instance.NotificationButtonBottom.Visibility = Visibility.Collapsed;
+                timer.Stop();
             };
 
         }

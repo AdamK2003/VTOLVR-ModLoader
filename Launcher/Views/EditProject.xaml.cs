@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Core.Enums;
 using Core.Jsons;
 using Launcher.Classes;
 using Launcher.Windows;
@@ -23,31 +24,25 @@ namespace Launcher.Views
     /// </summary>
     public partial class EditProject : UserControl
     {
-        public Action<bool, string> previewImageCallBack, webImageCallBack;
+        public Action<bool, string> _previewImageCallBack;
+        public Action<bool, string> _webImageCallBack;
         private BaseItem _item;
-        private string _currentPath;
-        private bool _isMod;
+        private string _currentPath => _item.Directory.FullName;
+        private bool _isMod => _item.ContentType == ContentType.MyMods;
         
         // Changed values
         private bool _isPublic;
         private bool _unlisted;
 
-        public EditProject(string path)
+        public EditProject(long lastEdit)
         {
-            _currentPath = path;
             InitializeComponent();
-
-            _isMod = Directory.Exists(_currentPath + @"\Builds");
-
-            if (!File.Exists(_currentPath + (_isMod ? @"\Builds\info.json" : @"\info.json")))
+            if (!TryGetItem(lastEdit))
             {
-                Notification.Show("Missing info.json", "Error");
+                Notification.Show("Can't find item", "Error");
                 MainWindow._instance.Creator(null, null);
-                return;
+                return; 
             }
-
-            _item = Helper.GetBaseItem(_currentPath + (_isMod ? @"\Builds" : string.Empty));
-            Console.Log(_item.ToString());
             SetValues();
             
             if (_isMod)
@@ -55,11 +50,26 @@ namespace Launcher.Views
             else
                 LoadSkin();
 
-            previewImageCallBack += PreviewImageCallBack;
-            webImageCallBack += WebImageCallBack;
+            _previewImageCallBack += PreviewImageCallBack;
+            _webImageCallBack += WebImageCallBack;
             CheckForInternet();
             Helper.SentryLog("Created Edit Page", Helper.SentryLogCategory.EditProject);
             Title.Text = $"Editing {_item.Name}";
+        }
+
+        private bool TryGetItem(long lastEdit)
+        {
+            foreach (BaseItem item in Program.Items)
+            {
+                if (item.LastEdit != lastEdit)
+                    continue;
+                
+                Console.Log(item.ToString());
+                _item = item;
+                return true;
+            }
+
+            return false;
         }
 
         private void SetValues()
@@ -234,13 +244,13 @@ namespace Launcher.Views
         private void PreviewImageButton(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Preview Image Button Pressed", Helper.SentryLogCategory.EditProject);
-            FileDialog.Dialog(Directory.GetCurrentDirectory(), previewImageCallBack, new string[] {"png"});
+            FileDialog.Dialog(Directory.GetCurrentDirectory(), _previewImageCallBack, new string[] {"png"});
         }
 
         private void WebPageImageButton(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Web Preview Image Button Pressed", Helper.SentryLogCategory.EditProject);
-            FileDialog.Dialog(Directory.GetCurrentDirectory(), webImageCallBack, new string[] {"png"});
+            FileDialog.Dialog(Directory.GetCurrentDirectory(), _webImageCallBack, new string[] {"png"});
         }
 
         public void PreviewImageCallBack(bool selected, string filePath)

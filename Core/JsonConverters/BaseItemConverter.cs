@@ -49,27 +49,34 @@ namespace Core.JsonConverters
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
             JsonSerializer serializer)
         {
-            object instance = Activator.CreateInstance(objectType);
+            BaseItem instance = new BaseItem();
             var props = objectType.GetTypeInfo().DeclaredProperties.ToList();
 
             JObject jo = JObject.Load(reader);
             foreach (JProperty jp in jo.Properties())
             {
-                if (!_propertyMappings.TryGetValue(jp.Name, out string name))
+                string name = jp.Name;
+                // Checks to see if any old properties are present
+                if (_propertyMappings.TryGetValue(jp.Name, out string updatedName))
                 {
-                    name = jp.Name;
+                    name = updatedName;
                 }
 
+                // Loops through all the variables in the class BaseItem
                 for (int i = 0; i < props.Count; i++)
                 {
                     if (!props[i].CanWrite)
                         continue;
+                    
+                    // Checks if it has the attribute and the names match
                     var hasAttribute = props[i].GetCustomAttribute<JsonPropertyAttribute>();
                     if (hasAttribute != null &&
                         hasAttribute.PropertyName == name)
                     {
-                        hasAttribute.PropertyName = name;
-                        props[i].SetValue(instance, jp.Value.ToObject(props[i].PropertyType, serializer));
+                        // Sets the instance variable to the converted json object
+                        object newValue = jp.Value.ToObject(props[i].PropertyType, serializer);
+                        Logger.Log($"Setting {name} to value of {newValue}({jp.Value})");
+                        props[i].SetValue(instance,newValue);
                         break;
                     }
                 }

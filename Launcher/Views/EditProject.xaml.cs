@@ -27,6 +27,10 @@ namespace Launcher.Views
         private BaseItem _item;
         private string _currentPath;
         private bool _isMod;
+        
+        // Changed values
+        private bool _isPublic;
+        private bool _unlisted;
 
         public EditProject(string path)
         {
@@ -78,8 +82,8 @@ namespace Launcher.Views
                     _currentPath + @"\" + _item.WebPreviewImage);
             }
 
-            PublicButton.Content = _item.IsPublic ? "Private" : "Public";
-            UnlistedButton.Content = _item.Unlisted ? "Unlisted" : "Listed";
+            SetIsPublic(_item.IsPublic);
+            SetListed(_item.Unlisted);
             SourceCodeInputBox.Text = _item.Source;
             VersionInputBox.Text = _item.Version;
         }
@@ -154,8 +158,8 @@ namespace Launcher.Views
             if (_isMod)
                 _item.Source = modSource.Text;
             _item.LastEdit = DateTime.Now.Ticks;
-            _item.IsPublic = isPublic.IsChecked.Value;
-            _item.Unlisted = unlisted.IsChecked.Value;
+            _item.IsPublic = _isPublic;
+            _item.Unlisted = _unlisted;
 
             _item.SaveFile();
 
@@ -323,12 +327,6 @@ namespace Launcher.Views
                 _item.Unlisted = unlisted.IsChecked.Value;
         }
 
-        private void PublicChanged(object sender, RoutedEventArgs e)
-        {
-            if (_item != null)
-                _item.IsPublic = isPublic.IsChecked.Value;
-        }
-
         private void UpdateDependencies()
         {
             Helper.SentryLog("Updating Dependencies", Helper.SentryLogCategory.EditProject);
@@ -378,5 +376,29 @@ namespace Launcher.Views
         }
 
         private void SaveProject(object sender, RoutedEventArgs e) => SaveProject();
+
+        private void MakePublicPressed(object sender, RoutedEventArgs e) => SetIsPublic(!_isPublic);
+
+        private void SetIsPublic(bool newValue)
+        {
+            if (_item == null)
+                return;
+            
+            _isPublic = newValue;
+            PublicButton.Content = newValue ? "Public" : "Private";
+            PublicWarningText.Visibility = newValue ? Visibility.Collapsed : Visibility.Visible;
+        }
+        
+        private void UnlistedPressed(object sender, RoutedEventArgs e) => SetListed(!_unlisted);
+
+        private void SetListed(bool newValue)
+        {
+            if (_item == null)
+                return;
+
+            _unlisted = newValue;
+            UnlistedButton.Content = newValue ? "Unlisted" : "Listed";
+        }
+
     }
 }

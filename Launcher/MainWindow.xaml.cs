@@ -30,6 +30,11 @@ namespace Launcher
         public Manager ItemManager { get; private set; }
         public Downloads Downloads { get; private set; }
         public Setup Setup { get; set; }
+        
+        // Notifications
+        public enum Results { None, Ok, No, Yes, Cancel }
+
+        public enum Buttons { None, Ok, NoYes, OkCancel }
 
         public MainWindow()
         {
@@ -305,12 +310,110 @@ namespace Launcher
             timer.Start();
             timer.Tick += (sender, args) =>
             {
-                _instance.HideNotification();
+                HideNotification();
                 timer.Stop();
             };
         }
 
-        private void HideNotification(bool skipAnimation = false)
+        public static void ShowNotification(string message, Buttons buttons,
+            Action<Results> userDecided)
+        {
+            _instance.NotificationBackground.Visibility = Visibility.Visible;
+            _instance.NotificationButtons.Visibility = Visibility.Visible;
+            _instance.NotificationText.Visibility = Visibility.Visible;
+            _instance.NotificationText.Text = message;
+            
+            switch (buttons)
+            {
+                case Buttons.Ok:
+                    _instance.NotificationButtonMiddle.Visibility = Visibility.Visible;
+                    _instance.NotificationButtonMiddle.Content = "Ok";
+                    _instance.NotificationButtonMiddle.Click += OkClicked;
+                    _instance.NotificationButtonMiddle.Tag = userDecided;
+                    break;
+                case Buttons.NoYes:
+                    _instance.NotificationButtonTop.Visibility = Visibility.Visible;
+                    _instance.NotificationButtonBottom.Visibility = Visibility.Visible;
+                    
+                    _instance.NotificationButtonTop.Content = "Yes";
+                    _instance.NotificationButtonBottom.Content = "No";
+                    
+                    _instance.NotificationButtonTop.Click += YesClicked;
+                    _instance.NotificationButtonBottom.Click += NoClicked;
+                    _instance.NotificationButtonTop.Tag = userDecided;
+                    _instance.NotificationButtonBottom.Tag = userDecided;
+                    break;
+                case Buttons.OkCancel:
+                    _instance.NotificationButtonTop.Visibility = Visibility.Visible;
+                    _instance.NotificationButtonBottom.Visibility = Visibility.Visible;
+                    
+                    _instance.NotificationButtonTop.Content = "Ok";
+                    _instance.NotificationButtonBottom.Content = "Cancel";
+                    
+                    _instance.NotificationButtonTop.Click += OkClicked;
+                    _instance.NotificationButtonBottom.Click += CanceledClicked;
+                    _instance.NotificationButtonTop.Tag = userDecided;
+                    _instance.NotificationButtonBottom.Tag = userDecided;
+                    break;
+            }
+            
+            DoubleAnimation animation = new DoubleAnimation(
+                0f,
+                85f, 
+                TimeSpan.FromSeconds(0.3f));
+            
+            _instance.NotificationBackground.BeginAnimation(HeightProperty, animation);
+            _instance.NotificationButtons.BeginAnimation(HeightProperty, animation);
+            _instance.NotificationText.BeginAnimation(HeightProperty, animation);
+            
+            
+        }
+
+        private static void CanceledClicked(object sender, RoutedEventArgs e)
+        {
+            _instance.NotificationButtonBottom.Click -= CanceledClicked;
+            HideNotification();
+            
+            // The callback is stored in the tag of each button
+            Button button = sender as Button;
+            Action<Results> callback = button.Tag as Action<Results>;
+            callback?.Invoke(Results.Cancel);
+        }
+
+        private static void NoClicked(object sender, RoutedEventArgs e)
+        {
+            _instance.NotificationButtonBottom.Click -= NoClicked;
+            HideNotification();
+            
+            // The callback is stored in the tag of each button
+            Button button = sender as Button;
+            Action<Results> callback = button.Tag as Action<Results>;
+            callback?.Invoke(Results.No);
+        }
+
+        private static void YesClicked(object sender, RoutedEventArgs e)
+        {
+            _instance.NotificationButtonTop.Click -= YesClicked;
+            HideNotification();
+            
+            // The callback is stored in the tag of each button
+            Button button = sender as Button;
+            Action<Results> callback = button.Tag as Action<Results>;
+            callback?.Invoke(Results.Yes);
+        }
+
+        private static void OkClicked(object sender, RoutedEventArgs e)
+        {
+            _instance.NotificationButtonMiddle.Click -= OkClicked;
+            HideNotification();
+            
+            // The callback is stored in the tag of each button
+            Button button = sender as Button;
+            Action<Results> callback = button.Tag as Action<Results>;
+            callback?.Invoke(Results.Ok);
+        }
+
+        public static void HideNotification(bool skipAnimation = false)
         {
             if (skipAnimation)
             {

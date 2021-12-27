@@ -467,7 +467,8 @@
                 Height="29"
                 Margin="10,10,10,0"
                 Style="{StaticResource RoundedRedButton}"
-                FontFamily="{StaticResource Medium}"/>
+                FontFamily="{StaticResource Medium}"
+                Click="CancelChanges"/>
             <Button
                 Grid.Row="35"
                 Grid.Column="6"

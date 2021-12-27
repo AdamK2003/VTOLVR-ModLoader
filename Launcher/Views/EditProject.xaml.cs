@@ -410,5 +410,55 @@ namespace Launcher.Views
             UnlistedButton.Content = newValue ? "Unlisted" : "Listed";
         }
 
+        private void CancelChanges(object sender, RoutedEventArgs e) => CheckChanges();
+
+        private void CheckChanges()
+        {
+            int changes = 0;
+
+            if (!NameInputBox.Text.Equals(_item.Name))
+                changes++;
+            if (!TaglineInputBox.Text.Equals(_item.Tagline))
+                changes++;
+            if (!SourceCodeInputBox.Text.Equals(_item.Source))
+                changes++;
+            if (!DescriptionInputBox.Text.Equals(_item.Description))
+                changes++;
+            if (_isPublic != _item.IsPublic)
+                changes++;
+            if (_unlisted != _item.Unlisted)
+                changes++;
+            if (!VersionInputBox.Text.Equals(_item.Version))
+                changes++;
+            
+            // Header Image
+            // Preview Image
+            // Skin Materials
+
+            if (changes == 0)
+            {
+                Close();
+                return;
+            }
+            
+            MainWindow.ShowNotification(
+                $"There is {changes} unsaved {(changes == 1? "change" : "changes")}. " +
+                $"Are you sure you want to lose {(changes == 1? "this change" : "these changes")}?",
+                MainWindow.Buttons.NoYes,
+                UserDecided);
+        }
+
+        private void UserDecided(MainWindow.Results results)
+        {
+            if (results == MainWindow.Results.No)
+            {
+                MainWindow.HideNotification();
+                return;
+            }
+            // The only other answer can be yes
+            Close();
+        }
+
+        private void Close() =>  MainWindow._instance.Creator(null, null);
     }
 }

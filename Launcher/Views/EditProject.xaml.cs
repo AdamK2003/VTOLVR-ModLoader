@@ -7,15 +7,15 @@ using System.Net;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media.Animation;
+using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Core.Enums;
 using Core.Jsons;
 using Launcher.Classes;
 using Launcher.Windows;
-using MdXaml;
+using FileDialog = Launcher.Windows.FileDialog;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace Launcher.Views
 {
@@ -33,6 +33,9 @@ namespace Launcher.Views
         // Changed values
         private bool _isPublic;
         private bool _unlisted;
+
+        private FileInfo _webPreviewFile;
+        private FileInfo _previewFile;
 
         public EditProject(long lastEdit)
         {
@@ -77,23 +80,32 @@ namespace Launcher.Views
             NameInputBox.Text = _item.Name;
             TaglineInputBox.Text = _item.Tagline;
             DescriptionInputBox.Text = _item.Description;
-            string path = Path.Combine(_item.Directory.FullName, _item.PreviewImage);
+            
+            SetIsPublic(_item.IsPublic);
+            SetListed(_item.Unlisted);
+            
+            string path = Path.Combine(_item.Directory.FullName, _item.WebPreviewImage);
+            Console.Log($"Searching for web preview ({_item.WebPreviewImage}) at {path}");
+            if (File.Exists(path))
+            {
+                WebPreviewImage.Source = new BitmapImage().LoadImage(path);
+            }
+            else
+            {
+                Console.Log("Couldn't find web preview");
+            }
+            
+            path = Path.Combine(_item.Directory.FullName, _item.PreviewImage);
             Console.Log($"Searching for preview image ({_item.PreviewImage}) at {path}");
             if (File.Exists(path))
             {
                 PreviewImage.Source = new BitmapImage().LoadImage(path);
             }
-
-            path = Path.Combine(_currentPath, _item.WebPreviewImage);
-            Console.Log($"Searching for web preview image ({_item.WebPreviewImage}) at {path}");
-            if (File.Exists(path))
+            else
             {
-                HeaderImage.Source = new BitmapImage().LoadImage(
-                    _currentPath + @"\" + _item.WebPreviewImage);
+                Console.Log("Couldn't find preview image");
             }
-
-            SetIsPublic(_item.IsPublic);
-            SetListed(_item.Unlisted);
+            
             SourceCodeInputBox.Text = _item.Source;
             VersionInputBox.Text = _item.Version;
         }
@@ -171,6 +183,55 @@ namespace Launcher.Views
             _item.IsPublic = _isPublic;
             _item.Unlisted = _unlisted;
 
+            
+            if (_webPreviewFile != null)
+            {
+                // If the previous image exists, we need to delete it.
+                string path = Path.Combine(_item.Directory.FullName, _item.WebPreviewImage);
+                if (File.Exists(path))
+                {
+                    Console.Log($"Deleting previous web preview image");
+                    if (!Helper.TryDelete(path))
+                    {
+                        MainWindow.ShowNotification(
+                            $"Failed to delete {path}. " +
+                            $"You can manually delete it to remove it", 
+                            TimeSpan.FromSeconds(5));
+                        
+                        Console.Log($"Failed to delete {path} and warned user");
+                    }
+                }
+                
+                _webPreviewFile.CopyTo(
+                    Path.Combine(_item.Directory.FullName, _webPreviewFile.Name),
+                    true);
+                _item.WebPreviewImage = _webPreviewFile.Name;
+            }
+            
+            if (_previewFile != null)
+            {
+                // If the previous image exists, we need to delete it.
+                string path = Path.Combine(_item.Directory.FullName, _item.PreviewImage);
+                if (File.Exists(path))
+                {
+                    Console.Log($"Deleting previous preview image");
+                    if (!Helper.TryDelete(path))
+                    {
+                        MainWindow.ShowNotification(
+                            $"Failed to delete {path}. " +
+                            $"You can manually delete it to remove it", 
+                            TimeSpan.FromSeconds(5));
+                        
+                        Console.Log($"Failed to delete {path} and warned user");
+                    }
+                }
+                
+                _previewFile.CopyTo(
+                    Path.Combine(_item.Directory.FullName, _previewFile.Name),
+                    true);
+                _item.PreviewImage = _previewFile.Name;
+            }
+            
             _item.SaveFile();
 
             if (_item.HasPublicID() && !Program.DisableInternet)
@@ -291,7 +352,7 @@ namespace Launcher.Views
 
             webPageImageText.Visibility = Visibility.Hidden;
 
-            HeaderImage.Source = new BitmapImage().LoadImage(filePath);
+            WebPreviewImage.Source = new BitmapImage().LoadImage(filePath);
             SaveProject();
         }
 
@@ -430,9 +491,11 @@ namespace Launcher.Views
                 changes++;
             if (!VersionInputBox.Text.Equals(_item.Version))
                 changes++;
+            if (_previewFile != null)
+                changes++;
+            if (_webPreviewFile != null)
+                changes++;
             
-            // Header Image
-            // Preview Image
             // Skin Materials
 
             if (changes == 0)
@@ -460,5 +523,55 @@ namespace Launcher.Views
         }
 
         private void Close() =>  MainWindow._instance.Creator(null, null);
+
+        private void WebImageChanged(object sender, RoutedEventArgs e)
+        {
+            string filePath = string.Empty;
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.InitialDirectory = string.IsNullOrEmpty(_item.PreviewImage) ? 
+                        _item.Directory.FullName : _item.PreviewImage;
+                dialog.Filter = "png files (*.png)|*.png";
+                dialog.RestoreDirectory = true;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    filePath = dialog.FileName;
+                }
+            }
+
+            if (string.IsNullOrEmpty(filePath))
+                return;
+
+            _webPreviewFile = new FileInfo(filePath);
+            WebPreviewImage.Source = new BitmapImage()
+                .LoadImage(_webPreviewFile.FullName);
+        }
+        
+        private void PreviewImageChanged(object sender, RoutedEventArgs e)
+        {
+            string filePath = string.Empty;
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.InitialDirectory = string.IsNullOrEmpty(_item.PreviewImage) ? 
+                    _item.Directory.FullName : _item.PreviewImage;
+                dialog.Filter = "png files (*.png)|*.png";
+                dialog.RestoreDirectory = true;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    filePath = dialog.FileName;
+                }
+            }
+
+            if (string.IsNullOrEmpty(filePath))
+                return;
+
+            _previewFile = new FileInfo(filePath);
+            PreviewImage.Source = new BitmapImage()
+                .LoadImage(_previewFile.FullName);
+        }
     }
 }

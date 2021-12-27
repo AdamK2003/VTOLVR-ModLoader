@@ -319,7 +319,7 @@
                 Grid.Row="25"
                 Grid.Column="1"
                 Grid.ColumnSpan="6"
-                Text="Header Image" 
+                Text="Web Preview Image" 
                 Margin="0,10,0,0"
                 Style="{StaticResource TextNormal}"/>
             <TextBlock 
@@ -338,7 +338,7 @@
             <Image 
                 Grid.Row="26" 
                 Grid.Column="6" 
-                Name="HeaderImage"
+                Name="WebPreviewImage"
                 Height="72"
                 Width="128"/>
             <Button 
@@ -348,7 +348,8 @@
                 Height="29"
                 Style="{StaticResource RoundedLightButton}"
                 FontFamily="{StaticResource Medium}"
-                Content="Change"/>
+                Content="Change"
+                Click="WebImageChanged"/>
             <TextBlock 
                 Grid.Row="28"
                 Grid.Column="1"
@@ -382,7 +383,8 @@
                 Height="29"
                 Style="{StaticResource RoundedLightButton}"
                 FontFamily="{StaticResource Medium}"
-                Content="Change"/>
+                Content="Change"
+                Click="PreviewImageChanged"/>
             
             <!-- # Divider # -->
             <Rectangle

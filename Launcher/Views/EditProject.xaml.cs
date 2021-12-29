@@ -10,10 +10,12 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Core.Classes;
 using Core.Enums;
 using Core.Jsons;
 using Launcher.Classes;
 using Launcher.Windows;
+using Button = System.Windows.Controls.Button;
 using FileDialog = Launcher.Windows.FileDialog;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -33,6 +35,7 @@ namespace Launcher.Views
         // Changed values
         private bool _isPublic;
         private bool _unlisted;
+        private List<Material> _skinMaterials;
 
         private FileInfo _webPreviewFile;
         private FileInfo _previewFile;
@@ -108,6 +111,8 @@ namespace Launcher.Views
             
             SourceCodeInputBox.Text = _item.Source;
             VersionInputBox.Text = _item.Version;
+            _skinMaterials = _item.SkinMaterials;
+            MaterialsControl.ItemsSource = _skinMaterials;
         }
 
         public async void CheckForInternet()
@@ -182,6 +187,7 @@ namespace Launcher.Views
             _item.LastEdit = DateTime.Now.Ticks;
             _item.IsPublic = _isPublic;
             _item.Unlisted = _unlisted;
+            _item.SkinMaterials = _skinMaterials;
 
             
             if (_webPreviewFile != null)
@@ -442,7 +448,10 @@ namespace Launcher.Views
 
         private void SkinMaterialClicked(object sender, RoutedEventArgs e)
         {
-            MaterialWindow window = new (new DirectoryInfo(_currentPath), "Test Material",ref _item);
+            Button buttton = sender as Button;
+            Material mat = buttton.Tag as Material;
+            
+            MaterialWindow window = new (ref mat, ref _item);
             window.Show();
         }
 
@@ -572,6 +581,38 @@ namespace Launcher.Views
             _previewFile = new FileInfo(filePath);
             PreviewImage.Source = new BitmapImage()
                 .LoadImage(_previewFile.FullName);
+        }
+
+        private void AddMaterialClicked(object sender, RoutedEventArgs e)
+        {
+            Console.Log("Added a new material");
+            Helper.SentryLog("Added a new material", Helper.SentryLogCategory.EditProject);
+            
+            Material newMat = new Material() { Name = "New Material" };
+            MaterialWindow window = new MaterialWindow(ref newMat, ref _item);
+            window.Closed += MaterialEditorClosing;
+            window.Show();
+            
+            _skinMaterials.Add(newMat);
+            UpdateList();
+        }
+
+        private void UpdateList()
+        {
+            MaterialsControl.ItemsSource = _skinMaterials;
+            MaterialsControl.Items.Refresh();
+        }
+
+        private void MaterialEditorClosing(object? sender, EventArgs e)
+        {
+            Console.Log("Material Editor Closed");
+            Helper.SentryLog("Closing Material Editor", Helper.SentryLogCategory.EditProject);
+            if (sender == null)
+                return;
+            
+            MaterialWindow window = sender as MaterialWindow;
+            Material material = window.Material;
+            UpdateList();
         }
     }
 }

@@ -16,34 +16,72 @@ namespace Launcher.Windows
 {
     public partial class MaterialWindow : Window
     {
+        public Material Material;
+        
         private List<Property> _properties = new List<Property>();
         private List<string> _fileNames;
         private DirectoryInfo _root;
         private string _name;
         private BaseItem _item;
 
-        public MaterialWindow(DirectoryInfo directory, string materialName, ref BaseItem item)
+        public MaterialWindow(ref Material material, ref BaseItem item)
         {
-            _root = directory;
-            _name = materialName;
+            DataContext = this;
+            _root = item.Directory;
+            _name = material.Name;
             _item = item;
+            Material = material;
             UpdateFilesList();
             InitializeComponent();
-            Title.Text = $"Editing {_name}";
+            GetProperties();
+            TitleText.Text = $"Editing {_name}";
+            Title = TitleText.Text;
+            MaterialNameInput.Text = _name;
+        }
+
+        private void GetProperties()
+        {
+            foreach (KeyValuePair<string,string> valuePair in Material.Textures)
+            {
+                _properties.Add(new Property(ref _fileNames)
+                {
+                    PropertyName = valuePair.Key,
+                    FileName = valuePair.Value
+                });
+            }
+            UpdateList();
         }
         
         private void AddProperty(object sender, RoutedEventArgs e)
         {
-            _properties.Add(new Property(ref _fileNames)
+            // This makes it so you can't get the same name twice in 
+            // dictionary 
+            int number = _properties.Count;
+            string name = number.ToString();
+            while (Material.Textures.TryGetValue(name, out string value))
             {
-                PropertyName = _properties.Count.ToString()
-            });
+                number++;
+                name = number.ToString();
+            }
+            
+            Property newProperty = new Property(ref _fileNames)
+            {
+                PropertyName = name
+            };
+            _properties.Add(newProperty);
+            AddTexture(newProperty);
             UpdateList();
+        }
+
+        private void AddTexture(Property property)
+        {
+            Material.Textures.Add(property.PropertyName, property.FileName);
         }
 
         private void UpdateList()
         {
             List.ItemsSource = _properties;
+            List.Items.Refresh();
         }
 
         private void UpdateFilesList()
@@ -57,7 +95,7 @@ namespace Launcher.Windows
             }
         }
 
-        private void UpdatePropertyList(ref BaseItem item)
+        private void UpdatePropertyList()
         {
             
         }
@@ -79,6 +117,17 @@ namespace Launcher.Windows
         {
             ComboBox comboBox = sender as ComboBox;
             Console.Log($"{((Property)comboBox.DataContext).FileName}");    
+        }
+
+        private void MaterialNameChanged(object sender, TextChangedEventArgs e)
+        {
+            if (MaterialNameInput == null)
+                return;
+            
+            _name = MaterialNameInput.Text;
+            TitleText.Text = $"Editing {_name}";
+            Title = TitleText.Text;
+            Material.Name = _name;
         }
     }
 }

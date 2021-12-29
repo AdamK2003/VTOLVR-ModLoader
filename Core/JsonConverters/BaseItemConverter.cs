@@ -110,7 +110,21 @@ namespace Core.JsonConverters
                     writer.WriteStartArray();
                     for (int i = 0; i < list.Count; i++)
                     {
-                        writer.WriteValue(list[i]);
+                        Material currentMat = list[i];
+                        writer.WriteStartObject();
+                        
+                        writer.WritePropertyName("Name");
+                        writer.WriteValue(currentMat.Name);
+
+                        writer.WritePropertyName("Textures");
+                        foreach (var keyPair in currentMat.Textures)
+                        {
+                            writer.WriteStartObject();
+                            writer.WritePropertyName(keyPair.Key);
+                            writer.WriteValue(keyPair.Value);
+                            writer.WriteEndObject();
+                        }
+                        writer.WriteEndObject();
                     }
                     writer.WriteEndArray();
                     continue;

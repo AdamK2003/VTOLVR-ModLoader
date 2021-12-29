@@ -411,7 +411,8 @@
                 Margin="10,10,10,0"
                 Style="{StaticResource RoundedGreenButton}"
                 FontFamily="{StaticResource Medium}"
-                Name="AddMaterialButton"/>
+                Name="AddMaterialButton"
+                Click="AddMaterialClicked"/>
             <ItemsControl
                 Grid.Row="33"
                 Grid.Column="1"
@@ -429,7 +430,8 @@
                         <Button
                             Style="{StaticResource transparentButton}"
                             Margin="10"
-                            Click="SkinMaterialClicked">
+                            Click="SkinMaterialClicked"
+                            Tag="{Binding }">
                             <StackPanel
                                 Background="#4b4b4b"
                                 Height="160"
@@ -440,7 +442,7 @@
                                     Fill="Red"
                                     Margin="0,10,0,0"/>
                                 <TextBlock 
-                                    Text="{Binding MaterialName}"
+                                    Text="{Binding Name}"
                                     Style="{StaticResource TextSmall}"
                                     HorizontalAlignment="Center"
                                     Margin="0,5,0,0"/>

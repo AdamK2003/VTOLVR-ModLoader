@@ -52,7 +52,22 @@ namespace Launcher.Views
 
         private void UILoaded(object sender, RoutedEventArgs e)
         {
-            RefreshColumns();
+            // This is a really bad work around for the grid actualwidth
+            // being 0. I've tried Measure and Arrange, Loaded and a dispacher
+            // None of them worked. So just have this half a second delay. To call RefreshColumns
+            
+            TimeSpan delay = TimeSpan.FromSeconds(0.5f);
+            var timer = new DispatcherTimer
+            {
+                Interval = delay
+            };
+            timer.Start();
+            timer.Tick += (sender, args) =>
+            {
+                RefreshColumns();
+                timer.Stop();
+            };
+            
             GetScrollViewer();
             _openSiteButton.Content = "Open " + Program.URL;
         }
@@ -661,7 +676,7 @@ namespace Launcher.Views
             RefreshColumns();
         }
 
-        public void RefreshColumns()
+        private void RefreshColumns()
         {
             // Thank you Assistant for this snippet
             double totalSize = 0;
@@ -769,6 +784,28 @@ namespace Launcher.Views
             var url = Program.URL;
             url = url.Replace("&", "^&");
             Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+        }
+
+        private void ListSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ListView listView = sender as ListView;
+            GridView gridView = listView.View as GridView;
+            
+            double workingWidth = e.NewSize.Width - SystemParameters.VerticalScrollBarWidth;
+            GridViewColumn description = null;
+            
+            foreach (var column in gridView.Columns)
+            {
+                if (column.Header?.ToString() == "Description")
+                {
+                    description = column;
+                }
+                else
+                {
+                    workingWidth -= column.ActualWidth;
+                }
+            }
+            description.Width = workingWidth > 0 ? workingWidth : 0;
         }
     }
 }

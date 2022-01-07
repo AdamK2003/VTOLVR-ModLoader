@@ -17,5 +17,9 @@ public enum VTOLVehicles {
     /// <summary>
     /// The F-45A
     /// </summary>
-    F45A 
+    F45A,
+    /// <summary>
+    /// The AH-94
+    /// </summary>
+    AH94
 }

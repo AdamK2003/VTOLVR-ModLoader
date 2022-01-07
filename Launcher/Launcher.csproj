@@ -11,8 +11,8 @@
         <Title>VTOL VR Mod Launcher</Title>
         <Description>A ModLoader for VTOL VR</Description>
         <Copyright>Copyright © 2021</Copyright>
-        <AssemblyVersion>5.1.2</AssemblyVersion>
-        <FileVersion>5.1.2</FileVersion>
+        <AssemblyVersion>5.2.0</AssemblyVersion>
+        <FileVersion>5.2.0</FileVersion>
         <ProductVersion>5.0.1.0</ProductVersion>
         <RootNamespace>Launcher</RootNamespace>
         <PublishSingleFile>true</PublishSingleFile>
@@ -30,6 +30,7 @@
 
     <ItemGroup>
         <PackageReference Include="Gameloop.Vdf" Version="0.6.1" />
+        <PackageReference Include="MdXaml" Version="1.12.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Salaros.ConfigParser" Version="0.3.8" />
         <PackageReference Include="Sentry" Version="3.9.4" />
@@ -44,9 +45,25 @@
         <Resource Include="Resources\LogoSpinning.gif" />
         <Resource Include="Resources\LogoHalloweenSpinning.gif" />
         <Resource Include="Resources\LogoChristmasSpinning.gif" />
-        <Resource Include="Resources\Montserrat-Medium.ttf" />
-        <Resource Include="Resources\Montserrat-ExtraBold.ttf" />
-        <Resource Include="Resources\Squares Bold Free.otf" />
+        <Resource Include="Resources\Fonts\Montserrat-Black.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-BlackItalic.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-Bold.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-BoldItalic.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-ExtraBold.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-ExtraBoldItalic.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-ExtraLight.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-ExtraLightItalic.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-Italic.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-Light.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-LightItalic.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-Medium.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-MediumItalic.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-Regular.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-SemiBold.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-SemiBoldItalic.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-Thin.ttf" />
+        <Resource Include="Resources\Fonts\Montserrat-ThinItalic.ttf" />
+        <Resource Include="Resources\Fonts\Squares Bold Free.otf" />
     </ItemGroup>
 
     <ItemGroup>

@@ -7,11 +7,17 @@ using System.Net;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Core.Classes;
+using Core.Enums;
 using Core.Jsons;
 using Launcher.Classes;
 using Launcher.Windows;
+using Button = System.Windows.Controls.Button;
+using FileDialog = Launcher.Windows.FileDialog;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace Launcher.Views
 {
@@ -20,56 +26,93 @@ namespace Launcher.Views
     /// </summary>
     public partial class EditProject : UserControl
     {
-        public Action<bool, string> previewImageCallBack, webImageCallBack;
+        public Action<bool, string> _previewImageCallBack;
+        public Action<bool, string> _webImageCallBack;
         private BaseItem _item;
-        private string _currentPath;
-        private bool _isMod;
+        private string _currentPath => _item.Directory.FullName;
+        private bool _isMod => _item.ContentType == ContentType.MyMods;
+        
+        // Changed values
+        private bool _isPublic;
+        private bool _unlisted;
+        private List<Material> _skinMaterials;
 
-        public EditProject(string path)
+        private FileInfo _webPreviewFile;
+        private FileInfo _previewFile;
+
+        public EditProject(long lastEdit)
         {
-            _currentPath = path;
             InitializeComponent();
-
-            _isMod = Directory.Exists(_currentPath + @"\Builds");
-
-            if (!File.Exists(_currentPath + (_isMod ? @"\Builds\info.json" : @"\info.json")))
+            if (!TryGetItem(lastEdit))
             {
-                Notification.Show("Missing info.json", "Error");
+                Notification.Show("Can't find item", "Error");
                 MainWindow._instance.Creator(null, null);
-                return;
+                return; 
             }
-
-            _item = Helper.GetBaseItem(_currentPath + (_isMod ? @"\Builds" : string.Empty));
-            projectName.Text = _item.Name;
-            tagline.Text = _item.Tagline;
-            projectDescription.Text = _item.Description;
-
-            if (File.Exists(_currentPath + (_isMod ? @"\Builds\" : @"\") + _item.PreviewImage))
-            {
-                previewImage.Source = new BitmapImage().LoadImage(
-                    _currentPath + (_isMod ? @"\Builds\" : @"\") + _item.PreviewImage);
-                previewImageText.Visibility = Visibility.Hidden;
-            }
-
-            if (File.Exists(_currentPath + @"\" + _item.WebPreviewImage))
-            {
-                webPageImage.Source = new BitmapImage().LoadImage(
-                    _currentPath + @"\" + _item.WebPreviewImage);
-                webPageImageText.Visibility = Visibility.Hidden;
-            }
-
-            isPublic.IsChecked = _item.IsPublic;
-            unlisted.IsChecked = _item.Unlisted;
-
+            SetValues();
+            
             if (_isMod)
                 LoadMod();
             else
                 LoadSkin();
 
-            previewImageCallBack += PreviewImageCallBack;
-            webImageCallBack += WebImageCallBack;
+            _previewImageCallBack += PreviewImageCallBack;
+            _webImageCallBack += WebImageCallBack;
             CheckForInternet();
             Helper.SentryLog("Created Edit Page", Helper.SentryLogCategory.EditProject);
+            Title.Text = $"Editing {_item.Name}";
+        }
+
+        private bool TryGetItem(long lastEdit)
+        {
+            foreach (BaseItem item in Program.Items)
+            {
+                if (item.LastEdit != lastEdit)
+                    continue;
+                
+                Console.Log(item.ToString());
+                _item = item;
+                return true;
+            }
+
+            return false;
+        }
+
+        private void SetValues()
+        {
+            NameInputBox.Text = _item.Name;
+            TaglineInputBox.Text = _item.Tagline;
+            DescriptionInputBox.Text = _item.Description;
+            
+            SetIsPublic(_item.IsPublic);
+            SetListed(_item.Unlisted);
+            
+            string path = Path.Combine(_item.Directory.FullName, _item.WebPreviewImage);
+            Console.Log($"Searching for web preview ({_item.WebPreviewImage}) at {path}");
+            if (File.Exists(path))
+            {
+                WebPreviewImage.Source = new BitmapImage().LoadImage(path);
+            }
+            else
+            {
+                Console.Log("Couldn't find web preview");
+            }
+            
+            path = Path.Combine(_item.Directory.FullName, _item.PreviewImage);
+            Console.Log($"Searching for preview image ({_item.PreviewImage}) at {path}");
+            if (File.Exists(path))
+            {
+                PreviewImage.Source = new BitmapImage().LoadImage(path);
+            }
+            else
+            {
+                Console.Log("Couldn't find preview image");
+            }
+            
+            SourceCodeInputBox.Text = _item.Source;
+            VersionInputBox.Text = _item.Version;
+            _skinMaterials = _item.SkinMaterials;
+            MaterialsControl.ItemsSource = _skinMaterials;
         }
 
         public async void CheckForInternet()
@@ -77,7 +120,7 @@ namespace Launcher.Views
             Helper.SentryLog("Checking for internet", Helper.SentryLogCategory.EditProject);
             if (!await HttpHelper.CheckForInternet())
             {
-                saveButton.Content = "Save Locally (Can't connect to server)";
+                SaveButton.Content = "Save Locally (Can't connect to server)";
             }
         }
 
@@ -88,19 +131,26 @@ namespace Launcher.Views
             modSource.Visibility = Visibility.Visible;
 
             modSource.Text = _item.Source;
+            
+            SkinsTitle.Visibility = Visibility.Collapsed;
+            AddMaterialButton.Visibility = Visibility.Collapsed;
+            MaterialsControl.Visibility = Visibility.Collapsed;
+            SkinDivider.Visibility = Visibility.Collapsed;
         }
 
         private void LoadSkin()
         {
             Helper.SentryLog("Loading Skin", Helper.SentryLogCategory.EditProject);
-            grid.RowDefinitions[6].Height = new GridLength(0);
-            grid.RowDefinitions[7].Height = new GridLength(0);
+
+            SourceCodeTitle.Visibility = Visibility.Collapsed;
+            SourceCodeDescription.Visibility = Visibility.Collapsed;
+            SourceCodeInputBox.Visibility = Visibility.Collapsed;
         }
 
         private void ProjectNameChanged(object sender, TextChangedEventArgs e)
         {
-            projectName.Text = projectName.Text.RemoveSpecialCharacters();
-            projectName.CaretIndex = projectName.Text.Length;
+            NameInputBox.Text = NameInputBox.Text.RemoveSpecialCharacters();
+            NameInputBox.CaretIndex = NameInputBox.Text.Length;
         }
 
         private void Save(object sender, RoutedEventArgs e)
@@ -126,18 +176,68 @@ namespace Launcher.Views
         private void SaveProject()
         {
             Helper.SentryLog("Saving Project", Helper.SentryLogCategory.EditProject);
-            saveButton.IsEnabled = false;
-            saveButton.Content = "Saving...";
-            _item.Name = projectName.Text;
-            _item.Tagline = tagline.Text;
-            _item.Description = projectDescription.Text;
-            _item.Version = projectVersion.Text;
+            SaveButton.IsEnabled = false;
+            SaveButton.Content = "Saving...";
+            _item.Name = NameInputBox.Text;
+            _item.Tagline = TaglineInputBox.Text;
+            _item.Description = DescriptionInputBox.Text;
+            _item.Version = VersionInputBox.Text;
             if (_isMod)
                 _item.Source = modSource.Text;
             _item.LastEdit = DateTime.Now.Ticks;
-            _item.IsPublic = isPublic.IsChecked.Value;
-            _item.Unlisted = unlisted.IsChecked.Value;
+            _item.IsPublic = _isPublic;
+            _item.Unlisted = _unlisted;
+            _item.SkinMaterials = _skinMaterials;
 
+            
+            if (_webPreviewFile != null)
+            {
+                // If the previous image exists, we need to delete it.
+                string path = Path.Combine(_item.Directory.FullName, _item.WebPreviewImage);
+                if (File.Exists(path))
+                {
+                    Console.Log($"Deleting previous web preview image");
+                    if (!Helper.TryDelete(path))
+                    {
+                        MainWindow.ShowNotification(
+                            $"Failed to delete {path}. " +
+                            $"You can manually delete it to remove it", 
+                            TimeSpan.FromSeconds(5));
+                        
+                        Console.Log($"Failed to delete {path} and warned user");
+                    }
+                }
+                
+                _webPreviewFile.CopyTo(
+                    Path.Combine(_item.Directory.FullName, _webPreviewFile.Name),
+                    true);
+                _item.WebPreviewImage = _webPreviewFile.Name;
+            }
+            
+            if (_previewFile != null)
+            {
+                // If the previous image exists, we need to delete it.
+                string path = Path.Combine(_item.Directory.FullName, _item.PreviewImage);
+                if (File.Exists(path))
+                {
+                    Console.Log($"Deleting previous preview image");
+                    if (!Helper.TryDelete(path))
+                    {
+                        MainWindow.ShowNotification(
+                            $"Failed to delete {path}. " +
+                            $"You can manually delete it to remove it", 
+                            TimeSpan.FromSeconds(5));
+                        
+                        Console.Log($"Failed to delete {path} and warned user");
+                    }
+                }
+                
+                _previewFile.CopyTo(
+                    Path.Combine(_item.Directory.FullName, _previewFile.Name),
+                    true);
+                _item.PreviewImage = _previewFile.Name;
+            }
+            
             _item.SaveFile();
 
             if (_item.HasPublicID() && !Program.DisableInternet)
@@ -167,14 +267,19 @@ namespace Launcher.Views
             }
 
             Console.Log("Saved Project!");
-            saveButton.Content = "Saved (Locally)";
-            var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(2)};
+            TimeSpan delay = TimeSpan.FromSeconds(2);
+            var timer = new DispatcherTimer
+            {
+                Interval = delay
+            };
             timer.Start();
             timer.Tick += (sender, args) =>
             {
-                saveButton.Content = "Save";
-                saveButton.IsEnabled = true;
+                SaveButton.Content = "Save Changes";
+                SaveButton.IsEnabled = true;
+                timer.Stop();
             };
+            MainWindow.ShowNotification("Saved Changes", delay);
         }
 
         private async void UpdateSent(HttpResponseMessage response)
@@ -188,31 +293,31 @@ namespace Launcher.Views
                             $"Error Code: {response.StatusCode}\n" +
                             $"URL: {Program.URL + Program.ApiURL + (_isMod ? Program.ModsURL : Program.SkinsURL)}/{_item.PublicID}/\n" +
                             $"Raw Response: {await response.Content.ReadAsStringAsync()}");
-                saveButton.Content = "Save";
+                SaveButton.Content = "Save";
                 return;
             }
 
             Console.Log("Project has been synced with vtolvr-mods.com");
-            saveButton.Content = "Saved and Updated on vtolvr-mods.com";
+            SaveButton.Content = "Saved and Updated on vtolvr-mods.com";
             var timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(2)};
             timer.Start();
             timer.Tick += (sender, args) =>
             {
-                saveButton.Content = "Save";
-                saveButton.IsEnabled = true;
+                SaveButton.Content = "Save";
+                SaveButton.IsEnabled = true;
             };
         }
 
         private void PreviewImageButton(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Preview Image Button Pressed", Helper.SentryLogCategory.EditProject);
-            FileDialog.Dialog(Directory.GetCurrentDirectory(), previewImageCallBack, new string[] {"png"});
+            FileDialog.Dialog(Directory.GetCurrentDirectory(), _previewImageCallBack, new string[] {"png"});
         }
 
         private void WebPageImageButton(object sender, RoutedEventArgs e)
         {
             Helper.SentryLog("Web Preview Image Button Pressed", Helper.SentryLogCategory.EditProject);
-            FileDialog.Dialog(Directory.GetCurrentDirectory(), webImageCallBack, new string[] {"png"});
+            FileDialog.Dialog(Directory.GetCurrentDirectory(), _webImageCallBack, new string[] {"png"});
         }
 
         public void PreviewImageCallBack(bool selected, string filePath)
@@ -232,7 +337,7 @@ namespace Launcher.Views
 
             previewImageText.Visibility = Visibility.Hidden;
 
-            previewImage.Source = new BitmapImage().LoadImage(filePath);
+            PreviewImage.Source = new BitmapImage().LoadImage(filePath);
             SaveProject();
         }
 
@@ -253,7 +358,7 @@ namespace Launcher.Views
 
             webPageImageText.Visibility = Visibility.Hidden;
 
-            webPageImage.Source = new BitmapImage().LoadImage(filePath);
+            WebPreviewImage.Source = new BitmapImage().LoadImage(filePath);
             SaveProject();
         }
 
@@ -299,12 +404,6 @@ namespace Launcher.Views
                 _item.Unlisted = unlisted.IsChecked.Value;
         }
 
-        private void PublicChanged(object sender, RoutedEventArgs e)
-        {
-            if (_item != null)
-                _item.IsPublic = isPublic.IsChecked.Value;
-        }
-
         private void UpdateDependencies()
         {
             Helper.SentryLog("Updating Dependencies", Helper.SentryLogCategory.EditProject);
@@ -338,6 +437,182 @@ namespace Launcher.Views
             }
 
             _item.Dependencies = newDependencies;
+        }
+
+        private void ProjectDescription_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (MarkdownViewer == null)
+                return;
+            MarkdownViewer.Markdown = DescriptionInputBox.Text;
+        }
+
+        private void SkinMaterialClicked(object sender, RoutedEventArgs e)
+        {
+            Button buttton = sender as Button;
+            Material mat = buttton.Tag as Material;
+            
+            MaterialWindow window = new (ref mat, ref _item);
+            window.Show();
+        }
+
+        private void SaveProject(object sender, RoutedEventArgs e) => SaveProject();
+
+        private void MakePublicPressed(object sender, RoutedEventArgs e) => SetIsPublic(!_isPublic);
+
+        private void SetIsPublic(bool newValue)
+        {
+            if (_item == null)
+                return;
+            
+            _isPublic = newValue;
+            PublicButton.Content = newValue ? "Public" : "Private";
+            PublicWarningText.Visibility = newValue ? Visibility.Collapsed : Visibility.Visible;
+        }
+        
+        private void UnlistedPressed(object sender, RoutedEventArgs e) => SetListed(!_unlisted);
+
+        private void SetListed(bool newValue)
+        {
+            if (_item == null)
+                return;
+
+            _unlisted = newValue;
+            UnlistedButton.Content = newValue ? "Unlisted" : "Listed";
+        }
+
+        private void CancelChanges(object sender, RoutedEventArgs e) => CheckChanges();
+
+        private void CheckChanges()
+        {
+            int changes = 0;
+
+            if (!NameInputBox.Text.Equals(_item.Name))
+                changes++;
+            if (!TaglineInputBox.Text.Equals(_item.Tagline))
+                changes++;
+            if (!SourceCodeInputBox.Text.Equals(_item.Source))
+                changes++;
+            if (!DescriptionInputBox.Text.Equals(_item.Description))
+                changes++;
+            if (_isPublic != _item.IsPublic)
+                changes++;
+            if (_unlisted != _item.Unlisted)
+                changes++;
+            if (!VersionInputBox.Text.Equals(_item.Version))
+                changes++;
+            if (_previewFile != null)
+                changes++;
+            if (_webPreviewFile != null)
+                changes++;
+            
+            // Skin Materials
+
+            if (changes == 0)
+            {
+                Close();
+                return;
+            }
+            
+            MainWindow.ShowNotification(
+                $"There is {changes} unsaved {(changes == 1? "change" : "changes")}. " +
+                $"Are you sure you want to lose {(changes == 1? "this change" : "these changes")}?",
+                MainWindow.Buttons.NoYes,
+                UserDecided);
+        }
+
+        private void UserDecided(MainWindow.Results results)
+        {
+            if (results == MainWindow.Results.No)
+            {
+                MainWindow.HideNotification();
+                return;
+            }
+            // The only other answer can be yes
+            Close();
+        }
+
+        private void Close() =>  MainWindow._instance.Creator(null, null);
+
+        private void WebImageChanged(object sender, RoutedEventArgs e)
+        {
+            string filePath = string.Empty;
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.InitialDirectory = string.IsNullOrEmpty(_item.PreviewImage) ? 
+                        _item.Directory.FullName : _item.PreviewImage;
+                dialog.Filter = "png files (*.png)|*.png";
+                dialog.RestoreDirectory = true;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    filePath = dialog.FileName;
+                }
+            }
+
+            if (string.IsNullOrEmpty(filePath))
+                return;
+
+            _webPreviewFile = new FileInfo(filePath);
+            WebPreviewImage.Source = new BitmapImage()
+                .LoadImage(_webPreviewFile.FullName);
+        }
+        
+        private void PreviewImageChanged(object sender, RoutedEventArgs e)
+        {
+            string filePath = string.Empty;
+
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.InitialDirectory = string.IsNullOrEmpty(_item.PreviewImage) ? 
+                    _item.Directory.FullName : _item.PreviewImage;
+                dialog.Filter = "png files (*.png)|*.png";
+                dialog.RestoreDirectory = true;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    filePath = dialog.FileName;
+                }
+            }
+
+            if (string.IsNullOrEmpty(filePath))
+                return;
+
+            _previewFile = new FileInfo(filePath);
+            PreviewImage.Source = new BitmapImage()
+                .LoadImage(_previewFile.FullName);
+        }
+
+        private void AddMaterialClicked(object sender, RoutedEventArgs e)
+        {
+            Console.Log("Added a new material");
+            Helper.SentryLog("Added a new material", Helper.SentryLogCategory.EditProject);
+            
+            Material newMat = new Material() { Name = "New Material" };
+            MaterialWindow window = new MaterialWindow(ref newMat, ref _item);
+            window.Closed += MaterialEditorClosing;
+            window.Show();
+            
+            _skinMaterials.Add(newMat);
+            UpdateList();
+        }
+
+        private void UpdateList()
+        {
+            MaterialsControl.ItemsSource = _skinMaterials;
+            MaterialsControl.Items.Refresh();
+        }
+
+        private void MaterialEditorClosing(object? sender, EventArgs e)
+        {
+            Console.Log("Material Editor Closed");
+            Helper.SentryLog("Closing Material Editor", Helper.SentryLogCategory.EditProject);
+            if (sender == null)
+                return;
+            
+            MaterialWindow window = sender as MaterialWindow;
+            Material material = window.Material;
+            UpdateList();
         }
     }
 }

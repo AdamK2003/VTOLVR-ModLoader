@@ -4,10 +4,512 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Launcher.Views"
+             xmlns:global="clr-namespace:"
+             xmlns:classes="clr-namespace:Launcher.Classes"
+             xmlns:mdXaml="clr-namespace:MdXaml;assembly=MdXaml"
              mc:Ignorable="d"
-             d:DesignHeight="1200" d:DesignWidth="800">
+             d:DesignHeight="1400" 
+             d:DesignWidth="800"
+             Background="#FF3d3d3d">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid x:Name="grid">
+        <Grid
+            Name="MainGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="128"/>
+                <ColumnDefinition Width="1.6*"/>
+                <ColumnDefinition Width="1.6*"/>
+                <ColumnDefinition Width="1.6*"/>
+                <ColumnDefinition Width="1.6*"/>
+                <ColumnDefinition Width="128"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock 
+                Grid.Row="1"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Editing {ProjectName}"
+                Style="{StaticResource HeaderOne}" 
+                TextAlignment="Left"
+                x:Name="Title"/>
+            <TextBlock 
+                Grid.Row="2"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="General" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}"/>
+            <TextBlock 
+                Grid.Row="3"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Project Name" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextNormal}"/>
+            <TextBlock 
+                Grid.Row="4"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="A unique name for your mod. (40 characters max &amp; Letters, Numbers and Spaces only)" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}"/>
+            <TextBox  
+                Grid.Row="5"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Name="NameInputBox"
+                FontSize="12"
+                Background="Transparent" 
+                Foreground="White" 
+                TextWrapping="Wrap" 
+                MaxLength="40"
+                Margin="0,10,0,0"
+                TextChanged="ProjectNameChanged"/>
+            <TextBlock 
+                Grid.Row="6"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Tagline" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextNormal}"/>
+            <TextBlock 
+                Grid.Row="7"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="The tagline is displayed on the mod listing. Provide a brief summary of what it does." 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}"/>
+            <TextBox 
+                Grid.Row="8"
+                Grid.Column="1" 
+                Grid.ColumnSpan="6"
+                Name="TaglineInputBox" 
+                FontSize="12" 
+                Background="Transparent" 
+                Foreground="White" 
+                TextWrapping="Wrap" 
+                Margin="0,10,0,0"
+                MaxLength="100" />
+            <TextBlock 
+                Grid.Row="9"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Source Code Link" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextNormal}"
+                Name="SourceCodeTitle"/>
+            <TextBlock 
+                Grid.Row="10"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Is your mod open source? Link the source code here so people can find it easily!" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}"
+                Name="SourceCodeDescription"/>
+            <TextBox 
+                Grid.Row="11"
+                Grid.Column="1" 
+                Grid.ColumnSpan="6"
+                FontSize="12" 
+                Background="Transparent" 
+                Foreground="White" 
+                TextWrapping="Wrap" 
+                Margin="0,10,0,0"
+                MaxLength="100"
+                Name="SourceCodeInputBox"/>
+            <TextBlock 
+                Grid.Row="12"
+                Grid.Column="1" 
+                Grid.ColumnSpan="6"
+                Text="Description" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextNormal}"/>
+            <TextBlock 
+                Grid.Row="13" 
+                Grid.Column="1"
+                Grid.ColumnSpan="3"
+                Text="Explain what your mod does and how to use it!" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}"/>
+            <TextBlock 
+                Grid.Row="13" 
+                Grid.Column="4" 
+                Grid.ColumnSpan="3"
+                Text="Markdown Preview" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}" 
+                TextAlignment="Right"/>
+            <TextBox 
+                Grid.Row="14" 
+                Grid.Column="1" 
+                Grid.ColumnSpan="2"
+                Name="DescriptionInputBox" 
+                Text="Your Projects Description" 
+                FontSize="12" 
+                TextChanged="ProjectDescription_OnTextChanged"
+                Background="Transparent" 
+                Foreground="White" TextWrapping="Wrap"
+                AcceptsReturn="True" 
+                AcceptsTab="True" 
+                AllowDrop="True"
+                Margin="0,10,0,0"/>
+            <Rectangle
+                Grid.Row="14" 
+                Grid.Column="4"
+                Grid.ColumnSpan="3"
+                Fill="White"
+                Margin="100,10,0,0"/>
+            <mdXaml:MarkdownScrollViewer 
+                Grid.Row="14" 
+                Grid.Column="4"
+                Grid.ColumnSpan="3"
+                Name="MarkdownViewer"
+                MarkdownStyleName="GithubLike"
+                Margin="100,10,0,0"
+                HorizontalScrollBarVisibility="Hidden"
+                VerticalScrollBarVisibility="Hidden"
+                ClickAction="OpenBrowser"/>
+            <TextBlock 
+                Grid.Row="15"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Make Public" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextNormal}"/>
+            <TextBlock 
+                Grid.Row="16" 
+                Grid.Column="1"
+                Grid.ColumnSpan="5"
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}"
+                Text="Set if your item should be visible on the public list. This should be used if you want to do private testing by yourself."/>
+            <Button 
+                Grid.Row="16" 
+                Grid.Column="6" 
+                Margin="10,10,10,0"
+                Height="29"
+                Style="{StaticResource RoundedLightButton}"
+                FontFamily="{StaticResource Medium}"
+                Content="Private"
+                Name="PublicButton"
+                Click="MakePublicPressed"/>
+            <TextBlock 
+                Grid.Row="17" 
+                Grid.Column="1" 
+                Grid.ColumnSpan="5"
+                Margin="0,10,0,0"
+                Text="⚠️ Warning this will only this item will only be accessible by your account. " 
+                Style="{StaticResource TextSmall}"
+                FontFamily="{StaticResource Medium}"
+                Background="#E1B12C" 
+                Foreground="Black"
+                TextAlignment="Center" 
+                Padding="2"
+                Name="PublicWarningText"/>
+            <TextBlock 
+                Grid.Row="18"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Make Unlisted" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextNormal}"/>
+            <TextBlock 
+                Grid.Row="19"
+                Grid.Column="1"
+                Grid.ColumnSpan="5"
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}"
+                Text="Set if your mod should be hidden from the mods list. This should be used if you want to do private testing, your mod must still be marked public to be accessible. Anyone with a link would be able to access your mod."/>
+            <Button 
+                Grid.Row="19"
+                Grid.Column="6"
+                Margin="10,0,10,0"
+                Height="29"
+                Style="{StaticResource RoundedLightButton}"
+                FontFamily="{StaticResource Medium}"
+                Content="Unlisted"
+                Name="UnlistedButton"
+                Click="UnlistedPressed"/>
+            <TextBlock 
+                Grid.Row="20"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Version" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextNormal}"/>
+            <TextBlock 
+                Grid.Row="21"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}"
+                Text="What version your mod is. Example: 1.0.0"/>
+            <TextBox 
+                Grid.Row="22" 
+                Grid.Column="1"
+                Grid.ColumnSpan="6"  
+                Text="1.0.0" 
+                FontSize="12"
+                Background="Transparent" 
+                Foreground="White" 
+                TextWrapping="Wrap"
+                Margin="0,10,0,0"
+                Name="VersionInputBox"/>
+            
+            <!-- # Divider # -->
+            <Rectangle
+                Grid.Row="23"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Fill="#4b4b4b"
+                Height="5"
+                Margin="0,20,0,20"/>
+            <!-- # Divider # -->
+            
+            <TextBlock 
+                Grid.Row="24"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Images" 
+                Style="{StaticResource TextSmall}"/>
+            <TextBlock 
+                Grid.Row="25"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Web Preview Image" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextNormal}"/>
+            <TextBlock 
+                Grid.Row="26"
+                Grid.Column="1"
+                Grid.ColumnSpan="5"
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}"
+                Text="This will be the image shown on the mods list on the website. Must be an image file (PNG ) and less than 2MB."/>
+            <Rectangle
+                Grid.Row="26"
+                Grid.Column="6"
+                Fill="#4b4b4b"
+                Height="72"
+                Width="128"/>
+            <Image 
+                Grid.Row="26" 
+                Grid.Column="6" 
+                Name="WebPreviewImage"
+                Height="72"
+                Width="128"/>
+            <Button 
+                Grid.Row="27" 
+                Grid.Column="6" 
+                Margin="10,10,10,0"
+                Height="29"
+                Style="{StaticResource RoundedLightButton}"
+                FontFamily="{StaticResource Medium}"
+                Content="Change"
+                Click="WebImageChanged"/>
+            <TextBlock 
+                Grid.Row="28"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Preview Image" 
+                Margin="0,10,0,0"
+                Style="{StaticResource TextNormal}"/>
+            <TextBlock 
+                Grid.Row="29"
+                Grid.Column="1"
+                Grid.ColumnSpan="5"
+                Margin="0,10,0,0"
+                Style="{StaticResource TextSmall}"
+                Text="This will be the image shown on the mods list in game. Must be an image file (PNG ) and less than 2MB."/>
+            <Rectangle
+                Grid.Row="29"
+                Grid.Column="6"
+                Fill="#4b4b4b"
+                Height="72"
+                Width="128"/>
+            <Image 
+                Grid.Row="29" 
+                Grid.Column="6" 
+                Name="PreviewImage"
+                Height="72"
+                Width="128"/>
+            <Button 
+                Grid.Row="30" 
+                Grid.Column="6" 
+                Margin="10,10,10,0"
+                Height="29"
+                Style="{StaticResource RoundedLightButton}"
+                FontFamily="{StaticResource Medium}"
+                Content="Change"
+                Click="PreviewImageChanged"/>
+            
+            <!-- # Divider # -->
+            <Rectangle
+                Grid.Row="31"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Fill="#4b4b4b"
+                Height="5"
+                Margin="0,20,0,20"/>
+            <!-- # Divider # -->
+            
+            <TextBlock 
+                Grid.Row="32"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Text="Skin Materials" 
+                Style="{StaticResource TextSmall}"
+                Name="SkinsTitle"/>
+            <Button
+                Grid.Row="32"
+                Grid.Column="6"
+                Content="Add Material"
+                Height="29"
+                Margin="10,10,10,0"
+                Style="{StaticResource RoundedGreenButton}"
+                FontFamily="{StaticResource Medium}"
+                Name="AddMaterialButton"
+                Click="AddMaterialClicked"/>
+            <ItemsControl
+                Grid.Row="33"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Margin="0,10,0,0"
+                Name="MaterialsControl">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button
+                            Style="{StaticResource transparentButton}"
+                            Margin="10"
+                            Click="SkinMaterialClicked"
+                            Tag="{Binding }">
+                            <StackPanel
+                                Background="#4b4b4b"
+                                Height="160"
+                                Width="160">
+                                <Rectangle
+                                    Height="128"
+                                    Width="128"
+                                    Fill="Red"
+                                    Margin="0,10,0,0"/>
+                                <TextBlock 
+                                    Text="{Binding Name}"
+                                    Style="{StaticResource TextSmall}"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                
+            </ItemsControl>
+            
+            <!-- # Divider # -->
+            <Rectangle
+                Grid.Row="34"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Fill="#4b4b4b"
+                Height="5"
+                Margin="0,20,0,20"
+                Name="SkinDivider"/>
+            <!-- # Divider # -->
+            
+            <Button
+                Grid.Row="35"
+                Grid.Column="1"
+                Content="Cancel Changes"
+                Height="29"
+                Margin="10,10,10,0"
+                Style="{StaticResource RoundedRedButton}"
+                FontFamily="{StaticResource Medium}"
+                Click="CancelChanges"/>
+            <Button
+                Grid.Row="35"
+                Grid.Column="6"
+                Name="SaveButton"
+                Content="Save Changes"
+                Height="29"
+                Margin="10,10,10,0"
+                Style="{StaticResource RoundedGreenButton}"
+                FontFamily="{StaticResource Medium}"
+                Click="SaveProject"/>
+            
+            <!-- Height is 60 when expanded -->
+            <Rectangle
+                Grid.Row="35"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="8"
+                Fill="#fffa65"
+                Height="0" 
+                Name="PopupRectangle"
+                VerticalAlignment="Bottom"/>
+            <TextBlock
+                Grid.Row="35"
+                Grid.RowSpan="2"
+                Grid.Column="1"
+                Grid.ColumnSpan="6"
+                Style="{StaticResource TextNormal}"
+                Foreground="Black"
+                Text="Saved"
+                Name="PopupText"
+                TextAlignment="Center"
+                VerticalAlignment="Bottom"
+                Height="0"
+                Margin="10,10,0,0"/>
+            
+            
+            <Grid x:Name="grid" Grid.Column="1" Visibility="Hidden">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30" />
                 <RowDefinition Height="100" />
@@ -26,23 +528,15 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Text="Project Name:" Foreground="LightGray" FontSize="20" />
-            <TextBox Grid.Row="1" x:Name="projectName" Text="Your Project Name" FontSize="40"
-                     Background="Transparent" Foreground="White" TextWrapping="Wrap" MaxLength="40"
-                     TextChanged="ProjectNameChanged" />
+            
 
             <TextBlock Grid.Row="2" Text="Tagline:" Foreground="LightGray" FontSize="20" />
-            <TextBox Grid.Row="3" x:Name="tagline"
-                     Text="The tagline is displayed on the mod listing. Provide a brief summary of what it does."
-                     FontSize="20" Background="Transparent" Foreground="White" TextWrapping="Wrap" MaxLength="100" />
+            
 
             <TextBlock Grid.Row="4" Text="Project Description:" Foreground="LightGray" FontSize="20" />
-            <TextBox Grid.Row="5" x:Name="projectDescription" Text="Your Projects Description" FontSize="20"
-                     Background="Transparent" Foreground="White" TextWrapping="Wrap"
-                     AcceptsReturn="True" AcceptsTab="True" AllowDrop="True" />
+            
 
             <TextBlock Grid.Row="6" Text="Product Version:" Foreground="LightGray" FontSize="20" />
-            <TextBox Grid.Row="7" x:Name="projectVersion" Text="1.0.0" FontSize="20"
-                     Background="Transparent" Foreground="White" TextWrapping="Wrap" />
 
             <TextBlock Grid.Row="8" Text="Source Code (Optional) :" Foreground="LightGray" FontSize="20"
                        Visibility="Hidden"
@@ -70,9 +564,7 @@
                            TextAlignment="Center">
                     Web Page Image
                 </TextBlock>
-
-                <Image Grid.Row="1" Grid.Column="0" x:Name="previewImage" />
-                <Image Grid.Row="1" Grid.Column="1" x:Name="webPageImage" />
+                
 
                 <TextBlock Grid.Row="1" Grid.Column="0" Foreground="LightGray" FontSize="20" TextAlignment="Center"
                            VerticalAlignment="Center" x:Name="previewImageText">
@@ -95,16 +587,12 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"
-                          Content="Is Public" Foreground="White" Checked="PublicChanged" x:Name="isPublic"
-                          ToolTip="Set if your mod should be visible on the mods list. This should be used if you want to do private testing." />
                 <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="False" VerticalAlignment="Center"
                           Content="Is Unlisted" Foreground="White" Checked="UnlistedChanged" x:Name="unlisted"
                           ToolTip="Set if your mod should be hidden from the mods list. This should be used if you want to do private testing, your mod must still be marked public to be accessible. Anyone with a link would be able to access your mod." />
             </Grid>
-            <Button Grid.Row="99" x:Name="saveButton" Click="Save" Style="{StaticResource RoundedDarkButton}"
-                    Content="Save" />
 
+        </Grid>
         </Grid>
     </ScrollViewer>
 </UserControl>

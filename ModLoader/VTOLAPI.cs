@@ -176,6 +176,8 @@ public class VTOLAPI : MonoBehaviour
                 return VTOLVehicles.FA26B;
             case "F-45A":
                 return VTOLVehicles.F45A;
+            case "AH-94":
+                return VTOLVehicles.AH94;
             default:
                 return VTOLVehicles.None;
         }

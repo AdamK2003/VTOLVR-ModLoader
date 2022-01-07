@@ -157,20 +157,18 @@ namespace ModLoader
                     currentSkin.hasF45A = true;
                     Log($"[{folder}] has a skin for the F-45A");
                 }
+                
+                if (File.Exists(folder + @"\3.png")) //AH-94
+                {
+                    currentSkin.hasAH94 = true;
+                    Log($"[{folder}] has a skin for the AH-94");
+                }
 
-                if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.AV42C && currentSkin.hasAv42c)
-                {
-                    currentSkin.folderPath = folder;
-                    installedSkins.Add(currentSkin);
-                    Log("Added that skin to the list");
-                }
-                else if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.FA26B && currentSkin.hasFA26B)
-                {
-                    currentSkin.folderPath = folder;
-                    installedSkins.Add(currentSkin);
-                    Log("Added that skin to the list");
-                }
-                else if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.F45A && currentSkin.hasF45A)
+                VTOLVehicles currentVehicle = VTOLAPI.GetPlayersVehicleEnum();
+                if ((currentVehicle == VTOLVehicles.AV42C && currentSkin.hasAv42c) ||
+                    (currentVehicle == VTOLVehicles.FA26B && currentSkin.hasFA26B) ||
+                    (currentVehicle == VTOLVehicles.F45A && currentSkin.hasF45A) ||
+                    (currentVehicle == VTOLVehicles.AH94 && currentSkin.hasAH94))
                 {
                     currentSkin.folderPath = folder;
                     installedSkins.Add(currentSkin);
@@ -308,6 +306,9 @@ namespace ModLoader
                 case VTOLVehicles.F45A:
                     preview = @"\2.png";
                     break;
+                case VTOLVehicles.AH94:
+                    preview = @"\3.png";
+                    break;
             }
             WWW www = new WWW("file:///" + installedSkins[currentSkin].folderPath + preview);
             while (!www.isDone)
@@ -323,7 +324,7 @@ namespace ModLoader
         private class Skin
         {
             public string name;
-            public bool hasAv42c, hasFA26B, hasF45A;
+            public bool hasAv42c, hasFA26B, hasF45A, hasAH94;
             public string folderPath;
         }
     }

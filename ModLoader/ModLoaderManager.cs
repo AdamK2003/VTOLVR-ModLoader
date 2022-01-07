@@ -93,6 +93,20 @@ namespace ModLoader
             HarmonyInstance harmony = HarmonyInstance.Create("vtolvrmodding.modloader");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             LoadLauncherSettings();
+
+            const string key = "USE_OVERCLOUD";
+            if (GameSettings.TryGetGameSettingValue(key, out bool ocEnabled))
+            {
+                if (ocEnabled)
+                {
+                    Debug.Log("The Mod Loader has detected overcloud was enabled. Disabling OverCloud Setting");
+                    GameSettings.SetGameSettingValue(key, false);
+                }
+                else
+                {
+                    Debug.Log("The Mod Loader checked for OverCloud and it was false.");
+                }
+            }
         }
 
         private void TcpDataReceived(object sender, Message e)

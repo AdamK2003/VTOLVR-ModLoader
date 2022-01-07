@@ -137,7 +137,6 @@ namespace Launcher.Views
             public string NewReleaseText { get; set; }
             public DateTime DateTime { get; set; }
             public Brush BackgroundColour { get; set; }
-            public long LastEditLong { get; set; }
 
             public MyProject(string name, string description, string path, string openProjectText,
                 string newReleaseText, DateTime dateTime)
@@ -149,14 +148,13 @@ namespace Launcher.Views
                 OpenProjectText = openProjectText;
                 NewReleaseText = newReleaseText;
                 DateTime = dateTime;
-                LastEditLong = dateTime.Ticks;
             }
         }
 
         private void EditProject(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            MainWindow.OpenPage(new EditProject((long)button.Tag));
+            MainWindow.OpenPage(new EditProject(button.Tag.ToString()));
         }
 
         private void OpenProject(object sender, RoutedEventArgs e)

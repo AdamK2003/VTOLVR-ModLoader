@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Core.Classes;
-using Core.Jsons;
 using Valve.Newtonsoft.Json;
 using Valve.Newtonsoft.Json.Linq;
 using Valve.Newtonsoft.Json.Serialization;
 
-namespace Core.JsonConverters
+namespace Core.Jsons
 {
     public class BaseItemConverter : JsonConverter
     {
@@ -49,34 +47,27 @@ namespace Core.JsonConverters
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
             JsonSerializer serializer)
         {
-            BaseItem instance = new BaseItem();
+            object instance = Activator.CreateInstance(objectType);
             var props = objectType.GetTypeInfo().DeclaredProperties.ToList();
 
             JObject jo = JObject.Load(reader);
             foreach (JProperty jp in jo.Properties())
             {
-                string name = jp.Name;
-                // Checks to see if any old properties are present
-                if (_propertyMappings.TryGetValue(jp.Name, out string updatedName))
+                if (!_propertyMappings.TryGetValue(jp.Name, out string name))
                 {
-                    name = updatedName;
+                    name = jp.Name;
                 }
 
-                // Loops through all the variables in the class BaseItem
                 for (int i = 0; i < props.Count; i++)
                 {
                     if (!props[i].CanWrite)
                         continue;
-                    
-                    // Checks if it has the attribute and the names match
                     var hasAttribute = props[i].GetCustomAttribute<JsonPropertyAttribute>();
                     if (hasAttribute != null &&
                         hasAttribute.PropertyName == name)
                     {
-                        // Sets the instance variable to the converted json object
-                        object newValue = jp.Value.ToObject(props[i].PropertyType, serializer);
-                        Logger.Log($"Setting {name} to value of {newValue}({jp.Value})");
-                        props[i].SetValue(instance,newValue);
+                        hasAttribute.PropertyName = name;
+                        props[i].SetValue(instance, jp.Value.ToObject(props[i].PropertyType, serializer));
                         break;
                     }
                 }
@@ -95,40 +86,8 @@ namespace Core.JsonConverters
             {
                 if (property.PropertyType == typeof(DirectoryInfo))
                     continue;
-                
-                writer.WritePropertyName(property.PropertyName);
-                
-                if (property.PropertyType == typeof(List<Material>))
-                {
-                    List<Material> list = property.ValueProvider.GetValue(value) as List<Material>;
-                    if (list == null)
-                    {
-                        writer.WriteNull();
-                        continue;
-                    }
-                    
-                    writer.WriteStartArray();
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        Material currentMat = list[i];
-                        writer.WriteStartObject();
-                        
-                        writer.WritePropertyName("Name");
-                        writer.WriteValue(currentMat.Name);
 
-                        writer.WritePropertyName("Textures");
-                        foreach (var keyPair in currentMat.Textures)
-                        {
-                            writer.WriteStartObject();
-                            writer.WritePropertyName(keyPair.Key);
-                            writer.WriteValue(keyPair.Value);
-                            writer.WriteEndObject();
-                        }
-                        writer.WriteEndObject();
-                    }
-                    writer.WriteEndArray();
-                    continue;
-                }
+                writer.WritePropertyName(property.PropertyName);
 
                 if (property.PropertyType == typeof(List<string>))
                 {

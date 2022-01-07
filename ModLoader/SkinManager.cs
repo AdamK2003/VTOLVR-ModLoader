@@ -4,8 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Core.Enums;
-using Core.Jsons;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -15,33 +13,25 @@ namespace ModLoader
     public class SkinManager : VTOLMOD
     {
         //This variables are used on different scenes
-        private List<BaseItem> _skins = new List<BaseItem>();
-        private List<Skin> _installedSkins = new List<Skin>();
-        private int _selectedSkin = -1;
+        private List<Skin> installedSkins = new List<Skin>();
+        private int selectedSkin = -1;
 
         //Vehicle Config scene only
-        private int _currentSkin;
-        private Text _scenarioName;
-        private Text _scenarioDescription;
-        private RawImage _skinPreview;
+        private int currentSkin;
+        private Text scenarioName, scenarioDescription;
+        private RawImage skinPreview;
 
-        private static GameObject _prefab;
+        private static GameObject prefab;
 
         /// <summary>
         /// All the materials in the game
         /// </summary>
-        private List<Mat> _materials;
+        private List<Mat> materials;
         /// <summary>
         /// The default textures so we can revert back
         /// </summary>
-        private Dictionary<string, Texture> _defaultTextures;
-        private readonly string[] _matsNotToTouch = new string[] { "Font Material", "Font Material_0", "Font Material_1", "Font Material_2", "Font Material_3", "Font Material_4", "Font Material_5", "Font Material_6" };
-        
-        /// <summary>
-        /// A dictionary of all the already loaded textures. Their full path as the key.
-        /// </summary>
-        private Dictionary<string, Texture2D> _loadedTextures = new Dictionary<string, Texture2D>();
-        
+        private Dictionary<string, Texture> defaultTextures;
+        private string[] matsNotToTouch = new string[] { "Font Material", "Font Material_0", "Font Material_1", "Font Material_2", "Font Material_3", "Font Material_4", "Font Material_5", "Font Material_6" };
         private struct Mat
         {
             public string name;
@@ -53,7 +43,6 @@ namespace ModLoader
                 this.material = material;
             }
         }
-        
         private void Start()
         {
             Mod mod = new Mod();
@@ -68,13 +57,13 @@ namespace ModLoader
             yield return new WaitForSeconds(0.5f);
             Log("Getting Default Textures");
             Material[] materials = Resources.FindObjectsOfTypeAll(typeof(Material)) as Material[];
-            _defaultTextures = new Dictionary<string, Texture>(materials.Length);
+            defaultTextures = new Dictionary<string, Texture>(materials.Length);
 
 
             for (int i = 0; i < materials.Length; i++)
             {
-                if (!_matsNotToTouch.Contains(materials[i].name) && !_defaultTextures.ContainsKey(materials[i].name))
-                    _defaultTextures.Add(materials[i].name, materials[i].GetTexture("_MainTex"));
+                if (!matsNotToTouch.Contains(materials[i].name) && !defaultTextures.ContainsKey(materials[i].name))
+                    defaultTextures.Add(materials[i].name, materials[i].GetTexture("_MainTex"));
             }
 
             Log($"Got {materials.Length} default textures stored");
@@ -108,25 +97,22 @@ namespace ModLoader
                     break;
             }
         }
-        
         private void SpawnMenu()
         {
-            if (_prefab == null)
-                _prefab = ModLoader.assetBundle.LoadAsset<GameObject>("SkinLoaderMenu");
+            if (prefab == null)
+                prefab = ModLoader.assetBundle.LoadAsset<GameObject>("SkinLoaderMenu");
 
             //Setting Position
-            GameObject pannel = Instantiate(_prefab);
+            GameObject pannel = Instantiate(prefab);
             pannel.transform.position = new Vector3(-83.822f, -15.68818f, 5.774f);
             pannel.transform.rotation = Quaternion.Euler(-180, 62.145f, 180);
 
             Transform scenarioDisplayObject = pannel.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(1);
 
             //Storing Objects for later use
-            _scenarioName = scenarioDisplayObject.GetChild(1).GetChild(3).GetComponent<Text>();
-            _scenarioDescription = scenarioDisplayObject.GetChild(1).GetChild(2).GetComponent<Text>();
-            _skinPreview = scenarioDisplayObject.GetChild(1).GetChild(1).GetComponent<RawImage>();
-            
-            _scenarioDescription.gameObject.SetActive(true);
+            scenarioName = scenarioDisplayObject.GetChild(1).GetChild(3).GetComponent<Text>();
+            scenarioDescription = scenarioDisplayObject.GetChild(1).GetChild(2).GetComponent<Text>();
+            skinPreview = scenarioDisplayObject.GetChild(1).GetChild(1).GetComponent<RawImage>();
 
             //Linking buttons with methods
             VRInteractable NextENVButton = scenarioDisplayObject.GetChild(1).GetChild(5).GetComponent<VRInteractable>();
@@ -140,112 +126,116 @@ namespace ModLoader
             VRInteractable ApplyButton = scenarioDisplayObject.GetChild(1).GetChild(4).GetComponent<VRInteractable>();
             ApplyButton.OnInteract.AddListener(delegate { SelectSkin(); Apply(); });
 
-            FindSkins();
+            FindSkins(Path.Combine(ModLoaderManager.RootPath, "skins"));
+            if (!string.IsNullOrEmpty(ModLoaderManager.MyProjectsPath))
+                FindSkins(Path.Combine(ModLoaderManager.MyProjectsPath, "My Skins"));
             UpdateUI();
 
         }
-        
-        private void FindSkins()
+        private void FindSkins(string path)
         {
-            _skins = ModReader.Items.Where(
-                x => x.ContentType == ContentType.Skins || x.ContentType == ContentType.MySkins).ToList();
+            Log("Searching for Skins in " + path);
+            foreach (string folder in Directory.GetDirectories(path))
+            {
+                Skin currentSkin = new Skin();
+                string[] split = folder.Split('\\');
+                currentSkin.name = split[split.Length - 1];
+                if (File.Exists(folder + @"\0.png")) //AV-42C
+                {
+                    currentSkin.hasAv42c = true;
+                    Log($"[{folder}] has a skin for the AV-42C");
+                }
+
+                if (File.Exists(folder + @"\1.png")) //FA26B
+                {
+                    currentSkin.hasFA26B = true;
+                    Log($"[{folder}] has a skin for the FA-26B");
+                }
+
+                if (File.Exists(folder + @"\2.png")) //F45A
+                {
+                    currentSkin.hasF45A = true;
+                    Log($"[{folder}] has a skin for the F-45A");
+                }
+
+                if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.AV42C && currentSkin.hasAv42c)
+                {
+                    currentSkin.folderPath = folder;
+                    installedSkins.Add(currentSkin);
+                    Log("Added that skin to the list");
+                }
+                else if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.FA26B && currentSkin.hasFA26B)
+                {
+                    currentSkin.folderPath = folder;
+                    installedSkins.Add(currentSkin);
+                    Log("Added that skin to the list");
+                }
+                else if (VTOLAPI.GetPlayersVehicleEnum() == VTOLVehicles.F45A && currentSkin.hasF45A)
+                {
+                    currentSkin.folderPath = folder;
+                    installedSkins.Add(currentSkin);
+                    Log("Added that skin to the list");
+                }
+                else if (!currentSkin.hasAv42c && !currentSkin.hasF45A && !currentSkin.hasF45A)
+                {
+                    LogError($"It seems that a folder doesn't have any skins in it. Folder: {folder}");
+                }
+
+            }
         }
-        
         public void Next()
         {
-            _currentSkin += 1;
+            currentSkin += 1;
             ClampCount();
             UpdateUI();
         }
-        
         public void Previous()
         {
-            _currentSkin -= 1;
+            currentSkin -= 1;
             ClampCount();
             UpdateUI();
 
         }
-        
         public void SelectSkin()
         {
-            Debug.Log("Changed selected skin to " + _currentSkin);
-            _selectedSkin = _currentSkin;
+            Debug.Log("Changed selected skin to " + currentSkin);
+            selectedSkin = currentSkin;
         }
-        
+
+
+
         private void FindMaterials(Material[] mats)
         {
             if (mats == null)
                 mats = Resources.FindObjectsOfTypeAll<Material>();
-            _materials = new List<Mat>(mats.Length);
+            materials = new List<Mat>(mats.Length);
 
             //We now add every texture into the dictionary which gives more things to change for the skin creators
             for (int i = 0; i < mats.Length; i++)
             {
-                _materials.Add(new Mat(mats[i].name, mats[i]));
+                materials.Add(new Mat(mats[i].name, mats[i]));
             }
         }
         public void RevertTextures()
         {
             Log("Reverting Textures");
-            for (int i = 0; i < _materials.Count; i++)
+            for (int i = 0; i < materials.Count; i++)
             {
-                if (_defaultTextures.ContainsKey(_materials[i].name))
-                    _materials[i].material.SetTexture("_MainTex", _defaultTextures[_materials[i].name]);
+                if (defaultTextures.ContainsKey(materials[i].name))
+                    materials[i].material.SetTexture("_MainTex", defaultTextures[materials[i].name]);
                 else
-                    LogError($"Tried to get material {_materials[i].name} but it wasn't in the default dictonary");
+                    LogError($"Tried to get material {materials[i].name} but it wasn't in the default dictonary");
             }
         }
-        
         private void Apply()
         {
-            Log("Applying Skin Number " + _selectedSkin);
-            if (_selectedSkin < 0)
+            Log("Applying Skin Number " + selectedSkin);
+            if (selectedSkin < 0)
             {
                 Debug.Log("Selected Skin was below 0");
                 return;
             }
 
-            BaseItem skin = _skins[_currentSkin];
-            Log($"Skin = {skin.Name}|Path = {skin.Directory.FullName}");
-
-            foreach (Core.Classes.Material material in skin.SkinMaterials)
-            {
-                for (int i = 0; i < _materials.Count; i++)
-                {
-                    if (!material.Name.Equals(_materials[i].material.name))
-                        continue;
-                    StartCoroutine(SetTextures(material.Textures, _materials[i].material, skin.Directory.FullName));
-                    break;
-                }
-            }
-
-            if (skin.SkinMaterials.Count != 0)
-            {
-                Log($"{skin.Name} is an up to date skin");
-                return;
-            }
-            
-            // This section is to keep old skins still working.
-            
-            LogWarning($"{skin.Name} is a legacy skin.");
-
-            string lastPath = string.Empty;
-            for (int i = 0; i < _materials.Count; i++)
-            {
-                lastPath = Path.Combine(skin.Directory.FullName, $"{_materials[i].name}.png");
-                if (File.Exists(lastPath))
-                {
-                    StartCoroutine(UpdateTexture(lastPath, _materials[i].material));
-                    continue;
-                }
-                lastPath = Path.Combine(skin.Directory.FullName, "mat_aFighterExt2.png");
-                if (_materials[i].name.Equals("mat_afighterExt2_livery") && File.Exists(lastPath))
-                {
-                    StartCoroutine(UpdateTexture(lastPath, _materials[i].material));
-                }
-            }
-
-            /*
             Skin selected = installedSkins[selectedSkin];
 
             Log("\nSkin: " + selected.name + " \nPath: " + selected.folderPath);
@@ -263,41 +253,7 @@ namespace ModLoader
                     StartCoroutine(UpdateTexture(selected.folderPath + @"\mat_aFighterExt2.png", materials[i].material));
                 }
             }
-            */
-
         }
-
-        private IEnumerator SetTextures(Dictionary<string, string> textures, Material material, string folder)
-        {
-            string lastPath = string.Empty;
-            foreach (KeyValuePair<string,string> pair in textures)
-            {
-                lastPath = Path.Combine(folder, pair.Value);
-                
-                // Checking if we have already loaded it
-                if (_loadedTextures.ContainsKey(lastPath))
-                {
-                    material.SetTexture(pair.Key, _loadedTextures[lastPath]);
-                    Log($"Found {lastPath} cached");
-                    yield break;
-                }
-                
-                Log($"Loading {lastPath} as it isn't in the cache");
-                using (WWW www = new WWW($"file:///{lastPath}"))
-                {
-                    while (!www.isDone)
-                        yield return null;
-                    material.SetTexture(pair.Key, www.texture);
-                    
-                    // This check is here in case the same texture gets loaded twice
-                    // in two different materials. 
-                    if (!_loadedTextures.ContainsKey(lastPath))
-                        _loadedTextures.Add(lastPath, www.texture);
-                }
-            }
-        }
-        
-        // Legacy skins loading method
         private IEnumerator UpdateTexture(string path, Material material)
         {
             Log("Updating Texture from path: " + path);
@@ -315,78 +271,49 @@ namespace ModLoader
                 Log($"Set Material for {material.name} to texture located at {path}");
             }
         }
-        
+
+
+
         private void ClampCount()
         {
-            if (_currentSkin < 0)
+            if (currentSkin < 0)
             {
-                Debug.Log("Current Skin was below 0, moving to max amount which is " + (_skins.Count - 1));
-                _currentSkin = _skins.Count - 1;
+                Debug.Log("Current Skin was below 0, moving to max amount which is " + (installedSkins.Count - 1));
+                currentSkin = installedSkins.Count - 1;
             }
-            else if (_currentSkin > _skins.Count - 1)
+            else if (currentSkin > installedSkins.Count - 1)
             {
                 Debug.Log("Current Skin was higher than the max amount of skins, reseting to 0");
-                _currentSkin = 0;
+                currentSkin = 0;
             }
         }
-        
         private void UpdateUI()
         {
-            if (_skins.Count == 0)
+            if (installedSkins.Count == 0)
                 return;
             StartCoroutine(UpdateUIEnumerator());
-            Log("Current Skin = " + _currentSkin);
+            Log("Current Skin = " + currentSkin);
         }
-        
         private IEnumerator UpdateUIEnumerator()
         {
-            BaseItem skin = _skins[_currentSkin];
-            string previewImagePath = String.Empty;
-
-            if (!string.IsNullOrEmpty(skin.PreviewImage))
+            string preview = @"";
+            switch (VTOLAPI.GetPlayersVehicleEnum())
             {
-                previewImagePath = skin.PreviewImage;
+                case VTOLVehicles.AV42C:
+                    preview = @"\0.png";
+                    break;
+                case VTOLVehicles.FA26B:
+                    preview = @"\1.png";
+                    break;
+                case VTOLVehicles.F45A:
+                    preview = @"\2.png";
+                    break;
             }
-            else
-            {
-                // This is for old skins before 5.2.0
-                
-                string preview = @"";
-                switch (VTOLAPI.GetPlayersVehicleEnum())
-                {
-                    case VTOLVehicles.AV42C:
-                        preview = @"0.png";
-                        break;
-                    case VTOLVehicles.FA26B:
-                        preview = @"1.png";
-                        break;
-                    case VTOLVehicles.F45A:
-                        preview = @"2.png";
-                        break;
-                }
-                Log($"{skin.Directory} + {preview} = {Path.Combine(skin.Directory.FullName, preview)}");
-                previewImagePath = Path.Combine(skin.Directory.FullName, preview);
-                LogWarning($"Using legacy image path of \"{previewImagePath}\" for {skin.Name}");
-            }
-
-            Texture2D previewImage;
-            if (_loadedTextures.ContainsKey(previewImagePath))
-            {
-                previewImage = _loadedTextures[previewImagePath];
-            }
-            else
-            {
-                using (WWW www = new WWW($"file://{previewImagePath}"))
-                {
-                    while (!www.isDone)
-                        yield return null;
-                    previewImage = www.texture;
-                }
-            }
-            
-            _scenarioName.text = skin.Name;
-            _scenarioDescription.text = skin.Tagline;
-            _skinPreview.texture = previewImage;
+            WWW www = new WWW("file:///" + installedSkins[currentSkin].folderPath + preview);
+            while (!www.isDone)
+                yield return null;
+            scenarioName.text = installedSkins[currentSkin].name;
+            skinPreview.texture = www.texture;
         }
         private void OnDestroy()
         {

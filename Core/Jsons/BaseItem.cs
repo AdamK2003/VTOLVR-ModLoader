@@ -3,9 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Core.Classes;
 using Core.Enums;
-using Core.JsonConverters;
 using Valve.Newtonsoft.Json;
 
 namespace Core.Jsons
@@ -28,7 +26,6 @@ namespace Core.Jsons
         public const string JWebPreviewImage = "web_preview_image";
         public const string JDependencies = "dependencies";
         public const string JModDependencies = "mod_dependencies";
-        public const string JSkinMaterials = "skin_materials";
 
         [JsonProperty(JName)] public string Name { get; set; } = string.Empty;
         [JsonProperty(JDescription)] public string Description { get; set; } = string.Empty;
@@ -45,9 +42,6 @@ namespace Core.Jsons
         [JsonProperty(JWebPreviewImage)] public string WebPreviewImage { get; set; } = string.Empty;
         [JsonProperty(JDependencies)] public List<string> Dependencies { get; set; }
         [JsonProperty(JModDependencies)] public List<BaseItem> ModDependencies { get; set; }
-
-        [JsonProperty(JSkinMaterials)]
-        public List<Material> SkinMaterials { get; set; } = new List<Material>();
         [JsonIgnore] public DirectoryInfo Directory { get; set; }
 
         [JsonIgnore]
@@ -124,11 +118,6 @@ namespace Core.Jsons
 
             Logger.Error("Failed to get base item.\nError:" + error);
             return null;
-        }
-
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
     }
 }

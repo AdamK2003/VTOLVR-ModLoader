@@ -35,7 +35,6 @@
             <RowDefinition Height="45" />
             <RowDefinition Height="45" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="5" />
             <RowDefinition Height="40" />
             <RowDefinition Height="20" />
@@ -51,19 +50,10 @@
         </Grid.ColumnDefinitions>
 
         <!-- Background Colours -->
-        <Rectangle 
-            Grid.Row="0" 
-            Grid.RowSpan="14" 
-            Grid.Column="0" 
-            Grid.ColumnSpan="2"
-            Fill="#4b4b4b"/>
-        
-        <Rectangle 
-            Grid.Row="14" 
-            Grid.RowSpan="3" 
-            Grid.Column="0" 
-            Grid.ColumnSpan="6"
-            Fill="#4b4b4b"/>
+        <Rectangle Grid.Row="0" Grid.RowSpan="13" Grid.Column="0" Grid.ColumnSpan="2"
+                   Fill="#4b4b4b"></Rectangle>
+        <Rectangle Grid.Row="13" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="6"
+                   Fill="#4b4b4b"></Rectangle>
         
         <!-- Top Warning Message -->
         <Grid Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4"
@@ -136,96 +126,27 @@
                 Click="OpenSettings" Style="{StaticResource RoundedDarkButton}" x:Name="settingsButton"
                 Margin="11,8" />
         
-        <ContentControl 
-            Grid.Row="0" 
-            Grid.RowSpan="14" 
-            Grid.Column="2" 
-            Grid.ColumnSpan="4"  
-            Content="{Binding}" />
+        <ContentControl Grid.Row="0" Grid.RowSpan="13" Grid.Column="2" Grid.ColumnSpan="4"  Content="{Binding}" />
 
         
-        <ProgressBar  
-            Grid.Row="15" 
-            Grid.Column="1" 
-            Grid.ColumnSpan="2"
-            Style="{DynamicResource DarkProgressBar}" 
-            Foreground="#3d3d3d"
-            Background="{x:Null}" 
-            BorderBrush="{x:Null}" 
-            Value="100"
-            x:Name="progressBar" />
+        <ProgressBar  Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="2"
+                      Style="{DynamicResource DarkProgressBar}" Foreground="#3d3d3d"
+                      Background="{x:Null}" BorderBrush="{x:Null}" Value="100"
+                      x:Name="progressBar" />
         
-        <TextBlock 
-            Grid.Row="16" 
-            Grid.Column="1" 
-            Grid.ColumnSpan="2" 
-            Text="Progress Text..."
-            Style="{StaticResource TextSmall}" 
-            VerticalAlignment="Center" 
-            x:Name="progressText" />
+        <TextBlock Grid.Row="15" Grid.Column="1" Grid.ColumnSpan="2" Text="Progress Text..."
+                   Style="{StaticResource TextSmall}" VerticalAlignment="Center" 
+                   x:Name="progressText" />
         
-        <Button 
-            Grid.Row="15" 
-            Grid.Column="4"  
-            Style="{DynamicResource RoundedDarkButton}"
-            FontFamily="{StaticResource SquaresBoldFree}"
-            Content="Play" 
-            FontSize="30"
-            BorderBrush="{x:Null}" 
-            x:Name="launchButton" 
-            Click="OpenGame" />
+        <Button Grid.Row="14" Grid.Column="4"  
+                Style="{DynamicResource RoundedDarkButton}"
+                FontFamily="{StaticResource SquaresBoldFree}"
+                Content="Play" FontSize="30"
+                BorderBrush="{x:Null}" x:Name="launchButton" Click="OpenGame" />
 
-        <TextBlock 
-            Grid.Row="16" 
-            Grid.Column="4" 
-            Text="Dev Tools Enabled" 
-            Background="#FFA69700"
-            Foreground="White" 
-            TextAlignment="Center"
-            FontSize="10" 
-            VerticalAlignment="Center"
-            x:Name="DevToolsText" 
-            Visibility="Hidden" />
-        
-        <!-- Notification Area -->
-        <Rectangle 
-            Grid.Row="13" 
-            Grid.Column="2" 
-            Grid.ColumnSpan="4"
-            Fill="#fffa65"
-            Name="NotificationBackground"/>
-        <TextBlock
-            Grid.Row="13"
-            Grid.Column="2"
-            Grid.ColumnSpan="2"
-            Text="Global Notification"
-            Style="{StaticResource TextNormal}"
-            Foreground="Black"
-            Padding="10"
-            Name="NotificationText"
-            TextAlignment="Center"/>
-        <StackPanel
-            Grid.Row="13"
-            Grid.Column="4"
-            Name="NotificationButtons">
-            <Button
-                Style="{StaticResource RoundedDarkButton}"
-                Content="Yes"
-                Margin="5,5"
-                Name="NotificationButtonTop"/>
-            
-            <Button
-                Style="{StaticResource RoundedDarkButton}"
-                Content="No"
-                Margin="5,5"
-                Name="NotificationButtonMiddle"/>
-            
-            <Button
-                Style="{StaticResource RoundedDarkButton}"
-                Content="Cancel"
-                Margin="5,5"
-                Name="NotificationButtonBottom"/>
-        </StackPanel>
+        <TextBlock Grid.Row="15" Grid.Column="4" Text="Dev Tools Enabled" Background="#FFA69700"
+                   Foreground="White" TextAlignment="Center" FontSize="10" VerticalAlignment="Center"
+                   x:Name="DevToolsText" Visibility="Hidden" />
         
     </Grid>
 </Window>

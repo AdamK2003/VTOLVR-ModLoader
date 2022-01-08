@@ -292,7 +292,8 @@ namespace ModLoader
                     Debug.LogError($"[Dev Tools] Content type didn't match mod, so item isn't loaded");
                     return;
                 }
-
+                
+                Debug.Log($"[Dev Tools] Loading DLL from path: {path}");
                 byte[] dllBytes = File.ReadAllBytes(path);
                 IEnumerable<Type> source =
                       from t in Assembly.Load(dllBytes).GetTypes()

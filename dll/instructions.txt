@@ -3,7 +3,6 @@ Add the following dll's to this folder:
 	- 0Harmony.dll
 	- Assembly-CSharp.dll
 	- Assembly-CSharp-firstpass.dll
-	- ModLoader.dll
 	- netstandard.dll
 	- SimpleTCP.dll
 	- Unity.TextMeshPro.dll

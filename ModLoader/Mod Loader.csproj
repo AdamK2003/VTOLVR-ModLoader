@@ -52,9 +52,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dll\Facepunch.Steamworks.Win64.dll</HintPath>
     </Reference>
-    <Reference Include="ModLoader">
-      <HintPath>..\dll\ModLoader.dll</HintPath>
-    </Reference>
     <Reference Include="netstandard">
       <HintPath>..\dll\netstandard.dll</HintPath>
     </Reference>

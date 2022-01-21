@@ -5,19 +5,21 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Mime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Core.Enums;
 using Core.Jsons;
 using Launcher.Classes;
 using Launcher.Classes.Json;
 using Launcher.Windows;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ContentType = Core.Enums.ContentType;
 
 namespace Launcher.Views
 {
@@ -661,14 +663,26 @@ namespace Launcher.Views
         }
 
         /// <summary>
-        /// Gets a file name from the end of the URL
+        /// Gets the file name by reading the header from the web response.
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
         private static string GetFileName(string url)
         {
-            string[] split = url.Split('/');
-            return split[split.Length - 1];
+            string filename = string.Empty;
+            
+            using (WebClient client = new WebClient())
+            {
+                // This is just for the server end in case we do need to see what
+                // is sending requests to us.
+                client.Headers.Add("user-agent", Program.ProgramName.RemoveSpecialCharacters());
+                
+                client.OpenRead(url);
+                string header_contentDisposition = client.ResponseHeaders["content-disposition"];
+                filename = new ContentDisposition(header_contentDisposition).FileName;
+            }
+
+            return filename;
         }
 
         private void WindowSizeChanged(object sender, SizeChangedEventArgs e)

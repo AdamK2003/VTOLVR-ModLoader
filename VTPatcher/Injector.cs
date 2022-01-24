@@ -191,6 +191,9 @@ namespace VTPatcher
         {
             if (_loadedModLoader)
                 return;
+
+            if (GameStartup.version.releaseType != GameVersion.ReleaseTypes.Modded)
+                return;
             
             _loadedModLoader = true;
             string modloaderPath = Path.Combine("VTOLVR_ModLoader", "ModLoader.dll");

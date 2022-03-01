@@ -7,11 +7,15 @@ using System.Net;
 using Launcher.Views;
 using Launcher.Windows;
 using Console = Launcher.Views.Console;
+using System.Linq;
+
+
 
 namespace Launcher.Classes
 {
     static class Updater
     {
+        public static string[] IgnoredFiles = new string[] { "VTOLVR-ModLoader", "VTPatcher", "ModLoader" };
         private const string _oldLauncherName = "VTOLVR-ModLoader.old.exe";
         private static string _oldPath;
         private static bool _updatingLauncher;
@@ -49,18 +53,24 @@ namespace Launcher.Classes
             {
                 if (_files[i].Name.Equals("VTOLVR-ModLoader"))
                 {
+                    
+                    /*
                     if (!Helper.CalculateMD5(Program.ExePath).Equals(_files[i].Hash))
                     {
                         Console.Log($"{Program.ExePath} needs updating");
                         totalCount++;
                     }
                     continue;
+                    */
                 }
                 lastPath = $"{Program.VTOLFolder}/{_files[i].Location}" ;
                 if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(_files[i].Hash))
                 {
-                    Console.Log($"{lastPath} needs updating");
-                    totalCount++;
+                    if (!IgnoredFiles.Contains(_files[i].Name))
+                    {
+                        Console.Log($"{lastPath} needs updating");
+                        totalCount++;
+                    }
                 }
             }
 
@@ -94,7 +104,7 @@ namespace Launcher.Classes
             {
                 if (_files[i].Name.Equals("VTOLVR-ModLoader"))
                 {
-                    if (!Helper.CalculateMD5(Program.ExePath).Equals(_files[i].Hash))
+                    if (false) //!Helper.CalculateMD5(Program.ExePath).Equals(_files[i].Hash))
                     {
                         if (!MoveLauncher())
                             return;
@@ -105,7 +115,7 @@ namespace Launcher.Classes
                 }
                 
                 lastPath = Program.VTOLFolder + "/" + _files[i].Location;
-                if (!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(_files[i].Hash))
+                if ((!File.Exists(lastPath) || !Helper.CalculateMD5(lastPath).Equals(_files[i].Hash)) && _files[i].Name != "VTPatcher")
                 {
                     Console.Log($"Need to update {_files[i].Location}");
 
@@ -123,6 +133,7 @@ namespace Launcher.Classes
 
         private static void AddFile(UpdateFile file)
         {
+            if (IgnoredFiles.Contains(file.Name)) return;
             Console.Log("Updating " + file.Name);
             _updateFiles.Add(file);
             

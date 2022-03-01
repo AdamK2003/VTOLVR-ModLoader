@@ -3,9 +3,11 @@
 using Harmony;
 using UnityEngine;
 
+
+
 namespace ModLoader.Patches
 {
-    [HarmonyPatch(typeof(LoadingSceneController), nameof(LoadingSceneController.Start))]
+    [HarmonyPatch(typeof(LoadingSceneController), "Start")]
     public class LoadingSceneControllerPatch
     {
         static void Postfix(LoadingSceneController __instance)
@@ -16,5 +18,6 @@ namespace ModLoader.Patches
                 Debug.Log($"Dev tools has made the player ready up");
             }
         }
+
     }
 }

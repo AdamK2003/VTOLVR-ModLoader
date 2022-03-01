@@ -210,10 +210,11 @@ namespace Launcher
         {
             Helper.SentryLog("Starting process", Helper.SentryLogCategory.Program);
             Views.Console.Log("Launching VTOL VR");
+            Views.Console.Log(VTOLFolder + @"VTOLVR.exe");
 
             var psi = new ProcessStartInfo
             {
-                FileName = @"steam://run/667970",
+                FileName = VTOLFolder + "VTOLVR.exe",
                 UseShellExecute = true,
                 WindowStyle = ProcessWindowStyle.Minimized
             };

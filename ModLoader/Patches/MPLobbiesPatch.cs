@@ -14,7 +14,7 @@ using VTOLVR.Multiplayer;
 namespace ModLoader.Patches
 { 
     //Patches the create lobby function to add the host's loaded mods to the lobby info
-    [HarmonyPatch(typeof(VTMPMainMenu), nameof(VTMPMainMenu.LaunchMPGameForScenario))]
+    [HarmonyPatch(typeof(VTMPMainMenu), "LaunchMPGameForScenario")]
     class LobbyManagerPatch
     {
         static void Prefix()
@@ -45,7 +45,7 @@ namespace ModLoader.Patches
             if (loadedMods != VTOLAPI.GetUsersOrderedMods())
             {
                 Debug.Log("Unable to join because of mismatched mods: " + loadedMods);
-                __instance.ShowError("Required mods for lobby: " + loadedMods);
+                //__instance.ShowError("Required mods for lobby: " + loadedMods);
                 
                 return false;
             }

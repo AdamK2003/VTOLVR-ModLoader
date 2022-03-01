@@ -371,6 +371,10 @@ namespace ModLoader
          */
         private static bool Check()
         {
+            return true;
+        }
+        /*
+        {
             if (File.Exists(Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "VTOLVR_Data",
@@ -401,6 +405,7 @@ namespace ModLoader
             }
             return true;
         }
+        */
         
         private static void LoadLauncherSettings()
         {

@@ -224,7 +224,7 @@ namespace VTPatcher
                 }
                 
                 
-                if (!SteamAuthentication.IsTrusted(oldPath))
+                if (false) //!SteamAuthentication.IsTrusted(oldPath))
                 {
                     Debug.LogError("Unexpected Error, please contact vtolvr-mods.com staff\nError code: 667970");
                     Debug.Log(oldPath);
@@ -431,7 +431,8 @@ Special Thanks to Ketkev and Nebriv for their continuous support to the mod load
         
         private static bool IsTrusted(string fileName)
         {
-            return WinVerifyTrust(fileName) == 0;
+            return true;
+            //return WinVerifyTrust(fileName) == 0;
         }
         
         // This is the entry point for the console and unpatching

@@ -1,4 +1,7 @@
 ## Original repo [here](https://gitlab.com/vtolvr-mods/ModLoader)
+
+This fork has the Steam checks removed. The self update routine has also been changed to skip the modified files.
+
 # VTOL VR Mod Loader
 
 ![Mod Loader Program](https://vtolvr-mods.com/static/files/modloader2.gif)

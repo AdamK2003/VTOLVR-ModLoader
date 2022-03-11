@@ -21,6 +21,8 @@ using Harmony;
 using ModLoader.Classes;
 using ModLoader.Classes.Json;
 using Core;
+using ModLoader.Discord;
+
 namespace ModLoader
 {
     /// <summary>

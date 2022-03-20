@@ -9,6 +9,7 @@ using ModLoader;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using System.Collections;
+
 /// <summary>
 /// This is the VTOL VR Modding API which aims to simplify repetitive tasks.
 /// </summary>
@@ -49,7 +50,11 @@ public class VTOLAPI : MonoBehaviour
     private void Awake()
     {
         if (instance)
-            Destroy(this.gameObject);
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
         DontDestroyOnLoad(this.gameObject);
         instance = this;
         gamePath = Directory.GetCurrentDirectory();
@@ -125,18 +130,34 @@ public class VTOLAPI : MonoBehaviour
             SceneLoaded.Invoke(Scene);
     }
 
+    #region Steam Related Methods
+    
     /// <summary>
     /// Returns the steam ID of the player which is using this mod.
     /// </summary>
-    /// <returns></returns>
+    [Obsolete]
     public ulong GetSteamID() => SteamClient.SteamId;
 
+    /// <summary>
+    /// Returns the steam ID of the player which is using this mod.
+    /// </summary>
+    public static ulong SteamId() => SteamClient.SteamId;
+    
     /// <summary>
     /// Returns the current name of the steam user, if they change their name during play session, this doesn't update.
     /// </summary>
     /// <returns></returns>
+    [Obsolete]
     public string GetSteamName() => SteamClient.Name;
 
+    /// <summary>
+    /// Returns the current name of the steam user, if they change their name during play session, this doesn't update.
+    /// </summary>
+    public static string SteamName() => SteamClient.Name;
+
+    #endregion
+    
+    
     /// <summary>
     /// Returns the parent gameobject of what vehicle the player is currently flying, it will return null if nothing is found.
     /// </summary>

@@ -19,11 +19,11 @@ public enum VTOLScenes
     /// The room where you select the weapons and skins before starting a secnario
     /// </summary>
     VehicleConfiguration, 
+    MeshTerrain, 
     /// <summary>
     /// The helmet room where you wait for the game to load.
     /// </summary>
     LoadingScene, 
-    MeshTerrain, 
     /// <summary>
     /// A plane empty scene with just water.
     /// </summary>
@@ -41,5 +41,6 @@ public enum VTOLScenes
     CustomMapBase, 
     CommRadioTest, 
     ShaderVariantsScene, 
-    CustomMapBase_OverCloud
+    CustomMapBase_OverCloud,
+    LocalizationScene
 };

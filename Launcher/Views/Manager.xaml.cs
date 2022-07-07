@@ -244,9 +244,17 @@ namespace Launcher.Views
 
         private void RequestItem(string publicID, bool isMod)
         {
-            HttpHelper.DownloadStringAsync(
-                $"{Program.URL}{Program.ApiURL}{(isMod ? Program.ModsURL : Program.SkinsURL)}/{publicID}",
-                RequestItemCallback, extraData: new object[] {isMod, publicID});
+            try
+            {
+                HttpHelper.DownloadStringAsync(
+                    $"{Program.URL}{Program.ApiURL}{(isMod ? Program.ModsURL : Program.SkinsURL)}/{publicID}",
+                    RequestItemCallback, extraData: new object[] {isMod, publicID});
+            }
+            catch (Exception e)
+            {
+                Console.Log($"Exception happened when trying to request pub_id:{publicID}.\n{e}");
+                ReceivedError(publicID);
+            }
         }
 
         private async void RequestItemCallback(HttpResponseMessage response, object[] extraData)

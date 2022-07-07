@@ -18,8 +18,7 @@ namespace Build
             { "msbuild", @"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"},
             { "unity", @"C:\Program Files\Unity\Hub\Editor\2019.1.8f1\Editor\Unity.exe"},
             { "nuget", @"B:\Gitlab Runner\nuget.exe" },
-            { "dotnet", @"C:\Program Files\dotnet\dotnet.exe"},
-            { "sign", @"C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\signtool.exe"}
+            { "dotnet", @"C:\Program Files\dotnet\dotnet.exe"}
         };
         static void Main(string[] args)
         {
@@ -52,8 +51,6 @@ namespace Build
                 BuildPatcher();
             else if (args.Contains("buildunpatcher"))
                 BuildUnPatcher();
-            else if (args.Contains("sign"))
-                SignFiles();
             else if (args.Contains("autoupdatezip"))
                 CreateUpdaterZip();
             else if (args.Contains("move"))
@@ -129,39 +126,6 @@ namespace Build
             Log("Building UnPatcher.exe\n");
             Run(paths["msbuild"],
                 "-p:Configuration=Release -nologo \"UnPatcher.csproj\"",
-                @"\UnPatcher");
-        }
-        
-        private static void SignFiles()
-        {
-            Log("Signing Core.dll");
-            FileInfo file = new FileInfo(@"Core\bin\Release\netstandard2.0\Core.dll");
-            Run(paths["sign"],
-                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
-                @"\Core");
-            
-            Log("Signing ModLoader.dll");
-            file = new FileInfo(@"ModLoader\bin\Release\ModLoader.dll");
-            Run(paths["sign"],
-                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
-                @"\ModLoader");
-            
-            Log("Signing Launcher");
-            file = new FileInfo(@"Launcher\bin\Release\net5.0-windows\win-x64\publish\Launcher.exe");
-            Run(paths["sign"],
-                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
-                @"\Launcher");
-            
-            Log("Signing Patcher");
-            file = new FileInfo(@"VTPatcher\bin\Release\VTPatcher.dll");
-            Run(paths["sign"],
-                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
-                @"\VTPatcher");
-            
-            Log("Signing UnPatcher");
-            file = new FileInfo(@"UnPatcher\bin\Release\UnPatcher.exe");
-            Run(paths["sign"],
-                $"sign /n \"Open Source Developer, Ben Wilson\" /fd SHA256 /t http://public-qlts.certum.pl/qts-17 \"{file.FullName}\"",
                 @"\UnPatcher");
         }
 

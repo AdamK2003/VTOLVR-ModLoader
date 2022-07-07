@@ -4,7 +4,6 @@ stages:
   - build_wpf
   - build_patcher
   - build_unpatcher
-  - sign_files
   - autoupdate_zip
   - move_files
 
@@ -69,23 +68,6 @@ build_unpatcher:
     - .\Builder.exe buildunpatcher dlls=$dlls
   artifacts:
     paths:
-      - UnPatcher\bin\Release\UnPatcher.exe
-    expire_in: 1 day
-  only:
-    - dev
-    - release
-
-sign_files:
-  stage: sign_files
-  script:
-    - .\Builder.exe sign
-  artifacts:
-    paths:
-      - ModLoader\bin\Release\ModLoader.dll
-      - ModLoader\bin\Release\ModLoader.xml
-      - Core\bin\Release\netstandard2.0\Core.dll
-      - Launcher\bin\Release\net5.0-windows\win-x64\publish\Launcher.exe
-      - VTPatcher\bin\Release\VTPatcher.dll
       - UnPatcher\bin\Release\UnPatcher.exe
     expire_in: 1 day
   only:

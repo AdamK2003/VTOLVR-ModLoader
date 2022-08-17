@@ -168,7 +168,9 @@ namespace ModLoader
                 if ((currentVehicle == VTOLVehicles.AV42C && currentSkin.hasAv42c) ||
                     (currentVehicle == VTOLVehicles.FA26B && currentSkin.hasFA26B) ||
                     (currentVehicle == VTOLVehicles.F45A && currentSkin.hasF45A) ||
-                    (currentVehicle == VTOLVehicles.AH94 && currentSkin.hasAH94))
+                    (currentVehicle == VTOLVehicles.AH94 && currentSkin.hasAH94) ||
+                    (currentVehicle == VTOLVehicles.None && !currentSkin.hasAv42c && // Modded Planes
+                     !currentSkin.hasAH94 && !currentSkin.hasF45A && !currentSkin.hasFA26B)) // Modded Planes
                 {
                     currentSkin.folderPath = folder;
                     installedSkins.Add(currentSkin);
@@ -236,7 +238,8 @@ namespace ModLoader
 
             Skin selected = installedSkins[selectedSkin];
 
-            Log("\nSkin: " + selected.name + " \nPath: " + selected.folderPath);
+            Log($"\nSkin: \"{selected.name}\" \n " +
+                $"Path: \"{selected.folderPath}\" \n ");
 
             for (int i = 0; i < materials.Count; i++)
             {
@@ -308,6 +311,11 @@ namespace ModLoader
                     break;
                 case VTOLVehicles.AH94:
                     preview = @"\3.png";
+                    break;
+                
+                // This is for modded vehicles
+                default:
+                    preview = @"\preview.png";
                     break;
             }
             WWW www = new WWW("file:///" + installedSkins[currentSkin].folderPath + preview);

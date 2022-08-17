@@ -188,7 +188,27 @@ namespace Launcher.Views
             autoUpdateCheckbox.IsChecked = AutoUpdate;
             steamvrCheckbox.IsChecked = SteamVR;
 
-            CheckDoorstepConfig();
+            try
+            {
+                CheckDoorstepConfig();
+            }
+            catch (Exception e)
+            {
+                Console.Log("Error when trying to checkdoorstep config.\n" +
+                            $"{e}");
+                
+                string filePath = Path.Combine(Program.VTOLFolder, "doorstop_config.ini");
+                if (File.Exists(filePath))
+                {
+                    string fileContent = File.ReadAllText(filePath);
+                    Console.Log($"Contents of the users doorstep:\n{fileContent}");
+                    if (Helper.TryDelete(filePath))
+                    {
+                        Console.Log("Deleted the doorstep file");
+                    }
+                }
+            }
+
             SetupBranchesFromSettings();
             SaveSettings();
         }

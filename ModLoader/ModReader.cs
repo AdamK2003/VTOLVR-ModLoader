@@ -16,7 +16,7 @@ using ModLoader.Classes.Json;
 using Core;
 namespace ModLoader
 {
-    class ModReader
+    internal static class ModReader
     {
         public static List<Core.Jsons.BaseItem> Items
         {

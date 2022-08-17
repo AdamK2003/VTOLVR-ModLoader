@@ -105,6 +105,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\VTOLAPI.cs" />
     <Compile Include="API\VTOLScenes.cs" />
     <Compile Include="API\VTOLVehicles.cs" />
     <Compile Include="Classes\Campaigns.cs" />
@@ -113,9 +114,12 @@
     <Compile Include="Classes\Json\LauncherSettings.cs" />
     <Compile Include="DataCollector.cs" />
     <Compile Include="DevTools.cs" />
-    <Compile Include="DiscordController.cs" />
-    <Compile Include="DiscordRpc.cs" />
     <Compile Include="Classes\Mod.cs" />
+    <Compile Include="Discord\DiscordController.cs" />
+    <Compile Include="Discord\DiscordJoinEvent.cs" />
+    <Compile Include="Discord\DiscordJoinRequestEvent.cs" />
+    <Compile Include="Discord\DiscordRpc.cs" />
+    <Compile Include="Discord\DiscordSpectateEvent.cs" />
     <Compile Include="ModLoader.cs" />
     <Compile Include="ModLoaderManager.cs" />
     <Compile Include="Patches\LoadingSceneControllerPatch.cs" />
@@ -126,7 +130,6 @@
     <Compile Include="SkinManager.cs" />
     <Compile Include="UIManager.cs" />
     <Compile Include="UI\ListItemTemplate.cs" />
-    <Compile Include="VTOLAPI.cs" />
     <Compile Include="VTOLMOD.cs" />
     <Compile Include="ModReader.cs" />
   </ItemGroup>
